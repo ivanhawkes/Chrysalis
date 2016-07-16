@@ -1,0 +1,702 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="ConsoleCommands\ConsoleCommands.cpp">
+      <Filter>ConsoleCommands</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\MathUtils.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EventSystem\WindowEventSystem.cpp">
+      <Filter>Game\EventSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="ConsoleVariables\ConsoleVariables.cpp">
+      <Filter>ConsoleVariables</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Physics\GamePhysicsSettings.cpp">
+      <Filter>Game\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Rules\GameRules.cpp">
+      <Filter>Game\Rules</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Startup\GameStartup.cpp">
+      <Filter>Game\Startup</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\EditorGame.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Game.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="ActionMaps\GameActionMaps.cpp">
+      <Filter>ActionMaps</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\PlayerCamera\FirstPersonCamera.cpp">
+      <Filter>Actor\PlayerCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\PlayerCamera\ActionRPGCamera.cpp">
+      <Filter>Actor\PlayerCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Character\Character.cpp">
+      <Filter>Actor\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Player\Input\PlayerInput.cpp">
+      <Filter>Actor\Player\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Player\Player.cpp">
+      <Filter>Actor\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\PlayerCamera\ICamera.cpp">
+      <Filter>Actor\PlayerCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\PlayerCamera\PlayerCamera.cpp">
+      <Filter>Actor\PlayerCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Character\Movement\CharacterMovementController.cpp">
+      <Filter>Actor\Character\Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\AutoEnum.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\StringUtils.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\CryWatch.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\LocalizeUtility.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Character\Movement\StateMachine\CharacterStateEntry.cpp">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Character\Movement\StateMachine\CharacterStateDead.cpp">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Character\Movement\StateMachine\CharacterStateLedge.cpp">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Character\Movement\StateMachine\CharacterStateLinked.cpp">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Character\Movement\StateMachine\CharacterStateMovement.cpp">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Character\Movement\StateMachine\CharacterStateSwim.cpp">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Character\Movement\StateMachine\CharacterStateSwimWaterTestProxy.cpp">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Character\Movement\StateMachine\CharacterStateUtil.cpp">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Character\Movement\StateMachine\CharacterStateAnimationControlled.cpp">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Character\Movement\StateMachine\CharacterStateFly.cpp">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Character\Movement\StateMachine\CharacterStateGround.cpp">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Character\Movement\StateMachine\CharacterStateJump.cpp">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Character\Movement\StateMachine\CharacterStateLadder.cpp">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\EntityScriptCalls.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility\DesignerWarning.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Animation\Player\PlayerAnimation.cpp">
+      <Filter>Actor\Animation\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Environment\Ledge\LedgeManager.cpp">
+      <Filter>Environment\Ledge</Filter>
+    </ClCompile>
+    <ClCompile Include="Environment\Ledge\LedgeStatic.cpp">
+      <Filter>Environment\Ledge</Filter>
+    </ClCompile>
+    <ClCompile Include="Environment\Ledge\Ledge.cpp">
+      <Filter>Environment\Ledge</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\ActorAnimationEvents.cpp">
+      <Filter>Actor</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\Inventory\EntityInventory.cpp">
+      <Filter>Actor\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectID\ObjectId.cpp">
+      <Filter>ObjectId</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectID\ObjectIdMasterFactory.cpp">
+      <Filter>ObjectId</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Registration\GameRegistration.cpp">
+      <Filter>Game\Registration</Filter>
+    </ClCompile>
+    <ClCompile Include="Boids\Flock.cpp">
+      <Filter>Boids</Filter>
+    </ClCompile>
+    <ClCompile Include="Boids\BoidCollision.cpp">
+      <Filter>Boids</Filter>
+    </ClCompile>
+    <ClCompile Include="Boids\BoidObject.cpp">
+      <Filter>Boids</Filter>
+    </ClCompile>
+    <ClCompile Include="Boids\BoidsProxy.cpp">
+      <Filter>Boids</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptBinds\Boids\ScriptBindBoids.cpp">
+      <Filter>ScriptBinds\Boids</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptBinds\Game\ScriptBindGame.cpp">
+      <Filter>ScriptBinds\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptBinds\ScriptBinds.cpp">
+      <Filter>ScriptBinds</Filter>
+    </ClCompile>
+    <ClCompile Include="Boids\Avian\BoidAvian.cpp">
+      <Filter>Boids\Avian</Filter>
+    </ClCompile>
+    <ClCompile Include="Boids\Avian\ChickenBoids.cpp">
+      <Filter>Boids\Avian</Filter>
+    </ClCompile>
+    <ClCompile Include="Boids\Avian\AvianFlock.cpp">
+      <Filter>Boids\Avian</Filter>
+    </ClCompile>
+    <ClCompile Include="Boids\Amphibian\FrogBoids.cpp">
+      <Filter>Boids\Amphibian</Filter>
+    </ClCompile>
+    <ClCompile Include="Boids\Amphibian\TurtleBoid.cpp">
+      <Filter>Boids\Amphibian</Filter>
+    </ClCompile>
+    <ClCompile Include="Boids\Aquatic\BoidFish.cpp">
+      <Filter>Boids\Aquatic</Filter>
+    </ClCompile>
+    <ClCompile Include="Boids\Aquatic\FishFlock.cpp">
+      <Filter>Boids\Aquatic</Filter>
+    </ClCompile>
+    <ClCompile Include="Boids\Terran\BugsFlock.cpp">
+      <Filter>Boids\Terran</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Cache\GameCache.cpp">
+      <Filter>Game\Cache</Filter>
+    </ClCompile>
+    <ClCompile Include="Environment\Water\WaterRipplesGenerator.cpp">
+      <Filter>Environment\Water</Filter>
+    </ClCompile>
+    <ClCompile Include="Flowgraph\Image\ScreenFader\ScreenFaderNode.cpp">
+      <Filter>Flowgraph\Image\ScreenFader</Filter>
+    </ClCompile>
+    <ClCompile Include="Item\Item.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Item\Weapon\Weapon.cpp">
+      <Filter>Item\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="Item\Accessory\Accessory.cpp">
+      <Filter>Item\Accessory</Filter>
+    </ClCompile>
+    <ClCompile Include="Item\ItemAccessory.cpp">
+      <Filter>Item</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptBinds\Item\ScriptBindItem.cpp">
+      <Filter>ScriptBinds\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Item\Parameters\ItemParameter.cpp">
+      <Filter>Item\Parameters</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\ProceduralContext\ProceduralContextAim.cpp">
+      <Filter>Animation\ProceduralContext</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\ProceduralContext\ProceduralContextColliderMode.cpp">
+      <Filter>Animation\ProceduralContext</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\ProceduralContext\ProceduralContextLook.cpp">
+      <Filter>Animation\ProceduralContext</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\ProceduralContext\ProceduralContextMovementControlMethod.cpp">
+      <Filter>Animation\ProceduralContext</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\ProceduralContext\ProceduralContextRagdoll.cpp">
+      <Filter>Animation\ProceduralContext</Filter>
+    </ClCompile>
+    <ClCompile Include="Item\Parameters\ItemBaseParameter.cpp">
+      <Filter>Item\Parameters</Filter>
+    </ClCompile>
+    <ClCompile Include="Item\Parameters\ItemFlashlightParameter.cpp">
+      <Filter>Item\Parameters</Filter>
+    </ClCompile>
+    <ClCompile Include="Item\Parameters\ItemGeometryParameter.cpp">
+      <Filter>Item\Parameters</Filter>
+    </ClCompile>
+    <ClCompile Include="Item\Parameters\ItemLaserParameter.cpp">
+      <Filter>Item\Parameters</Filter>
+    </ClCompile>
+    <ClCompile Include="Item\Parameters\ItemAccessoryParameter.cpp">
+      <Filter>Item\Parameters</Filter>
+    </ClCompile>
+    <ClCompile Include="Flowgraph\FlowGameEntityNode.cpp">
+      <Filter>Flowgraph</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="Game\EventSystem\IWindowEventSystem.h">
+      <Filter>Game\EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\ProjectDefines.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleCommands\ConsoleCommands.h">
+      <Filter>ConsoleCommands</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\MathUtils.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EventSystem\WindowEventSystem.h">
+      <Filter>Game\EventSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleVariables\ConsoleVariables.h">
+      <Filter>ConsoleVariables</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Physics\GamePhysicsSettings.h">
+      <Filter>Game\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Rules\GameRules.h">
+      <Filter>Game\Rules</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Startup\GameStartup.h">
+      <Filter>Game\Startup</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\EditorGame.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Game.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="ActionMaps\GameActionMaps.h">
+      <Filter>ActionMaps</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\PlayerCamera\FirstPersonCamera.h">
+      <Filter>Actor\PlayerCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\PlayerCamera\ActionRPGCamera.h">
+      <Filter>Actor\PlayerCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Character\Character.h">
+      <Filter>Actor\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Player\Input\IPlayerInput.h">
+      <Filter>Actor\Player\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Player\Input\PlayerInput.h">
+      <Filter>Actor\Player\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Player\Player.h">
+      <Filter>Actor\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Movement\IActorMovementController.h">
+      <Filter>Actor\Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\PlayerCamera\ICamera.h">
+      <Filter>Actor\PlayerCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\PlayerCamera\PlayerCamera.h">
+      <Filter>Actor\PlayerCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Character\Movement\CharacterMovementController.h">
+      <Filter>Actor\Character\Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="StateMachine\StateMachine.h">
+      <Filter>StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\AutoEnum.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\CryHash.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\StringUtils.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\CryWatch.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\LocalizeUtility.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Character\Movement\StateMachine\CharacterStateEvents.h">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Character\Movement\StateMachine\CharacterStateDead.h">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Character\Movement\StateMachine\CharacterStateLedge.h">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Character\Movement\StateMachine\CharacterStateSwim.h">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Character\Movement\StateMachine\CharacterStateSwimWaterTestProxy.h">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Character\Movement\StateMachine\CharacterStateUtil.h">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Character\Movement\StateMachine\CharacterStateFly.h">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Character\Movement\StateMachine\CharacterStateGround.h">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Character\Movement\StateMachine\CharacterStateJump.h">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Character\Movement\StateMachine\CharacterStateLadder.h">
+      <Filter>Actor\Character\Movement\StateMachine</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Character\ICharacterEventListener.h">
+      <Filter>Actor\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\EntityScriptCalls.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\DesignerWarning.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Animation\Player\PlayerAnimation.h">
+      <Filter>Actor\Animation\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Environment\Ledge\LedgeManager.h">
+      <Filter>Environment\Ledge</Filter>
+    </ClInclude>
+    <ClInclude Include="Environment\Ledge\LedgeStatic.h">
+      <Filter>Environment\Ledge</Filter>
+    </ClInclude>
+    <ClInclude Include="Environment\Ledge\Ledge.h">
+      <Filter>Environment\Ledge</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\PlayerCamera\CameraPose.h">
+      <Filter>Actor\PlayerCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\ActorClassTypes.h">
+      <Filter>Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\ActorPhysics.h">
+      <Filter>Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\ActorState.h">
+      <Filter>Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\ActorAnimationEvents.h">
+      <Filter>Actor</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\Inventory\EntityInventory.h">
+      <Filter>Actor\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectID\ObjectId.h">
+      <Filter>ObjectId</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectID\ObjectIdMasterFactory.h">
+      <Filter>ObjectId</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Registration\GameRegistration.h">
+      <Filter>Game\Registration</Filter>
+    </ClInclude>
+    <ClInclude Include="Boids\Flock.h">
+      <Filter>Boids</Filter>
+    </ClInclude>
+    <ClInclude Include="Boids\BoidCollision.h">
+      <Filter>Boids</Filter>
+    </ClInclude>
+    <ClInclude Include="Boids\BoidObject.h">
+      <Filter>Boids</Filter>
+    </ClInclude>
+    <ClInclude Include="Boids\BoidsProxy.h">
+      <Filter>Boids</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptBinds\Boids\ScriptBindBoids.h">
+      <Filter>ScriptBinds\Boids</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptBinds\Game\ScriptBindGame.h">
+      <Filter>ScriptBinds\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptBinds\ScriptBinds.h">
+      <Filter>ScriptBinds</Filter>
+    </ClInclude>
+    <ClInclude Include="Boids\AvianFlock.h">
+      <Filter>Boids\Avian</Filter>
+    </ClInclude>
+    <ClInclude Include="Boids\Avian\AvianEnum.h">
+      <Filter>Boids\Avian</Filter>
+    </ClInclude>
+    <ClInclude Include="Boids\Avian\BoidAvian.h">
+      <Filter>Boids\Avian</Filter>
+    </ClInclude>
+    <ClInclude Include="Boids\Avian\ChickenBoids.h">
+      <Filter>Boids\Avian</Filter>
+    </ClInclude>
+    <ClInclude Include="Boids\Amphibian\FrogBoids.h">
+      <Filter>Boids\Amphibian</Filter>
+    </ClInclude>
+    <ClInclude Include="Boids\Amphibian\TurtleBoid.h">
+      <Filter>Boids\Amphibian</Filter>
+    </ClInclude>
+    <ClInclude Include="Boids\Aquatic\BoidFish.h">
+      <Filter>Boids\Aquatic</Filter>
+    </ClInclude>
+    <ClInclude Include="Boids\Aquatic\FishFlock.h">
+      <Filter>Boids\Aquatic</Filter>
+    </ClInclude>
+    <ClInclude Include="Boids\Terran\BugsFlock.h">
+      <Filter>Boids\Terran</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Cache\GameCache.h">
+      <Filter>Game\Cache</Filter>
+    </ClInclude>
+    <ClInclude Include="Environment\Water\WaterRipplesGenerator.h">
+      <Filter>Environment\Water</Filter>
+    </ClInclude>
+    <ClInclude Include="Item\Item.h">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Item\Weapon\Weapon.h">
+      <Filter>Item\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Item\Accessory\Accessory.h">
+      <Filter>Item\Accessory</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility\ItemString.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptBinds\Item\ScriptBindItem.h">
+      <Filter>ScriptBinds\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Item\Parameters\ItemParameter.h">
+      <Filter>Item\Parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\ProceduralContext\ProceduralContextAim.h">
+      <Filter>Animation\ProceduralContext</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\ProceduralContext\ProceduralContextColliderMode.h">
+      <Filter>Animation\ProceduralContext</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\ProceduralContext\ProceduralContextHelpers.h">
+      <Filter>Animation\ProceduralContext</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\ProceduralContext\ProceduralContextLook.h">
+      <Filter>Animation\ProceduralContext</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\ProceduralContext\ProceduralContextMovementControlMethod.h">
+      <Filter>Animation\ProceduralContext</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\ProceduralContext\ProceduralContextRagdoll.h">
+      <Filter>Animation\ProceduralContext</Filter>
+    </ClInclude>
+    <ClInclude Include="Item\Parameters\ItemBaseParameter.h">
+      <Filter>Item\Parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="Item\Parameters\ItemFlashlightParameter.h">
+      <Filter>Item\Parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="Item\Parameters\ItemGeometryParameter.h">
+      <Filter>Item\Parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="Item\Parameters\ItemLaserParameter.h">
+      <Filter>Item\Parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="Item\Parameters\ItemAccessoryParameter.h">
+      <Filter>Item\Parameters</Filter>
+    </ClInclude>
+    <ClInclude Include="Flowgraph\G2FlowBaseNode.h">
+      <Filter>Flowgraph</Filter>
+    </ClInclude>
+    <ClInclude Include="Flowgraph\FlowBaseNode.h">
+      <Filter>Flowgraph</Filter>
+    </ClInclude>
+    <ClInclude Include="Flowgraph\FlowGameEntityNode.h">
+      <Filter>Flowgraph</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Actor">
+      <UniqueIdentifier>{ee99e9fa-b715-4615-9022-2c913d1e9e5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor\Player">
+      <UniqueIdentifier>{ecf2aa6d-879a-4cd9-b2da-5cd18d151cdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor\PlayerCamera">
+      <UniqueIdentifier>{759c6c0e-1621-4213-85a9-3fb5a5f92ae9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{d52fae4e-85ee-48b8-9ed6-3981515eaa78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ActionMaps">
+      <UniqueIdentifier>{2938d15c-cbc5-4fcd-9351-fd2e8226ce76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor\Animation">
+      <UniqueIdentifier>{31cc4933-6394-428f-b78c-645744b7ff78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entities">
+      <UniqueIdentifier>{047d9161-6e49-40f8-8835-2dd30ab9a46c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{627ec244-210c-4584-a3f1-f9dd3054a00c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Physics">
+      <UniqueIdentifier>{edd7d133-8b58-45c8-b762-c37792dcdd45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Rules">
+      <UniqueIdentifier>{caf4ac19-9352-4288-a6ff-32b246d9cd2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Startup">
+      <UniqueIdentifier>{e397c8b8-2556-464a-80d5-740e9c5c9592}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\EventSystem">
+      <UniqueIdentifier>{ac61d529-4e64-4b00-b66f-9adc3ec278c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ConsoleVariables">
+      <UniqueIdentifier>{1bbd3f31-b20f-4789-81bc-8e90fec72dc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor\Character">
+      <UniqueIdentifier>{00883bb6-d5a9-47e9-bccc-36136360453c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Templates">
+      <UniqueIdentifier>{40ea597f-223e-4d49-bb93-e812cc49ca37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor\Player\Input">
+      <UniqueIdentifier>{2214c98f-2689-4aad-aade-9f9da12036bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor\Movement">
+      <UniqueIdentifier>{289e59fc-3645-4d2f-adf4-b082fa8ed7b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor\Character\Movement">
+      <UniqueIdentifier>{ce74c6de-3c0e-42e6-b3da-91975feb2fa0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="StateMachine">
+      <UniqueIdentifier>{84d58dc1-c1f1-44f6-ac45-51d05ad662f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor\Character\Movement\StateMachine">
+      <UniqueIdentifier>{9853d4e2-0bb2-4b19-b835-cf211940fcbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Environment">
+      <UniqueIdentifier>{cced7673-8127-4449-90ae-49b65cbb440e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor\Animation\Player">
+      <UniqueIdentifier>{36ca17f4-2ae5-4d88-ba6c-b82df6d2a7c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Environment\Ledge">
+      <UniqueIdentifier>{c114114d-66f1-4f15-a4aa-e6450969b20f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Actor\Inventory">
+      <UniqueIdentifier>{7d700965-d31e-490e-ae58-87440311ab45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ObjectId">
+      <UniqueIdentifier>{b8bd71aa-41eb-4fce-bc89-4f56fa7075c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Animation">
+      <UniqueIdentifier>{b86915d0-cd60-4b73-948a-1ed5037f3a9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Boids">
+      <UniqueIdentifier>{f96e262f-dbc5-48f9-abd9-5cf9a68f7268}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ScriptBinds">
+      <UniqueIdentifier>{84535b59-2e5a-4974-8ab7-ec50925cf4d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ScriptBinds\Boids">
+      <UniqueIdentifier>{ffb2d2a0-b4c3-44e6-aa1f-2f715425df24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ScriptBinds\Game">
+      <UniqueIdentifier>{46ca7b0e-0dcc-4faf-8eb8-2dc8cb12260e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Boids\Avian">
+      <UniqueIdentifier>{c6289016-7efe-4a9d-b4fb-1b1a559d4409}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Boids\Aquatic">
+      <UniqueIdentifier>{4863ec85-76cb-4ee4-87a2-75e86860fec2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Boids\Terran">
+      <UniqueIdentifier>{acc18ed9-a6aa-498c-bec1-b5fa7ab11daf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Boids\Amphibian">
+      <UniqueIdentifier>{c1157f8f-0038-4786-80e8-8e613f7e59d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Cache">
+      <UniqueIdentifier>{636a9f9c-26ab-47f8-911c-5d2919eb8fe0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Environment\Water">
+      <UniqueIdentifier>{904e3aa7-c2c7-442b-bb4e-e537cfdd3912}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Flowgraph">
+      <UniqueIdentifier>{c39a0f71-5517-4838-ad14-7cdc0f672cfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Flowgraph\Image">
+      <UniqueIdentifier>{dcd97b36-b149-4ff9-89c2-63c377ba942b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Flowgraph\Image\ScreenFader">
+      <UniqueIdentifier>{c2066b51-bb3e-4857-8ae8-771435e090ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Item">
+      <UniqueIdentifier>{b9d34b2f-27a0-49fa-a7a9-a21adfade404}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Item\Weapon">
+      <UniqueIdentifier>{aa56b5bc-6640-4545-9a51-a852b7e915b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Registration">
+      <UniqueIdentifier>{082104d4-7d4b-46b1-abc2-e6e70d6e2fa8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Item\Accessory">
+      <UniqueIdentifier>{3dc8b7aa-59a3-4cc0-b8e0-dcc9012f241b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ScriptBinds\Item">
+      <UniqueIdentifier>{c22169e3-6cc9-4bf2-be42-ef975cfe95bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Item\Parameters">
+      <UniqueIdentifier>{e3fd5e5b-e991-4ee0-8c25-f87419fb51ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Item\Weapon\Parameters">
+      <UniqueIdentifier>{58f44c43-d78b-4fa3-8589-8d1ea8fee57d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Item\Accessory\Parameters">
+      <UniqueIdentifier>{8d88f93f-1a5b-4c76-896f-a04c62086862}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Animation\ProceduralContext">
+      <UniqueIdentifier>{59b8fba5-b762-4ec4-9a63-d7226aec6a91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Articy">
+      <UniqueIdentifier>{70082d32-3cb1-4509-b9f0-3943588fba8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ConsoleCommands">
+      <UniqueIdentifier>{4ff781cf-5ea9-4372-a853-1c31008228e0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ActionMaps\Actions.txt">
+      <Filter>ActionMaps</Filter>
+    </None>
+    <None Include="Templates\ActorTemplate.cpp">
+      <Filter>Templates</Filter>
+    </None>
+    <None Include="Templates\ActorTemplate.h">
+      <Filter>Templates</Filter>
+    </None>
+    <None Include="Templates\GameObjectExtensionTemplate.cpp">
+      <Filter>Templates</Filter>
+    </None>
+    <None Include="Templates\GameObjectExtensionTemplate.h">
+      <Filter>Templates</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Chrysalis.rc" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,299 @@
+{
+  "NoUberFile": {
+    "DLL": [
+      "StdAfx.cpp",
+      "StdAfx.h"
+    ]
+  },
+  "Chrysalis_uber_Game.cpp": {
+    "ActionMaps": [
+      "ActionMaps/GameActionMaps.h",
+      "ActionMaps/GameActionMaps.cpp"
+    ],
+    "Actor": [
+      "Actor/ActorAnimationEvents.cpp",
+      "Actor/ActorAnimationEvents.h",
+      "Actor/ActorClassTypes.h",
+      "Actor/ActorPhysics.h",
+      "Actor/ActorStance.h",
+      "Actor/ActorState.h"
+    ],
+    "Actor/Animation/Player": [
+      "Actor/Animation/Player/PlayerAnimation.cpp",
+      "Actor/Animation/Player/PlayerAnimation.h"
+    ],
+    "Actor/Character": [
+      "Actor/Character/ICharacterEventListener.h",
+      "Actor/Character/Character.cpp",
+      "Actor/Character/Character.h"
+    ],
+    "Actor/Character/Movement": [
+      "Actor/Character/Movement/CharacterMovementController.h",
+      "Actor/Character/Movement/CharacterMovementController.cpp",
+      "Actor/Character/Movement/CharacterRotation.cpp",
+      "Actor/Character/Movement/CharacterRotation.h"
+    ],
+    "Actor/Character/Movement/StateMachine": [
+      "Actor/Character/Movement/StateMachine/CharacterStateAIMovement.cpp",
+      "Actor/Character/Movement/StateMachine/CharacterStateAnimationControlled.cpp",
+      "Actor/Character/Movement/StateMachine/CharacterStateDead.cpp",
+      "Actor/Character/Movement/StateMachine/CharacterStateDead.h",
+      "Actor/Character/Movement/StateMachine/CharacterStateEntry.cpp",
+      "Actor/Character/Movement/StateMachine/CharacterStateEvents.h",
+      "Actor/Character/Movement/StateMachine/CharacterStateFly.cpp",
+      "Actor/Character/Movement/StateMachine/CharacterStateFly.h",
+      "Actor/Character/Movement/StateMachine/CharacterStateGround.cpp",
+      "Actor/Character/Movement/StateMachine/CharacterStateGround.h",
+      "Actor/Character/Movement/StateMachine/CharacterStateJump.cpp",
+      "Actor/Character/Movement/StateMachine/CharacterStateJump.h",
+      "Actor/Character/Movement/StateMachine/CharacterStateLadder.cpp",
+      "Actor/Character/Movement/StateMachine/CharacterStateLadder.h",
+      "Actor/Character/Movement/StateMachine/CharacterStateLedge.cpp",
+      "Actor/Character/Movement/StateMachine/CharacterStateLedge.h",
+      "Actor/Character/Movement/StateMachine/CharacterStateLinked.cpp",
+      "Actor/Character/Movement/StateMachine/CharacterStateMovement.cpp",
+      "Actor/Character/Movement/StateMachine/CharacterStateSpectate.cpp",
+      "Actor/Character/Movement/StateMachine/CharacterStateSpectate.h",
+      "Actor/Character/Movement/StateMachine/CharacterStateSwim.cpp",
+      "Actor/Character/Movement/StateMachine/CharacterStateSwim.h",
+      "Actor/Character/Movement/StateMachine/CharacterStateSwimWaterTestProxy.cpp",
+      "Actor/Character/Movement/StateMachine/CharacterStateSwimWaterTestProxy.h",
+      "Actor/Character/Movement/StateMachine/CharacterStateUtil.cpp",
+      "Actor/Character/Movement/StateMachine/CharacterStateUtil.h"
+    ],
+    "Actor/Inventory": [
+      "Actor/Inventory/EntityInventory.cpp",
+      "Actor/Inventory/EntityInventory.h"
+    ],
+    "Actor/Player": [
+      "Actor/Player/Player.cpp",
+      "Actor/Player/Player.h"
+    ],
+    "Animation/ProceduralContext": [
+      "Animation/ProceduralContext/ProceduralContextAim.cpp",
+      "Animation/ProceduralContext/ProceduralContextAim.h",
+      "Animation/ProceduralContext/ProceduralContextColliderMode.cpp",
+      "Animation/ProceduralContext/ProceduralContextColliderMode.h",
+      "Animation/ProceduralContext/ProceduralContextHelpers.h",
+      "Animation/ProceduralContext/ProceduralContextLook.cpp",
+      "Animation/ProceduralContext/ProceduralContextLook.h",
+      "Animation/ProceduralContext/ProceduralContextMovementControlMethod.cpp",
+      "Animation/ProceduralContext/ProceduralContextMovementControlMethod.h",
+      "Animation/ProceduralContext/ProceduralContextRagdoll.cpp",
+      "Animation/ProceduralContext/ProceduralContextRagdoll.h"
+    ],
+    "Boids": [
+      "Boids/BoidCollision.cpp",
+      "Boids/BoidCollision.h",
+      "Boids/BoidObject.cpp",
+      "Boids/BoidObject.h",
+      "Boids/BoidsProxy.cpp",
+      "Boids/BoidsProxy.h",
+      "Boids/Flock.cpp",
+      "Boids/Flock.h",
+      "Boids/ScriptBindBoids.cpp",
+      "Boids/ScriptBindBoids.h"
+    ],
+    "Boids/Amphibian": [
+      "Boids/Amphibian/FrogBoids.cpp",
+      "Boids/Amphibian/FrogBoids.h",
+      "Boids/Amphibian/TurtleBoid.cpp",
+      "Boids/Amphibian/TurtleBoid.h"
+    ],
+    "Boids/Aquatic": [
+      "Boids/Aquatic/BoidFish.cpp",
+      "Boids/Aquatic/BoidFish.h",
+      "Boids/Aquatic/FishFlock.cpp",
+      "Boids/Aquatic/FishFlock.h"
+    ],
+    "Boids/Avian": [
+      "Boids/Avian/AvianEnum.h",
+      "Boids/Avian/AvianFlock.cpp",
+      "Boids/Avian/AvianFlock.h",
+      "Boids/Avian/BoidAvian.cpp",
+      "Boids/Avian/BoidAvian.h",
+      "Boids/Avian/ChickenBoids.cpp",
+      "Boids/Avian/ChickenBoids.h"
+    ],
+    "Boids/Terran": [
+      "Boids/Terran/BugsFlock.cpp",
+      "Boids/Terran/BugsFlock.h"
+    ],
+    "Camera": [
+      "Camera/ICamera.h",
+      "Camera/ICamera.cpp",
+      "Camera/ICameraManager.h",
+      "Camera/ActionRPGCamera.cpp",
+      "Camera/ActionRPGCamera.h",
+      "Camera/CameraManager.cpp",
+      "Camera/CameraManager.h",
+      "Camera/FirstPersonCamera.cpp",
+      "Camera/FirstPersonCamera.h"
+    ],
+    "ConsoleCommands": [
+      "ConsoleCommands/ConsoleCommands.h",
+      "ConsoleCommands/ConsoleCommands.cpp"
+    ],
+    "ConsoleVariables": [
+      "ConsoleVariables/ConsoleVariables.h",
+      "ConsoleVariables/ConsoleVariables.cpp"
+    ],
+    "Entity": [
+      "Entity/EntityEffects.h",
+      "Entity/EntityEffects.cpp",
+      "Entity/EntityScriptCalls.h"
+    ],
+    "EntitySensing": [
+      "EntitySensing/IEntityAwareness.h",
+      "EntitySensing/IEntityLocking.h",
+      "EntitySensing/EntityAwareness.h",
+      "EntitySensing/EntityAwareness.cpp",
+      "EntitySensing/EntityLocking.h",
+      "EntitySensing/EntityLocking.cpp"
+    ],
+    "Environment/Ledge": [
+      "Environment/Ledge/Ledge.h",
+      "Environment/Ledge/Ledge.cpp",
+      "Environment/Ledge/LedgeManager.h",
+      "Environment/Ledge/LedgeManager.cpp",
+      "Environment/Ledge/LedgeStatic.h",
+      "Environment/Ledge/LedgeStatic.cpp"
+    ],
+    "Entity/Ownership": [
+      "Entity/Ownership/IEntityOwnership.h",
+      "Entity/Ownership/IEntityOwnership.cpp"
+    ],
+    "Environment/Water": [
+      "Environment/Water/WaterRipplesGenerator.h",
+      "Environment/Water/WaterRipplesGenerator.cpp"
+    ],
+    "Flowgraph": [
+      "Flowgraph/FlowBaseNode.h",
+      "Flowgraph/FlowGameEntityNode.cpp",
+      "Flowgraph/FlowGameEntityNode.h"
+    ],
+    "Flowgraph/Image/ScreenFader": [
+      "Flowgraph/Image/ScreenFader/ScreenFaderNode.cpp"
+    ],
+    "Flowgraph/VR": [
+      "Flowgraph/VR/OculusFlowNodes.cpp"
+    ],
+    "Game": [
+      "Game/EditorGame.cpp",
+      "Game/EditorGame.h",
+      "Game/Game.h",
+      "Game/Game.cpp",
+      "Game/ScriptBindGame.cpp",
+      "Game/ScriptBindGame.h"
+    ],
+    "Game/Cache": [
+      "Game/Cache/GameCache.cpp",
+      "Game/Cache/GameCache.h"
+    ],
+    "Game/Physics": [
+      "Game/Physics/GamePhysicsSettings.cpp",
+      "Game/Physics/GamePhysicsSettings.h"
+    ],
+    "Game/Registration": [
+      "Game/Registration/GameRegistration.cpp",
+      "Game/Registration/GameRegistration.h"
+    ],
+    "Game/Rules": [
+      "Game/Rules/GameRules.h",
+      "Game/Rules/GameRules.cpp"
+    ],
+    "Game/Startup": [
+      "Game/Startup/GameStartup.h",
+      "Game/Startup/GameStartup.cpp"
+    ],
+    "Openable": [
+      "Openable/IOpenable.h",
+      "Openable/Containers/IContainerExtension.h",
+      "Openable/Containers/ContainerExtension.h",
+      "Openable/Containers/ContainerExtension.cpp",
+      "Openable/Doors/IDoorExtension.h",
+      "Openable/Doors/DoorExtension.h",
+      "Openable/Doors/DoorExtension.cpp",
+      "Openable/Keys/IKeyExtension.h",
+      "Openable/Keys/KeyExtension.h",
+      "Openable/Keys/KeyExtension.cpp",
+      "Openable/Locks/ILockExtension.h",
+      "Openable/Locks/LockExtension.h",
+      "Openable/Locks/LockExtension.cpp"
+    ],
+    "Item": [
+      "Item/Item.cpp",
+      "Item/Item.h",
+      "Item/ItemAccessory.cpp",
+      "Item/ItemEffect.cpp",
+      "Item/ScriptBindItem.cpp",
+      "Item/ScriptBindItem.h"
+    ],
+    "Item/Accessory": [
+      "Item/Accessory/Accessory.cpp",
+      "Item/Accessory/Accessory.h"
+    ],
+    "Item/Flashlight": [
+      "Item/Flashlight/Flashlight.cpp",
+      "Item/Flashlight/Flashlight.h",
+      "Item/Flashlight/ItemFlashlightParameter.cpp",
+      "Item/Flashlight/ItemFlashlightParameter.h",
+      "Item/Flashlight/ItemFlashlightParameterShared.cpp",
+      "Item/Flashlight/ItemFlashlightParameterShared.h"
+    ],
+    "Item/Parameters": [
+      "Item/Parameters/ItemAccessoryParameter.cpp",
+      "Item/Parameters/ItemAccessoryParameter.h",
+      "Item/Parameters/ItemBaseParameter.cpp",
+      "Item/Parameters/ItemBaseParameter.h",
+      "Item/Parameters/ItemGeometryParameter.cpp",
+      "Item/Parameters/ItemGeometryParameter.h",
+      "Item/Parameters/ItemLaserParameter.cpp",
+      "Item/Parameters/ItemLaserParameter.h"
+    ],
+    "Item/Weapon": [
+      "Item/Weapon/Weapon.cpp",
+      "Item/Weapon/Weapon.h"
+    ],
+    "ObjectID": [
+      "ObjectID/ObjectId.cpp",
+      "ObjectID/ObjectId.h",
+      "ObjectID/ObjectIdMasterFactory.cpp",
+      "ObjectID/ObjectIdMasterFactory.h"
+    ],
+    "PlayerInput": [
+      "PlayerInput/IPlayerInput.h",
+      "PlayerInput/PlayerInput.cpp",
+      "PlayerInput/PlayerInput.h"
+    ],
+    "ScriptBinds": [
+      "ScriptBinds/ScriptBinds.cpp",
+      "ScriptBinds/ScriptBinds.h"
+    ],
+    "SharedParameters": [
+      "SharedParameters/DynamicLight.h",
+      "SharedParameters/DynamicLight.cpp",
+      "SharedParameters/FogVolume.h",
+      "SharedParameters/FogVolume.cpp",
+      "SharedParameters/SharedParameters.h"
+    ],
+    "StateMachine": [
+      "StateMachine/StateMachine.h"
+    ],
+    "Utility": [
+      "Utility/AutoEnum.cpp",
+      "Utility/AutoEnum.h",
+      "Utility/CryHash.h",
+      "Utility/CryWatch.cpp",
+      "Utility/CryWatch.h",
+      "Utility/DesignerWarning.cpp",
+      "Utility/DesignerWarning.h",
+      "Utility/ItemString.h",
+      "Utility/LocalizeUtility.cpp",
+      "Utility/LocalizeUtility.h",
+      "Utility/Proxy.h",
+      "Utility/StringUtils.cpp",
+      "Utility/StringUtils.h"
+    ]
+  }
+}
