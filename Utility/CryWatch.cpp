@@ -19,8 +19,8 @@
 #include "CryWatch.h"
 #include <CrySystem/ISystem.h>
 #include <CryRenderer/IRenderer.h>
-#include "ConsoleVariables/ConsoleVariables.h"
-#include "Utility/StringUtils.h"
+#include <ConsoleVariables/ConsoleVariables.h>
+#include <Utility/StringUtils.h>
 
 #if CRY_WATCH_ENABLED
 

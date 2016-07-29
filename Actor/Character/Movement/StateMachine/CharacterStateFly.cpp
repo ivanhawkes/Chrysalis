@@ -27,12 +27,12 @@ void CCharacterStateFly::OnEnter(CCharacter& Character)
 	//}
 
 	//Character.m_actorPhysics.velocity = Character.m_actorPhysics.velocityUnconstrained.Set (0, 0, 0);
-	//Character.m_actorPhysics.speed = Character.GetActorStats()->speedFlat = 0.0f;
+	//Character.m_actorPhysics.speed = Character.GetActorState()->speedFlat = 0.0f;
 	//Character.m_actorPhysics.groundMaterialIdx = -1;
 	//Character.m_actorPhysics.gravity = simPar.gravity;
 
-	//Character.GetActorStats()->fallSpeed = 0.0f;
-	//Character.GetActorStats()->inFiring = 0;
+	//Character.GetActorState()->fallSpeed = 0.0f;
+	//Character.GetActorState()->inFiring = 0;
 
 	CCharacterStateUtil::PhySetFly(Character);
 }
@@ -41,7 +41,7 @@ void CCharacterStateFly::OnEnter(CCharacter& Character)
 bool CCharacterStateFly::OnPrePhysicsUpdate(CCharacter& Character, const SActorMovementRequest& movementRequest, float frameTime)
 {
 	// TODO: Add this back in.
-	//	if (Character.GetActorStats()->spectatorInfo.mode == 0)
+	//	if (Character.GetActorState()->spectatorInfo.mode == 0)
 	//{
 	//	const uint8 flyMode = Character.GetFlyMode ();
 

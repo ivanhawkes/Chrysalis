@@ -8,10 +8,10 @@ Use "OnSetStance" if you need this functionality!
 */
 #include <StdAfx.h>
 
-#include "StateMachine/StateMachine.h"
+#include <StateMachine/StateMachine.h>
 #include <IAnimatedCharacter.h>
-#include "Game/Game.h"
-#include "ConsoleVariables/ConsoleVariables.h"
+#include <Game/Game.h>
+#include <ConsoleVariables/ConsoleVariables.h>
 #include <Actor/Character/Character.h>
 #include "CharacterStateEvents.h"
 #include "CharacterStateUtil.h"
@@ -57,7 +57,7 @@ private:
 	const TStateIndex StateGroundInput(CCharacter& Character, const SInputEventData& inputEvent);
 	void StateSprintInput(CCharacter& Character, const SInputEventData& inputEvent);
 	void ProcessSprint(CCharacter& Character, const SCharacterPrePhysicsData& prePhysicsEvent);
-	void OnSpecialMove(CCharacter &Character, ICharacterEventListener::ESpecialMove specialMove);
+	void OnSpecialMove(CCharacter &Character, IActorEventListener::ESpecialMove specialMove);
 	bool IsActionControllerValid(CCharacter& Character) const;
 
 	void CreateWaterEffects();
@@ -236,18 +236,18 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::GroundMoveme
 	{
 		case STATE_EVENT_ENTER:
 			CCharacterStateUtil::InitializeMoveRequest (Character.GetMoveRequest ());
-			Character.GetActorStats()->inAir = 0.f;
+			Character.GetActorState()->inAir = 0.f;
 			break;
 
 		case STATE_EVENT_EXIT:
-			Character.GetActorStats()->onGround = 0.f;
+			Character.GetActorState()->onGround = 0.f;
 			m_flags.ClearFlags (ECharacterStateFlags_Sprinting);
 			break;
 
 		case CHARACTER_EVENT_PREPHYSICSUPDATE:
 		{
 			const SCharacterPrePhysicsData& prePhysicsEvent = static_cast<const SStateEventCharacterMovementPrePhysics&> (event).GetPrePhysicsData ();
-			Character.GetActorStats()->onGround += prePhysicsEvent.m_frameTime;
+			Character.GetActorState()->onGround += prePhysicsEvent.m_frameTime;
 
 			// Only send the event if we've been flying for 2 consecutive frames - this prevents some state thrashing.
 			if (Character.GetActorPhysics()->flags.AreAllFlagsActive (SActorPhysics::EActorPhysicsFlags::WasFlying | SActorPhysics::EActorPhysicsFlags::Flying))
@@ -255,7 +255,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::GroundMoveme
 				Character.StateMachineHandleEventMovement (SStateEventGroundColliderChanged (false));
 			}
 
-			if (CCharacterStateUtil::ShouldJump (Character, prePhysicsEvent.m_movement))
+			if (CCharacterStateUtil::IsJumpAllowed (Character, prePhysicsEvent.m_movement))
 			{
 				Character.StateMachineHandleEventMovement (SStateEventJump (prePhysicsEvent));
 
@@ -330,18 +330,18 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Fly(CCharact
 	{
 		case STATE_EVENT_ENTER:
 			m_stateFly.OnEnter(Character);
-			Character.GetActorStats()->inAir = 0.0f;
+			Character.GetActorState()->inAir = 0.0f;
 			break;
 
 		case STATE_EVENT_EXIT:
-			Character.GetActorStats()->inAir = 0.0f;
+			Character.GetActorState()->inAir = 0.0f;
 			m_stateFly.OnExit(Character);
 			break;
 
 		case CHARACTER_EVENT_PREPHYSICSUPDATE:
 		{
 			const SCharacterPrePhysicsData& prePhysicsEvent = static_cast<const SStateEventCharacterMovementPrePhysics&> (event).GetPrePhysicsData();
-			Character.GetActorStats()->inAir += prePhysicsEvent.m_frameTime;
+			Character.GetActorState()->inAir += prePhysicsEvent.m_frameTime;
 
 			if (!m_stateFly.OnPrePhysicsUpdate(Character, prePhysicsEvent.m_movement, prePhysicsEvent.m_frameTime))
 			{
@@ -400,7 +400,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Ladder(CChar
 
 		case CHARACTER_EVENT_LADDER:
 		{
-			Character.GetActorStats()->EnableStatusFlags(kActorStatus_onLadder);
+			Character.GetActorState()->EnableStatusFlags(kActorStatus_onLadder);
 			const SStateEventLadder& ladderEvent = static_cast<const SStateEventLadder&>(event);
 			m_stateLadder.OnUseLadder(Character, ladderEvent.GetLadder());
 		}
@@ -408,7 +408,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Ladder(CChar
 
 		case CHARACTER_EVENT_LADDER_LEAVE:
 		{
-			Character.GetActorStats()->DisableStatusFlags(kActorStatus_onLadder);
+			Character.GetActorState()->DisableStatusFlags(kActorStatus_onLadder);
 			const SStateEventLeaveLadder& leaveLadderEvent = static_cast<const SStateEventLeaveLadder&>(event);
 			ELadderLeaveLocation leaveLoc = leaveLadderEvent.GetLeaveLocation();
 			m_stateLadder.LeaveLadder(Character, leaveLoc);
@@ -570,7 +570,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::GroundFall(C
 		case CHARACTER_EVENT_GROUND_COLLIDER_CHANGED:
 			if (static_cast<const SStateEventGroundColliderChanged&> (event).OnGround())
 			{
-				Character.GetActorStats()->inAir = 0.0f;
+				Character.GetActorState()->inAir = 0.0f;
 
 				return State_Ground;
 			}
@@ -591,7 +591,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::SlideFall(CC
 		case CHARACTER_EVENT_GROUND_COLLIDER_CHANGED:
 			if (static_cast<const SStateEventGroundColliderChanged&> (event).OnGround())
 			{
-				Character.GetActorStats()->inAir = 0.0f;
+				Character.GetActorState()->inAir = 0.0f;
 
 				return State_Slide;
 			}
@@ -615,9 +615,9 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::FallTest(CCh
 
 			// We're considered inAir at this point.
 			//  - NOTE: this does not mean CCharacter::IsInAir() returns true.
-			float inAir = Character.GetActorStats()->inAir;
+			float inAir = Character.GetActorState()->inAir;
 			inAir += prePhysicsEvent.m_frameTime;
-			Character.GetActorStats()->inAir = inAir;
+			Character.GetActorState()->inAir = inAir;
 
 			if (!CCharacterStateUtil::IsOnGround(Character))
 			{
@@ -688,7 +688,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Jump(CCharac
 		case CHARACTER_EVENT_PREPHYSICSUPDATE:
 		{
 			const SCharacterPrePhysicsData& prePhysicsEvent = static_cast<const SStateEventCharacterMovementPrePhysics&> (event).GetPrePhysicsData();
-			Character.GetActorStats()->inAir += prePhysicsEvent.m_frameTime;
+			Character.GetActorState()->inAir += prePhysicsEvent.m_frameTime;
 
 			if (m_stateJump.OnPrePhysicsUpdate(Character, m_flags.AreAnyFlagsActive(ECharacterStateFlags_CurrentItemIsHeavy), prePhysicsEvent.m_movement, prePhysicsEvent.m_frameTime))
 			{
@@ -832,8 +832,8 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Swim(CCharac
 			m_stateSwim.OnEnter(Character);
 			m_flags.AddFlags(ECharacterStateFlags_Swimming);
 			Character.OnSetStance(STANCE_SWIM);
-			Character.GetActorStats()->onGround = 0.0f;
-			Character.GetActorStats()->inAir = 0.0f;
+			Character.GetActorState()->onGround = 0.0f;
+			Character.GetActorState()->inAir = 0.0f;
 			break;
 
 		case STATE_EVENT_EXIT:
@@ -1029,12 +1029,12 @@ void CCharacterStateMovement::ProcessSprint(CCharacter& Character, const SCharac
 	// If sprint toggle is off, then we only want to sprint if it is pressed.
 	uint32 flagsToCheck = g_pGameCVars->cl_sprintToggle ? (ECharacterStateFlags_SprintPressed | ECharacterStateFlags_Sprinting) : (ECharacterStateFlags_SprintPressed);
 
-	if (m_flags.AreAnyFlagsActive(flagsToCheck) && CCharacterStateUtil::ShouldSprint(Character, prePhysicsEvent.m_movement, Character.GetCurrentItem()))
+	if (m_flags.AreAnyFlagsActive(flagsToCheck) && CCharacterStateUtil::IsSprintingAllowed(Character, prePhysicsEvent.m_movement, Character.GetCurrentItem()))
 	{
 		if (!Character.IsSprinting())
 		{
-			// notify ICharacterEventListener about sprinting (just once)
-			OnSpecialMove(Character, ICharacterEventListener::eSM_SpeedSprint);
+			// notify IActorEventListener about sprinting (just once)
+			OnSpecialMove(Character, IActorEventListener::eSM_SpeedSprint);
 		}
 
 		m_flags.AddFlags(ECharacterStateFlags_Sprinting);
@@ -1051,7 +1051,7 @@ void CCharacterStateMovement::ProcessSprint(CCharacter& Character, const SCharac
 }
 
 
-void CCharacterStateMovement::OnSpecialMove(CCharacter &Character, ICharacterEventListener::ESpecialMove specialMove)
+void CCharacterStateMovement::OnSpecialMove(CCharacter &Character, IActorEventListener::ESpecialMove specialMove)
 {
 /*	if (Character.m_CharacterEventListeners.empty() == false)
 	{

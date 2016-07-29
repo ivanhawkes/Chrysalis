@@ -8,7 +8,6 @@
 #include <Game/Game.h>
 #include <Game/Rules/GameRules.h>
 #include <CryInput/IHardwareMouse.h>
-#include <Actor/ActorClassTypes.h>
 #include <Item/Item.h>
 #include <Item/Weapon/Weapon.h>
 #include <Camera/ICamera.h>
@@ -65,6 +64,7 @@ bool CPlayer::Init(IGameObject * pGameObject)
 	IEntityClass *pEntityClass = pEntity->GetClass();
 
 	// Registers this instance to the actor system.
+	// TODO: Can we have a player who isn't an actor?
 	gEnv->pGame->GetIGameFramework()->GetIActorSystem()->AddActor(GetEntityId(), this);
 
 	// Add this instance to the network or fail out early.
@@ -211,6 +211,7 @@ bool CPlayer::ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParam
 		return false;
 
 	// Removes this instance's previous actor and adds it as a new one.
+	// TODO: Can we have a player who isn't an actor?
 	gEnv->pGame->GetIGameFramework()->GetIActorSystem()->RemoveActor(params.prevId);
 	gEnv->pGame->GetIGameFramework()->GetIActorSystem()->AddActor(GetEntityId(), this);
 
@@ -304,7 +305,6 @@ void CPlayer::ProcessEvent(SEntityEvent& event)
 
 void CPlayer::PrePhysicsUpdate()
 {
-	const float frameTime = gEnv->pTimer->GetFrameTime();
 }
 
 

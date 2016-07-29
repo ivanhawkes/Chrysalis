@@ -2,8 +2,8 @@
 
 #include <Actor/Character/Character.h>
 #include <IItemSystem.h>
-#include "Game/Game.h"
-#include "ConsoleVariables/ConsoleVariables.h"
+#include <Game/Game.h>
+#include <ConsoleVariables/ConsoleVariables.h>
 #include "CharacterStateLedge.h"
 #include "IAnimatedCharacter.h"
 #include "CharacterStateUtil.h"
@@ -106,7 +106,7 @@ public:
 				{
 					/*const TagID vaultID = ledgeGrabFragment.fragmentTagIDs.vault;
 					fragTagDef->Set (m_fragTags, vaultID, true);
-					SActorStats *pCharacterStats = m_Character.GetActorStats ();
+					SActorStats *pCharacterStats = m_Character.GetActorState ();
 					pCharacterStats->forceSTAP = SActorStats::eFS_On;	// force STAP on for vaults
 					pCharacterStats->bDisableTranslationPinning = true; // disables translation pinning for vaults (stops 3P legs from cutting through camera)
 					*/
@@ -197,7 +197,7 @@ public:
 
 		m_Character.PartialAnimationControlled (false, CharacterCameraAnimationSettings ());
 		
-		SActorStats *pCharacterStats = m_Character.GetActorStats ();
+		SActorStats *pCharacterStats = m_Character.GetActorState ();
 		pCharacterStats->forceSTAP = SActorStats::eFS_None;
 		pCharacterStats->bDisableTranslationPinning = false;*/
 
@@ -267,9 +267,9 @@ bool CCharacterStateLedge::CanGrabOntoLedge(const CCharacter& Character)
 	if (Character.IsClient())
 	{
 		/*		const float kAirTime [2] = {0.5f, 0.0f};
-				const float inAirTime = Character.CCharacter::GetActorStats ()->inAir;
+				const float inAirTime = Character.CCharacter::GetActorState ()->inAir;
 				const bool canGrabFromAir = (inAirTime >= kAirTime [Character.IsJumping ()]);
-				const SActorStats& CharacterStats = *Character.GetActorStats ();
+				const SActorStats& CharacterStats = *Character.GetActorState ();
 
 				IItem *pCurrentItem = Character.GetCurrentItem ();
 				if (pCurrentItem)
@@ -685,7 +685,7 @@ SLedgeTransitionData::EOnLedgeTransition CCharacterStateLedge::GetBestTransition
 
 bool CCharacterStateLedge::CanReachPlatform(const CCharacter& Character, const Vec3& ledgePosition, const Vec3& refPosition)
 {
-	/*const SActorStats& stats = *Character.GetActorStats ();
+	/*const SActorStats& stats = *Character.GetActorState ();
 	const SActorPhysics& actorPhysics = Character.GetActorPhysics ();
 
 	const Vec3 distanceVector = ledgePosition - refPosition;

@@ -1,7 +1,7 @@
 #include <StdAfx.h>
 
 #include "ScriptBindItem.h"
-#include "Game/Game.h"
+#include <Game/Game.h>
 #include "Item/Item.h"
 
 

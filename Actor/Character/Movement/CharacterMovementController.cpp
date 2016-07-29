@@ -2,13 +2,13 @@
 
 #include "CharacterMovementController.h"
 #include <CryAISystem/IAgent.h>
-#include <Actor/Character/Character.h>
-#include <Actor/Player/Player.h>
+#include <Actor/Actor.h>
+#include <Actor/ActorStance.h>
 #include <Actor/ActorState.h>
+#include <Actor/Player/Player.h>
 #include <Camera/ICamera.h>
 #include <PlayerInput/IPlayerInput.h>
 #include <IMovementController.h>
-#include <Camera/ICamera.h>
 
 
 // ***
@@ -52,9 +52,9 @@ bool CCharacterMovementController::RequestMovement(CMovementRequest& request)
 
 bool CCharacterMovementController::GetStanceState(const SStanceStateQuery& query, SStanceState& state)
 {
-	IEntity* pEntity = m_pCharacter->GetEntity();
+	IEntity* pEntity = m_pActor->GetEntity();
 
-	const SActorStance* actorStance = m_pCharacter->GetStanceInfo(query.stance);
+	const SActorStance* actorStance = m_pActor->GetStanceInfo(query.stance);
 	if (!actorStance)
 		return false;
 
@@ -131,9 +131,9 @@ bool CCharacterMovementController::GetStanceState(const SStanceStateQuery& query
 // ***
 
 
-CCharacterMovementController::CCharacterMovementController(CCharacter* pCharacter)
+CCharacterMovementController::CCharacterMovementController(CActor* pActor)
 {
-	m_pCharacter = pCharacter;
+	m_pActor = pActor;
 	Reset();
 }
 
@@ -264,9 +264,9 @@ void CCharacterMovementController::ComputeMovementRequest()
 
 void CCharacterMovementController::ComputeMovementState()
 {
-	IEntity* pEntity = m_pCharacter->GetEntity();
+	IEntity* pEntity = m_pActor->GetEntity();
 
-	if (pEntity && m_pCharacter)
+	if (pEntity && m_pActor)
 	{
 		m_movementState.minSpeed = -1.0f;
 		m_movementState.maxSpeed = -1.0f;
@@ -283,7 +283,7 @@ void CCharacterMovementController::ComputeMovementState()
 			m_movementState.isMoving = true;
 			m_movementState.movementDirection = vecMove.GetNormalizedSafe();
 
-			m_movementState.eyePosition = pEntity->GetWorldPos() + m_pCharacter->GetLocalEyePos();
+			m_movementState.eyePosition = pEntity->GetWorldPos() + m_pActor->GetLocalEyePos();
 			
 			// TODO: ** NOW ** add in the look target, aimtarget, firetargets and set them to be 5 metres in front of where we are looking.
 			// I suspect these are what is causing him to rotate back around again.

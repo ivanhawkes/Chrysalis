@@ -1,8 +1,8 @@
 #include <StdAfx.h>
 
 #include "CharacterStateSwim.h"
-#include "Game/Game.h"
-#include "ConsoleVariables/ConsoleVariables.h"
+#include <Game/Game.h>
+#include <ConsoleVariables/ConsoleVariables.h>
 #include <Actor/Character/Character.h>
 #include "CharacterStateUtil.h"
 #include "CharacterStateEvents.h"
@@ -62,7 +62,7 @@ bool CCharacterStateSwim::OnPrePhysicsUpdate(CCharacter& Character, const SActor
 
 		CCharacterStateUtil::PhySetFly (Character);
 
-		const SActorStats& stats = Character.m_stats;
+		const SActorStats& stats = Character.m_actorState;
 
 		#ifdef STATE_DEBUG
 		const bool debug = (g_pGameCVars->cl_debugSwimming != 0);
@@ -287,7 +287,7 @@ void CCharacterStateSwim::OnEnter(CCharacter& Character)
 	m_lastWaterLevel = Character.m_CharacterStateSwimWaterTestProxy.GetWaterLevel ();
 	m_lastWaterLevelTime = Character.m_CharacterStateSwimWaterTestProxy.GetWaterLevelTimeUpdated ();
 
-	Character.GetActorStats()->inAir = 0.0f;
+	Character.GetActorState()->inAir = 0.0f;
 
 	if (Character.IsClient ())
 	{

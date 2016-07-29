@@ -29,7 +29,6 @@
 #include <ObjectID/ObjectIdMasterFactory.h>
 #include <ScriptBinds/ScriptBinds.h>
 #include <Game/Cache/GameCache.h>
-//#include <IPluginManager_impl.h>
 #include <Game/Registration/GameRegistration.h>
 
 
@@ -91,13 +90,6 @@ CGame::~CGame()
 	// Un-Registers From IGameFramework Event Notifications.
 	m_pGameFramework->UnregisterListener(this);
 
-	// Very Important This Gets Called. Shuts Down And Releases All Loaded Plug-ins.
-	//if (gPluginManager)
-	//{
-	//	CRY_ASSERT(gPluginManager->GetBase()->Release(true));
-	//	gPluginManager = nullptr;
-	//}
-
 	// Clean up anything else that needs it.
 	SAFE_DELETE(m_pObjectIdMasterFactory);
 	SAFE_DELETE(m_pRayCaster);
@@ -122,10 +114,6 @@ bool CGame::Init(IGameFramework *pFramework)
 
 	// Create a set of action maps.
 	m_pGameActionMaps = new CGameActionMaps();
-
-	// Plugin manager needs to initialise fairly early.
-	//PluginManager::InitPluginManager();
-	//PluginManager::InitPluginsBeforeFramework();
 
 	// Register Game-Specific Console Variables.
 	RegisterGameCVars();
@@ -365,8 +353,6 @@ void CGame::RegisterGameFlowNodes()
 	//		pFactory = pFactory->m_pNext;
 	//	}
 	//}
-
-	//PluginManager::RegisterPluginFlownodes();
 }
 
 

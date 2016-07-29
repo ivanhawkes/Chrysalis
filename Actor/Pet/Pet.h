@@ -1,44 +1,33 @@
 #pragma once
 
 #include <Actor/Actor.h>
-#include <Actor/Character/Movement/CharacterRotation.h>
 #include <StateMachine/StateMachine.h>
 
 
-enum ELadderLeaveLocation
-{
-	eLLL_First = 0,
-	eLLL_Top = eLLL_First,
-	eLLL_Bottom,
-	eLLL_Drop,
-	eLLL_Count,
-};
-
-
 /**
-An implementation of the IActor interface. A CCharacter is an actor that represents a character within the game,
+An implementation of the IActor interface. A CPet is an actor that represents a character within the game,
 either an NPC or PC which can be controlled by a player.
 
 Characters may have inventory.
 
-\sa	CGameObjectExtensionHelper&lt;CCharacter, IActor&gt;
+\sa	CGameObjectExtensionHelper&lt;CPet, IActor&gt;
 */
 
 // TODO: probably needs to also implement IInventoryListener to listen for inventory changes.
 
-class CCharacter : public CActor
+class CPet : public CActor
 {
 private:
 	// Declaration of the state machine that controls character movement.
-	DECLARE_STATE_MACHINE(CCharacter, Movement);
+	//DECLARE_STATE_MACHINE(CPet, Movement);
 
 public:
 
 	/** This instance's default constructor. */
-	CCharacter();
+	CPet();
 
 	/** This instance's default destructor. */
-	virtual ~CCharacter();
+	virtual ~CPet();
 
 
 	// ***
@@ -71,10 +60,10 @@ public:
 public:
 
 	/* You must override CActor for correct behaviour. */
-	const char* GetActorClassName() const override { return "CCharacter"; };
+	const char* GetActorClassName() const override { return "CPet"; };
 
 	/* You must override CActor for correct behaviour. */
-	ActorClass GetActorClass() const override { return EActorClassType::EACT_ACTOR; };
+	ActorClass GetActorClass() const override { return EActorClassType::EACT_PET; };
 
 
 	// ***
@@ -85,10 +74,11 @@ public:
 
 
 	// ***
-	// *** CCharacter
+	// *** CPet
 	// ***
 
 public:
+
 
 protected:
 
@@ -126,8 +116,6 @@ protected:
 	/** Whenever a property in the editor is changed, this function is called. */
 	void OnEditorPropertyChanged();
 
-
-private:
 
 	// ***
 	// *** Life-cycle

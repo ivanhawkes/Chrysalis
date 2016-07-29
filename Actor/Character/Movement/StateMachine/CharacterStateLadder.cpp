@@ -1,8 +1,8 @@
 #include <StdAfx.h>
 
 #include "CharacterStateLadder.h"
-#include "Game/Game.h"
-#include "ConsoleVariables/ConsoleVariables.h"
+#include <Game/Game.h>
+#include <ConsoleVariables/ConsoleVariables.h>
 #include <Actor/Character/Character.h>
 #include "Actor/Animation/Player/PlayerAnimation.h"
 #include "CharacterStateUtil.h"
@@ -595,7 +595,7 @@ bool CCharacterStateLadder::OnPrePhysicsUpdate(CCharacter& Character, const SAct
 		#ifndef _RELEASE
 		if (g_pGameCVars->ladder_logVerbosity)
 		{
-		CryWatch ("[LADDER] RUNG=$3%u/%u$o FRAC=$3%.2f$o: %s is %.2fm up a ladder, move=%.2f - %s, %s, %s, camAnim=%.2f, $7INERTIA=%.2f SETTLE=%.2f", m_numRungsFromBottomPosition, m_topRungNumber, m_fractionBetweenRungs, Character.GetEntity ()->GetEntityTextDescription (), Character.GetEntity ()->GetWorldPos ().z - m_ladderBottom.z, requiredMovement.z, Character.CanTurnBody () ? "$4can turn body$o" : "$3cannot turn body$o", (Character.GetEntity ()->GetSlotFlags (0) & ENTITY_SLOT_RENDER_NEAREST) ? "render nearest" : "render normal", Character.IsOnLadder () ? "$3on a ladder$o" : "$4not on a ladder$o", Character.GetActorStats ()->partialCameraAnimFactor, m_climbInertia, m_scaleSettle);
+		CryWatch ("[LADDER] RUNG=$3%u/%u$o FRAC=$3%.2f$o: %s is %.2fm up a ladder, move=%.2f - %s, %s, %s, camAnim=%.2f, $7INERTIA=%.2f SETTLE=%.2f", m_numRungsFromBottomPosition, m_topRungNumber, m_fractionBetweenRungs, Character.GetEntity ()->GetEntityTextDescription (), Character.GetEntity ()->GetWorldPos ().z - m_ladderBottom.z, requiredMovement.z, Character.CanTurnBody () ? "$4can turn body$o" : "$3cannot turn body$o", (Character.GetEntity ()->GetSlotFlags (0) & ENTITY_SLOT_RENDER_NEAREST) ? "render nearest" : "render normal", Character.IsOnLadder () ? "$3on a ladder$o" : "$4not on a ladder$o", Character.GetActorState ()->partialCameraAnimFactor, m_climbInertia, m_scaleSettle);
 
 		if (m_mostRecentlyEnteredAction && m_mostRecentlyEnteredAction->GetStatus () == IAction::Installed)
 		{
@@ -637,7 +637,7 @@ bool CCharacterStateLadder::OnPrePhysicsUpdate(CCharacter& Character, const SAct
 		{
 		// Waiting for Character to switch to 'NoWeapon' item - check this is still happening! (If not, warn
 		// and play the get on animation anyway - let's not get stuck here!)
-		EntityId switchingToItemID = Character.GetActorStats ()->exchangeItemStats.switchingToItemID;
+		EntityId switchingToItemID = Character.GetActorState ()->exchangeItemStats.switchingToItemID;
 		IEntity * pEntity = gEnv->pEntitySystem->GetEntity (switchingToItemID);
 
 		if (pEntity == NULL)
@@ -664,7 +664,7 @@ bool CCharacterStateLadder::OnPrePhysicsUpdate(CCharacter& Character, const SAct
 		{
 		m_mostRecentlyEnteredAction->UpdateCameraAnimFactor ();
 		}
-		else if (Character.GetActorStats ())
+		else if (Character.GetActorState ())
 		{
 		float pushUpDown = movementRequest.desiredVelocity.y;
 		const float deflection = fabsf (pushUpDown);

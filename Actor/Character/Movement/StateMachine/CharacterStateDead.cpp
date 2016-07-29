@@ -1,10 +1,10 @@
 #include <StdAfx.h>
 
 #include "CharacterStateDead.h"
-#include "Game/Game.h"
-#include "ConsoleVariables/ConsoleVariables.h"
+#include <Game/Game.h>
+#include <ConsoleVariables/ConsoleVariables.h>
 #include <Actor/Character/Character.h>
-/*#include "ICharacterEventListener.h"
+/*#include "IActorEventListener.h"
 #include "HitDeathReactions.h"
 #include "GameRules.h"
 #include "GameCodeCoverage/GameCodeCoverageTracker.h"

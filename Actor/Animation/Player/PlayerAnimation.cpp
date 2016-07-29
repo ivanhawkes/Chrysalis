@@ -1,7 +1,7 @@
 #include <StdAfx.h>
 
 #include "PlayerAnimation.h"
-#include "Game/Game.h"
+#include <Game/Game.h>
 
 
 SMannequinPlayerParams PlayerMannequin;

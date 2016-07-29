@@ -158,7 +158,7 @@ void CCharacterRotation::ProcessNormal(float frameTime)
 //	PR_CHECKQNAN_VEC(right);
 //#endif //ENABLE_NAN_CHECK
 //
-//	const Ang3 vNewDeltaAngles = m_deltaAngles * m_character.m_stats.flashBangStunMult;
+//	const Ang3 vNewDeltaAngles = m_deltaAngles * m_character.m_actorState.flashBangStunMult;
 //
 //#ifdef PLAYER_MOVEMENT_DEBUG_ENABLED
 //	m_character.DebugGraph_AddValue("AimDeltaH", vNewDeltaAngles.z);
@@ -340,7 +340,7 @@ void CCharacterRotation::ProcessNormal(float frameTime)
 //	const Vec3 velocity = m_character.GetActorPhysics().velocity;
 //	const float speed2(velocity.len2());
 //
-//	if ((speed2 > 0.01f) && m_character.m_stats.inAir)
+//	if ((speed2 > 0.01f) && m_character.m_actorState.inAir)
 //	{
 //
 //		const float maxSpeed = m_character.GetStanceMaxSpeed(STANCE_STAND);

@@ -1,10 +1,22 @@
+/**
+\file d:\CRYENGINE5\Crytek\CRYENGINE_5.1\Code\Chrysalis\Actor\Character\Movement\CharacterMovementController.h
+
+Declares the character movement controller class.
+
+While this class is currently named to imply it requires character class information, it presently
+does not, needing only information available on CActor. If possible, I like to preserve this artifical
+divide, where information pertinant to moving the actor remains in the CActor base class.
+
+Assuming this is still true when the project is mature - this class can be renamed CActorMovementController instead,
+to better illustrate it's use and needs.
+**/
 #pragma once
 
 #include <IGameObject.h>
 #include <IMovementController.h>
 
 
-class CCharacter;
+class CActor;
 struct SActorMovementRequest;
 
 
@@ -61,7 +73,7 @@ public:
 	// ***
 
 
-	CCharacterMovementController(CCharacter* pCharacter);
+	CCharacterMovementController(CActor* pActor);
 	virtual ~CCharacterMovementController();
 
 
@@ -99,7 +111,7 @@ private:
 	void ComputeMovementState();
 
 	/** The character. */
-	CCharacter* m_pCharacter;
+	CActor* m_pActor;
 
 	/** The movement request. */
 	CMovementRequest m_movementRequest;

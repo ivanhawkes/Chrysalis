@@ -6,9 +6,10 @@ Provides a place to store the present state of an actor.
 #pragma once
 
 #include <CryGame/CoherentValue.h>
-#include <Utility/AutoEnum.h>
 #include <CryEntitySystem/IEntity.h>
 #include <ICryMannequin.h>
+#include <CryAISystem/IAgent.h>
+#include <Utility/AutoEnum.h>
 
 
 typedef TBitfield TActorStatusFlags;
@@ -46,22 +47,17 @@ struct SActorState
 
 	SActorState()
 	{
-		memset(this, 0, sizeof(SActorState));
+		memset(this, 0, sizeof(*this));
 	}
 
 	/** Duration the character has been in the air. */
-	//TODO: it was CCoherentValue<float> inAir; prior, see if this was needed and drop this note and the one below.
 	float inAir;
 
 	/** Duration the character has been on the ground. */
-	//CCoherentValue<float> onGround;
 	float onGround;
 
-
-	// TODO: think of a less silly name for the flag test than 'reasons'.
-
 	/**
-	Enables the status flags.
+	Enables status flags.
 
 	\param	reason	The reason.
 	*/
@@ -69,7 +65,7 @@ struct SActorState
 
 
 	/**
-	Disables the status flags.
+	Disables status flags.
 
 	\param	reason	The reason.
 	*/
@@ -109,7 +105,7 @@ private:
 
 	/*
 	public:
-	CCoherentValue<float> speedFlat;
+	float speedFlat;
 
 	// TODO: might be deprecated - find out what it does, if anything.
 	int movementDir;
@@ -128,7 +124,7 @@ private:
 
 	EntityId spectacularKillPartner;
 
-	CCoherentValue<bool> isHidden;
+	bool isHidden;
 
 	EntityId mountedWeaponID;
 

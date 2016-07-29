@@ -13,6 +13,8 @@
 #include <Flowgraph/FlowGameEntityNode.h>
 #include <Actor/Player/Player.h>
 #include <Actor/Character/Character.h>
+#include <Actor/Mount/Mount.h>
+#include <Actor/Pet/Pet.h>
 #include <Environment/Water/WaterRipplesGenerator.h>
 #include <Item/Flashlight/Flashlight.h>
 #include <EntitySensing/EntityAwareness.h>
@@ -170,9 +172,10 @@ void CGameRegistration::RegisterGameObjects(IGameFramework *pFramework)
 	RegisterGameObject<CActionRPGCamera>("ActionRPGCamera", "", eGORF_HiddenInEditor);
 	RegisterGameObject<CFirstPersonCamera>("FirstPersonCamera", "", eGORF_HiddenInEditor);
 
-	// Registers the character actor.
+	// Registers the character, pet and mount actors.
 	RegisterGameObject<CCharacter>("Character", "Scripts/Entities/AI/Character.Lua", eGORF_None);
-
+	RegisterGameObject<CMount>("Mount", "Scripts/Entities/AI/Mount.Lua", eGORF_None);
+	RegisterGameObject<CPet>("Pet", "Scripts/Entities/AI/Pet.Lua", eGORF_None);
 
 	// ***
 	// *** Items

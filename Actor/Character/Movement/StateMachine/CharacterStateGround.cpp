@@ -1,8 +1,8 @@
 #include <StdAfx.h>
 
 #include "CharacterStateGround.h"
-#include "Game/Game.h"
-#include "ConsoleVariables/ConsoleVariables.h"
+#include <Game/Game.h>
+#include <ConsoleVariables/ConsoleVariables.h>
 #include <Actor/Character/Character.h>
 #include "CharacterStateJump.h"
 #include "CharacterStateUtil.h"
@@ -23,7 +23,7 @@ CCharacterStateGround::CCharacterStateGround()
 
 void CCharacterStateGround::OnEnter(CCharacter& Character)
 {
-	Character.GetActorStats()->inAir = 0.0f;
+	Character.GetActorState()->inAir = 0.0f;
 
 	// Ensure inertia is set!
 	CCharacterStateUtil::RestoreCharacterPhysics(Character);
@@ -73,7 +73,7 @@ void CCharacterStateGround::OnPrePhysicsUpdate(CCharacter& Character, const SAct
 	bool debugJumping = (g_pGameCVars->pl_debug_jumping != 0);
 #endif
 
-	const SActorStats& stats = *Character.GetActorStats();
+	const SActorStats& stats = *Character.GetActorState();
 
 	{
 		xmDesiredVel = xmMove;

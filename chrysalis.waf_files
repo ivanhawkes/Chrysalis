@@ -11,19 +11,21 @@
       "ActionMaps/GameActionMaps.cpp"
     ],
     "Actor": [
+      "Actor/Actor.cpp",
+      "Actor/Actor.h",
       "Actor/ActorAnimationEvents.cpp",
       "Actor/ActorAnimationEvents.h",
-      "Actor/ActorClassTypes.h",
       "Actor/ActorPhysics.h",
       "Actor/ActorStance.h",
-      "Actor/ActorState.h"
+      "Actor/ActorState.h",
+      "Actor/Fate.h",
+      "Actor/IActorEventListener.h"
     ],
     "Actor/Animation/Player": [
       "Actor/Animation/Player/PlayerAnimation.cpp",
       "Actor/Animation/Player/PlayerAnimation.h"
     ],
     "Actor/Character": [
-      "Actor/Character/ICharacterEventListener.h",
       "Actor/Character/Character.cpp",
       "Actor/Character/Character.h"
     ],
@@ -64,6 +66,14 @@
     "Actor/Inventory": [
       "Actor/Inventory/EntityInventory.cpp",
       "Actor/Inventory/EntityInventory.h"
+    ],
+    "Actor/Mount": [
+      "Actor/Mount/Mount.cpp",
+      "Actor/Mount/Mount.h"
+    ],
+    "Actor/Pet": [
+      "Actor/Pet/Pet.cpp",
+      "Actor/Pet/Pet.h"
     ],
     "Actor/Player": [
       "Actor/Player/Player.cpp",

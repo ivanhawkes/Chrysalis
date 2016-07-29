@@ -12,7 +12,7 @@
 
 #include <StdAfx.h>
 #include "AutoEnum.h"
-#include "Utility/StringUtils.h"
+#include <Utility/StringUtils.h>
 
 #define DO_PARSE_BITFIELD_STRING_LOGS 0
 

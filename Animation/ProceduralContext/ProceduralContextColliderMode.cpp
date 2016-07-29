@@ -3,7 +3,7 @@
 
 #include "ProceduralContextColliderMode.h"
 #include <IActorSystem.h>
-#include "Game/Game.h"
+#include <Game/Game.h>
 
 
 CRYREGISTER_CLASS(CProceduralContextColliderMode);

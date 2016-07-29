@@ -2,8 +2,8 @@
 
 #include "CharacterStateJump.h"
 #include <IVehicleSystem.h>
-#include "Game/Game.h"
-#include "ConsoleVariables/ConsoleVariables.h"
+#include <Game/Game.h>
+#include <ConsoleVariables/ConsoleVariables.h>
 #include <Actor/Character/Character.h>
 #include "CharacterStateUtil.h"
 #include "Utility/CryWatch.h"
@@ -69,7 +69,7 @@ void CCharacterStateJump::OnFall(CCharacter& Character)
 void CCharacterStateJump::StartJump(CCharacter& Character, const bool isHeavyWeapon, const float fVerticalSpeedModifier)
 {
 	/*	const SActorPhysics& actorPhysics = Character.GetActorPhysics ();
-		const SActorStats& stats = *Character.GetActorStats ();
+		const SActorStats& stats = *Character.GetActorState ();
 		const float onGroundTime = 0.2f;
 
 		float g = actorPhysics.gravity.len ();
@@ -115,7 +115,7 @@ void CCharacterStateJump::StartJump(CCharacter& Character, const bool isHeavyWea
 
 		Character.PlaySound (CCharacter::ESound_Jump);
 
-		OnSpecialMove (Character, ICharacterEventListener::eSM_Jump);
+		OnSpecialMove (Character, IActorEventListener::eSM_Jump);
 
 		CCCPOINT_IF (Character.IsClient (), CharacterMovement_LocalCharacterNormalJump);
 		CCCPOINT_IF (!Character.IsClient (), CharacterMovement_NonLocalCharacterNormalJump);
@@ -242,18 +242,18 @@ void CCharacterStateJump::OnExit(CCharacter& Character, const bool isHeavyWeapon
 }
 
 
-void CCharacterStateJump::OnSpecialMove(CCharacter &Character, ICharacterEventListener::ESpecialMove specialMove)
+void CCharacterStateJump::OnSpecialMove(CCharacter &Character, IActorEventListener::ESpecialMove specialMove)
 {
-	/*if (Character.m_CharacterEventListeners.empty () == false)
+/*	if (Character.m_CharacterEventListeners.empty() == false)
 	{
-	CCharacter::TCharacterEventListeners::const_iterator iter = Character.m_CharacterEventListeners.begin ();
-	CCharacter::TCharacterEventListeners::const_iterator cur;
-	while (iter != Character.m_CharacterEventListeners.end ())
-	{
-	cur = iter;
-	++iter;
-	(*cur)->OnSpecialMove (&Character, specialMove);
-	}
+		CCharacter::TCharacterEventListeners::const_iterator iter = Character.m_CharacterEventListeners.begin();
+		CCharacter::TCharacterEventListeners::const_iterator cur;
+		while (iter != Character.m_CharacterEventListeners.end())
+		{
+			cur = iter;
+			++iter;
+			(*cur)->OnSpecialMove(&Character, specialMove);
+		}
 	}*/
 }
 
@@ -335,7 +335,7 @@ void CCharacterStateJump::Landed(CCharacter& Character, const bool isHeavyWeapon
 	CRY_ASSERT_MESSAGE(Character.GetLinkedEntity() == NULL || remoteControlled, "Cannot 'land' when you're linked to another entity!");
 #endif
 
-	/*const SActorStats& stats = Character.m_stats;
+	/*const SActorStats& stats = Character.m_actorState;
 
 	Vec3 CharacterPosition = Character.GetEntity ()->GetWorldPos ();
 	IPhysicalEntity *phys = Character.GetEntity ()->GetPhysics ();
@@ -458,7 +458,7 @@ void CCharacterStateJump::Landed(CCharacter& Character, const bool isHeavyWeapon
 
 const Vec3 CCharacterStateJump::CalculateInAirJumpExtraVelocity(const CCharacter& Character, const Vec3& desiredVelocity) const
 {
-	/*const SActorStats& stats = Character.m_stats;
+	/*const SActorStats& stats = Character.m_actorState;
 	const float speedUpFactor = 0.175f;
 
 	Vec3 jumpExtraVelocity (0.0f, 0.0f, 0.0f);
@@ -559,15 +559,15 @@ bool CCharacterStateJump::UpdateCommon(CCharacter& Character, const bool isHeavy
 	if (actorPhysics.velocity * actorPhysics.gravity > 0.0f)
 	{
 	const float fHeightofEntity = Character.GetEntity ()->GetWorldTM ().GetTranslation ().z;
-	m_startFallingHeight = (float) __fsel (-Character.GetActorStats()->fallSpeed, fHeightofEntity, max (m_startFallingHeight, fHeightofEntity));
-	Character.GetActorStats()->fallSpeed = -actorPhysics.velocity.z;
+	m_startFallingHeight = (float) __fsel (-Character.GetActorState()->fallSpeed, fHeightofEntity, max (m_startFallingHeight, fHeightofEntity));
+	Character.GetActorState()->fallSpeed = -actorPhysics.velocity.z;
 	}
 
-	if (!gEnv->bMultiCharacter && Character.IsInPickAndThrowMode () && (Character.GetActorStats()->fallSpeed > 10.f))
+	if (!gEnv->bMultiCharacter && Character.IsInPickAndThrowMode () && (Character.GetActorState()->fallSpeed > 10.f))
 	Character.ExitPickAndThrow ();
 
 	// inAir is set to 0.0f if we're swimming later - before refactoring this test happened *after* that, hence this test is here.
-	m_jumpLock = (float) __fsel (-fabsf (Character.GetActorStats()->inAir), max (0.0f, m_jumpLock - frameTime), m_jumpLock);
+	m_jumpLock = (float) __fsel (-fabsf (Character.GetActorState()->inAir), max (0.0f, m_jumpLock - frameTime), m_jumpLock);
 
 	return true;*/
 
@@ -600,16 +600,16 @@ void CCharacterStateJump::Land(CCharacter &Character, const bool isHeavyWeapon, 
 	}
 
 	// TODO: Physics sync.
-	const float fallSpeed = Character.GetActorStats()->fallSpeed;
+	const float fallSpeed = Character.GetActorState()->fallSpeed;
 	Landed (Character, isHeavyWeapon, fabsf (Character.GetActorPhysics()->velocityDelta.z)); // fallspeed might be incorrect on a dedicated server (pos is synced from client, but also smoothed).
 
-	Character.GetActorStats()->wasHit = false;
+	Character.GetActorState()->wasHit = false;
 
 	SetJumpState (Character, JState_None);
 
-	if (Character.GetActorStats()->fallSpeed)
+	if (Character.GetActorState()->fallSpeed)
 	{
-	Character.GetActorStats()->fallSpeed = 0.0f;
+	Character.GetActorState()->fallSpeed = 0.0f;
 
 	const float worldWaterLevel = Character.m_CharacterStateSwimWaterTestProxy.GetWaterLevel ();
 	if (fHeightofEntity < worldWaterLevel)

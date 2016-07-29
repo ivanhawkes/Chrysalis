@@ -3,13 +3,11 @@
 #include <CryCore/Platform/platform_impl.inl>
 #include <CryGame/IGameFramework.h>
 #include <CryRenderer/IRenderer.h>
-//#include <string>
 #include <CryInput/IHardwareMouse.h>
 #include <CryCore/Platform/CryLibrary.h>
-#include "ConsoleVariables/ConsoleVariables.h"
+#include <ConsoleVariables/ConsoleVariables.h>
 #include "GameStartup.h"
-#include "Game/Game.h"
-//#include <IPluginManager_impl.h>
+#include <Game/Game.h>
 
 
 // A platform independant way to specify the CryAction library filename.
@@ -209,8 +207,6 @@ IGameRef CGameStartup::Init(SSystemInitParams &startupParams)
 	// Also signifies that it was created / initialized already and thus will prevent other systems from creating / initializing it.
 	startupParams.pSystem = m_pGameFramework->GetISystem();
 
-	//PluginManager::RememberStartupParams(startupParams);
-
 	// Create a game instance and initialize it.
 	static char pGameBuffer [sizeof(CGame)];
 	m_pGame = new ((void*) pGameBuffer) CGame();
@@ -239,8 +235,6 @@ IGameRef CGameStartup::Init(SSystemInitParams &startupParams)
 
 	// Create the random seed value.
 	GetISystem()->GetISystemEventDispatcher()->OnSystemEvent(ESYSTEM_EVENT_RANDOM_SEED, (UINT_PTR) gEnv->pTimer->GetAsyncTime().GetMicroSecondsAsInt64(), 0);
-
-	//PluginManager::InitPluginsLast();
 
 	// TODO: Init Steam. Check the SteamInit routine on ISystem. It looks like it needs to be implemented by the client - but not sure how as yet.
 

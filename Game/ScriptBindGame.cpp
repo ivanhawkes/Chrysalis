@@ -2,7 +2,7 @@
 
 #include "ScriptBindGame.h"
 #include <CryEntitySystem/IEntitySystem.h>
-#include "Game/Game.h"
+#include <Game/Game.h>
 #include "Game/Cache/GameCache.h"
 #include <GameObjects/GameObject.h>
 

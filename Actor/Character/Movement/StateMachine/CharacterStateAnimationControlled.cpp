@@ -88,7 +88,7 @@ const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationCo
 	{
 		case STATE_EVENT_EXIT:
 			/*m_flags.ClearFlags (ECharacterStateFlags_InteractiveAction);
-			Character.GetActorStats ()->animationControlledID = 0;
+			Character.GetActorState ()->animationControlledID = 0;
 			Character.AnimationControlled (false);
 			m_interactiveActionController.OnLeave (Character);*/
 			break;
@@ -124,7 +124,7 @@ const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationCo
 			RequestTransitionState (Character, CHARACTER_STATE_MOVEMENT);
 			}
 
-			Character.GetActorStats ()->animationControlledID = m_interactiveActionController.GetInteractiveObjectId ();
+			Character.GetActorState ()->animationControlledID = m_interactiveActionController.GetInteractiveObjectId ();
 			Character.AnimationControlled (true, action.GetShouldUpdateVisibility ());*/
 		}
 			break;

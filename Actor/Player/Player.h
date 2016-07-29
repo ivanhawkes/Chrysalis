@@ -490,7 +490,7 @@ public:
 	/**
 	Gets this instance's actor class type.
 
-	/sa EACTORCLASSTYPE.
+	/sa EActorClassType.
 
 	\return	This instance's actor class type.
 	*/

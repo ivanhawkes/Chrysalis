@@ -17,7 +17,7 @@
 
 #include "ScriptBindBoids.h"
 #include <CryEntitySystem/IEntitySystem.h>
-#include "Game/Game.h"
+#include <Game/Game.h>
 #include "Boids/BoidsProxy.h"
 #include "Boids/Flock.h"
 #include "Boids/Terran/BugsFlock.h"
@@ -26,7 +26,7 @@
 #include "Boids/Avian/AvianFlock.h"
 #include "Boids/Aquatic/FishFlock.h"
 #include <Actor/Player/Player.h>
-#include "Utility/LocalizeUtility.h"
+#include <Utility/LocalizeUtility.h>
 
 
 //////////////////////////////////////////////////////////////////////////

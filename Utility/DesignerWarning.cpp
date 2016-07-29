@@ -1,7 +1,7 @@
 #include <StdAfx.h>
 
 #include "DesignerWarning.h"
-#include "ConsoleVariables/ConsoleVariables.h"
+#include <ConsoleVariables/ConsoleVariables.h>
 /*#include "Testing/FeatureTester.h"
 #include "Testing/AutoTester.h"*/
 

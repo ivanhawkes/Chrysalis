@@ -1,8 +1,8 @@
 #include <StdAfx.h>
 
 #include "CharacterStateSwimWaterTestProxy.h"
-#include "Game/Game.h"
-#include "ConsoleVariables/ConsoleVariables.h"
+#include <Game/Game.h>
+#include <ConsoleVariables/ConsoleVariables.h>
 #include <Actor/Character/Character.h>
 /*#include "CharacterRotation.h"*/
 
@@ -369,7 +369,7 @@ void CCharacterStateSwimWaterTestProxy::UpdateWaterLevel(const Vec3& worldRefere
 void CCharacterStateSwimWaterTestProxy::DebugDraw(const CCharacter& Character, const Vec3& referencePosition)
 {
 	// DEBUG RENDERING
-	/*const SActorStats& stats = *Character.GetActorStats ();
+	/*const SActorStats& stats = *Character.GetActorState ();
 	const bool debugSwimming = (g_pGameCVars->cl_debugSwimming != 0);
 
 	if (debugSwimming && (m_CharacterWaterLevel > -10.0f) && (m_CharacterWaterLevel < 10.0f))

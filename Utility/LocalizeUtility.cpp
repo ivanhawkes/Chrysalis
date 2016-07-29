@@ -2,7 +2,7 @@
 
 #include <CrySystem/ILocalizationManager.h>
 #include <CryString/StringUtils.h>
-#include "Utility/StringUtils.h"
+#include <Utility/StringUtils.h>
 #include "LocalizeUtility.h"
 
 

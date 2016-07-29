@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CharacterStateLedge.h"
-#include "Actor/Character/ICharacterEventListener.h"
+#include <Actor/IActorEventListener.h>
 
 
 class CCharacter;
@@ -58,7 +58,7 @@ private:
 	void Landed(CCharacter& Character, const bool isHeavyWeapon, float fallSpeed);
 	const Vec3 CalculateInAirJumpExtraVelocity(const CCharacter& Character, const Vec3& desiredVelocity) const;
 
-	void OnSpecialMove(CCharacter &Character, ICharacterEventListener::ESpecialMove specialMove);
+	void OnSpecialMove(CCharacter &Character, IActorEventListener::ESpecialMove specialMove);
 
 	EJumpState m_jumpState;
 	mutable float m_jumpLock;

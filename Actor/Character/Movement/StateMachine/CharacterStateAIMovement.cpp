@@ -120,15 +120,15 @@
 //		case CHARACTER_EVENT_PREPHYSICSUPDATE:
 //		{
 //			const SCharacterPrePhysicsData& prePhysicsEvent = static_cast<const SStateEventCharacterMovementPrePhysics&> (event).GetPrePhysicsData ();
-//			Character.m_stats.onGround += prePhysicsEvent.m_frameTime;
+//			Character.m_actorState.onGround += prePhysicsEvent.m_frameTime;
 //
 //			if (!CCharacterStateUtil::IsOnGround (Character))
 //			{
 //				// We're considered inAir at this point.
 //				// NOTE: this does not mean CCharacter::IsInAir() returns true.
-//				float inAir = Character.m_stats.inAir;
+//				float inAir = Character.m_actorState.inAir;
 //				inAir += prePhysicsEvent.m_frameTime;
-//				Character.m_stats.inAir = inAir;
+//				Character.m_actorState.inAir = inAir;
 //
 //				// We can be purely time based for AI as we can't jump or navigate to a falling position, though, we might be pushed, thrown, etc.
 //				if ((inAir > g_pGameCVars->pl_movement.ground_timeInAirToFall))
@@ -138,7 +138,7 @@
 //			}
 //			else
 //			{
-//				Character.m_stats.inAir = 0.0f;
+//				Character.m_actorState.inAir = 0.0f;
 //			}
 //
 //			CCharacterStateUtil::ProcessRotation (Character, prePhysicsEvent.m_movement, Character.GetMoveRequest ());
@@ -207,7 +207,7 @@
 //		case STATE_EVENT_ENTER:
 //			m_stateGround.OnEnter (Character);
 //			m_flags.AddFlags (ECharacterStateFlags_Ground);
-//			Character.m_stats.inAir = 0.0f;
+//			Character.m_actorState.inAir = 0.0f;
 //			break;
 //
 //		case STATE_EVENT_EXIT:
@@ -270,7 +270,7 @@
 //		case CHARACTER_EVENT_PREPHYSICSUPDATE:
 //		{
 //			const SCharacterPrePhysicsData& prePhysicsEvent = static_cast<const SStateEventCharacterMovementPrePhysics&> (event).GetPrePhysicsData ();
-//			Character.m_stats.inAir += prePhysicsEvent.m_frameTime;
+//			Character.m_actorState.inAir += prePhysicsEvent.m_frameTime;
 //
 //			if (m_stateJump.OnPrePhysicsUpdate (Character, m_flags.AreAnyFlagsActive (ECharacterStateFlags_CurrentItemIsHeavy), prePhysicsEvent.m_movement, prePhysicsEvent.m_frameTime))
 //			{
@@ -384,7 +384,7 @@
 //
 //void CCharacterStateAIMovement::ProcessSprint (const CCharacter& Character, const SCharacterPrePhysicsData& prePhysicsEvent)
 //{
-//	if (m_flags.AreAnyFlagsActive (ECharacterStateFlags_SprintPressed | ECharacterStateFlags_Sprinting) && CCharacterStateUtil::ShouldSprint (Character, prePhysicsEvent.m_movement, Character.GetCurrentItem ()))
+//	if (m_flags.AreAnyFlagsActive (ECharacterStateFlags_SprintPressed | ECharacterStateFlags_Sprinting) && CCharacterStateUtil::IsSprintingAllowed (Character, prePhysicsEvent.m_movement, Character.GetCurrentItem ()))
 //	{
 //		m_flags.AddFlags (ECharacterStateFlags_Sprinting);
 //		if (Character.GetCharacterInput ()->GetType () == ICharacterInput::CHARACTER_INPUT)

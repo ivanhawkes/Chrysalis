@@ -3,7 +3,7 @@
 #include "Ledge.h"
 #include <CryGame/IGameVolumes.h>
 #include <CryRenderer/IRenderAuxGeom.h>
-#include "Game/Game.h"
+#include <Game/Game.h>
 #include "LedgeManager.h"
 #include "Entity/EntityScriptCalls.h"
 
