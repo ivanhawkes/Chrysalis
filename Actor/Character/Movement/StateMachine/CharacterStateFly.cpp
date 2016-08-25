@@ -5,7 +5,7 @@
 #include <CryPhysics/physinterface.h>
 #include "CharacterStateFly.h"
 #include <Actor/Character/Character.h>
-#include "CharacterStateUtil.h"
+#include <Actor/Movement/StateMachine/ActorStateUtility.h>
 //#include "CharacterInput.h"
 
 

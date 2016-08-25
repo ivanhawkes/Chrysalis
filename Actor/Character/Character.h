@@ -5,16 +5,6 @@
 #include <StateMachine/StateMachine.h>
 
 
-enum ELadderLeaveLocation
-{
-	eLLL_First = 0,
-	eLLL_Top = eLLL_First,
-	eLLL_Bottom,
-	eLLL_Drop,
-	eLLL_Count,
-};
-
-
 /**
 An implementation of the IActor interface. A CCharacter is an actor that represents a character within the game,
 either an NPC or PC which can be controlled by a player.

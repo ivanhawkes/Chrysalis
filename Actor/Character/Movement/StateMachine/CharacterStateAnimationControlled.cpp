@@ -30,7 +30,7 @@ const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationCo
 {
 	switch (event.GetEventId())
 	{
-		case CHARACTER_EVENT_INTERACTIVE_ACTION:
+		case ACTOR_EVENT_INTERACTIVE_ACTION:
 			return State_InteractiveAction;
 
 		case CHARACTER_EVENT_CUTSCENE:
@@ -61,7 +61,7 @@ const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationCo
 	{
 		case STATE_EVENT_ENTER:
 			// TODO: this made sense in Crysis 2, but might not for our system.
-			m_flags.AddFlags(ECharacterStateFlags_Ground);
+			m_flags.AddFlags(eActorStateFlags_Ground);
 			if (Character.IsPlayer())
 			{
 				gEnv->pGame->GetIGameFramework()->AllowSave(false);
@@ -70,7 +70,7 @@ const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationCo
 
 		case STATE_EVENT_EXIT:
 			// TODO: this made sense in Crysis 2, but might not for our system.
-			m_flags.ClearFlags(ECharacterStateFlags_Ground);
+			m_flags.ClearFlags(eActorStateFlags_Ground);
 			if (Character.IsPlayer())
 			{
 				gEnv->pGame->GetIGameFramework()->AllowSave(true);
@@ -87,15 +87,15 @@ const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationCo
 	switch (event.GetEventId())
 	{
 		case STATE_EVENT_EXIT:
-			/*m_flags.ClearFlags (ECharacterStateFlags_InteractiveAction);
+			/*m_flags.ClearFlags (eActorStateFlags_InteractiveAction);
 			Character.GetActorState ()->animationControlledID = 0;
 			Character.AnimationControlled (false);
 			m_interactiveActionController.OnLeave (Character);*/
 			break;
 
-		case CHARACTER_EVENT_PREPHYSICSUPDATE:
+		case ACTOR_EVENT_PREPHYSICSUPDATE:
 		{
-			/*const SCharacterPrePhysicsData& prePhysicsEvent = static_cast<const SStateEventCharacterMovementPrePhysics&> (event).GetPrePhysicsData ();
+			/*const SActorPrePhysicsData& prePhysicsEvent = static_cast<const SStateEventActorMovementPrePhysics&> (event).GetPrePhysicsData ();
 			m_interactiveActionController.Update (Character, prePhysicsEvent.m_frameTime, prePhysicsEvent.m_movement);
 
 			if (!m_interactiveActionController.IsInInteractiveAction ())
@@ -105,9 +105,9 @@ const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationCo
 		}
 			break;
 
-		case CHARACTER_EVENT_INTERACTIVE_ACTION:
+		case ACTOR_EVENT_INTERACTIVE_ACTION:
 		{
-			/*m_flags.AddFlags (ECharacterStateFlags_InteractiveAction);
+			/*m_flags.AddFlags (eActorStateFlags_InteractiveAction);
 
 			const SStateEventInteractiveAction& action = static_cast<const SStateEventInteractiveAction&> (event);
 			if (action.GetObjectEntityID () != 0)
@@ -129,13 +129,13 @@ const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationCo
 		}
 			break;
 
-		case CHARACTER_EVENT_DEAD:
+		case ACTOR_EVENT_DEAD:
 			/*if (m_interactiveActionController.IsInInteractiveAction ())
 			{
 			m_interactiveActionController.Abort (Character);
 			}*/
 
-			RequestTransitionState(Character, CHARACTER_STATE_MOVEMENT, CHARACTER_EVENT_DEAD);
+			RequestTransitionState(Character, CHARACTER_STATE_MOVEMENT, ACTOR_EVENT_DEAD);
 			break;
 	}
 

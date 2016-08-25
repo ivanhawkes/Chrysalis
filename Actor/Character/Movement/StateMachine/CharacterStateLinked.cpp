@@ -39,23 +39,23 @@ const CCharacterStateLinked::TStateIndex CCharacterStateLinked::Root(CCharacter&
 			//Character.m_CharacterStateSwimWaterTestProxy.Reset (true);
 			break;
 
-		case CHARACTER_EVENT_WEAPONCHANGED:
+		case ACTOR_EVENT_WEAPONCHANGED:
 		{
 			/*const CWeapon* pWeapon = static_cast<const CWeapon*>(event.GetData (0).GetPtr ());
 
 			if (pWeapon && pWeapon->IsHeavyWeapon ())
 			{
-			m_flags.AddFlags (ECharacterStateFlags_CurrentItemIsHeavy);
+			m_flags.AddFlags (eActorStateFlags_CurrentItemIsHeavy);
 			}
 			else
 			{
-			m_flags.ClearFlags (ECharacterStateFlags_CurrentItemIsHeavy);
+			m_flags.ClearFlags (eActorStateFlags_CurrentItemIsHeavy);
 			}*/
 			break;
 		}
 
-		case CHARACTER_EVENT_DEAD:
-			//RequestTransitionState (Character, Character.IsAIControlled () ? CHARACTER_STATE_MOVEMENT_AI : CHARACTER_STATE_MOVEMENT, CHARACTER_EVENT_DEAD);
+		case ACTOR_EVENT_DEAD:
+			//RequestTransitionState (Character, Character.IsAIControlled () ? CHARACTER_STATE_MOVEMENT_AI : CHARACTER_STATE_MOVEMENT, ACTOR_EVENT_DEAD);
 			break;
 	}
 

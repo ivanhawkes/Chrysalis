@@ -1,19 +1,22 @@
 #pragma once
 
 #include <IGameObject.h>
-#include <IViewSystem.h>
 #include <Item/Item.h>
 #include <Item/Flashlight/ItemFlashlightParameter.h>
 #include <Item/Flashlight/ItemFlashlightParameterShared.h>
 #include <SharedParameters/DynamicLight.h>
 #include <Entity/EntityEffects.h>
+#include <EntityInteraction\IEntityInteraction.h>
+
+
+class IEntityInteraction;
 
 
 /**
 \sa	CGameObjectExtensionHelper&lt;CFlashlight, IGameObjectExtension&gt;
 \sa	IGameObjectView
 */
-class CFlashlight : public CGameObjectExtensionHelper < CFlashlight, CItem >
+class CFlashlight : public CGameObjectExtensionHelper < CFlashlight, CItem >, public IInteractionSwitch, public IInteractionPickupAndDrop, public IInteractionInteract
 {
 public:
 	// ***
@@ -49,6 +52,29 @@ public:
 
 	//void PreResetParams() override {};
 	//bool ResetParams() override;
+
+
+	// ***
+	// *** IInteractionInteract
+	// ***
+
+	void Interact() override { gEnv->pLog->LogAlways("Interation Interact fired."); };
+
+	// ***
+	// *** IInteractionSwitch
+	// ***
+
+	void SwitchOn() override { gEnv->pLog->LogAlways("Interation SwitchOn fired."); ToggleSwitch(); };
+	void SwitchOff() override { gEnv->pLog->LogAlways("Interation SwitchOff fired."); ToggleSwitch(); };
+
+
+	// ***
+	// *** IInteractionPickupAndDrop
+	// ***
+
+	void Pickup() override { gEnv->pLog->LogAlways("Interation Pickup fired."); };
+	void Drop() override { gEnv->pLog->LogAlways("Interation Drop fired."); };
+	void Inspect() override { gEnv->pLog->LogAlways("Interation Inspect fired."); };
 
 
 	// ***
@@ -143,7 +169,9 @@ private:
 	float m_batteryLevel = 1.0f;
 
 	/** Identifier for the light once it's attached to this entity. */
-	EntityEffects::TAttachedEffectId m_lightId;
+	EntityEffects::TAttachedEffectId m_lightId { EntityEffects::EFFECTID_INVALID };
 
 	int m_fpGeomSlotId = -1;
+
+	IEntityInteraction* m_interactor { nullptr };
 };

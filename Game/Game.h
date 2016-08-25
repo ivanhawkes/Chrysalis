@@ -17,12 +17,10 @@ const string ProjectName = "Chrysalis";
 
 struct IGameRules;
 struct IPlayerProfileManager;
-struct IActionMap;
 struct IActor;
 class CGamePhysicsSettings;
 class CConsoleCommands;
 class CConsoleVariables;
-class CGameActionMaps;
 class CLedgeManager;
 class CObjectIdMasterFactory;
 class CGameCache;
@@ -35,6 +33,8 @@ static const string GamePathLibs = "libs/";
 static const string GamePathLuaScripts = "Scripts/";
 static const string GamePathLuaEntities = "Scripts/Entities/";
 
+// A default value for times when an actor isn't available to find eye height.
+static const Vec3 AverageEyePosition { 0.0f, 0.0f, 1.76f };
 
 /**
 An implementation of the IGame interface. Used to decide game logic and controls how a
@@ -55,14 +55,14 @@ public:
 
 
 	/**
-	Automatically called by the IGameStartup interface. Initializes this instance with the
-	specified IGameFramework interface. Used to sign-in the default user, set the current game type,
-	load ActionMaps, And register custom GameObjects.
-
-	\param [in,out]	pFramework	The currently active IGameFrameWork interface.
-
-	\return	True If initialization was successful. False otherwise.
-	*/
+	Automatically called by the IGameStartup interface. Initializes this instance with the specified IGameFramework
+	interface. Used to sign-in the default user, set the current game type, load ActionMaps, And register custom
+	GameObjects.
+	
+	\param [in,out]	pFramework The currently active IGameFrameWork interface.
+	
+	\return True If initialization was successful. False otherwise.
+	**/
 	virtual bool Init(IGameFramework *pFramework);
 
 
@@ -139,7 +139,7 @@ public:
 	\param	filename	The filename of the ActionMap file you want to load the ActionMaps from (an
 	XML file).
 	*/
-	virtual void LoadActionMaps(const char* filename = "libs/config/defaultprofile.xml");
+	virtual void LoadActionMaps(const char* filename = "libs/config/defaultprofile.xml") {};
 
 
 	/**
@@ -410,7 +410,7 @@ public:
 
 
 private:
-	GlobalRayCaster* m_pRayCaster = nullptr;
+	GlobalRayCaster* m_pRayCaster { nullptr };
 
 
 	// ***	
@@ -512,14 +512,6 @@ public:
 	ILINE CConsoleVariables* GetCVars() { return m_pConsoleVariables; }
 
 
-	///**
-	//Access to the game's action maps.
-
-	//\return	A CGameActionMaps&amp;
-	//*/
-	CGameActionMaps& ActionMaps() const { return *m_pGameActionMaps; };
-
-
 	/**
 	Gets ledge manager.
 
@@ -582,13 +574,6 @@ private:
 	*/
 	IGameRules* m_pGameRules = nullptr;
 
-
-	/**
-	The default ActionMap. Used to provide input logic to a CRYENGINE game. An ActionMap provides mappings between
-	"actions" and input devices, such that when a specific input device sends a signal, the mapped action happens.
-	*/
-	IActionMap* m_pDefaultAM = nullptr;
-
 	/** The EntityId of the player (client actor). */
 	EntityId m_PlayerEntityId = INVALID_ENTITYID;
 
@@ -603,9 +588,6 @@ private:
 
 	/** The console variables. Used to register and unregister the console variables. */
 	CConsoleVariables* m_pConsoleVariables = nullptr;
-
-	///** The game action maps. */
-	CGameActionMaps* m_pGameActionMaps = nullptr;
 
 	/** A manager for handling the ledges in levels. */
 	CLedgeManager* m_pLedgeManager = nullptr;

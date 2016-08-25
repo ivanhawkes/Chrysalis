@@ -1,16 +1,10 @@
 #include <StdAfx.h>
 
 #include "ActionRPGCamera.h"
-#include <IViewSystem.h>
-#include <IActorSystem.h>
-#include <IAnimatedCharacter.h>
-#include <CryGame/GameUtils.h>
-#include <ActionMaps/GameActionMaps.h>
 #include <Game/Game.h>
-#include <ConsoleVariables/ConsoleVariables.h>
+#include <IActorSystem.h>
 #include <Actor/Player/Player.h>
-#include <PlayerInput/IPlayerInput.h>
-#include <IViewSystem.h>
+#include <Actor/Player/PlayerInput/IPlayerInput.h>
 
 
 // ***
@@ -18,33 +12,21 @@
 // ***
 
 
-bool CActionRPGCamera::Init(IGameObject * pGameObject)
-{
-	// Critical this is called.
-	SetGameObject(pGameObject);
-
-	// It's a good idea to use the entity as a default for our target entity.
-	m_targetEntityID = GetEntityId();
-
-	return true;
-}
-
-
 void CActionRPGCamera::PostInit(IGameObject * pGameObject)
 {
 	// Allow this instance to be updated every frame.
 	pGameObject->EnableUpdateSlot(this, 0);
 	
+	// It's a good idea to use the entity as a default for our target entity.
+	m_targetEntityID = GetEntityId();
+
 	// Create a new view and link it to this entity.
 	auto pViewSystem = gEnv->pGame->GetIGameFramework()->GetIViewSystem();
 	m_pView = pViewSystem->CreateView();
 	m_pView->LinkTo(GetGameObject());
-}
 
-
-void CActionRPGCamera::GetMemoryUsage(ICrySizer *pSizer) const
-{
-	pSizer->Add(*this);
+	// We are usually hosted in the same entity as a camera manager. Use it if you can find one.
+	m_pCameraManager = static_cast<ICameraManager*> (pGameObject->QueryExtension("CameraManager"));
 }
 
 
@@ -110,9 +92,7 @@ void CActionRPGCamera::Update(SEntityUpdateContext& ctx, int updateSlot)
 			Quat quatPostTransYP = Quat::CreateRotationXYZ(Ang3(m_viewPitch * m_reversePitchTilt, 0.0f, 0.0f));
 
 			// Target and aim position come from the entity position.
-			Vec3 vecTargetInitialPosition;
-			Vec3 vecTargetInitialAimPosition;
-			GetTargetPositions(pTargetEntity, m_targetBoneName, m_targetAimBoneName, vecTargetInitialPosition, vecTargetInitialAimPosition);
+			Vec3 vecTargetAimPosition = GetTargetAimPosition(pTargetEntity);
 
 			// The distance from the view to the target.
 			float shapedZoom = (m_zoom * m_zoom) / (m_zoomMax * m_zoomMax);
@@ -133,13 +113,13 @@ void CActionRPGCamera::Update(SEntityUpdateContext& ctx, int updateSlot)
 
 			// Work out where to place the new initial position. We will be using a unit vector facing forward Y
 			// as the starting place and applying rotations from the target bone and player camera movements.
-			Vec3 vecViewPosition = vecTargetInitialPosition + (quatTargetRotation * (Vec3(0.0f, 1.0f, 0.0f) * zoomDistance))
+			Vec3 vecViewPosition = vecTargetAimPosition + (quatTargetRotation * (Vec3(0.0f, 1.0f, 0.0f) * zoomDistance))
 				+ quatTargetRotation * m_viewPositionOffset;
 
 			// By default, we try and aim the camera at the target, taking into account the current mouse yaw and pitch values.
 			// Since the target and aim can actually be the same we need to use a safe version of the normalised quaternion to
 			// prevent errors.
-			Quat quatViewRotationGoal = Quat::CreateRotationVDir((vecTargetInitialAimPosition - vecViewPosition).GetNormalizedSafe());
+			Quat quatViewRotationGoal = Quat::CreateRotationVDir((vecTargetAimPosition - vecViewPosition).GetNormalizedSafe());
 
 			// Use a slerp to smooth out fast camera rotations.
 			Quat quatViewRotation;
@@ -159,21 +139,24 @@ void CActionRPGCamera::Update(SEntityUpdateContext& ctx, int updateSlot)
 
 			// Gimbal style rotation after it's moved into it's initial position.
 			Quat quatOrbitRotation = quatViewRotation * quatPostTransYP;
-			Vec3 vecTargetAimPosition = vecTargetInitialAimPosition + quatViewRotation * m_aimPositionOffset;
 
 			// Perform a collision detection. Note, any collisions will disallow use of interpolated
 			// camera movement.
-			//CollisionDetection (vecTargetAimPosition, vecViewPosition);
+			// NOTE: This is broken in two ways. Collisions always hit the actor model, and I refactored
+			// vecTargetAimPosition from two variables which held the same value - so the line beneath
+			// is bupkis / wrong.
+			//Vec3 vecTargetAimPosition = vecTargetAimPosition + quatViewRotation * m_aimPositionOffset;
+			CollisionDetection (vecTargetAimPosition, vecViewPosition);
 
 #if defined(_DEBUG)
 			//			if (m_bDebug)
 			{
 				// Initial position for our target.
-				//gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(vecTargetInitialPosition, 0.16f, ColorB(0, 0, 128));
-				//gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(vecTargetInitialPosition + quatTargetRotation * m_viewPositionOffset, 0.06f, ColorB(0, 128, 0));
+				//gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(vecTargetAimPosition, 0.16f, ColorB(0, 0, 128));
+				//gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(vecTargetAimPosition + quatTargetRotation * m_viewPositionOffset, 0.06f, ColorB(0, 128, 0));
 
 				//// Initial aim position.
-				//gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(vecTargetInitialAimPosition, 0.08f, ColorB(128, 0, 0));
+				//gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(vecTargetAimPosition, 0.08f, ColorB(128, 0, 0));
 			}
 #endif
 
@@ -209,6 +192,9 @@ void CActionRPGCamera::UpdateView(SViewParams& params)
 	params.position = GetCameraPose().GetPosition();
 	params.rotation = GetCameraPose().GetRotation();
 
+	if (m_pCameraManager) 
+		params.position += GetCameraPose().GetRotation() * m_pCameraManager->GetViewOffset();
+
 	// TODO: Need to set a FoV or weird stuff happens. Set up a cvar or something.
 	// VR devices might need to be queried.
 	params.fov = DEG2RAD(60.0f);
@@ -233,10 +219,6 @@ void CActionRPGCamera::AttachToEntity(EntityId entityId)
 	auto pTargetEntity = gEnv->pEntitySystem->GetEntity(m_targetEntityID);
 	if (pTargetEntity)
 	{
-		// TODO: Figure out if we really need to be linking to the target entity. It seems like it's a good idea but it
-		// always messes up the view.
-		//m_pView->LinkTo(pTargetEntity);
-
 		// Give the camera an initial orientation based on the entity's rotation.
 		m_quatTargetRotation = Quat::CreateRotationVDir(pTargetEntity->GetForwardDir());
 	}
@@ -294,60 +276,36 @@ void CActionRPGCamera::ResetCamera()
 }
 
 
-void CActionRPGCamera::RegisterCvars()
-{}
-
-
-void CActionRPGCamera::UnregisterCvars()
-{}
-
-
 // ***
 // *** Camera movement and updates.
 // ***
 
 
-void CActionRPGCamera::GetTargetPositions(IEntity* const pEntity,
-	string targetBone, string targetAimBone,
-	Vec3& vecTargetPosition, Vec3& vecTargetAimPosition)
+Vec3 CActionRPGCamera::GetTargetAimPosition(IEntity* const pEntity)
 {
+	Vec3 position { AverageEyePosition };
+
 	if (pEntity)
 	{
-		// Default is simply to use the entity position.
-		vecTargetAimPosition = vecTargetPosition = pEntity->GetPos() + Vec3(0.0f, 0.0f, 1.92f); // HACK: Dirty cheat to get the camera target up around eye height.
+		// If we are attached to an entity that is an actor we can use their eye position.
+		Vec3 localEyePosition = position;
+		auto pActor = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_targetEntityID);
+		if (pActor)
+			localEyePosition = pActor->GetLocalEyePos();
 
-		// If they want to target a bone, we need to have an actor to work with.
-		if ((targetBone.length() > 0) || (targetAimBone.length() > 0))
-		{
-			IActor* pActor = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(pEntity->GetId());
-			if (pActor)
-			{
-				// Get Animated Character
-				IAnimatedCharacter* pAnimCharacter = pActor->GetAnimatedCharacter();
-				ICharacterInstance* pCharacter = pEntity->GetCharacter(0);
+		// HACK: TESTING - moving eye position back to see the actor during testing.
+		Vec3 debugEyeOffset = Vec3(ZERO);
+		//Vec3 debugEyeOffset = pEntity->GetWorldRotation() * (Vec3(-FORWARD_DIRECTION) * 0.6f);
 
-				// Get Skeleton Pose
-				if (pAnimCharacter && pCharacter)
-				{
-					ISkeletonPose* pPose = pCharacter->GetISkeletonPose();
-					IDefaultSkeleton& targetSkeleton = pCharacter->GetIDefaultSkeleton();
-
-					if (pPose)
-					{
-						// The world position which acts as our camera target.
-						int16 targetPositionBoneId = targetSkeleton.GetJointIDByName(targetBone);
-						if (targetPositionBoneId >= 0)
-							vecTargetPosition = (pAnimCharacter->GetAnimLocation() * pPose->GetAbsJointByID(targetPositionBoneId)).t;
-
-						// The world position of the bone we wish to aim towards.
-						int16 targetViewAimBoneId = targetSkeleton.GetJointIDByName(targetAimBone);
-						if (targetViewAimBoneId >= 0)
-							vecTargetAimPosition = (pAnimCharacter->GetAnimLocation() * pPose->GetAbsJointByID(targetViewAimBoneId)).t;
-					}
-				}
-			}
-		}
+		// Pose is based on entity position and the eye position.
+		// We will use the rotation of the entity as a base, and apply pitch based on our own reckoning.
+		position = pEntity->GetPos() + localEyePosition + debugEyeOffset;
+		
+		// DEBUG
+		//gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(position, 0.05f, ColorB(0, 0, 255, 255));
 	}
+
+	return position;
 }
 
 
@@ -359,14 +317,17 @@ bool CActionRPGCamera::CollisionDetection(const Vec3& Goal, Vec3& CameraPosition
 	// TODO: need to skip the player's geometry and if they are in a vehicle, that needs skipping too.
 	ray_hit rayhit;
 	static IPhysicalEntity* pSkipEnts [10];
-	int nskip = 0;
 
+	// Skip the target actor for this.
+	pSkipEnts [0] = gEnv->pEntitySystem->GetEntity(m_targetEntityID)->GetPhysics();
+
+	// Perform the ray cast.
 	int hits = gEnv->pPhysicalWorld->RayWorldIntersection(Goal,
 		CameraPosition - Goal,
-		ent_all,
+		ent_static | ent_sleeping_rigid | ent_rigid | ent_independent | ent_terrain,
 		rwi_stop_at_pierceable | rwi_colltype_any,
 		&rayhit,
-		1, pSkipEnts, nskip + 1);
+		1, pSkipEnts, 2);
 
 	if (hits)
 	{

@@ -10,65 +10,48 @@ The host entity will be used as a default for the entity which the camera operat
 #pragma once
 
 #include <IGameObject.h>
-#include <IViewSystem.h>
 #include "ICameraManager.h"
 #include "ICamera.h"
 
 
-class CCameraManager : public CGameObjectExtensionHelper <CCameraManager, ICameraManager>, public IGameObjectView
+class CCameraManager : public CGameObjectExtensionHelper <CCameraManager, ICameraManager>, public IActionListener
 {
 public:
 	// ***
-	// *** IGameObjectExtension
+	// *** ISimpleExtension
 	// ***
 
 	void GetMemoryUsage(ICrySizer *pSizer) const override;
-	bool Init(IGameObject * pGameObject) override;
 	void PostInit(IGameObject * pGameObject) override;
-	void InitClient(int channelId) override {};
-	void PostInitClient(int channelId) override {};
-	bool ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override;
-	void PostReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override {};
-	bool GetEntityPoolSignature(TSerialize signature) override { return true; };
-	void Release() override { delete this; };
-	void FullSerialize(TSerialize ser) override {};
-	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int pflags) override { return true; };
-	void PostSerialize() override {};
-	void SerializeSpawnInfo(TSerialize ser) override {};
-	ISerializableInfoPtr GetSpawnInfo() override { return nullptr; };
 	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
-	void HandleEvent(const SGameObjectEvent& event) override {};
-	void ProcessEvent(SEntityEvent& event) override {};
-	void SetChannelId(uint16 id) override {};
-	void SetAuthority(bool auth) override {};
-	void PostUpdate(float frameTime) override {};
-	void PostRemoteSpawn() override {};
+	void HandleEvent(const SGameObjectEvent &event) override;
 
 
 	// ***
-	// *** IGameObjectView
+	// *** IActionListener
 	// ***
 
+public:
 
 	/**
-	Called when the view should provide an update of it's current state.
-	
-	\param	params A structure with members that are used to control view parameters.
-	**/
-	void UpdateView(SViewParams& params) override;
+	Handles the action event.
+
+	\param	action		  	The action.
+	\param	activationMode	The activation mode.
+	\param	value		  	An optional value that may contain useful information for an action.
+	*/
+	virtual void OnAction(const ActionId& action, int activationMode, float value);
 
 
-	/**
-	Called when the view should provide a post update of it's current state.
-	
-	\param	params A variable-length parameters list containing view parameters.
-	**/
-	void PostUpdateView(SViewParams& params) override {};
+	/** After action. */
+	virtual void AfterAction() {};
 
 
 	// ***
 	// *** ICameraManager
 	// ***
+
+public:
 
 	/**
 	Player cameras generally need to follow an actor. This allows us to switch which entity represents the actor that
@@ -119,16 +102,53 @@ public:
 	virtual ~CCameraManager();
 
 
+	/**
+	Gets view offset.
+	
+	\return The view offset.
+	**/
+	Vec3 GetViewOffset() override { return m_viewOffset; };
+
+
 private:
+	/** Registers the action maps and starts to listen for action map events. */
+	void RegisterActionMaps();
+
+	void InitializeActionHandler();
+
+	/**	Executes the camera shift up action.	**/
+	bool OnActionCameraShiftUp(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+
+	/**	Executes the camera shift down action.	**/
+	bool OnActionCameraShiftDown(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+
+	/**	Executes the camera shift left action.	**/
+	bool OnActionCameraShiftLeft(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+
+	/**	Executes the camera shift right action.	**/
+	bool OnActionCameraShiftRight(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+
+	/**	Executes the camera shift forward action.	**/
+	bool OnActionCameraShiftForward(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+
+	/**	Executes the camera shift backward action.	**/
+	bool OnActionCameraShiftBackward(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+
+	/** A static handler for the actions we are interested in hooking. */
+	TActionHandler<CCameraManager> m_actionHandler;
+
 	/**	An array large enough to hold one of each defined camera mode. **/
 	ICamera* m_cameraModes [ECameraMode::_LAST];
 
 	/** The current camera mode. */
-	ECameraMode m_cameraMode;
+	ECameraMode m_cameraMode { ECameraMode::NO_CAMERA };
 
 	/** The last camera mode. */
-	ECameraMode m_lastCameraMode;
+	ECameraMode m_lastCameraMode { ECameraMode::NO_CAMERA };
 
-	/** The camera pose. */
-	CCameraPose m_cameraPose { CCameraPose() };
+	/** The amount each offset tweak will adjust the camera by. **/
+	const float adjustmentAmount { 0.025f };
+
+	/** Provides a last moment offset for the view - useful for debugging and player controller extra camera movement. **/
+	Vec3 m_viewOffset { ZERO };
 };

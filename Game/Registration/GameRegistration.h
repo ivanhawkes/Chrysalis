@@ -34,8 +34,18 @@ struct SEntityScriptProperties
 class CGameRegistration
 {
 public:
-	// Register all the components that this game needs to register.
+
+	/**
+	Register all the components that this game needs to register.
+	
+	\param [in,out]	pFramework If non-null, the framework.
+	**/
 	static void RegisterGameObjects(IGameFramework *pFramework);
+
+
+	/** Registers the entity flow nodes. The flow node registration data is disposed of after registration. */
+	static void RegisterEntityFlowNodes();
+
 
 private:
 	enum eGameObjectRegistrationFlags
@@ -45,11 +55,6 @@ private:
 		eGORF_NoEntityClass = 0x2,
 		eGORF_InstanceProperties = 0x4,
 	};
-
-
-	/** Registers the entity flow nodes. The flow node registration data is disposed of after registration. */
-	// TODO: This is not currently being called anywhere. Find out where it needs to be hooked in.
-	static void RegisterEntityFlowNodes();
 
 
 	/**

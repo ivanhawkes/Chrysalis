@@ -1,7 +1,7 @@
 #include <StdAfx.h>
 
 //#include "CharacterStateEvents.h"
-//#include "CharacterStateUtil.h"
+//#include <Actor/Movement/StateMachine/ActorStateUtility.h>
 //#include "CharacterInput.h"
 //#include <Actor/Character/Character.h>
 //#include "CharacterStateDead.h"
@@ -27,7 +27,7 @@
 //private:
 //	const TStateIndex StateGroundInput (CCharacter& Character, const SInputEventData& inputEvent);
 //	void StateSprintInput (CCharacter& Character, const SInputEventData& inputEvent);
-//	void ProcessSprint (const CCharacter& Character, const SCharacterPrePhysicsData& prePhysicsEvent);
+//	void ProcessSprint (const CCharacter& Character, const SActorPrePhysicsData& prePhysicsEvent);
 //
 //private:
 //
@@ -56,24 +56,24 @@
 //	const ECharacterStateEvent eventID = static_cast<ECharacterStateEvent> (event.GetEventId ());
 //	switch (eventID)
 //	{
-//		case CHARACTER_EVENT_WEAPONCHANGED:
+//		case ACTOR_EVENT_WEAPONCHANGED:
 //		{
-//			m_flags.ClearFlags (ECharacterStateFlags_CurrentItemIsHeavy);
+//			m_flags.ClearFlags (eActorStateFlags_CurrentItemIsHeavy);
 //
 //			const CWeapon* pWeapon = static_cast<const CWeapon*> (event.GetData (0).GetPtr ());
 //			if (pWeapon && pWeapon->IsHeavyWeapon ())
 //			{
-//				m_flags.AddFlags (ECharacterStateFlags_CurrentItemIsHeavy);
+//				m_flags.AddFlags (eActorStateFlags_CurrentItemIsHeavy);
 //			}
 //		}
 //			break;
 //
-//		case CHARACTER_EVENT_DEAD:
+//		case ACTOR_EVENT_DEAD:
 //			return State_Dead;
 //
 //		case STATE_EVENT_DEBUG:
 //		{
-//			AUTOENUM_BUILDNAMEARRAY (stateFlags, eCharacterStateFlags);
+//			AUTOENUM_BUILDNAMEARRAY (stateFlags, eActorStateFlags);
 //			STATE_DEBUG_EVENT_LOG (this, event, false, state_white, "Active: StateMovement: CurrentFlags: %s", AutoEnum_GetStringFromBitfield (m_flags.GetRawFlags (), stateFlags, sizeof (stateFlags) / sizeof (char*)).c_str ());
 //		}
 //			break;
@@ -94,8 +94,8 @@
 //			Character.SetCanTurnBody (true);
 //			break;
 //
-//		case CHARACTER_EVENT_INPUT:
-//			return StateGroundInput (Character, static_cast<const SStateEventCharacterInput&> (event).GetInputEventData ());
+//		case ACTOR_EVENT_INPUT:
+//			return StateGroundInput (Character, static_cast<const SStateEventActorInput&> (event).GetInputEventData ());
 //	}
 //
 //	return State_Continue;
@@ -114,12 +114,12 @@
 //			break;
 //
 //		case STATE_EVENT_EXIT:
-//			m_flags.ClearFlags (ECharacterStateFlags_Sprinting);
+//			m_flags.ClearFlags (eActorStateFlags_Sprinting);
 //			break;
 //
-//		case CHARACTER_EVENT_PREPHYSICSUPDATE:
+//		case ACTOR_EVENT_PREPHYSICSUPDATE:
 //		{
-//			const SCharacterPrePhysicsData& prePhysicsEvent = static_cast<const SStateEventCharacterMovementPrePhysics&> (event).GetPrePhysicsData ();
+//			const SActorPrePhysicsData& prePhysicsEvent = static_cast<const SStateEventActorMovementPrePhysics&> (event).GetPrePhysicsData ();
 //			Character.m_actorState.onGround += prePhysicsEvent.m_frameTime;
 //
 //			if (!CCharacterStateUtil::IsOnGround (Character))
@@ -133,7 +133,7 @@
 //				// We can be purely time based for AI as we can't jump or navigate to a falling position, though, we might be pushed, thrown, etc.
 //				if ((inAir > g_pGameCVars->pl_movement.ground_timeInAirToFall))
 //				{
-//					Character.StateMachineHandleEventMovement (CHARACTER_EVENT_FALL);
+//					Character.StateMachineHandleEventMovement (ACTOR_EVENT_FALL);
 //				}
 //			}
 //			else
@@ -173,15 +173,15 @@
 //		}
 //			break;
 //
-//		case CHARACTER_EVENT_PREPHYSICSUPDATE:
+//		case ACTOR_EVENT_PREPHYSICSUPDATE:
 //		{
-//			const SCharacterPrePhysicsData& prePhysicsEvent = static_cast<const SStateEventCharacterMovementPrePhysics&> (event).GetPrePhysicsData ();
+//			const SActorPrePhysicsData& prePhysicsEvent = static_cast<const SStateEventActorMovementPrePhysics&> (event).GetPrePhysicsData ();
 //
 //			m_stateDead.OnPrePhysicsUpdate (Character, prePhysicsEvent.m_movement, prePhysicsEvent.m_frameTime);
 //		}
 //			break;
 //
-//		case CHARACTER_EVENT_UPDATE:
+//		case ACTOR_EVENT_UPDATE:
 //		{
 //			CCharacterStateDead::UpdateCtx updateCtx;
 //			updateCtx.frameTime = static_cast<const SStateEventUpdate&>(event).GetFrameTime ();
@@ -189,7 +189,7 @@
 //		}
 //			break;
 //
-//		case CHARACTER_EVENT_DEAD:
+//		case ACTOR_EVENT_DEAD:
 //			return State_Done;
 //	}
 //
@@ -206,26 +206,26 @@
 //	{
 //		case STATE_EVENT_ENTER:
 //			m_stateGround.OnEnter (Character);
-//			m_flags.AddFlags (ECharacterStateFlags_Ground);
+//			m_flags.AddFlags (eActorStateFlags_Ground);
 //			Character.m_actorState.inAir = 0.0f;
 //			break;
 //
 //		case STATE_EVENT_EXIT:
-//			m_flags.ClearFlags (ECharacterStateFlags_Ground);
+//			m_flags.ClearFlags (eActorStateFlags_Ground);
 //			m_stateGround.OnExit (Character);
 //			break;
 //
-//		case CHARACTER_EVENT_PREPHYSICSUPDATE:
+//		case ACTOR_EVENT_PREPHYSICSUPDATE:
 //		{
-//			const SCharacterPrePhysicsData& prePhysicsEvent = static_cast<const SStateEventCharacterMovementPrePhysics&> (event).GetPrePhysicsData ();
+//			const SActorPrePhysicsData& prePhysicsEvent = static_cast<const SStateEventActorMovementPrePhysics&> (event).GetPrePhysicsData ();
 //
 //			ProcessSprint (Character, prePhysicsEvent);
 //
-//			m_stateGround.OnPrePhysicsUpdate (Character, prePhysicsEvent.m_movement, prePhysicsEvent.m_frameTime, m_flags.AreAnyFlagsActive (ECharacterStateFlags_CurrentItemIsHeavy), false);
+//			m_stateGround.OnPrePhysicsUpdate (Character, prePhysicsEvent.m_movement, prePhysicsEvent.m_frameTime, m_flags.AreAnyFlagsActive (eActorStateFlags_CurrentItemIsHeavy), false);
 //		}
 //			break;
 //
-//		case CHARACTER_EVENT_STANCE_CHANGED:
+//		case ACTOR_EVENT_STANCE_CHANGED:
 //		{
 //			CCharacterStateUtil::ChangeStance (Character, event);
 //
@@ -238,7 +238,7 @@
 //		}
 //			break;
 //
-//		case CHARACTER_EVENT_FALL:
+//		case ACTOR_EVENT_FALL:
 //			return State_Fall;
 //	}
 //
@@ -256,23 +256,23 @@
 //		case STATE_EVENT_ENTER:
 //			m_stateJump.OnEnter (Character);
 //			m_stateJump.OnFall (Character);
-//			m_flags.AddFlags (ECharacterStateFlags_InAir);
+//			m_flags.AddFlags (eActorStateFlags_InAir);
 //			break;
 //
 //		case STATE_EVENT_EXIT:
 //			m_flags.ClearFlags (
-//				ECharacterStateFlags_InAir |
-//				ECharacterStateFlags_Jump |
-//				ECharacterStateFlags_Sprinting);
-//			m_stateJump.OnExit (Character, m_flags.AreAnyFlagsActive (ECharacterStateFlags_CurrentItemIsHeavy));
+//				eActorStateFlags_InAir |
+//				eActorStateFlags_Jump |
+//				eActorStateFlags_Sprinting);
+//			m_stateJump.OnExit (Character, m_flags.AreAnyFlagsActive (eActorStateFlags_CurrentItemIsHeavy));
 //			break;
 //
-//		case CHARACTER_EVENT_PREPHYSICSUPDATE:
+//		case ACTOR_EVENT_PREPHYSICSUPDATE:
 //		{
-//			const SCharacterPrePhysicsData& prePhysicsEvent = static_cast<const SStateEventCharacterMovementPrePhysics&> (event).GetPrePhysicsData ();
+//			const SActorPrePhysicsData& prePhysicsEvent = static_cast<const SStateEventActorMovementPrePhysics&> (event).GetPrePhysicsData ();
 //			Character.m_actorState.inAir += prePhysicsEvent.m_frameTime;
 //
-//			if (m_stateJump.OnPrePhysicsUpdate (Character, m_flags.AreAnyFlagsActive (ECharacterStateFlags_CurrentItemIsHeavy), prePhysicsEvent.m_movement, prePhysicsEvent.m_frameTime))
+//			if (m_stateJump.OnPrePhysicsUpdate (Character, m_flags.AreAnyFlagsActive (eActorStateFlags_CurrentItemIsHeavy), prePhysicsEvent.m_movement, prePhysicsEvent.m_frameTime))
 //			{
 //				return State_Ground;
 //			}
@@ -296,17 +296,17 @@
 //	{
 //		case STATE_EVENT_ENTER:
 //			m_stateSwim.OnEnter (Character);
-//			m_flags.AddFlags (ECharacterStateFlags_Swimming);
+//			m_flags.AddFlags (eActorStateFlags_Swimming);
 //			break;
 //
 //		case STATE_EVENT_EXIT:
-//			m_flags.ClearFlags (ECharacterStateFlags_Swimming);
+//			m_flags.ClearFlags (eActorStateFlags_Swimming);
 //			m_stateSwim.OnExit (Character);
 //			break;
 //
-//		case CHARACTER_EVENT_PREPHYSICSUPDATE:
+//		case ACTOR_EVENT_PREPHYSICSUPDATE:
 //		{
-//			const SCharacterPrePhysicsData& prePhysicsEvent = static_cast<const SStateEventCharacterMovementPrePhysics&> (event).GetPrePhysicsData ();
+//			const SActorPrePhysicsData& prePhysicsEvent = static_cast<const SStateEventActorMovementPrePhysics&> (event).GetPrePhysicsData ();
 //
 //			ProcessSprint (Character, prePhysicsEvent);
 //
@@ -327,7 +327,7 @@
 //		}
 //			break;
 //
-//		case CHARACTER_EVENT_UPDATE:
+//		case ACTOR_EVENT_UPDATE:
 //			m_stateSwim.OnUpdate (Character, static_cast<const SStateEventUpdate&>(event).GetFrameTime ());
 //			break;
 //	}
@@ -341,9 +341,9 @@
 //
 //	switch (event.GetEventId ())
 //	{
-//		case CHARACTER_EVENT_PREPHYSICSUPDATE:
+//		case ACTOR_EVENT_PREPHYSICSUPDATE:
 //		{
-//			const SCharacterPrePhysicsData& prePhysicsEvent = static_cast<const SStateEventCharacterMovementPrePhysics&> (event).GetPrePhysicsData ();
+//			const SActorPrePhysicsData& prePhysicsEvent = static_cast<const SStateEventActorMovementPrePhysics&> (event).GetPrePhysicsData ();
 //
 //			Character.m_CharacterStateSwim_WaterTestProxy.PreUpdateNotSwimming (Character, prePhysicsEvent.m_frameTime);
 //
@@ -378,15 +378,15 @@
 //{
 //	CRY_ASSERT (inputEvent.m_inputEvent == SInputEventData::EInputEvent_Sprint);
 //
-//	m_flags.SetFlags (ECharacterStateFlags_SprintPressed, inputEvent.m_activationMode == eAAM_OnPress);
+//	m_flags.SetFlags (eActorStateFlags_SprintPressed, inputEvent.m_activationMode == eAAM_OnPress);
 //}
 //
 //
-//void CCharacterStateAIMovement::ProcessSprint (const CCharacter& Character, const SCharacterPrePhysicsData& prePhysicsEvent)
+//void CCharacterStateAIMovement::ProcessSprint (const CCharacter& Character, const SActorPrePhysicsData& prePhysicsEvent)
 //{
-//	if (m_flags.AreAnyFlagsActive (ECharacterStateFlags_SprintPressed | ECharacterStateFlags_Sprinting) && CCharacterStateUtil::IsSprintingAllowed (Character, prePhysicsEvent.m_movement, Character.GetCurrentItem ()))
+//	if (m_flags.AreAnyFlagsActive (eActorStateFlags_SprintPressed | eActorStateFlags_Sprinting) && CCharacterStateUtil::IsSprintingAllowed (Character, prePhysicsEvent.m_movement, Character.GetCurrentItem ()))
 //	{
-//		m_flags.AddFlags (ECharacterStateFlags_Sprinting);
+//		m_flags.AddFlags (eActorStateFlags_Sprinting);
 //		if (Character.GetCharacterInput ()->GetType () == ICharacterInput::CHARACTER_INPUT)
 //		{
 //			static_cast<CCharacterInput*> (Character.GetCharacterInput ())->ClearCrouchAction ();
@@ -394,6 +394,6 @@
 //	}
 //	else
 //	{
-//		m_flags.ClearFlags (ECharacterStateFlags_Sprinting);
+//		m_flags.ClearFlags (eActorStateFlags_Sprinting);
 //	}
 //}

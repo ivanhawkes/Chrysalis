@@ -233,7 +233,7 @@ void CMount::Revive(EReasonForRevive reasonForRevive)
 
 void CMount::SelectMovementHierarchy()
 {
-	//StateMachineHandleEventMovement(CHARACTER_EVENT_ENTRY_CHARACTER);
+	//StateMachineHandleEventMovement(ACTOR_EVENT_ENTRY);
 }
 
 

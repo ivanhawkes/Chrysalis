@@ -13,7 +13,6 @@
 #include <ILevelSystem.h>
 #include <Game/Rules/GameRules.h>
 #include <Actor/Player/Player.h>
-#include <ActionMaps/GameActionMaps.h>
 #include <CryCore/Platform/IPlatformOS.h>
 #include <IPlayerProfiles.h>
 #include <CryFlowGraph/IFlowSystem.h>
@@ -30,11 +29,11 @@
 #include <ScriptBinds/ScriptBinds.h>
 #include <Game/Cache/GameCache.h>
 #include <Game/Registration/GameRegistration.h>
+#include <Flowgraph/FlowBaseNode.h>
 
 
-//CG2AutoRegFlowNodeBase *CG2AutoRegFlowNodeBase::m_pFirst = 0;
-//CG2AutoRegFlowNodeBase *CG2AutoRegFlowNodeBase::m_pLast = 0;
-
+CAutoRegFlowNodeBaseZero* CAutoRegFlowNodeBaseZero::m_pFirst = nullptr;
+CAutoRegFlowNodeBaseZero* CAutoRegFlowNodeBaseZero::m_pLast = nullptr;
 
 
 CGame::CGame()
@@ -74,9 +73,6 @@ CGame::~CGame()
 	// Un-Registers Game-Specific Console Commands.
 	UnRegisterGameConsoleCommands();
 
-	// Dispose of the action maps.
-	SAFE_DELETE(m_pGameActionMaps);
-
 	// Deletes The Game-Specific Physics Settings;
 	SAFE_DELETE(m_pGamePhysicsSettings);
 
@@ -112,9 +108,6 @@ bool CGame::Init(IGameFramework *pFramework)
 	// Registers For IGameFramework Event Notifications.
 	m_pGameFramework->RegisterListener(this, "CGame", FRAMEWORKLISTENERPRIORITY_GAME);
 
-	// Create a set of action maps.
-	m_pGameActionMaps = new CGameActionMaps();
-
 	// Register Game-Specific Console Variables.
 	RegisterGameCVars();
 
@@ -126,9 +119,6 @@ bool CGame::Init(IGameFramework *pFramework)
 
 	// Initialize The IPlatformOS
 	InitPlatformOS();
-
-	// Used To Load The Required Default ActionMap.
-	LoadActionMaps();
 
 	// Creates The Game-Specific Physics Settings.
 	m_pGamePhysicsSettings = new CGamePhysicsSettings();
@@ -182,6 +172,11 @@ bool CGame::Init(IGameFramework *pFramework)
 	// Search the file system to find XML files with definitions for game weapons.
 	//m_pWeaponSystem = new CWeaponSystem(this, GetISystem());
 	//m_pWeaponSystem->Scan("Parameters/Weapons");
+
+	// Load and init the default action map profile.
+	IActionMapManager* pActionMapManager = gEnv->pGame->GetIGameFramework()->GetIActionMapManager();
+	pActionMapManager->InitActionMaps("libs/config/defaultprofile.xml");
+	pActionMapManager->Enable(true);
 
 	// Initialization Was Successful.
 	return true;
@@ -338,49 +333,25 @@ void CGame::RegisterGameFlowNodes()
 {
 	// TODO: New implementation for this or we don't get flownodes.
 
-	// Gets the IFlowSystem.
-	//if (IFlowSystem *pFlowSystem = m_pGameFramework->GetIFlowSystem())
-	//{
-	//	// Gets the flownode factory used to create the about-to-be-registered flownode.
-	//	CG2AutoRegFlowNodeBase *pFactory = CG2AutoRegFlowNodeBase::m_pFirst;
+	IFlowSystem* pFlowSystem = m_pGameFramework->GetIFlowSystem();
+	if (pFlowSystem)
+	{
+		CAutoRegFlowNodeBaseZero* pFactory = CAutoRegFlowNodeBaseZero::m_pFirst;
 
-	//	while (pFactory)
-	//	{
-	//		// Register the flownode.
-	//		pFlowSystem->RegisterType(pFactory->m_sClassName, pFactory);
+		while (pFactory)
+		{
+			pFlowSystem->RegisterType(pFactory->m_sClassName, pFactory);
+			pFactory = pFactory->m_pNext;
+		}
 
-	//		// Go to the next flownode.
-	//		pFactory = pFactory->m_pNext;
-	//	}
-	//}
+		CGameRegistration::RegisterEntityFlowNodes();
+	}
 }
 
 
 IGamePhysicsSettings* CGame::GetIGamePhysicsSettings()
 {
 	return m_pGamePhysicsSettings;
-}
-
-
-void CGame::LoadActionMaps(const char* filename)
-{
-	IActionMapManager* pActionMapManager = m_pGameFramework->GetIActionMapManager();
-
-	if (pActionMapManager)
-	{
-		pActionMapManager->RegisterActionMapEventListener(m_pGameActionMaps);
-		if (pActionMapManager->InitActionMaps(filename))
-		{
-			pActionMapManager->EnableActionMap("default", true);
-			pActionMapManager->EnableActionMap("player", true);
-			pActionMapManager->Enable(true);
-
-		}
-		else
-		{
-			CryFatalError("CGame::LoadActionMaps() Invalid action maps setup");
-		}
-	}
 }
 
 
@@ -670,11 +641,6 @@ void CGame::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
 					gEnv->pLog->LogWarning("No Player To Spawn. Aborting Spawn.");
 					return;
 				}
-
-				// Physicalize the player.
-				// TODO: Surely we need to physicalise at some point. Maybe not here, but somewhere.
-				//if (!(static_cast<CPlayer*>(pClientActor)->Physicalize()))
-				//	gEnv->pLog->LogWarning("CGame::OnSystemEvent(): Failed To Physicalize The Player!");
 			}
 		}
 		break;

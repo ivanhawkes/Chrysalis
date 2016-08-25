@@ -8,6 +8,7 @@
 class CCharacter;
 struct SStateEventLedge;
 struct SCharacterMoveRequest;
+struct IItemParamsNode;
 
 
 enum ELedgeType

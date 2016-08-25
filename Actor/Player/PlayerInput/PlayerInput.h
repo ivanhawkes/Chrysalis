@@ -13,30 +13,13 @@ class CPlayerInput : public CGameObjectExtensionHelper <CPlayerInput, IPlayerInp
 public:
 
 	// ***
-	// *** IGameObjectExtension
+	// *** ISimpleExtension
 	// ***
 
-	void GetMemoryUsage(ICrySizer *pSizer) const override;
-	bool Init(IGameObject * pGameObject) override;
 	void PostInit(IGameObject * pGameObject) override;
-	void InitClient(int channelId) override {};
-	void PostInitClient(int channelId) override {};
-	bool ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override;
-	void PostReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override {};
-	bool GetEntityPoolSignature(TSerialize signature) override { return true; };
-	void Release() override { delete this; };
-	void FullSerialize(TSerialize ser) override {};
-	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int pflags) override { return true; };
-	void PostSerialize() override {};
-	void SerializeSpawnInfo(TSerialize ser) override {};
-	ISerializableInfoPtr GetSpawnInfo() override { return nullptr; };
 	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
-	void HandleEvent(const SGameObjectEvent& event) override {};
-	void ProcessEvent(SEntityEvent& event) override;
-	void SetChannelId(uint16 id) override {};
-	void SetAuthority(bool auth) override {};
 	void PostUpdate(float frameTime) override;
-	void PostRemoteSpawn() override {};
+	void HandleEvent(const SGameObjectEvent &event) override;
 
 
 	// ***
@@ -104,6 +87,14 @@ public:
 	**/
 	float GetZoomDelta() override {	return m_lastZoomDelta; };
 
+
+	/**
+	Gets movement state flags.
+	
+	\return The movement state flags.
+	**/
+	uint32 GetMovementStateFlags () { return m_movementStateFlags; };
+
 	
 	Vec3 GetHeadMovement(const Quat& baseRotation) override;
 
@@ -113,12 +104,12 @@ public:
 
 	float GetHeadYawDelta() override;
 
-
 	
 	// ***
 	// *** IActionListener
 	// ***
 
+public:
 
 	/**
 	Handles the action event.
@@ -131,35 +122,20 @@ public:
 
 
 	/** After action. */
-	virtual void AfterAction();
+	virtual void AfterAction() {};
 
 
 	// ***
 	// ***  CPlayerInput
 	// ***
 
+public:
+
 	CPlayerInput() {};
-	virtual ~CPlayerInput() {};
-
-	enum EMovementStateFlags
-	{
-		None = 0,
-		Forward = (1 << 0),
-		Backward = (1 << 1),
-		Left = (1 << 2),
-		Right = (1 << 3)
-	};
+	virtual ~CPlayerInput();
 
 
-	enum EStanceFlags
-	{
-		Standing = 0,
-		Crouching,
-		Sitting,
-		Kneeling
-	};
-
-
+protected:
 	/**
 	Action handler for moving left.
 
@@ -420,27 +396,44 @@ public:
 	*/
 	bool OnActionItemThrow(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 
-private:
 
-	/** Accumulate all the inputs since the last cycle and save the totals. These can be queried by other components during
-	the update cycle, and will provide consistent results to each component for the movement and rotation. Some other
-	values may not be consistent, due to not being cached in m_lastXXXX variables. */
-	void PrePhysicsUpdate();
+	/**
+	Generic action bar action.
+	
+	\param	entityId	   Identifier for the entity.
+	\param	actionId	   Identifier for the action.
+	\param	activationMode The activation mode.
+	\param	value		   Provides the Id number of the action bar clicked
+	
+	\return true if it succeeds, false if it fails.
+	**/
+	bool OnActionBar(EntityId entityId, const ActionId& actionId, int activationMode, int buttonId);
+	
+	bool OnActionBar01(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionBar02(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionBar03(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionBar04(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionBar05(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionBar06(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionBar07(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionBar08(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionBar09(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionBar10(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionBar11(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionBar12(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+
+private:
 
 	/** Registers the action maps and starts to listen for action map events. */
 	void RegisterActionMaps();
 
-	/** Despite it's name, it actually just stops listening for action map events. */
-	void UnregisterActionMaps();
+	void InitializeActionHandler();
+
+	/** The player. */
+	CPlayer* m_pPlayer { nullptr };
 
 	/** A static handler for the actions we are interested in hooking. */
 	TActionHandler<CPlayerInput> m_actionHandler;
-
-	/** The actions. */
-	uint32 m_actions { 0 };
-
-	/** The last actions. */
-	uint32 m_lastActions { 0 };
 
 	/** The movement mask. */
 	uint32 m_movementStateFlags { EMovementStateFlags::None };
@@ -449,10 +442,10 @@ private:
 	uint32 m_stanceFlags { EStanceFlags::Standing };
 
 	/** true when the player wishes to sprint. */
-	bool bSprint { false };
+	bool shouldSprint { false };
 
 	/** true when the player wishes to run instead of walking. */
-	bool bRun { false };
+	bool shouldRun { false };
 
 	/** The delta (radians) of pitch requested using a mouse input.*/
 	float m_mousePitchDelta { 0.0f };
@@ -489,25 +482,25 @@ private:
 	Filter pitch adjustments below this threshold (radians). This is useful for removing slight amounts of jitter on
 	mouse movements and XBox controllers, making it easier to perform precise movements in only one axis.
 	*/
-	float m_pitchFilter { 0.015f };
+	float m_pitchFilter { 0.0001f };
 	
 	/**
 	Filter yaw adjustments below this threshold (radians). This is useful for removing slight amounts of jitter on
 	mouse movements and XBox controllers, making it easier to perform precise movements in only one axis.
 	*/
-	float m_yawFilter { 0.015f };
+	float m_yawFilter { 0.0001f };
 
 	/**
 	Filter pitch adjustments below this threshold (radians). This is useful for removing slight amounts of jitter on
 	mouse movements and XBox controllers, making it easier to perform precise movements in only one axis.
 	*/
-	float m_xiPitchFilter { 0.015f };
+	float m_xiPitchFilter { 0.0001f };
 
 	/**
 	Filter yaw adjustments below this threshold (radians). This is useful for removing slight amounts of jitter on
 	mouse movements and XBox controllers, making it easier to perform precise movements in only one axis.
 	*/
-	float m_xiYawFilter { 0.015f };
+	float m_xiYawFilter { 0.0001f };
 
 	/**	Zoom delta. A value that indicates how much they wish to zoom in (negative values) or out (positive values). **/
 	float m_zoomDelta { 0.0f };

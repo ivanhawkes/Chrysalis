@@ -3,11 +3,11 @@
 #include "EntityAwareness.h"
 #include <GameObjects/GameObject.h>
 #include <IActorSystem.h>
-#include <IViewSystem.h>
 #include <IMovementController.h>
 #include <Actor/Player/Player.h>
 #include <Actor/Character/Character.h>
 #include <Camera/ICamera.h>
+#include <EntityInteraction/EntityInteraction.h>
 
 
 /** The distance forward of the actor we will ray-cast in search of entities. */
@@ -20,30 +20,6 @@ static const float proximityCloseByFactor = 0.8f;
 static const float maxRaycastStaleness = 0.05f;
 
 #define PIERCE_GLASS (13)
-
-
-CEntityAwareness::UpdateQueryFunction CEntityAwareness::m_updateQueryFunctions [] =
-{
-	&CEntityAwareness::UpdateRaycastQuery,
-	&CEntityAwareness::UpdateProximityQuery,
-	&CEntityAwareness::UpdateNearQuery,
-	&CEntityAwareness::UpdateInFrontOfQuery,
-};
-
-
-CEntityAwareness::CEntityAwareness()
-{
-	m_rayHitPierceable.dist = -1.0f;
-}
-
-
-CEntityAwareness::~CEntityAwareness()
-{
-	for (int i = 0; i < maxQueuedRays; ++i)
-	{
-		m_queuedRays [i].Reset();
-	}
-}
 
 
 // ***
@@ -72,24 +48,6 @@ void CEntityAwareness::PostInit(IGameObject * pGameObject)
 }
 
 
-bool CEntityAwareness::ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params)
-{
-	ResetGameObject();
-
-	CRY_ASSERT_MESSAGE(false, "CEntityAwareness::ReloadExtension not implemented");
-
-	return false;
-}
-
-
-bool CEntityAwareness::GetEntityPoolSignature(TSerialize signature)
-{
-	CRY_ASSERT_MESSAGE(false, "CEntityAwareness::GetEntityPoolSignature not implemented");
-
-	return true;
-}
-
-
 void CEntityAwareness::FullSerialize(TSerialize ser)
 {
 	if (ser.GetSerializationTarget() == eST_Network)
@@ -111,27 +69,13 @@ void CEntityAwareness::Update(SEntityUpdateContext& ctx, int slot)
 	if (!m_pActor)
 		return;
 
-	// If this entity is the local player, and they are in a third person view, then we might want to use the camera
-	// for entity selection, instead of the actor's eyes.
+	// Using the local player's camera is fine for now. Arguably, you should get it from the actor skeleton instead
+	// but actor's don't allow you to query the eye direction, only it's position. Heisenberg much?
 	auto localPlayer = CPlayer::GetLocalPlayer();
-	if (m_pActor->GetEntityId() == localPlayer->GetAttachedEntityId () && localPlayer->IsThirdPerson())
-	{
-		auto camera = localPlayer->GetCamera();
-		m_eyePosition = camera->GetPosition();
-		m_eyeDirection = camera->GetRotation().v.GetNormalized();
-	}
-	else
-	{
-		// TODO: Movement controller doesn't update eye position unless the character is moving under their control.
-		// For cases where they are falling or sliding, it fails. Need to correct the movement controller most likely.
-		if (IMovementController* pMC = m_pActor->GetMovementController())
-		{
-			SMovementState s;
-			pMC->GetMovementState(s);
-			m_eyePosition = s.eyePosition;
-			m_eyeDirection = s.eyeDirection.GetNormalized();
-		}
-	}
+	auto camera = localPlayer->GetCamera();
+
+	m_eyePosition = camera->GetPosition();
+	m_eyeDirection = camera->GetRotation().GetNormalized();
 }
 
 
@@ -148,6 +92,30 @@ void CEntityAwareness::GetMemoryUsage(ICrySizer *pSizer) const
 // ***
 
 
+CEntityAwareness::UpdateQueryFunction CEntityAwareness::m_updateQueryFunctions [] =
+{
+	&CEntityAwareness::UpdateRaycastQuery,
+	&CEntityAwareness::UpdateProximityQuery,
+	&CEntityAwareness::UpdateNearQuery,
+	&CEntityAwareness::UpdateInFrontOfQuery,
+};
+
+
+CEntityAwareness::CEntityAwareness()
+{
+	m_rayHitPierceable.dist = -1.0f;
+}
+
+
+CEntityAwareness::~CEntityAwareness()
+{
+	for (int i = 0; i < maxQueuedRays; ++i)
+	{
+		m_queuedRays [i].Reset();
+	}
+}
+
+
 void CEntityAwareness::UpdateRaycastQuery()
 {
 	if (!m_pActor || m_pActor->GetEntity()->IsHidden())
@@ -155,7 +123,6 @@ void CEntityAwareness::UpdateRaycastQuery()
 
 	if (m_eyeDirection.IsValid())
 	{
-		// TODO: copy this method of skipping the actor over to the camera code.
 		IEntity * pEntity = m_pActor->GetEntity();
 		IPhysicalEntity * pPhysEnt = pEntity ? pEntity->GetPhysics() : nullptr;
 		IPhysicalEntity *skipEntities [1];
@@ -166,7 +133,7 @@ void CEntityAwareness::UpdateRaycastQuery()
 
 		m_queuedRays [raySlot].rayId = g_pGame->GetRayCaster().Queue(
 			RayCastRequest::HighPriority,
-			RayCastRequest(m_eyePosition, m_eyeDirection * forwardCastDistance,
+			RayCastRequest(m_eyePosition, m_eyeDirection * FORWARD_DIRECTION * forwardCastDistance,
 				ent_all,
 				rwi_pierceability(PIERCE_GLASS) | rwi_colltype_any,
 				skipEntities,
@@ -176,8 +143,8 @@ void CEntityAwareness::UpdateRaycastQuery()
 
 		m_queuedRays [raySlot].counter = ++m_requestCounter;
 
-		gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(m_eyePosition, ColorB(0, 0, 128), m_eyePosition + (m_eyeDirection * forwardCastDistance),
-			ColorB(0, 0, 255), 8.0f);
+		//gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(m_eyePosition, ColorB(0, 0, 128), 
+		//	m_eyePosition + (m_eyeDirection * FORWARD_DIRECTION * forwardCastDistance), ColorB(0, 0, 255), 8.0f);
 	}
 
 	// We've queued up the ray-cast, but since it's asynchronous we might not get a result for a little while. To
@@ -289,10 +256,12 @@ void CEntityAwareness::UpdateInFrontOfQuery()
 	m_entitiesInFrontOf.clear();
 
 	// A line segment to represent where the actor is looking.
-	Lineseg lineseg(m_eyePosition, m_eyePosition + m_proximityRadius * m_eyeDirection);
+	Lineseg lineseg(m_eyePosition, m_eyePosition + (m_eyeDirection * FORWARD_DIRECTION * m_proximityRadius));
 
 	// DEBUG: get the lineseg to show up.
 	gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(lineseg.start, ColorB(64, 0, 0), lineseg.end, ColorB(128, 0, 0), 8.0f);
+	gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(lineseg.start, 0.05f, ColorB(0, 0, 255, 255));
+	gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(lineseg.end, 0.05f, ColorB(0, 0, 255, 255));
 
 	// Retrieve the actor EntityId so we can exclude ourselves from the results.
 	EntityId ownerActorId = m_pActor ? m_pActor->GetEntityId() : INVALID_ENTITYID;
@@ -317,7 +286,20 @@ void CEntityAwareness::UpdateInFrontOfQuery()
 				// DEBUG: let's see those boxes.
 				gEnv->pRenderer->GetIRenderAuxGeom()->DrawOBB(obb, pEntity->GetWorldTM(), true, ColorB(0, 0, 196), EBoundingBoxDrawStyle::eBBD_Extremes_Color_Encoded);
 
-				m_entitiesInFrontOf.push_back(pEntity->GetId());
+				// TEST: wrong place for this test - move it to somewhere i can see it try all the entities near us.
+				auto pGameObject = gEnv->pGame->GetIGameFramework()->GetGameObject(pEntity->GetId());
+				if (pGameObject)
+				{
+					auto pInteractor = static_cast<IEntityInteraction*> (pGameObject->QueryExtension("EntityInteraction"));
+					if (pInteractor)
+					{
+						// There's an interactor component, so this is an interactive entity.
+						// 
+						auto verbs = pInteractor->GetVerbs();
+					}
+
+					m_entitiesInFrontOf.push_back(pEntity->GetId());
+				}
 			}
 		}
 	}
@@ -350,7 +332,7 @@ void CEntityAwareness::OnRayCastDataReceived(const QueuedRayID& rayID, const Ray
 		//			if (m_bDebug)
 		{
 			// Initial position for our target.
-			gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(m_rayHitSolid.pt, 0.05f, ColorB(255, 0, 0));
+			//gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(m_rayHitSolid.pt, 0.05f, ColorB(255, 0, 0));
 		}
 		//#endif
 
@@ -377,7 +359,7 @@ void CEntityAwareness::OnRayCastDataReceived(const QueuedRayID& rayID, const Ray
 			m_rayHitPierceable.next = nullptr;
 
 			// DEBUG
-			gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(result.hits [1].pt, 0.16f, ColorB(0, 0, 255));
+			//gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(result.hits [1].pt, 0.16f, ColorB(0, 0, 255));
 		}
 	}
 

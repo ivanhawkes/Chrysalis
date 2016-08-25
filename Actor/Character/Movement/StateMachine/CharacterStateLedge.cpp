@@ -6,7 +6,7 @@
 #include <ConsoleVariables/ConsoleVariables.h>
 #include "CharacterStateLedge.h"
 #include "IAnimatedCharacter.h"
-#include "CharacterStateUtil.h"
+#include <Actor/Movement/StateMachine/ActorStateUtility.h>
 #include "Environment/Ledge/LedgeManager.h"
 #include "Utility/CryWatch.h"
 #include "Actor/Animation/Player/PlayerAnimation.h"
@@ -86,7 +86,7 @@ public:
 					fragTagDef->Set(m_fragTags, vaultID, true);
 					break;
 				}
-					// perhaps set ledge off of midair and falling here. But ledge should be the default in data
+				// perhaps set ledge off of midair and falling here. But ledge should be the default in data
 			}
 
 			switch (m_transitionType)
@@ -171,7 +171,7 @@ public:
 				cameraAnimationSettings.rotationFactor = g_pGameCVars->pl_ledgeClamber.cameraBlendWeight;
 				m_Character.PartialAnimationControlled (true, cameraAnimationSettings);*/
 			}
-				break;
+			break;
 		}
 	}
 
@@ -196,12 +196,12 @@ public:
 		}
 
 		m_Character.PartialAnimationControlled (false, CharacterCameraAnimationSettings ());
-		
+
 		SActorStats *pCharacterStats = m_Character.GetActorState ();
 		pCharacterStats->forceSTAP = SActorStats::eFS_None;
 		pCharacterStats->bDisableTranslationPinning = false;*/
 
-		m_Character.StateMachineHandleEventMovement(CHARACTER_EVENT_LEDGE_ANIM_FINISHED);
+		m_Character.StateMachineHandleEventMovement(ACTOR_EVENT_LEDGE_ANIM_FINISHED);
 	}
 
 
@@ -493,11 +493,11 @@ void CCharacterStateLedge::OnAnimFinished(CCharacter &Character)
 		{
 		if (ledgeInfo.AreAnyFlagsSet (kLedgeFlag_useVault | kLedgeFlag_useHighVault) && ledgeInfo.AreFlagsSet (kLedgeFlag_endFalling))
 		{
-		Character.StateMachineHandleEventMovement (CHARACTER_EVENT_FALL);
+		Character.StateMachineHandleEventMovement (ACTOR_EVENT_FALL);
 		}
 		else
 		{
-		Character.StateMachineHandleEventMovement (CHARACTER_EVENT_GROUND);
+		Character.StateMachineHandleEventMovement (ACTOR_EVENT_GROUND);
 		}
 		}
 
@@ -966,9 +966,9 @@ bool CCharacterStateLedge::TryLedgeGrab(CCharacter& Character, const float expec
 
 float CCharacterStateLedge::GetLedgeGrabSpeed(const CCharacter& Character) const
 {
-	const float kSpeedMultiplier [3] = {GetLedgeGrabbingParams().m_fNormalSpeedUp,
+	const float kSpeedMultiplier [3] = { GetLedgeGrabbingParams().m_fNormalSpeedUp,
 		GetLedgeGrabbingParams().m_fMobilitySpeedUp,
-		GetLedgeGrabbingParams().m_fMobilitySpeedUpMaximum};
+		GetLedgeGrabbingParams().m_fMobilitySpeedUpMaximum };
 
 	return kSpeedMultiplier [0];
 }

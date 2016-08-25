@@ -62,7 +62,7 @@ public:
 
 	\return	The lesser fate.
 	*/
-	ILINE uint32 GetLesserFate() const { return static_cast<uint32_t>(m_fate & 0x0000FFFF); } 
+	ILINE uint32 GetLesserFate() const { return static_cast<uint32_t>(m_fate & 0x0000FFFF); }
 
 private:
 

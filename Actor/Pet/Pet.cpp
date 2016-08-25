@@ -233,7 +233,7 @@ void CPet::Revive(EReasonForRevive reasonForRevive)
 
 void CPet::SelectMovementHierarchy()
 {
-//	StateMachineHandleEventMovement(CHARACTER_EVENT_ENTRY_CHARACTER);
+//	StateMachineHandleEventMovement(ACTOR_EVENT_ENTRY);
 }
 
 

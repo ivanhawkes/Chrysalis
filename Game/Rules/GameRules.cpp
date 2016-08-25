@@ -3,6 +3,7 @@
 #include "GameRules.h"
 #include "IActorSystem.h"
 #include <Game/Game.h>
+#include <Actor/Player/Player.h>
 
 
 // ***
@@ -179,13 +180,13 @@ void CGameRules::OnDisconnect(EDisconnectionCause cause, const char *desc)
 
 bool CGameRules::OnClientConnect(int channelId, bool isReset)
 {
-	// When the client has connected, create the client actor (Player).
-	// TODO: Get the player name from Steam or something better than dude.
-	auto pPlayerActor = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->CreateActor(
-		channelId, "Dude", "Player",
-		Vec3(0, 0, 0), Quat(Ang3(0, 0, 0)), Vec3(1, 1, 1));
+	auto *pActorSystem = gEnv->pGame->GetIGameFramework()->GetIActorSystem();
 
-	return true;
+	// Called when a new client connects to the server. We need to spawn a player class to get the ball rolling.
+	if (pActorSystem->CreateActor(channelId, "PlayerProxy", "Player", ZERO, IDENTITY, Vec3(1, 1, 1)) != nullptr)
+		return true;
+
+	return false;
 }
 
 

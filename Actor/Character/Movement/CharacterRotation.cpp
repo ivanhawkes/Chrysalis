@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 
 #include <Actor/Player/Player.h>
-//#include <PlayerInput/PlayerInput.h>
+//#include <Actor/Player/PlayerInput/PlayerInput.h>
 #include <Actor/Character/Character.h>
 #include <Actor/Character/Movement/CharacterRotation.h>
 #include <Actor/Character/Movement/CharacterMovementController.h>
@@ -139,58 +139,58 @@ void CCharacterRotation::FullSerialize(TSerialize ser)
 
 void CCharacterRotation::ProcessNormal(float frameTime)
 {
-//#ifdef ENABLE_NAN_CHECK
-//	//create a matrix perpendicular to the ground
-//	Vec3 up(0, 0, 1);
-//	//..or perpendicular to the linked object Z
-//	SLinkStats *pLinkStats = &m_character.m_linkStats;
-//	if (pLinkStats->linkID && pLinkStats->flags & SLinkStats::LINKED_FREELOOK)
-//	{
-//		IEntity *pLinked = pLinkStats->GetLinked();
-//		if (pLinked)
-//			up = pLinked->GetRotation().GetColumn2();
-//	}
-//
-//	const Vec3 right(m_baseQuat.GetColumn0());
-//	const Vec3 forward((up % right).GetNormalized());
-//
-//	PR_CHECKQNAN_VEC(up);
-//	PR_CHECKQNAN_VEC(right);
-//#endif //ENABLE_NAN_CHECK
-//
-//	const Ang3 vNewDeltaAngles = m_deltaAngles * m_character.m_actorState.flashBangStunMult;
-//
-//#ifdef PLAYER_MOVEMENT_DEBUG_ENABLED
-//	m_character.DebugGraph_AddValue("AimDeltaH", vNewDeltaAngles.z);
-//	m_character.DebugGraph_AddValue("AimDeltaV", vNewDeltaAngles.x);
-//#endif
-//
-//	Ang3 newViewAngles;
-//	newViewAngles.Set(m_viewAngles.x + vNewDeltaAngles.x, m_viewAngles.y, m_viewAngles.z + vNewDeltaAngles.z);
-//	newViewAngles += m_externalAngles;
-//
-//	// These values need to be used because the player rotation is a quat and quaternions wrap on 720 degrees.
-//	newViewAngles.z = (float) __fsel(newViewAngles.z - (2.0f * gf_PI2), newViewAngles.z - (4.0f * gf_PI2), newViewAngles.z);
-//	newViewAngles.z = (float) __fsel(-(newViewAngles.z + (2.0f * gf_PI2)), newViewAngles.z + (4.0f * gf_PI2), newViewAngles.z);
-//
-//	m_viewAngles = newViewAngles;
-//
-//	if (m_character.CanTurnBody())
-//	{
-//		m_baseQuat = Quat::CreateRotationZ(newViewAngles.z);
-//	}
-//
-//	newViewAngles.y += m_viewRoll;
-//	m_viewQuat.SetRotationXYZ(newViewAngles);
-//
-//	m_deltaAngles = vNewDeltaAngles;
-//
-//	// TODO: Add back in when vehicles are ready.
-//	if (!m_character.GetLinkedVehicle())
-//	{
-//	//	// TODO: We might need new aspects for characters instead of players.
-//	//	CHANGED_NETWORK_STATE_REF(m_character, CPlayer::ASPECT_INPUT_CLIENT);
-//	}
+	//#ifdef ENABLE_NAN_CHECK
+	//	//create a matrix perpendicular to the ground
+	//	Vec3 up(0, 0, 1);
+	//	//..or perpendicular to the linked object Z
+	//	SLinkStats *pLinkStats = &m_character.m_linkStats;
+	//	if (pLinkStats->linkID && pLinkStats->flags & SLinkStats::LINKED_FREELOOK)
+	//	{
+	//		IEntity *pLinked = pLinkStats->GetLinked();
+	//		if (pLinked)
+	//			up = pLinked->GetRotation().GetColumn2();
+	//	}
+	//
+	//	const Vec3 right(m_baseQuat.GetColumn0());
+	//	const Vec3 forward((up % right).GetNormalized());
+	//
+	//	PR_CHECKQNAN_VEC(up);
+	//	PR_CHECKQNAN_VEC(right);
+	//#endif //ENABLE_NAN_CHECK
+	//
+	//	const Ang3 vNewDeltaAngles = m_deltaAngles * m_character.m_actorState.flashBangStunMult;
+	//
+	//#ifdef PLAYER_MOVEMENT_DEBUG_ENABLED
+	//	m_character.DebugGraph_AddValue("AimDeltaH", vNewDeltaAngles.z);
+	//	m_character.DebugGraph_AddValue("AimDeltaV", vNewDeltaAngles.x);
+	//#endif
+	//
+	//	Ang3 newViewAngles;
+	//	newViewAngles.Set(m_viewAngles.x + vNewDeltaAngles.x, m_viewAngles.y, m_viewAngles.z + vNewDeltaAngles.z);
+	//	newViewAngles += m_externalAngles;
+	//
+	//	// These values need to be used because the player rotation is a quat and quaternions wrap on 720 degrees.
+	//	newViewAngles.z = (float) __fsel(newViewAngles.z - (2.0f * gf_PI2), newViewAngles.z - (4.0f * gf_PI2), newViewAngles.z);
+	//	newViewAngles.z = (float) __fsel(-(newViewAngles.z + (2.0f * gf_PI2)), newViewAngles.z + (4.0f * gf_PI2), newViewAngles.z);
+	//
+	//	m_viewAngles = newViewAngles;
+	//
+	//	if (m_character.CanTurnBody())
+	//	{
+	//		m_baseQuat = Quat::CreateRotationZ(newViewAngles.z);
+	//	}
+	//
+	//	newViewAngles.y += m_viewRoll;
+	//	m_viewQuat.SetRotationXYZ(newViewAngles);
+	//
+	//	m_deltaAngles = vNewDeltaAngles;
+	//
+	//	// TODO: Add back in when vehicles are ready.
+	//	if (!m_character.GetLinkedVehicle())
+	//	{
+	//	//	// TODO: We might need new aspects for characters instead of players.
+	//	//	CHANGED_NETWORK_STATE_REF(m_character, CPlayer::ASPECT_INPUT_CLIENT);
+	//	}
 }
 
 

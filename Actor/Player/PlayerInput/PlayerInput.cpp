@@ -4,32 +4,15 @@
 #include <IActionMapManager.h>
 #include <CryMath/Cry_Math.h>
 #include <Game/Game.h>
-#include <ActionMaps/GameActionMaps.h>
 #include <Actor/Player/Player.h>
 #include <Actor/Character/Character.h>
 #include <Camera/ICamera.h>
-#include <Camera/ICameraManager.h>
 #include <ConsoleVariables/ConsoleVariables.h>
 
 
 // ***
-// *** IGameObjectExtension
+// *** ISimpleExtension
 // ***
-
-
-void CPlayerInput::GetMemoryUsage(ICrySizer *pSizer) const
-{
-	pSizer->Add(*this);
-}
-
-
-bool CPlayerInput::Init(IGameObject * pGameObject)
-{
-	// Critical this is called.
-	SetGameObject(pGameObject);
-
-	return true;
-}
 
 
 void CPlayerInput::PostInit(IGameObject * pGameObject)
@@ -37,26 +20,33 @@ void CPlayerInput::PostInit(IGameObject * pGameObject)
 	// Allow this instance to be updated every frame.
 	pGameObject->EnableUpdateSlot(this, 0);
 
-	// We will require pre-physics updates.
-	pGameObject->EnablePrePhysicsUpdate(ePPU_Always);
+	// Allow this instance to be post-updated every frame.
+	pGameObject->EnablePostUpdates(this);
 
-	// Register for pre-physics update.
-	RegisterEvent(ENTITY_EVENT_PREPHYSICSUPDATE, IComponent::EComponentFlags_Enable);
+	// Query for the player that owns this extension.
+	m_pPlayer = static_cast<CPlayer *>(pGameObject->QueryExtension("Player"));
 
-	RegisterActionMaps();
-}
-
-
-bool CPlayerInput::ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params)
-{
-	// Restores this instance's game object in case it has changed.
-	ResetGameObject();
-
-	return true;
+	// Detect when we become the local player.
+	const int requiredEvents [] = { eGFE_BecomeLocalPlayer };
+	pGameObject->UnRegisterExtForEvents(this, NULL, 0);
+	pGameObject->RegisterExtForEvents(this, requiredEvents, sizeof(requiredEvents) / sizeof(int));
 }
 
 
 void CPlayerInput::Update(SEntityUpdateContext& ctx, int updateSlot)
+{
+}
+
+
+// NOTE: By accumulating the deltas in the post update, we get consistent values back during pre-physics
+// and update, which is where most the work is done. There is zero chance of errors due to drift in values
+// from one update / pre-physics to another.
+// The downside is we have a definite lag of one frame for all input - and for VR this might be killer.
+// Ideally we would have a component system able to prioritise objects before others - and this would be
+// given a high priority.
+// TODO: Re-write when the above is available.
+
+void CPlayerInput::PostUpdate(float frameTime)
 {
 	// We can just add up all the acculmated requests to find out how much pitch / yaw is being requested.
 	// It's also a good time to filter out any small movement requests to stabilise the camera / etc.
@@ -76,19 +66,13 @@ void CPlayerInput::Update(SEntityUpdateContext& ctx, int updateSlot)
 }
 
 
-void CPlayerInput::ProcessEvent(SEntityEvent& event)
+void CPlayerInput::HandleEvent(const SGameObjectEvent &event)
 {
-	switch (event.event)
+	// We only register action maps if we are the local player.
+	if (event.event == eGFE_BecomeLocalPlayer)
 	{
-		case ENTITY_EVENT_PREPHYSICSUPDATE:
-			PrePhysicsUpdate();
-			break;
+		RegisterActionMaps();
 	}
-}
-
-
-void CPlayerInput::PostUpdate(float frameTime)
-{
 }
 
 
@@ -100,15 +84,13 @@ void CPlayerInput::PostUpdate(float frameTime)
 void CPlayerInput::ResetMovementState()
 {
 	m_movementStateFlags = EMovementStateFlags::None;
-	bSprint = false;
-	bRun = false;
+	shouldSprint = false;
+	shouldRun = false;
 }
 
 
 void CPlayerInput::ResetActionState()
 {
-	m_actions = 0;
-	m_lastActions = m_actions;
 }
 
 
@@ -195,21 +177,18 @@ Vec3 CPlayerInput::GetHeadMovement(const Quat& baseRotation)
 
 Ang3 CPlayerInput::GetHeadRotationDelta()
 {
-//	return Ang3(m_lastPitchDelta, 0.0f, m_lastYawDelta);
 	return Ang3(0.0f, 0.0f, 0.0f);
 }
 
 
 float CPlayerInput::GetHeadPitchDelta()
 {
-//	return m_lastPitchDelta;
 	return 0.0f;
 }
 
 
 float CPlayerInput::GetHeadYawDelta()
 {
-//	return m_lastYawDelta;
 	return 0.0f;
 }
 
@@ -225,74 +204,95 @@ void CPlayerInput::OnAction(const ActionId& action, int activationMode, float va
 }
 
 
-void CPlayerInput::AfterAction()
-{}
-
-
 // ***
 // *** CPlayerInput
 // ***
 
+CPlayerInput::~CPlayerInput()
+{
+	// Clean up our action map usage.
+	IActionMapManager* pActionMapManager = gEnv->pGame->GetIGameFramework()->GetIActionMapManager();
+	//pActionMapManager->EnableActionMap("player", false);
+	pActionMapManager->RemoveExtraActionListener(this, "player");
+
+	// NOTE: Good sense says we should be able to capture and release the actions - but it doesn't seem to like it when
+	// two extensions do it on one game object...commented out to make it work, but left in codefor explanation.
+	// CCameraManager is handling it for us.
+	// This technique seems to be fragile - expect it to break at some point.
+	// TODO: refactor this out.
+	//GetGameObject()->ReleaseActions(this);
+}
+
 void CPlayerInput::RegisterActionMaps()
 {
+	// Populate the action handler callbacks so that we get action map events.
+	InitializeActionHandler();
+
+	// Try and enable the "player" actions, which control our player.
 	IActionMapManager* pActionMapManager = gEnv->pGame->GetIGameFramework()->GetIActionMapManager();
+	//pActionMapManager->EnableActionMap("player", true);
+	pActionMapManager->AddExtraActionListener(this, "player");
 
-	if (pActionMapManager)
-	{
-		// Register our action map listener.
-		pActionMapManager->AddExtraActionListener(this);
-
-		// Only add the handlers once.
-		if (m_actionHandler.GetNumHandlers() == 0)
-		{
-			// Basic movement.
-			m_actionHandler.AddHandler(g_pGame->ActionMaps().move_left, &CPlayerInput::OnActionMoveLeft);
-			m_actionHandler.AddHandler(g_pGame->ActionMaps().move_right, &CPlayerInput::OnActionMoveRight);
-			m_actionHandler.AddHandler(g_pGame->ActionMaps().move_forward, &CPlayerInput::OnActionMoveForward);
-			m_actionHandler.AddHandler(g_pGame->ActionMaps().move_backward, &CPlayerInput::OnActionMoveBackward);
-
-			// Mouse yaw and pitch handlers.
-			m_actionHandler.AddHandler(g_pGame->ActionMaps().mouse_rotateyaw, &CPlayerInput::OnActionRotateYaw);
-			m_actionHandler.AddHandler(g_pGame->ActionMaps().mouse_rotatepitch, &CPlayerInput::OnActionRotatePitch);
-
-			// Zoom handlers.
-			m_actionHandler.AddHandler(g_pGame->ActionMaps().tpv_zoom_in, &CPlayerInput::OnActionZoomIn);
-			m_actionHandler.AddHandler(g_pGame->ActionMaps().tpv_zoom_out, &CPlayerInput::OnActionZoomOut);
-
-			// XBox controller yaw and pitch handlers.
-			m_actionHandler.AddHandler(g_pGame->ActionMaps().xi_rotateyaw, &CPlayerInput::OnActionXIRotateYaw);
-			m_actionHandler.AddHandler(g_pGame->ActionMaps().xi_rotatepitch, &CPlayerInput::OnActionXIRotatePitch);
-
-			// Jump.
-			m_actionHandler.AddHandler(g_pGame->ActionMaps().move_jump, &CPlayerInput::OnActionJump);
-
-			// Walk, run / jog, sprint.
-			m_actionHandler.AddHandler(g_pGame->ActionMaps().move_walkrun, &CPlayerInput::OnActionWalkRun);
-			m_actionHandler.AddHandler(g_pGame->ActionMaps().move_sprint, &CPlayerInput::OnActionSprint);
-
-			// Stances under player control.
-			m_actionHandler.AddHandler(g_pGame->ActionMaps().stance_crouch, &CPlayerInput::OnActionCrouch);
-			m_actionHandler.AddHandler(g_pGame->ActionMaps().stance_kneel, &CPlayerInput::OnActionKneel);
-			m_actionHandler.AddHandler(g_pGame->ActionMaps().stance_sit, &CPlayerInput::OnActionSit);
-
-			// Interact with an object.
-			m_actionHandler.AddHandler(g_pGame->ActionMaps().item_use, &CPlayerInput::OnActionItemUse);
-			m_actionHandler.AddHandler(g_pGame->ActionMaps().item_pickup, &CPlayerInput::OnActionItemPickup);
-			m_actionHandler.AddHandler(g_pGame->ActionMaps().item_drop, &CPlayerInput::OnActionItemDrop);
-			m_actionHandler.AddHandler(g_pGame->ActionMaps().item_throw, &CPlayerInput::OnActionItemThrow);
-		}
-	}
+	// NOTE: Good sense says we should be able to capture and release the actions - but it doesn't seem to like it when
+	// two extensions do it on one game object...commented out to make it work, but left in codefor explanation.
+	// CCameraManager is handling it for us.
+	// This technique seems to be fragile - expect it to break at some point.
+	// TODO: refactor this out.
+	// GetGameObject()->CaptureActions(this); 
 }
 
 
-void CPlayerInput::UnregisterActionMaps()
+void CPlayerInput::InitializeActionHandler()
 {
-	gEnv->pGame->GetIGameFramework()->GetIActionMapManager()->RemoveExtraActionListener(this);
-}
+	// Basic movement.
+	m_actionHandler.AddHandler(ActionId("move_left"), &CPlayerInput::OnActionMoveLeft);
+	m_actionHandler.AddHandler(ActionId("move_right"), &CPlayerInput::OnActionMoveRight);
+	m_actionHandler.AddHandler(ActionId("move_forward"), &CPlayerInput::OnActionMoveForward);
+	m_actionHandler.AddHandler(ActionId("move_backward"), &CPlayerInput::OnActionMoveBackward);
 
+	// Mouse yaw and pitch handlers.
+	m_actionHandler.AddHandler(ActionId("mouse_rotateyaw"), &CPlayerInput::OnActionRotateYaw);
+	m_actionHandler.AddHandler(ActionId("mouse_rotatepitch"), &CPlayerInput::OnActionRotatePitch);
 
-void CPlayerInput::PrePhysicsUpdate()
-{
+	// Zoom handlers.
+	m_actionHandler.AddHandler(ActionId("tpv_zoom_in"), &CPlayerInput::OnActionZoomIn);
+	m_actionHandler.AddHandler(ActionId("tpv_zoom_out"), &CPlayerInput::OnActionZoomOut);
+
+	// XBox controller yaw and pitch handlers.
+	m_actionHandler.AddHandler(ActionId("xi_rotateyaw"), &CPlayerInput::OnActionXIRotateYaw);
+	m_actionHandler.AddHandler(ActionId("xi_rotatepitch"), &CPlayerInput::OnActionXIRotatePitch);
+
+	// Jump.
+	m_actionHandler.AddHandler(ActionId("move_jump"), &CPlayerInput::OnActionJump);
+
+	// Walk, run / jog, sprint.
+	m_actionHandler.AddHandler(ActionId("move_walkrun"), &CPlayerInput::OnActionWalkRun);
+	m_actionHandler.AddHandler(ActionId("move_sprint"), &CPlayerInput::OnActionSprint);
+
+	// Stances under player control.
+	m_actionHandler.AddHandler(ActionId("stance_crouch"), &CPlayerInput::OnActionCrouch);
+	m_actionHandler.AddHandler(ActionId("stance_kneel"), &CPlayerInput::OnActionKneel);
+	m_actionHandler.AddHandler(ActionId("stance_sit"), &CPlayerInput::OnActionSit);
+
+	// Interact with an object.
+	m_actionHandler.AddHandler(ActionId("item_use"), &CPlayerInput::OnActionItemUse);
+	m_actionHandler.AddHandler(ActionId("item_pickup"), &CPlayerInput::OnActionItemPickup);
+	m_actionHandler.AddHandler(ActionId("item_drop"), &CPlayerInput::OnActionItemDrop);
+	m_actionHandler.AddHandler(ActionId("item_throw"), &CPlayerInput::OnActionItemThrow);
+
+	// Action bars.
+	m_actionHandler.AddHandler(ActionId("actionbar_01"), &CPlayerInput::OnActionBar01);
+	m_actionHandler.AddHandler(ActionId("actionbar_02"), &CPlayerInput::OnActionBar02);
+	m_actionHandler.AddHandler(ActionId("actionbar_03"), &CPlayerInput::OnActionBar03);
+	m_actionHandler.AddHandler(ActionId("actionbar_04"), &CPlayerInput::OnActionBar04);
+	m_actionHandler.AddHandler(ActionId("actionbar_05"), &CPlayerInput::OnActionBar05);
+	m_actionHandler.AddHandler(ActionId("actionbar_06"), &CPlayerInput::OnActionBar06);
+	m_actionHandler.AddHandler(ActionId("actionbar_07"), &CPlayerInput::OnActionBar07);
+	m_actionHandler.AddHandler(ActionId("actionbar_08"), &CPlayerInput::OnActionBar08);
+	m_actionHandler.AddHandler(ActionId("actionbar_09"), &CPlayerInput::OnActionBar09);
+	m_actionHandler.AddHandler(ActionId("actionbar_10"), &CPlayerInput::OnActionBar10);
+	m_actionHandler.AddHandler(ActionId("actionbar_11"), &CPlayerInput::OnActionBar11);
+	m_actionHandler.AddHandler(ActionId("actionbar_12"), &CPlayerInput::OnActionBar12);
 }
 
 
@@ -422,7 +422,7 @@ bool CPlayerInput::OnActionXIRotatePitch(EntityId entityId, const ActionId& acti
 bool CPlayerInput::OnActionZoomIn(EntityId entityId, const ActionId& actionId, int activationMode, float value)
 {
 	m_zoomDelta -= 1.0f;
-	
+
 	return false;
 }
 
@@ -483,7 +483,7 @@ bool CPlayerInput::OnActionWalkRun(EntityId entityId, const ActionId& actionId, 
 {
 	if (activationMode == eAAM_OnPress)
 	{
-		bRun = !bRun;
+		shouldRun = !shouldRun;
 		CryLogAlways("Player toggled walking / running");
 	}
 
@@ -495,12 +495,12 @@ bool CPlayerInput::OnActionSprint(EntityId entityId, const ActionId& actionId, i
 {
 	if (activationMode == eAAM_OnRelease)
 	{
-		bSprint = false;
+		shouldSprint = false;
 		CryLogAlways("Player stopped sprinting");
 	}
 	else if (activationMode && (eAAM_OnPress || eAAM_OnHold))
 	{
-		bSprint = true;
+		shouldSprint = true;
 		CryLogAlways("Player sprinting");
 	}
 
@@ -562,3 +562,94 @@ bool CPlayerInput::OnActionItemThrow(EntityId entityId, const ActionId& actionId
 
 	return false;
 }
+
+
+bool CPlayerInput::OnActionBar(EntityId entityId, const ActionId& actionId, int activationMode, int buttonId)
+{
+	if (activationMode == eAAM_OnRelease)
+	{
+		// Nothing happening at present.
+	}
+	else if (activationMode && (eAAM_OnPress || eAAM_OnHold))
+	{
+		if (auto pActor = CPlayer::GetLocalActor())
+		{
+			pActor->OnActionBarUse(entityId, buttonId);
+		}
+	}
+
+	return false;
+}
+
+
+bool CPlayerInput::OnActionBar01(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	return OnActionBar(entityId, actionId, activationMode, 1);
+}
+
+
+bool CPlayerInput::OnActionBar02(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	return OnActionBar(entityId, actionId, activationMode, 2);
+}
+
+
+bool CPlayerInput::OnActionBar03(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	return OnActionBar(entityId, actionId, activationMode, 3);
+}
+
+
+bool CPlayerInput::OnActionBar04(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	return OnActionBar(entityId, actionId, activationMode, 4);
+}
+
+
+bool CPlayerInput::OnActionBar05(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	return OnActionBar(entityId, actionId, activationMode, 5);
+}
+
+
+bool CPlayerInput::OnActionBar06(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	return OnActionBar(entityId, actionId, activationMode, 6);
+}
+
+
+bool CPlayerInput::OnActionBar07(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	return OnActionBar(entityId, actionId, activationMode, 7);
+}
+
+
+bool CPlayerInput::OnActionBar08(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	return OnActionBar(entityId, actionId, activationMode, 8);
+}
+
+
+bool CPlayerInput::OnActionBar09(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	return OnActionBar(entityId, actionId, activationMode, 9);
+}
+
+
+bool CPlayerInput::OnActionBar10(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	return OnActionBar(entityId, actionId, activationMode, 10);
+}
+
+
+bool CPlayerInput::OnActionBar11(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	return OnActionBar(entityId, actionId, activationMode, 11);
+}
+
+
+bool CPlayerInput::OnActionBar12(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	return OnActionBar(entityId, actionId, activationMode, 12);
+}
+

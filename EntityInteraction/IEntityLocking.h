@@ -1,9 +1,9 @@
 #pragma once
 
-#include <IGameObject.h>
+#include <Entities/Helpers/ISimpleExtension.h>
 
 
-struct IEntityLocking : public IGameObjectExtension
+struct IEntityLocking : public ISimpleExtension
 {
 	virtual bool IsUsable(EntityId entityId) const = 0;
 	virtual bool IsLocked() const = 0;

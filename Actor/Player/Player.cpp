@@ -13,9 +13,8 @@
 #include <Camera/ICamera.h>
 #include <Camera/ICameraManager.h>
 #include <Actor/Character/Character.h>
-#include <PlayerInput/PlayerInput.h>
-#include <PlayerInput/IPlayerInput.h>
-//#include <steam/steam_api.h>
+#include <Actor/Player/PlayerInput/PlayerInput.h>
+#include <Actor/Player/PlayerInput/IPlayerInput.h>
 
 
 CPlayer::CPlayer()
@@ -52,115 +51,8 @@ bool CPlayer::Init(IGameObject * pGameObject)
 	// Critical this is called.
 	SetGameObject(pGameObject);
 
-	/**
-	Stores whether this instance is the client actor. A player might be connected through a network or at the PC;
-	this will let us know when they are the local client.
-	
-	TODO: In HandleEvent this is just set straight to true - we need to unify the approach for dealing with local client.
-	*/
-	m_bClient = (((CGame*) gEnv->pGame)->GetClientActorID() == GetEntityId());
-
-	IEntity *pEntity = GetEntity();
-	IEntityClass *pEntityClass = pEntity->GetClass();
-
-	// Registers this instance to the actor system.
-	// TODO: Can we have a player who isn't an actor?
-	gEnv->pGame->GetIGameFramework()->GetIActorSystem()->AddActor(GetEntityId(), this);
-
 	// Add this instance to the network or fail out early.
-	if (!pGameObject->BindToNetwork())
-		return false;
-
-	// We will require pre-physics updates.
-	pGameObject->EnablePrePhysicsUpdate(ePPU_Always);
-
-	// Create a camera manager for this player. We do this early, since character attachment code needs to make calls
-	// to a functioning camera.
-	m_pCameraManager = reinterpret_cast<ICameraManager*> (GetGameObject()->AcquireExtension("CameraManager"));
-
-	// Acquire a player input component. At a later time it will be useful to check if a network version is needed, or
-	// perhaps AI / NULL versions.
-	m_pPlayerInput = reinterpret_cast<IPlayerInput*> (GetGameObject()->AcquireExtension("PlayerInput"));
-
-	// ***
-	// *** Spawn ourselves a character we can attach onto.
-	// ***
-
-	//	// Setup the camera spawn parameters.
-	//	SEntitySpawnParams spCharacter;
-	//	
-	//	// Entity will not be created through the entity pool.
-	//	spCharacter.bCreatedThroughPool = false;
-	//	
-	//	// Spawn the character even though the entity system has blocked all spawning ability.
-	//	spCharacter.bIgnoreLock = true;
-	//
-	//	// We need to tell the entity what class to use (which IGameObjectExtension to attach to it) 
-	//	// but to make sure we search through all of the available classes, we need to move the class iterator to the beginning of the list.
-	//	gEnv->pEntitySystem->GetClassRegistry ()->IteratorMoveFirst ();
-	//
-	//	// Tells this entity to attach the camera IGameObjectExtension to it.
-	//	spCharacter.pClass = gEnv->pEntitySystem->GetClassRegistry ()->FindClass ("Character");
-	//
-	//	// Assign an unique name to this entity.
-	//	// TODO: actually need this to be unique!
-	//	spCharacter.sName = "PlayerCharacter";
-	//
-	//	// Tells this entity to have 0 rotation on all axis.
-	//	spCharacter.qRotation = Quat (Ang3 (0, 0, 0));
-	//
-	//	// Spawn relative to the player.
-	////	spCharacter.vPosition = GetEntity ()->GetWorldPos () + Vec3 (0.0f, 2.0f, 0.0f);
-	//	spCharacter.vPosition = Vec3 (314.0f, 250.0f, 130.0f);
-	//
-	//	// Tells this entity to have default scale.
-	//	spCharacter.vScale = Vec3 (1, 1, 1);
-	//
-	//	// Spawn an entity using the specified parameters.
-	//	IEntity* pCharacterEntity = gEnv->pEntitySystem->SpawnEntity (spCharacter);
-	//	if (!pCharacterEntity)
-	//		return false;
-	//
-	//	// Gets the IGameObject associated with the newly spawned entity.
-	//	auto* pCharacterGameObject = gEnv->pGame->GetIGameFramework ()->GetGameObject (pCharacterEntity->GetId ());
-	//	if (!pCharacterGameObject)
-	//		return false;
-	//
-	//	// TODO: set m_characterId here!!!
-	//
-	// 
-	// 
-	// 
-	// 
-	// 
-	// 
-	// // TODO: This is broken or likely broken. QueryExtension is meant to be called from PostInit().
-	//	// Gets the camera IGameObjectExtension that's attached to the newly spawned entity's IGameObject.
-	//	auto pCharacter = static_cast<CCharacter*>(pCharacterGameObject->QueryExtension ("Character"));
-	//	if (!pCharacter)
-	//		return false;
-
-	// Set the target for the camera to this entity.
-	//	pCharacter->SetTargetEntityId (GetEntityId ());
-
-	// HACK: for now, camera target and character target can be this entity.
-	//m_attachedCharacterId = GetEntityId ();
-	//m_cameraTargetId = GetEntityId ();
-
-	// We'll start with the player in third person mode. In future we might check to see which mode they want, but for
-	// now, this is good enough.
-	if (!IsThirdPerson())
-		ToggleThirdPerson();
-
-	// HACK: hard coded effort to grab an entity to attach to as our pawn / character. It must occur after the camera has a chance to create itself.
-	auto pCharacterEntity = gEnv->pEntitySystem->FindEntityByName("Character1");
-	if (pCharacterEntity)
-	{
-		AttachToCharacter(pCharacterEntity->GetId());
-	}
-	CRY_ASSERT_MESSAGE(pCharacterEntity, "Player is not attached to a character. Do not enter game mode without attaching to a character.");
-
-	return true;
+	return pGameObject->BindToNetwork();
 }
 
 
@@ -171,6 +63,39 @@ void CPlayer::PostInit(IGameObject * pGameObject)
 
 	// Allow this instance to be post-updated every frame.
 	pGameObject->EnablePostUpdates(this);
+
+	// We will require pre-physics updates.
+	pGameObject->EnablePrePhysicsUpdate(ePPU_Always);
+
+	// Stores whether this instance is the client actor. A player might be connected through a network or at the PC;
+	// this will let us know when they are the local client.
+	// TODO: In HandleEvent this is just set straight to true - we need to unify the approach for dealing with local client.
+	m_isClient = (((CGame*) gEnv->pGame)->GetClientActorID() == GetEntityId());
+
+	// Registers this instance to the actor system.
+	// TODO: Can we have a player who isn't an actor?
+	gEnv->pGame->GetIGameFramework()->GetIActorSystem()->AddActor(GetEntityId(), this);
+
+	// We'll start with the player in third person mode. In future we might check to see which mode they want, but for
+	// now, this is good enough.
+	//if (!IsThirdPerson())
+	//	ToggleThirdPerson();
+	if (IsThirdPerson())
+		ToggleThirdPerson();
+
+	// Create a camera manager for this player. We do this early, since character attachment code needs to make calls
+	// to a functioning camera.
+	m_pCameraManager = static_cast<ICameraManager*> (GetGameObject()->AcquireExtension("CameraManager"));
+
+	// Acquire a player input component. At a later time it will be useful to check if a network version is needed, or
+	// perhaps AI / NULL versions.
+	m_pPlayerInput = static_cast<IPlayerInput*> (GetGameObject()->AcquireExtension("PlayerInput"));
+
+	// HACK: hard coded effort to grab an entity to attach to as our pawn / character. It must occur after the camera has a chance to create itself.
+	auto pCharacterEntity = gEnv->pEntitySystem->FindEntityByName("Character1");
+	CRY_ASSERT_MESSAGE(pCharacterEntity, "Player is not attached to a character. Do not enter game mode without attaching to a character.");
+	if (pCharacterEntity)
+		AttachToCharacter(pCharacterEntity->GetId());
 
 	//if (m_teamId)
 	//{
@@ -185,7 +110,7 @@ void CPlayer::PostInit(IGameObject * pGameObject)
 	RegisterEvent(ENTITY_EVENT_PREPHYSICSUPDATE, IComponent::EComponentFlags_Enable);
 
 	// If we are the client actor than notify the game of us being spawned.
-	if (m_bClient)
+	if (m_isClient)
 		((CGame*) gEnv->pGame)->OnClientActorSpawned(this);
 }
 
@@ -273,11 +198,11 @@ void CPlayer::HandleEvent(const SGameObjectEvent& event)
 			CRY_ASSERT_MESSAGE(GetAttachedActor(), "Player is not attached to a character. Do not enter game mode without attaching to a character.");
 
 			// Store that we are now the client actor.
-			m_bClient = true;
+			m_isClient = true;
 
 			gEnv->pLog->LogAlways("CPlayer::HandleEvent(): Entity \"%s\" became the local player!", GetEntity()->GetName());
 		}
-			break;
+		break;
 
 		default:
 			break;
@@ -785,7 +710,6 @@ void CPlayer::OnReused(IEntity *pEntity, SEntitySpawnParams &params)
 // *** CPlayer
 // ***
 
-
 void CPlayer::RegisterForGOEvents()
 {
 	// Lists the game object events we want to be notified about.
@@ -844,7 +768,7 @@ CCharacter* CPlayer::GetAttachedCharacter() const
 {
 	CRY_ASSERT_MESSAGE(m_attachedCharacterId != INVALID_ENTITYID, "There is no character attached to this player.");
 
-	return reinterpret_cast <CCharacter*> (gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_attachedCharacterId));
+	return static_cast<CCharacter*> (gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_attachedCharacterId));
 }
 
 

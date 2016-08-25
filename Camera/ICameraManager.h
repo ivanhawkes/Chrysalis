@@ -1,12 +1,12 @@
 #pragma once
 
-#include <IGameObject.h>
 #include "ICamera.h"
+
 
 struct ICamera;
 
 
-struct ICameraManager : public IGameObjectExtension
+struct ICameraManager : public ISimpleExtension
 {
 	/**
 	Player cameras generally need to follow an actor. This allows us to switch which entity represents the actor that
@@ -40,4 +40,12 @@ struct ICameraManager : public IGameObjectExtension
 	\return	null if it fails, else the camera.
 	*/
 	virtual ICamera* GetCamera() const = 0;
+
+
+	/**
+	The camera manager may supply an extra offset in local space for camera adjustments to the view.
+	
+	\return The view offset.
+	**/
+	virtual Vec3 GetViewOffset() = 0;
 };

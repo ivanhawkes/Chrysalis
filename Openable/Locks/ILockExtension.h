@@ -1,8 +1,8 @@
 #pragma once
 
-#include <IGameObject.h>
+#include <Entities/Helpers/ISimpleExtension.h>
 
 
-struct ILockExtension : IGameObjectExtension
+struct ILockExtension : ISimpleExtension
 {
 };

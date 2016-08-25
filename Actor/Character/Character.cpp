@@ -1,8 +1,10 @@
 #include <StdAfx.h>
 
 #include "Character.h"
+#include <Actor/Movement/ActorMovementController.h>
 #include <Actor/Character/Movement/StateMachine/CharacterStateEvents.h>
-#include <Actor/Character/Movement/StateMachine/CharacterStateUtil.h>
+#include <Actor/Movement/StateMachine/ActorStateUtility.h>
+
 
 // Definition of the state machine that controls character movement.
 DEFINE_STATE_MACHINE(CCharacter, Movement);
@@ -178,7 +180,7 @@ void CCharacter::PrePhysicsUpdate()
 	// 
 	// At some point it will need to call into CActor::PrePhysicsUpdate() and some other similar
 	// granular routines.
-	
+
 	const float frameTime = gEnv->pTimer->GetFrameTime();
 
 	if (m_pMovementController)
@@ -219,12 +221,9 @@ void CCharacter::PrePhysicsUpdate()
 
 
 
-		// TODO: GET THIS BACK IN! REMOVED WHILE REFACTORING CACTOR FROM CCHARACTER.
-		// HACK: THIS WILL NEED TO BE PLACED BACK IN ONCE WE WANT TO START WORKING ON GETTING THE
-		// PHYSICS FOR THE ACTOR ALL WORKING.
 		// The routine will need to be rewritten to work with actors only, or we need a new one that does the actor, that
 		// is called by a character version of this.
-		//CCharacterStateUtil::UpdateCharacterPhysicsStats(*this, m_actorPhysics, frameTime);
+		CCharacterStateUtil::UpdatePhysicsState(*this, m_actorPhysics, frameTime);
 
 
 
@@ -243,14 +242,11 @@ void CCharacter::PrePhysicsUpdate()
 
 		// Push the pre-physics event down to our state machine.
 		// TODO: This should become an Actor prephysics event instead, so all derived classes can share it.
-		const SCharacterPrePhysicsData prePhysicsData(frameTime, movementRequest);
-		const SStateEventCharacterMovementPrePhysics prePhysicsEvent(&prePhysicsData);
+		const SActorPrePhysicsData prePhysicsData(frameTime, movementRequest);
+		const SStateEventActorMovementPrePhysics prePhysicsEvent(&prePhysicsData);
 		StateMachineHandleEventMovement(STATE_DEBUG_APPEND_EVENT(prePhysicsEvent));
 
-		CryWatch("%s : velocity = %f, %f, %f\r\n", __func__,
-			movementRequest.desiredVelocity.x, movementRequest.desiredVelocity.y, movementRequest.desiredVelocity.z);
-
-
+		//CryWatch("%s : velocity = %f, %f, %f\r\n", __func__, movementRequest.desiredVelocity.x, movementRequest.desiredVelocity.y, movementRequest.desiredVelocity.z);
 
 
 		// TODO: does stance change really belong here?
@@ -329,16 +325,16 @@ void CCharacter::SelectMovementHierarchy()
 	//{
 	//	CRY_ASSERT (!IsPlayer ());
 
-	//	StateMachineHandleEventMovement (CHARACTER_EVENT_ENTRY_AI);
+	//	StateMachineHandleEventMovement (ACTOR_EVENT_ENTRY_AI);
 	//}
 	//else
 	//{
-	//	StateMachineHandleEventMovement (CHARACTER_EVENT_ENTRY_PLAYER);
+	//	StateMachineHandleEventMovement (ACTOR_EVENT_ENTRY_PLAYER);
 	//}
 
 	// HACK: set it to always be player for now.
 	// TODO: NEED THIS!!!
-	StateMachineHandleEventMovement(CHARACTER_EVENT_ENTRY_CHARACTER);
+	StateMachineHandleEventMovement(ACTOR_EVENT_ENTRY);
 }
 
 

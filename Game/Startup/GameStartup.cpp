@@ -199,8 +199,11 @@ IGameRef CGameStartup::Init(SSystemInitParams &startupParams)
 	ModuleInitISystem(m_pGameFramework->GetISystem(), ProjectName);
 
 	// Sets the user data of the game window to this instance.
-#ifdef WIN32
-	SetWindowLongPtr(reinterpret_cast<HWND>(gEnv->pRenderer->GetHWND()), GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+#if CRY_PLATFORM_WINDOWS
+	if (gEnv->pRenderer != nullptr)
+	{
+		SetWindowLongPtr(reinterpret_cast<HWND>(gEnv->pRenderer->GetHWND()), GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+	}
 #endif
 
 	// Allows all CRYENGINE systems to access and know about the ISystem instance.

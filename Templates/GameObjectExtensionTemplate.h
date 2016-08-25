@@ -1,7 +1,6 @@
 #pragma once
 
 #include <IGameObject.h>
-#include <IViewSystem.h>
 
 
 /**

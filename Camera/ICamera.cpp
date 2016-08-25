@@ -6,14 +6,6 @@
 #include <Actor/Player/Player.h>
 
 
-ICamera::ICamera()
-{}
-
-
-ICamera::~ICamera()
-{}
-
-
 void ICamera::GetCameraAnimationFactor(float& position, float& rotation)
 {
 	position = 0.0f;
@@ -27,7 +19,7 @@ const Vec3 ICamera::GetAimTarget() const
 	// Use a mid-length vector in the camera's forward direction as an initial target to ray-trace towards.
 	// We should keep it as short as practical to lower the cost of using it. That said, it should probably be at
 	// least the maximum distance for a GTAOE to help positioning the effect correctly.
-	const Vec3 aimDirection = m_cameraPose.GetRotation() * FORWARD_DIRECTION * 60.0f;
+	const Vec3 aimDirection = m_cameraPose.GetRotation() * FORWARD_DIRECTION * 100.0f;
 
 	// Try and update where the player is aiming.
 	// TODO: need to skip the player's geometry and if they are in a vehicle, that needs skipping too.
@@ -47,15 +39,15 @@ const Vec3 ICamera::GetAimTarget() const
 	if (hits)
 	{
 		// There's a hit, so return that as the aim target.
-#if defined(_DEBUG)
-		//gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(rayhit.pt, 0.05f, ColorB(128, 0, 0));
-#endif
+//#if defined(_DEBUG)
+//		gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(rayhit.pt, 0.05f, ColorB(128, 0, 0));
+//#endif
 		return rayhit.pt;
 	}
 
-#if defined(_DEBUG)
-	//gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(m_cameraPose.GetPosition() + aimDirection, 0.05f, ColorB(0, 0, 128));
-#endif
+//#if defined(_DEBUG)
+//	gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(m_cameraPose.GetPosition() + aimDirection, 0.25f, ColorB(0, 0, 128));
+//#endif
 
 	// Default is to return a position a set distance from the camera in the direction it is facing.
 	return m_cameraPose.GetPosition() + aimDirection;

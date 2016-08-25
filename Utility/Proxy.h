@@ -77,6 +77,6 @@ namespace Proxy
 	**/
 	ILINE CGameObject* GetUserProxy(IEntity* pIEntity)
 	{
-		return reinterpret_cast <CGameObject*> (pIEntity->GetProxy(ENTITY_PROXY_USER));
+		return static_cast<CGameObject*> (pIEntity->GetProxy(ENTITY_PROXY_USER));
 	}
 }

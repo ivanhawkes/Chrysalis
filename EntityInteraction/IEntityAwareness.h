@@ -5,13 +5,14 @@ Declares the IEntityAwareness interface.
 **/
 #pragma once
 
-#include <IGameObject.h>
+#include <Entities/Helpers/ISimpleExtension.h>
+
 
 struct ray_hit;
 typedef std::vector<EntityId> Entities;
 
 
-struct IEntityAwareness : IGameObjectExtension
+struct IEntityAwareness : ISimpleExtension
 {
 	/**
 	Gets the position of the actor's eyes.
@@ -26,7 +27,7 @@ struct IEntityAwareness : IGameObjectExtension
 
 	\return The direction.
 	**/
-	virtual const Vec3& GetDir() const = 0;
+	virtual const Quat& GetDir() const = 0;
 
 
 	/**

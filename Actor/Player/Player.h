@@ -21,6 +21,7 @@ struct IPlayerInput;
 class CCharacter;
 class CItem;
 class CWeapon;
+class CActor;
 
 
 /**
@@ -309,7 +310,7 @@ public:
 
 
 	/**
-	Gets this instance's local-space eye position (for a human, this is typically Vec3 (0, 0, 1.82f)).
+	Gets this instance's local-space eye position (for a human, this is typically Vec3 (0, 0, 1.76f)).
 
 	\return	This instance's local-space eye position.
 	*/
@@ -634,6 +635,8 @@ public:
 	// *** CPlayer
 	// ***
 
+public:
+
 	/** This instance's default constructor. */
 	CPlayer();
 
@@ -724,7 +727,10 @@ public:
 	*/
 	ILINE static CPlayer* GetLocalPlayer()
 	{
-		return static_cast<CPlayer*>(g_pGame->GetIGameFramework()->GetClientActor());
+		CPlayer* cPlayer = static_cast<CPlayer*>(g_pGame->GetIGameFramework()->GetClientActor());
+		CRY_ASSERT_MESSAGE(cPlayer, "Attempt to get the local player failed to get an actor.");
+
+		return cPlayer;
 	}
 
 
@@ -740,13 +746,14 @@ public:
 
 
 	/**
-	Convenience function to get the local actor, if there is one.
+	Convenience function to get the local actor, if there is one. We are casting to a CActor
+	since they should be the only form of actor returned from this call in any case.
 
 	\return	null if it fails, else the local actor.
 	*/
-	ILINE static IActor* GetLocalActor()
+	ILINE static CActor* GetLocalActor()
 	{
-		return gEnv->pGame->GetIGameFramework()->GetClientActor();
+		return reinterpret_cast<CActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
 	}
 
 
@@ -781,7 +788,7 @@ private:
 
 
 	/** Specifies whether this instance is the client actor. */
-	bool m_bClient = false;
+	bool m_isClient = false;
 
 	/** True if this player is using a third person camera. */
 	bool m_bIsThirdPerson = false;

@@ -4,17 +4,22 @@
 #include <Game/Game.h>
 #include <CryMath/Cry_Math.h>
 #include <CryCore/Assert/CryAssert.h>
-#include <IViewSystem.h>
 #include <ICryMannequin.h>
 #include <IAnimatedCharacter.h>
 #include <IGameObject.h>
 #include <IItemSystem.h>
-#include <Actor/Character/Movement/CharacterMovementController.h>
+#include <Actor/Movement/ActorMovementController.h>
 #include <Actor/ActorPhysics.h>
 #include <Actor/Player/Player.h>
+#include <Actor/Animation/Player/PlayerAnimation.h>
 #include <Entity/EntityScriptCalls.h>
-#include <EntitySensing/IEntityLocking.h>
-#include <EntitySensing/IEntityAwareness.h>
+#include <EntityInteraction/IEntityLocking.h>
+#include <EntityInteraction/IEntityAwareness.h>
+#include <EntityInteraction/EntityInteraction.h>
+#include <Utility/CryWatch.h>
+
+
+const string MANNEQUIN_FOLDER = "Animations/Mannequin/ADB/";
 
 
 SActorStance CActor::m_defaultStance;
@@ -90,36 +95,8 @@ bool CActor::Init(IGameObject * pGameObject)
 	// Stores the specified IGameObject in this instance.
 	SetGameObject(pGameObject);
 
-	// Initialise the movement state machine.
-	MovementHSMInit();
-
-	// Create a movement controller and set it as the active controller for this game object.
-	// Attempt to acquire an animated character component.
-	m_pMovementController = new CCharacterMovementController(this);
-	if (m_pMovementController)
-		GetGameObject()->SetMovementController(m_pMovementController);
-
-	// Stores whether this instance is the client actor.
-	// TODO: Won't this be false every time? Find out if this needs to be the client actor, or player - and
-	// how to set it if needed. Ideally we will control it completely.
-	m_bClient = (((CGame*) gEnv->pGame)->GetClientActorID() == GetEntityId());
-
-	// Registers this instance to the actor system.
-	gEnv->pGame->GetIGameFramework()->GetIActorSystem()->AddActor(GetEntityId(), this);
-
 	// Add this instance to the network.
-	if (!pGameObject->BindToNetwork())
-		return false;// Failed to add this instance to the network.
-
-	// Default is for a character to be controlled by AI.
-	//	m_isAIControlled = true;
-	m_isAIControlled = false;
-
-	// Select which HSM to use for our character's movement. This relies on it's AI status being
-	// correctly set first.
-	SelectMovementHierarchy();
-
-	return true;
+	return pGameObject->BindToNetwork();
 }
 
 
@@ -137,10 +114,29 @@ void CActor::PostInit(IGameObject * pGameObject)
 	// Allow this instance to be updated every frame.
 	pGameObject->EnableUpdateSlot(this, 0);
 
-	// Allow this instance to be post-updated every frame.
-	// NOTE: We currently don't need this enabled.
-	// TODO: Remove later if not needed.
-	pGameObject->EnablePostUpdates(this);
+	// Initialise the movement state machine.
+	MovementHSMInit();
+
+	// Create a movement controller and set it as the active controller for this game object.
+	// Attempt to acquire an animated character component.
+	m_pMovementController = new CActorMovementController(this);
+	if (m_pMovementController)
+		GetGameObject()->SetMovementController(m_pMovementController);
+
+	// Stores whether this instance is the client actor.
+	// TODO: Won't this be false every time? Find out if this needs to be the client actor, or player - and
+	// how to set it if needed. Ideally we will control it completely.
+	m_isClient = (((CGame*) gEnv->pGame)->GetClientActorID() == GetEntityId());
+
+	// Registers this instance to the actor system.
+	gEnv->pGame->GetIGameFramework()->GetIActorSystem()->AddActor(GetEntityId(), this);
+	// Default is for a character to be controlled by AI.
+	//	m_isAIControlled = true;
+	m_isAIControlled = false;
+
+	// Select which HSM to use for our character's movement. This relies on it's AI status being
+	// correctly set first.
+	SelectMovementHierarchy();
 
 	// Attempt to acquire an animated character component.
 	m_pAnimatedCharacter = static_cast<IAnimatedCharacter*> (GetGameObject()->AcquireExtension("AnimatedCharacter"));
@@ -190,9 +186,8 @@ void CActor::PostInit(IGameObject * pGameObject)
 
 	// Loading the controller definition that we previously created.
 	// This is owned by the animation database manager
-	//const SControllerDef* const pControllerDef = animationDatabaseManager.LoadControllerDef("Animations/Mannequin/ADB/sampleControllerDefs.xml");
-	//const SControllerDef* const pControllerDef = animationDatabaseManager.LoadControllerDef("Animations/Mannequin/ADB/PlayerControllerDefs.xml");
-	const SControllerDef* const pControllerDef = animationDatabaseManager.LoadControllerDef("Animations/Mannequin/ADB/sdk_tutorial3controllerdefs.xml");
+	const SControllerDef* const pControllerDef = animationDatabaseManager.LoadControllerDef(MANNEQUIN_FOLDER + "sdk_tutorial3controllerdefs.xml");
+	//const SControllerDef* const pControllerDef = animationDatabaseManager.LoadControllerDef(MANNEQUIN_FOLDER + "PlayerControllerDefs.xml");
 	if (pControllerDef == NULL)
 	{
 		CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_ERROR, "Failed to load controller definition for MannequinSample.");
@@ -211,6 +206,7 @@ void CActor::PostInit(IGameObject * pGameObject)
 	// Context Setup will associate this entity, the character instance we loaded at the beginning, and the animation
 	// database where we saved our fragments to this scope context.
 	const TagID scopeContextId = m_pAnimationContext->controllerDef.m_scopeContexts.Find("MainCharacter");
+	//const TagID scopeContextId = m_pAnimationContext->controllerDef.m_scopeContexts.Find("Char1P");
 	//const TagID scopeContextId = m_pAnimationContext->controllerDef.m_scopeContexts.Find("Char3P");
 	if (scopeContextId == TAG_ID_INVALID)
 	{
@@ -222,11 +218,9 @@ void CActor::PostInit(IGameObject * pGameObject)
 	CRY_ASSERT(pCharacterInstance != NULL);
 
 	// Loading a database
-	//const IAnimationDatabase* const pAnimationDatabase = animationDatabaseManager.Load("Animations/Mannequin/ADB/sampleDatabase.adb");
-	//const IAnimationDatabase* const pAnimationDatabase = animationDatabaseManager.Load("Animations/Mannequin/ADB/sampleDatabase.adb");
-	const IAnimationDatabase* const pAnimationDatabase = animationDatabaseManager.Load("Animations/Mannequin/ADB/sdk_tutorial3database.adb");
-	//const IAnimationDatabase* const pAnimationDatabase = animationDatabaseManager.Load("Animations/Mannequin/ADB/Human.adb");
-	//const IAnimationDatabase* const pAnimationDatabase = animationDatabaseManager.Load("animations/Mannequin/ADB/playerControllerDefs.xml");
+	const IAnimationDatabase* const pAnimationDatabase = animationDatabaseManager.Load(MANNEQUIN_FOLDER + "sdk_tutorial3database.adb");
+	//const IAnimationDatabase* const pAnimationDatabase = animationDatabaseManager.Load(MANNEQUIN_FOLDER + "PlayerAnims1P.adb");
+	//const IAnimationDatabase* const pAnimationDatabase = animationDatabaseManager.Load(MANNEQUIN_FOLDER + "PlayerAnims3P.adb");
 	if (pAnimationDatabase == NULL)
 	{
 		CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_ERROR, "Failed to load animation database for MannequinSample.");
@@ -238,19 +232,14 @@ void CActor::PostInit(IGameObject * pGameObject)
 	m_pActionController->SetScopeContext(scopeContextId, *pEntity, pCharacterInstance, pAnimationDatabase);
 
 	// Start the idle fragment.
-	//const FragmentID idleFragmentId = m_pAnimationContext->controllerDef.m_fragmentIDs.Find("Idle");
-	const FragmentID idleFragmentId = m_pAnimationContext->controllerDef.m_fragmentIDs.Find("Move");
-	//const FragmentID idleFragmentId = m_pAnimationContext->controllerDef.m_fragmentIDs.Find ("MotionMovement");
-
-	// Try and set a crouch state for testing.
-	//m_pAnimationContext->state.Set (tagId, true);
-
-	IActionPtr pAction = new TAction< SAnimationContext >(0, idleFragmentId);
-	m_pActionController->Queue(*pAction);
-	//Tag "Relaxed+Walk"
+	//const FragmentID fragmentId = m_pAnimationContext->controllerDef.m_fragmentIDs.Find("Idle");
+	////const FragmentID fragmentId = m_pAnimationContext->controllerDef.m_fragmentIDs.Find("Move");
+	////const FragmentID fragmentId = m_pAnimationContext->controllerDef.m_fragmentIDs.Find ("MotionMovement");
+	//IActionPtr pAction = new TAction<SAnimationContext>(0, fragmentId);
+	//m_pActionController->Queue(*pAction);
 
 	// If we are the client actor than notify the game of us being spawned.
-	if (m_bClient)
+	if (m_isClient)
 		((CGame*) gEnv->pGame)->OnClientActorSpawned(this);
 
 	// TODO: test code for now - want to get physics working on characters. This was being done in code
@@ -420,6 +409,42 @@ IComponent::ComponentEventPriority CActor::GetEventPriority(const int eventID) c
 
 void CActor::UpdateAnimationState(const SActorMovementRequest& movementRequest)
 {
+	if (m_pActionController)
+	{
+		// NOTE: should use actor physics to get the veloctiy, last velocity, movement flags, etc.
+		// 	auto physics = GetActorPhysics();
+
+		// HACK: get some debug
+		m_pActionController->SetFlag(AC_DebugDraw, 1);
+
+		// HACK: Really dirty way to switch between movement and idle states.
+		// FIXME: Switch to using priority levels and requeing the actions on completion.
+		if (movementRequest.desiredVelocity.len() > FLT_EPSILON)
+		{
+			if (!m_wasMovingLastFrame)
+			{
+				// Switch to movement fragment.
+				if (m_pActionIdle)
+					m_pActionIdle->Stop();
+				m_pActionMove = new TAction<SAnimationContext>(0, m_pAnimationContext->controllerDef.m_fragmentIDs.Find("Move"));
+				m_pActionController->Queue(*m_pActionMove);
+			}
+			m_wasMovingLastFrame = true;
+		}
+		else
+		{
+			if (m_wasMovingLastFrame)
+			{
+				// Switch to idle fragment.
+				if (m_pActionMove)
+					m_pActionMove->Stop();
+				m_pActionIdle = new TAction<SAnimationContext>(0, m_pAnimationContext->controllerDef.m_fragmentIDs.Find("Idle"));
+				m_pActionController->Queue(*m_pActionIdle);
+			}
+			m_wasMovingLastFrame = false;
+		}
+	}
+
 	/*	// TODO: get this working.
 
 		// Update variable scope contexts.
@@ -516,11 +541,6 @@ void CActor::SetChannelId(uint16 id)
 
 void CActor::SetAuthority(bool auth)
 {}
-
-
-void CActor::PostUpdate(float frameTime)
-{
-}
 
 
 void CActor::PostRemoteSpawn()
@@ -671,7 +691,7 @@ bool CActor::IsFriendlyEntity(EntityId entityId, bool bUsingAIIgnoreCharacter) c
 Vec3 CActor::GetLocalEyePos() const
 {
 	// The default, in case we can't find the actual eye position, will be to use an average male's height.
-	Vec3 eyePosition { 0.0f, 0.0f, 1.82f };
+	Vec3 eyePosition { AverageEyePosition };
 
 	// Get their character or bail early.
 	ICharacterInstance* pCharacter = GetEntity()->GetCharacter(0);
@@ -682,6 +702,15 @@ Vec3 CActor::GetLocalEyePos() const
 	const IAttachmentManager* pAttachmentManager = pCharacter->GetIAttachmentManager();
 	if (pAttachmentManager)
 	{
+		// Did the animators define a camera for us to use?
+		const auto eyeCamera = pAttachmentManager->GetIndexByName("#camera");
+		const IAttachment* pCameraAttachment = pAttachmentManager->GetInterfaceByIndex(eyeCamera);
+		if (pCameraAttachment)
+		{
+			// Early out and use the camera.
+			return GetEntity()->GetRotation() * pCameraAttachment->GetAttModelRelative().t;
+		}
+
 		const auto eyeLeft = pAttachmentManager->GetIndexByName("eye_left");
 		const auto eyeRight = pAttachmentManager->GetIndexByName("eye_right");
 		Vec3 eyeLeftPosition;
@@ -689,33 +718,32 @@ Vec3 CActor::GetLocalEyePos() const
 		int eyeFlags = 0;
 
 		// Is there a left eye?
-		if (eyeLeft > 0)
+		const IAttachment* pEyeLeftAttachment = pAttachmentManager->GetInterfaceByIndex(eyeLeft);
+		if (pEyeLeftAttachment)
 		{
-			const IAttachment* pEyeLeftAttachment = pAttachmentManager->GetInterfaceByIndex(eyeLeft);
-			if (pEyeLeftAttachment)
-			{
-				eyeLeftPosition = pEyeLeftAttachment->GetAttModelRelative().t;
-				eyeFlags |= 0x01;
-			}
+			eyeLeftPosition = GetEntity()->GetRotation() * pEyeLeftAttachment->GetAttModelRelative().t;
+			eyeFlags |= 0x01;
 		}
 
 		// Is there a right eye?
-		if (eyeRight > 0)
+		const IAttachment* pEyeRightAttachment = pAttachmentManager->GetInterfaceByIndex(eyeRight);
+		if (pEyeRightAttachment)
 		{
-			const IAttachment* pEyeRightAttachment = pAttachmentManager->GetInterfaceByIndex(eyeRight);
-			if (pEyeRightAttachment)
-			{
-				eyeRightPosition = pEyeRightAttachment->GetAttModelRelative().t;
-				eyeFlags |= 0x02;
-			}
+			eyeRightPosition = GetEntity()->GetRotation() * pEyeRightAttachment->GetAttModelRelative().t;
+			eyeFlags |= 0x02;
 		}
 
+		static bool alreadyWarned { false };
 		switch (eyeFlags)
 		{
 			case 0:
 				// Failure, didn't find any eyes.
 				// This will most likely spam the log. Disable it if it's annoying.
-				CryLogAlways("Character class %s does not have either left_eye, right_eye or either.", GetActorClassName());
+				if (!alreadyWarned)
+				{
+					CryLogAlways("Character class %s does not have '#camera', 'left_eye' or 'right_eye' defined.", GetActorClassName());
+					alreadyWarned = true;
+				}
 				break;
 
 			case 1:
@@ -828,7 +856,7 @@ bool CActor::IsPlayer() const
 
 bool CActor::IsClient() const
 {
-	return m_bClient;
+	return m_isClient;
 }
 
 
@@ -967,9 +995,6 @@ bool CActor::Physicalize()
 	//	PDim.heightPivot = sInfo->heightPivot;
 	//	PDim.maxUnproj = max (0.0f, sInfo->heightPivot);
 	//}
-
-
-
 
 	// We are going to be physicalizing this instance, so setup the physics simulation parameters to use for physics calculations.
 	pe_player_dynamics PDyn;
@@ -1319,10 +1344,26 @@ void CActor::OnActionItemUse(EntityId playerId)
 	{
 		if (auto pEntity = pEntityAwareness->GetEntityInFrontOf())
 		{
-			if (IScriptTable* pScriptTable = pEntity->GetScriptTable())
+			//if (IScriptTable* pScriptTable = pEntity->GetScriptTable())
+			//{
+			//	// TODO: Figure out how to pass an IEntity to the function.				
+			//	EntityScripts::CallScriptFunction(pEntity, pScriptTable, "OnUsed", GetEntityId(), 1);
+			//}
+
+			// TEST: wrong place for this test - move it to somewhere i can see it try all the entities near us.
+			if (auto pGameObject = gEnv->pGame->GetIGameFramework()->GetGameObject(pEntity->GetId()))
 			{
-				// TODO: Figure out how to pass an IEntity to the function.				
-				EntityScripts::CallScriptFunction(pEntity, pScriptTable, "OnUsed", GetEntityId(), 1);
+				if (auto pInteractor = static_cast<IEntityInteraction*> (pGameObject->QueryExtension("EntityInteraction")))
+				{
+					// There's an interactor component, so this is an interactive entity.
+					auto verbs = pInteractor->GetVerbs();
+					if (verbs.size() > 0)
+					{
+						// NOTE: just testing with first entry for now.
+						pInteractor->SelectInteractionVerb(verbs [0]);
+						pInteractor->OnInteractionStart();
+					}
+				}
 			}
 		}
 	}
@@ -1344,4 +1385,41 @@ void CActor::OnActionItemDrop(EntityId playerId)
 void CActor::OnActionItemThrow(EntityId playerId)
 {
 	CryLogAlways("Player threw an item");
+}
+
+
+void CActor::OnActionBarUse(EntityId playerId, int actionBarId)
+{
+	CryLogAlways("ActionBarId %d triggered.", actionBarId);
+
+	// Make sure we have the interaction extension.
+	if (GetInteractor())
+	{
+		// TODO: This should use IEntityLocking instead, and that should be given some useful interface. It might need a rename too.
+		auto pEntityAwareness = static_cast <IEntityAwareness*> (GetGameObject()->AcquireExtension("EntityAwareness"));
+		if (pEntityAwareness)
+		{
+			if (auto pEntity = pEntityAwareness->GetEntityInFrontOf())
+			{
+				if (auto pGameObject = gEnv->pGame->GetIGameFramework()->GetGameObject(pEntity->GetId()))
+				{
+					if (auto pInteractor = static_cast<IEntityInteraction*> (pGameObject->QueryExtension("EntityInteraction")))
+					{
+						// There's an interactor component, so this is an interactive entity.
+						auto verbs = pInteractor->GetVerbs();
+						if (verbs.size() >= actionBarId)
+						{
+							// NOTE: just testing with first entry for now.
+							pInteractor->SelectInteractionVerb(verbs [actionBarId - 1]);
+							pInteractor->OnInteractionStart();
+						}
+						else
+						{
+							CryLogAlways("No action defined.");
+						}
+					}
+				}
+			}
+		}
+	}
 }

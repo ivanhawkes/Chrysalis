@@ -1,8 +1,8 @@
 #pragma once
 
-#include <IGameObject.h>
-#include <IViewSystem.h>
 #include "ICamera.h"
+#include <IViewSystem.h>
+#include <Camera/CameraManager.h>
 
 
 /**
@@ -19,27 +19,10 @@ public:
 	// *** IGameObjectExtension
 	// ***
 
-	void GetMemoryUsage(ICrySizer *pSizer) const override;
-	bool Init(IGameObject * pGameObject) override;
 	void PostInit(IGameObject * pGameObject) override;
-	void InitClient(int channelId) override {};
-	void PostInitClient(int channelId) override {};
 	bool ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override;
-	void PostReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override {};
-	bool GetEntityPoolSignature(TSerialize signature) override { return true; };
 	void Release() override;
-	void FullSerialize(TSerialize ser) override {};
-	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int pflags) override { return true; };
-	void PostSerialize() override {};
-	void SerializeSpawnInfo(TSerialize ser) override {};
-	ISerializableInfoPtr GetSpawnInfo() override { return nullptr; };
 	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
-	void HandleEvent(const SGameObjectEvent& event) override {};
-	void ProcessEvent(SEntityEvent& event) override {};
-	void SetChannelId(uint16 id) override {};
-	void SetAuthority(bool auth) override {};
-	void PostUpdate(float frameTime) override {};
-	void PostRemoteSpawn() override {};
 
 
 	// ***
@@ -79,10 +62,8 @@ public:
 	/** Executes the activate action. */
 	void OnActivate() override;
 
-	
 	/** Executes the deactivate action. */
 	void OnDeactivate() override;
-
 
 
 	// ***
@@ -103,30 +84,21 @@ public:
 	virtual void ResetCamera();
 	
 private:
-	/** Registers the cvars. */
-	void RegisterCvars();
-
-
-	/** Unregisters the cvars. */
-	void UnregisterCvars();
 
 	/** The view camera for this instance. */
-	IView* m_pView = nullptr;
+	IView* m_pView { nullptr };
+
+	/** If our entity has a camera manager, we store a pointer to it here. **/
+	ICameraManager* m_pCameraManager { nullptr };
 	
 	/** Identifier for the entity which this camera is targeted towards. */
-	EntityId m_targetEntityID = INVALID_ENTITYID;
-
-	/** / Name of the target bone. */
-	string m_targetBoneName = "";
-
-	/** Name of the target aim bone. */
-	string m_targetAimBoneName = "";
+	EntityId m_targetEntityID { INVALID_ENTITYID };
 
 	/** Preferred distance in metres from the view camera to the target. */
-	float m_targetDistance = 5.0f;
+	float m_targetDistance { 5.0f };
 
 	/** Position of the camera during the last update. */
-	Vec3 m_vecLastPosition = { ZERO };
+	Vec3 m_vecLastPosition { ZERO };
 
 	/** Rotation of the camera during the last update. */
 	Quat m_quatLastTargetRotation { IDENTITY };
@@ -138,7 +110,8 @@ private:
 	A factor that applies pitch in the direction the camera is facing. The effect of this is to tilt it towards or
 	away from the orbit centre.
 	*/
-	float m_reversePitchTilt { 0.2f };
+	float m_reversePitchTilt { 0.1f };
+//	float m_reversePitchTilt { 0.0f };
 
 	/**
 	A translation vector which is applied after the camera is initially positioned. This provides for 'over the
@@ -151,6 +124,7 @@ private:
 	shoulder' views of the target actor.
 	*/
 	Vec3 m_aimPositionOffset { 0.45f, -0.5f, 0.0f };
+//	Vec3 m_aimPositionOffset { 0.0f, -0.0f, 0.0f };
 
 	/** The last known position of the camera target. */
 	Vec3 m_vecLastTargetPosition { ZERO };
@@ -209,14 +183,14 @@ private:
 	/** A delta value (degrees) to apply to the camera's initial calculated pitch. */
 	float m_viewPitch;
 
-	/** A delta value (degrees) to apply to the camera's initial calculated yaw. */
-	float m_viewYaw;
-
 	/** Minimum pitch delta (radians). */
 	float m_pitchMin { DEG2RAD(-85.0f) };
 
 	/** Maximum pitch delta (radians). */
 	float m_pitchMax { DEG2RAD(85.0f) };
+
+	/** A delta value (degrees) to apply to the camera's initial calculated yaw. */
+	float m_viewYaw;
 
 	/** Minimum yaw delta (radians). */
 	float m_yawMin { DEG2RAD(-180.0f) };
@@ -231,22 +205,16 @@ private:
 
 
 	/**
-	Determines the positions for target entity and aim.
+	Determines the position for camera to aim at on the target entity. It relies on the target being an actor for
+	accurate results, otherwise the position will be based on the average height for a person.
 	
-	\param [in,out]	pEntity				 If non-null, the entity.
-	\param	targetBone						The name of a bone which will act as the locus of our camera. The camera is
-											attached to this bone on the entity, if it exists and all movements are relative
-											to this location.
-	\param	targetAimBone					The name of a bone at which to aim the camera. This provides the ability to
-											aim the camera at a different position on the entity to where you are attached
-											e.g. your camera is attached to the player's spine but you aim the camera towards
-											their head.
-	\param [in,out]	vecTargetPosition    The target's position will be returned in this parameter.
-	\param [in,out]	vecTargetAimPosition The target's aim position will be returned in this parameter.
+	\param [in,out]	vecTargetPosition The target's position will be returned in this parameter.
+	
+	\param [in,out]	pEntity If non-null, the entity.
+	
+	\return The target aim position.
 	**/
-	void GetTargetPositions(IEntity* const pEntity,
-		string targetBone, string targetAimBone,
-		Vec3& vecTargetPosition, Vec3& vecTargetAimPosition);
+	Vec3 GetTargetAimPosition(IEntity* const pEntity);
 
 
 	/**

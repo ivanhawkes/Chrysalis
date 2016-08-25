@@ -74,12 +74,12 @@ public:
 
 	/**
 	Automatically Called By The Sandbox Editor When We Enter Or Exit "Game Mode".
-
-	\param	bGameMode	Specifies Whether We Are Entering Or Exiting Editor "Game Mode".
-
-	\return	False If Editor "Game Mode" Could Not Be Changed. True Otherwise.
-	*/
-	virtual bool SetGameMode(bool bGameMode) override;
+	
+	\param	isGameMode Specifies Whether We Are Entering Or Exiting Editor "Game Mode".
+	
+	\return False If Editor "Game Mode" Could Not Be Changed. True Otherwise.
+	**/
+	virtual bool SetGameMode(bool isGameMode) override;
 
 
 	/**
@@ -323,13 +323,21 @@ private:
 	/**
 	Specifies Whether The Local Player Is Currently Active Or Not (Whether The Player Was Spawned And Still Active).
 	*/
-	bool m_bPlayer;
+	bool m_isLocalPlayerActive;
 
 
 	/**
 	Specifies Whether We Are Using MultiPlayer Game Rules Or Not.
 	*/
 	bool m_bMultiPlayerGameRules;
+
+
+	/**
+	The identifier of the player pawn, if there is one. A player pawn is a character that is spawned on entering
+	game mode, and removed when exiting game mode.
+	**/
+	//EntityId m_playerPawnId { INVALID_ENTITYID };
+
 
 	// TODO: Add implmentation of IEquipmentSystemInterface. (member)
 };

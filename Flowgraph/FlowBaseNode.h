@@ -1,12 +1,12 @@
 // CryEngine Header File.
-// Copyright (C), Crytek, 1999-2015.
+// Copyright (C), Crytek, 1999-2016.
 
 
 #pragma once
 
 
-#include <CryFlowGraph/IFlowSystem.h>
-
+#include <CryFlowgraph/IFlowSystem.h>
+#include <CryGame/IGameFramework.h>
 
 enum ENodeCloneType
 {
@@ -116,7 +116,7 @@ private:
 	IFlowNodePtr m_pInstance;	// only applies for singleton nodes
 };
 
-#if defined(WIN32) && defined(_LIB)
+#if CRY_PLATFORM_WINDOWS && defined(_LIB)
 #define CRY_EXPORT_STATIC_LINK_VARIABLE( Var ) \
 	extern "C" { int lib_func_##Var() { return (int)&Var; } } \
 	__pragma( message("#pragma comment(linker,\"/include:_lib_func_"#Var"\")") )
@@ -163,7 +163,7 @@ protected:
 
 		if (pActInfo->pEntity)
 		{
-			bRet = (pActInfo->pEntity->GetId() == LOCAL_PLAYER_ENTITY_ID);
+			bRet = (pActInfo->pEntity->GetId() == gEnv->pGame->GetIGameFramework()->GetClientActorId());
 		}
 		else
 		{

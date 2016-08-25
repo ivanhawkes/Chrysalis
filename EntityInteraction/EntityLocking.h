@@ -8,7 +8,7 @@ This utilises an EntityAwareness extension to perform the core work of detecting
 #pragma once
 
 #include <IGameObject.h>
-#include <EntitySensing/IEntityLocking.h>
+#include <EntityInteraction/IEntityLocking.h>
 
 
 struct IEntityAwareness;
@@ -26,26 +26,10 @@ public:
 	// ***
 
 	void GetMemoryUsage(ICrySizer *pSizer) const override;
-	bool Init(IGameObject * pGameObject) override;
 	void PostInit(IGameObject * pGameObject) override;
-	void InitClient(int channelId) override {};
-	void PostInitClient(int channelId) override {};
-	bool ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override;
-	void PostReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override {};
-	bool GetEntityPoolSignature(TSerialize signature) override;
-	void Release() override;
 	void FullSerialize(TSerialize ser) override;
-	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int pflags) override;
 	void PostSerialize() override;
-	void SerializeSpawnInfo(TSerialize ser) override {};
-	ISerializableInfoPtr GetSpawnInfo() override { return 0; };
 	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
-	void HandleEvent(const SGameObjectEvent& event) override {};
-	void ProcessEvent(SEntityEvent& event) override {};
-	void SetChannelId(uint16 id) override {};
-	void SetAuthority(bool auth) override {};
-	void PostUpdate(float frameTime) override { CRY_ASSERT(false); };
-	void PostRemoteSpawn() override {};
 
 
 	// ***

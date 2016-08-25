@@ -5,6 +5,7 @@
 #include <IActorSystem.h>
 #include <IGameRulesSystem.h>
 #include <CryRenderer/IRenderAuxGeom.h>
+#include <EntityInteraction/EntityInteraction.h>
 
 
 //static const float ProximityRadius = 2.0f;
@@ -26,17 +27,12 @@ void CEntityLocking::GetMemoryUsage(ICrySizer * pSizer) const
 }
 
 
-bool CEntityLocking::Init(IGameObject * pGameObject)
+void CEntityLocking::PostInit(IGameObject * pGameObject)
 {
-	SetGameObject(pGameObject);
+	pGameObject->EnableUpdateSlot(this, 0);
 
-	// Aquire any needed extensions, if we don't have them already.
-	if (!m_pEntityAwareness)
-	{
-		m_pEntityAwareness = static_cast <IEntityAwareness*> (GetGameObject()->AcquireExtension("EntityAwareness"));
-		if (!m_pEntityAwareness)
-			return false;
-	}
+	// Aquire any needed extensions.
+	m_pEntityAwareness = static_cast <IEntityAwareness*> (GetGameObject()->AcquireExtension("EntityAwareness"));
 
 	//m_pEntityAwareness->SetProximityRadius(ProximityRadius);
 
@@ -59,30 +55,6 @@ bool CEntityLocking::Init(IGameObject * pGameObject)
 
 	// TEST: Allow me to test each method as required.
 	m_queryMethods = "rb";
-
-	return true;
-}
-
-
-void CEntityLocking::PostInit(IGameObject * pGameObject)
-{
-	pGameObject->EnableUpdateSlot(this, 0);
-}
-
-
-bool CEntityLocking::ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params)
-{
-	ResetGameObject();
-
-	CRY_ASSERT_MESSAGE(false, "CEntityLocking::ReloadExtension not implemented");
-
-	return false;
-}
-
-
-void CEntityLocking::Release()
-{
-	delete this;
 }
 
 
@@ -147,24 +119,10 @@ void CEntityLocking::FullSerialize(TSerialize ser)
 }
 
 
-bool CEntityLocking::NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags)
-{
-	return true;
-}
-
-
 void CEntityLocking::PostSerialize()
 {
 	if (m_funcOnNewUsable)
 		Script::CallMethod(m_pGameRules, m_funcOnNewUsable, EntityIdToScript(GetEntityId()), EntityIdToScript(m_overId));
-}
-
-
-bool CEntityLocking::GetEntityPoolSignature(TSerialize signature)
-{
-	CRY_ASSERT_MESSAGE(false, "CEntityLocking::GetEntityPoolSignature not implemented");
-
-	return true;
 }
 
 
@@ -282,7 +240,7 @@ bool CEntityLocking::PerformDotFilteredProximityQuery(SQueryResult& result, floa
 	float minDistanceToCenterSq(FLT_MAX);
 	IEntity* pNearestEntityToViewCenter(nullptr);
 	float maxDot = -1.0f;
-	Vec3 viewDirection = m_pEntityAwareness->GetDir();
+	Quat viewDirection = m_pEntityAwareness->GetDir();
 	Vec3 viewPos = m_pEntityAwareness->GetPos();
 
 	auto entities = m_pEntityAwareness->NearQuery();
@@ -298,7 +256,7 @@ bool CEntityLocking::PerformDotFilteredProximityQuery(SQueryResult& result, floa
 		Vec3 itemPos = bbox.GetCenter();
 		Vec3 diff = itemPos - viewPos;
 		Vec3 dirToItem = diff.GetNormalized();
-		float dotToItem = dirToItem.dot(viewDirection);
+		float dotToItem = dirToItem.dot(viewDirection.v);
 
 		if (dotToItem > maxDot)
 		{
@@ -346,14 +304,14 @@ bool CEntityLocking::PerformRayCastQuery(SQueryResult& result)
 bool CEntityLocking::PerformViewCenterQuery(SQueryResult& result)
 {
 	float minDistanceToCenterSq(FLT_MAX);
-	const Vec3 viewDirection = m_pEntityAwareness->GetDir() * m_lastRadius;
+	const Vec3 viewDirection = m_pEntityAwareness->GetDir() * FORWARD_DIRECTION * m_lastRadius;
 	const Vec3 viewPos = m_pEntityAwareness->GetPos();
 	Line viewLine(viewPos, viewDirection);
 
 	// DEBUG: get the lineseg to show up.	
-	gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(viewLine.pointonline, ColorB(0, 64, 0), viewLine.pointonline + viewDirection, ColorB(0, 128, 0));
-	gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(viewLine.pointonline, 0.05f, ColorB(64, 64, 64), false);
-	gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(viewLine.pointonline + viewDirection, 0.05f, ColorB(0, 128, 0), false);
+	//gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(viewLine.pointonline, ColorB(0, 64, 0), viewLine.pointonline + viewDirection, ColorB(0, 128, 0));
+	//gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(viewLine.pointonline, 0.05f, ColorB(64, 64, 64), false);
+	//gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(viewLine.pointonline + viewDirection, 0.05f, ColorB(0, 128, 0), false);
 
 	IEntity* pNearestEntityToViewCenter { nullptr };
 
@@ -372,7 +330,7 @@ bool CEntityLocking::PerformViewCenterQuery(SQueryResult& result)
 		gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(bbox, false, ColorB(0, 64, 64, 64), EBoundingBoxDrawStyle::eBBD_Faceted);
 
 		// DEBUG:
-		gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(viewLine.pointonline, ColorB(64, 64, 0, 255), itemPos, ColorB(128, 128, 0, 255));
+		//gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(viewLine.pointonline, ColorB(64, 64, 0, 255), itemPos, ColorB(128, 128, 0, 255));
 
 		float dstSqr = LinePointDistanceSqr(viewLine, itemPos);
 		if ((dstSqr < minDistanceToCenterSq))
@@ -421,7 +379,7 @@ bool CEntityLocking::PerformMergedQuery(SQueryResult& result, float minDot)
 	IEntity* pNearestBoxEntity(nullptr);
 	SQueryResult bestBoxResult;
 
-	const Vec3 viewDirection = m_pEntityAwareness->GetDir() * m_lastRadius;
+	const Vec3 viewDirection = m_pEntityAwareness->GetDir() * FORWARD_DIRECTION * m_lastRadius;
 	const Vec3 viewDirectionNormalized = viewDirection.GetNormalized();
 	const Vec3 viewPos = m_pEntityAwareness->GetPos();
 

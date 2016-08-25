@@ -5,7 +5,7 @@
 #include <ConsoleVariables/ConsoleVariables.h>
 #include <Actor/Character/Character.h>
 #include "Actor/Animation/Player/PlayerAnimation.h"
-#include "CharacterStateUtil.h"
+#include <Actor/Movement/StateMachine/ActorStateUtility.h>
 #include "Entity/EntityScriptCalls.h"
 #include "Utility/CryWatch.h"
 #include "CharacterStateEvents.h"

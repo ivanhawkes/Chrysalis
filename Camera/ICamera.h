@@ -2,6 +2,7 @@
 
 #include <CryMath/Cry_Math.h>
 #include <CryRenderer/Tarray.h>
+#include <Entities/Helpers/ISimpleExtension.h>
 
 
 class CPlayer;
@@ -135,12 +136,8 @@ private:
 };
 
 
-struct ICamera : public IGameObjectExtension
+struct ICamera : public ISimpleExtension
 {
-	ICamera();
-	virtual ~ICamera();
-
-
 	struct AnimationSettings
 	{
 		AnimationSettings() : positionFactor(0.0f), rotationFactor(0.0f), applyResult(false), stableBlendOff(false)
@@ -167,13 +164,13 @@ struct ICamera : public IGameObjectExtension
 	
 	\return true if debug allowed, false if not.
 	**/
-	bool IsDebugEnabled(void) const { return (m_bDebugEnabled); };
+	bool IsDebugEnabled(void) const { return (m_isDebugEnabled); };
 
 
 	/**
 	Enables / disable debugging helpers.
 	*/
-	void SetDebugEnabled(const bool enabled) { m_bDebugEnabled = enabled; };
+	void SetDebugEnabled(const bool enabled) { m_isDebugEnabled = enabled; };
 
 
 	/**
@@ -265,13 +262,13 @@ protected:
 
 
 	/** The position and rotation of the camera. This should be updated every frame during the update function. */
-	CCameraPose m_cameraPose = CCameraPose();
+	CCameraPose m_cameraPose { CCameraPose() };
 
 	/** Is debugging allowed? */
-	bool m_bDebugEnabled = false;
+	bool m_isDebugEnabled { false };
 
 	/** Is blending switched off? */
-	bool m_bBlendingOff = false;
+	bool m_bBlendingOff { false };
 
 	/**
 	TODO: document this. Not sure what it does.

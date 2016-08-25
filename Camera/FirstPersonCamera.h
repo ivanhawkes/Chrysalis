@@ -1,8 +1,8 @@
 #pragma once
 
-#include <IGameObject.h>
-#include <IViewSystem.h>
 #include "ICamera.h"
+#include <IViewSystem.h>
+#include <Camera/CameraManager.h>
 
 
 /**
@@ -19,27 +19,10 @@ public:
 	// *** IGameObjectExtension
 	// ***
 
-	void GetMemoryUsage(ICrySizer *pSizer) const override;
-	bool Init(IGameObject * pGameObject) override;
 	void PostInit(IGameObject * pGameObject) override;
-	void InitClient(int channelId) override {};
-	void PostInitClient(int channelId) override {};
 	bool ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override;
-	void PostReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override {};
-	bool GetEntityPoolSignature(TSerialize signature) override { return true; };
 	void Release() override;
-	void FullSerialize(TSerialize ser) override {};
-	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int pflags) override { return true; };
-	void PostSerialize() override {};
-	void SerializeSpawnInfo(TSerialize ser) override {};
-	ISerializableInfoPtr GetSpawnInfo() override { return nullptr; };
 	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
-	void HandleEvent(const SGameObjectEvent& event) override {};
-	void ProcessEvent(SEntityEvent& event) override {};
-	void SetChannelId(uint16 id) override {};
-	void SetAuthority(bool auth) override {};
-	void PostUpdate(float frameTime) override {};
-	void PostRemoteSpawn() override {};
 
 
 	// ***
@@ -89,19 +72,31 @@ public:
 public:
 
 	/** This instance's default constructor. */
-	CFirstPersonCamera() {};
+	CFirstPersonCamera();
 
 	/** This instance's default destructor. */
-	virtual ~CFirstPersonCamera() {};
+	virtual ~CFirstPersonCamera();
+
+	/** Resets the results of all player based camera movements back to their defaults. */
+	virtual void ResetCamera();
 
 
 private:
-	/** A static handler for the actions we are interested in hooking. */
-	TActionHandler<CFirstPersonCamera> m_actionHandler;
+	/** If our entity has a camera manager, we store a pointer to it here. **/
+	ICameraManager* m_pCameraManager { nullptr };
 
 	/** Identifier for the entity which this camera is targeted towards. */
-	EntityId m_targetEntityID = INVALID_ENTITYID;
+	EntityId m_targetEntityID { INVALID_ENTITYID };
 
 	/** The view camera for this instance. */
-	IView* m_pView = nullptr;
+	IView* m_pView { nullptr };
+
+	/** A delta value (degrees) to apply to the camera's initial calculated pitch. */
+	float m_viewPitch;
+
+	/** Minimum pitch delta (radians). */
+	float m_pitchMin { DEG2RAD(-85.0f) };
+
+	/** Maximum pitch delta (radians). */
+	float m_pitchMax { DEG2RAD(85.0f) };
 };

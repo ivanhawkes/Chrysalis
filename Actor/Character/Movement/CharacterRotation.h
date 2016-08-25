@@ -15,7 +15,7 @@ class CCharacterRotation
 public:
 	CCharacterRotation(const CCharacter& character);
 
-//	void Process(IItem* pCurrentItem, const SActorMovementRequest& movementRequest, const SAimAccelerationParams& verticalAcceleration, float frameTime);
+	//	void Process(IItem* pCurrentItem, const SActorMovementRequest& movementRequest, const SAimAccelerationParams& verticalAcceleration, float frameTime);
 	void Process(const SActorMovementRequest& movementRequest, float frameTime);
 
 	void FullSerialize(TSerialize ser);

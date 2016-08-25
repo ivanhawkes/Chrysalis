@@ -10,6 +10,7 @@
 //#include <IMovieSystem.h>
 #include <CryEntitySystem/IEntityPoolManager.h>
 #include <Actor/Player/Player.h>
+#include <Camera/ICamera.h>
 #include <Actor/Character/Character.h>
 #include "EditorGame.h"
 #include "Game.h"
@@ -45,24 +46,24 @@ extern "C"
 
 
 CEditorGame::CEditorGame() :
-m_pGameStartup(nullptr),
-m_GameRef(nullptr),
-m_bNetContext(false),
-m_bGameMode(false),
-m_bPlayer(false),
-m_bMultiPlayerGameRules(false)
+	m_pGameStartup(nullptr),
+	m_GameRef(nullptr),
+	m_bNetContext(false),
+	m_bGameMode(false),
+	m_isLocalPlayerActive(false),
+	m_bMultiPlayerGameRules(false)
 {
 	g_pEditorGame = this;
 }
 
 
 CEditorGame::CEditorGame(const char* pBinDir) :
-m_pGameStartup(nullptr),
-m_GameRef(nullptr),
-m_bNetContext(false),
-m_bGameMode(false),
-m_bPlayer(false),
-m_bMultiPlayerGameRules(false)
+	m_pGameStartup(nullptr),
+	m_GameRef(nullptr),
+	m_bNetContext(false),
+	m_bGameMode(false),
+	m_isLocalPlayerActive(false),
+	m_bMultiPlayerGameRules(false)
 {
 	g_pEditorGame = this;
 }
@@ -77,7 +78,7 @@ CEditorGame::~CEditorGame()
 void CEditorGame::ResetClient(IConsoleCmdArgs* pConsoleCommandArgs)
 {
 	// Store whether the player is enabled or not.
-	bool bOldPlayerValue = g_pEditorGame->m_bPlayer;
+	bool bOldPlayerValue = g_pEditorGame->m_isLocalPlayerActive;
 
 	// Disable the player.
 	g_pEditorGame->EnablePlayer(false);
@@ -202,19 +203,63 @@ void CEditorGame::Shutdown()
 }
 
 
-bool CEditorGame::SetGameMode(bool bGameMode)
+bool CEditorGame::SetGameMode(bool isGameMode)
 {
-	if (bGameMode)
+	if (isGameMode)
 		// Log that we are entering "game mode".
 		gEnv->pLog->LogAlways("Entering Game Mode...");
 	else
 		// Log that we are exiting "game mode".
 		gEnv->pLog->LogAlways("Exiting Game Mode...");
 
-	m_bGameMode = bGameMode;
-	bool on = bGameMode;
+	m_bGameMode = isGameMode;
+	bool on = isGameMode;
 	if (g_pEditorGameMode->GetIVal() == 0)
-		on = m_bPlayer;
+		on = m_isLocalPlayerActive;
+
+	// For convenience, we will move the player to the camera location when exiting game mode.	
+	if (const auto pPlayer = CPlayer::GetLocalPlayer())
+	{
+		auto pCamera = pPlayer->GetCamera();
+
+		if (pCamera)
+		{
+			if ((!isGameMode) && (on))
+			{
+				pPlayer->GetEntity()->SetPos(pCamera->GetCameraPose().GetPosition());
+				pPlayer->GetEntity()->SetRotation(pCamera->GetCameraPose().GetRotation());
+			}
+
+			//// HACK: Try and make a new actor here for testing...
+			//// It spawns and we can control it, but oddly doesn't delete when asked.
+			//auto *pActorSystem = gEnv->pGame->GetIGameFramework()->GetIActorSystem();
+			//if (isGameMode)
+			//{
+			//	// Called when a new client connects to the server. We need to spawn a player class to get the ball rolling.				
+			//	if (auto pActor = pActorSystem->CreateActor(0, "CharacterProxy", "Character", pCamera->GetCameraPose().GetPosition(),
+			//		Quat (Ang3(0.0f, 0.0f, pCamera->GetCameraPose().GetRotation().GetRotZ())),
+			//		Vec3(1, 1, 1)))
+			//	{
+			//		gEnv->pLog->LogAlways("Spawned a player pawn.");
+			//		m_playerPawnId = pActor->GetEntityId();
+			//		pPlayer->AttachToCharacter(m_playerPawnId);
+			//	}
+			//	else
+			//	{
+			//		gEnv->pLog->LogAlways("Failed to spawn a player pawn.");
+			//	}
+			//}
+			//else
+			//{
+			//	// NOTE: this should remove the pawn, but it doesn't.
+			//	if (m_playerPawnId != INVALID_ENTITYID)
+			//	{
+			//		pActorSystem->RemoveActor(m_playerPawnId);
+			//		m_playerPawnId = INVALID_ENTITYID;
+			//	}
+			//}
+		}
+	}
 
 	// Start or stop a networked game context.
 	bool ok = EnableNetContext(on);
@@ -224,11 +269,11 @@ bool CEditorGame::SetGameMode(bool bGameMode)
 
 		// If we are in the sandbox editor, notify the currently active game that the editor's "game mode" has been switched.
 		if (gEnv->IsEditor())
-			gEnv->pGame->EditorResetGame(bGameMode);
+			gEnv->pGame->EditorResetGame(isGameMode);
 
 		// Notify the IGameFramework that the editor's "game mode" has been switched.
 		IGameFramework * pGameFramework = gEnv->pGame->GetIGameFramework();
-		pGameFramework->OnEditorSetGameMode(bGameMode);
+		pGameFramework->OnEditorSetGameMode(isGameMode);
 
 		if (m_bGameMode)
 			// Log that we have successfully entered "game mode".
@@ -287,9 +332,7 @@ void CEditorGame::SetPlayerPosAng(Vec3 pos, Vec3 viewDir)
 
 	// Set the players position, rotation, and scale at the same time. It is very important that you specify the "Why"
 	// flags so that the sandbox editor can get notified about the transformation changes.
-	// This has a hard-coded value for player height, which it uses to translate downwards - presumably because
-	// the input pos is a camera position.
-	pEntity->SetPosRotScale(pos /*- Vec3(0.0f, 0.0f, 1.88f)*/, Quat(CamRot), pEntity->GetScale(),
+	pEntity->SetPosRotScale(pos, Quat(CamRot), pEntity->GetScale(),
 		ENTITY_XFORM_EDITOR | ENTITY_XFORM_POS | ENTITY_XFORM_ROT | ENTITY_XFORM_SCL);
 }
 
@@ -320,7 +363,7 @@ void CEditorGame::OnBeforeLevelLoad()
 	// Create the specified game rules.
 	//gEnv->pGame->GetIGameFramework()->GetIGameRulesSystem()->CreateGameRules("SinglePlayer");
 	gEnv->pGame->GetIGameFramework()->GetIGameRulesSystem()->CreateGameRules("SoloExploration");
-	
+
 	// Dispatch to all ILevelSystemListeners that a level has started to load.
 	gEnv->pGame->GetIGameFramework()->GetILevelSystem()->OnLoadingStart(0);
 }
@@ -394,7 +437,7 @@ void CEditorGame::ToggleMultiplayerGameRules()
 	m_bMultiPlayerGameRules = !m_bMultiPlayerGameRules;
 
 	// Store whether the player is enabled or not.
-	bool bOldPlayerSetting = m_bPlayer;
+	bool bOldPlayerSetting = m_isLocalPlayerActive;
 
 	// Disable the player.
 	EnablePlayer(false);
@@ -407,7 +450,7 @@ void CEditorGame::ToggleMultiplayerGameRules()
 	if (pClass)
 		pClass->LoadScript(true);
 
-	
+
 	// TODO: WTF - we're creating game rules again. Need to DRY principle this stuff.
 	if (m_bMultiPlayerGameRules)
 	{
@@ -460,7 +503,7 @@ bool CEditorGame::EnableNetContext(bool bEnable)
 			| eGSF_Client					// We are the client.
 			| eGSF_NoLevelLoading			// Dynamic level loading is not allowed.
 			| eGSF_BlockingClientConnect	// When connecting to the server / client, block. Don't continue until a connection is made.
-			| eGSF_NoGameRules				// The game rules should not be spawned automatically,  leave it up to use to do manually.
+			| eGSF_NoGameRules				// The game rules should not be spawned automatically,  leave it up to us to do manually.
 			| eGSF_NoQueries;				// Do not allow queries.
 
 		if (m_bMultiPlayerGameRules)
@@ -516,8 +559,8 @@ bool CEditorGame::EnableNetContext(bool bEnable)
 void CEditorGame::EnablePlayer(bool bEnable)
 {
 	bool spawnPlayer = false;
-	if (m_bPlayer != bEnable)
-		spawnPlayer = m_bPlayer = bEnable;
+	if (m_isLocalPlayerActive != bEnable)
+		spawnPlayer = m_isLocalPlayerActive = bEnable;
 
 	// Sets the editor's "game mode".
 	if (!SetGameMode(m_bGameMode))

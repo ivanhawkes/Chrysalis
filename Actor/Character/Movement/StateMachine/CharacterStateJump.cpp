@@ -5,7 +5,7 @@
 #include <Game/Game.h>
 #include <ConsoleVariables/ConsoleVariables.h>
 #include <Actor/Character/Character.h>
-#include "CharacterStateUtil.h"
+#include <Actor/Movement/StateMachine/ActorStateUtility.h>
 #include "Utility/CryWatch.h"
 #include "Environment/Ledge/LedgeManager.h"
 #include "Actor/Animation/Player/PlayerAnimation.h"
@@ -244,17 +244,17 @@ void CCharacterStateJump::OnExit(CCharacter& Character, const bool isHeavyWeapon
 
 void CCharacterStateJump::OnSpecialMove(CCharacter &Character, IActorEventListener::ESpecialMove specialMove)
 {
-/*	if (Character.m_CharacterEventListeners.empty() == false)
-	{
-		CCharacter::TCharacterEventListeners::const_iterator iter = Character.m_CharacterEventListeners.begin();
-		CCharacter::TCharacterEventListeners::const_iterator cur;
-		while (iter != Character.m_CharacterEventListeners.end())
+	/*	if (Character.m_CharacterEventListeners.empty() == false)
 		{
-			cur = iter;
-			++iter;
-			(*cur)->OnSpecialMove(&Character, specialMove);
-		}
-	}*/
+			CCharacter::TCharacterEventListeners::const_iterator iter = Character.m_CharacterEventListeners.begin();
+			CCharacter::TCharacterEventListeners::const_iterator cur;
+			while (iter != Character.m_CharacterEventListeners.end())
+			{
+				cur = iter;
+				++iter;
+				(*cur)->OnSpecialMove(&Character, specialMove);
+			}
+		}*/
 }
 
 

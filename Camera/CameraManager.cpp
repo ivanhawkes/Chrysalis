@@ -4,7 +4,6 @@
 #include "ActionRPGCamera.h"
 #include "FirstPersonCamera.h"
 #include <Actor/Player/Player.h>
-#include <ActionMaps/GameActionMaps.h>
 
 
 // ***
@@ -20,44 +19,31 @@ void CCameraManager::GetMemoryUsage(ICrySizer *pSizer) const
 }
 
 
-bool CCameraManager::Init(IGameObject * pGameObject)
-{
-	// Critical this is called.
-	SetGameObject(pGameObject);
-
-	// Start with a clean slate and a known state.
-	m_lastCameraMode = ECameraMode::NO_CAMERA;
-	m_cameraMode = ECameraMode::NO_CAMERA;
-	memset(m_cameraModes, 0, sizeof(m_cameraModes));
-
-	// First person camera.
-	m_cameraModes [ECameraMode::FIRST_PERSON] = reinterpret_cast<ICamera*>(GetGameObject()->AcquireExtension("FirstPersonCamera"));
-
-	//m_cameraModes [ECameraMode::FIRST_PERSON_HMD] = new CFirstPersonCamera (); // TODO: make a special one for HMD
-
-	// Action RPG Camera.
-	m_cameraModes [ECameraMode::ACTION_RPG] = reinterpret_cast<ICamera*>(GetGameObject()->AcquireExtension("ActionRPGCamera"));
-
-	// Once the cameras are created we should be able to select our default camera.
-	SetCameraMode(ECameraMode::ACTION_RPG, "Initial selection of camera.");
-//	SetCameraMode(ECameraMode::FIRST_PERSON, "Initial selection of camera.");
-	
-	return true;
-}
-
-
 void CCameraManager::PostInit(IGameObject * pGameObject)
 {
 	// Allow this instance to be updated every frame.
 	pGameObject->EnableUpdateSlot(this, 0);
-}
 
+	// Start with a clean slate and a known state.
+	memset(m_cameraModes, 0, sizeof(m_cameraModes));
 
-bool CCameraManager::ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params)
-{
-	ResetGameObject();
+	// First person camera.
+	m_cameraModes [ECameraMode::FIRST_PERSON] = static_cast<ICamera*>(GetGameObject()->AcquireExtension("FirstPersonCamera"));
 
-	return true;
+	//m_cameraModes [ECameraMode::FIRST_PERSON_HMD] = new CFirstPersonCamera (); // TODO: make a special one for HMD
+
+	// Action RPG Camera.
+	m_cameraModes [ECameraMode::ACTION_RPG] = static_cast<ICamera*>(GetGameObject()->AcquireExtension("ActionRPGCamera"));
+
+	// Once the cameras are created we should be able to select our default camera.
+	SetCameraMode(ECameraMode::ACTION_RPG, "Initial selection of camera.");
+	//	SetCameraMode(ECameraMode::FIRST_PERSON, "Initial selection of camera.");
+
+	// Detect when we become the local player.
+	const int requiredEvents [] = { eGFE_BecomeLocalPlayer };
+	pGameObject->UnRegisterExtForEvents(this, NULL, 0);
+	pGameObject->RegisterExtForEvents(this, requiredEvents, sizeof(requiredEvents) / sizeof(int));
+
 }
 
 
@@ -90,22 +76,24 @@ void CCameraManager::Update(SEntityUpdateContext& ctx, int updateSlot)
 }
 
 
-// ***
-// *** IGameObjectView
-// ***
-
-
-void CCameraManager::UpdateView(SViewParams& params)
+void CCameraManager::HandleEvent(const SGameObjectEvent &event)
 {
-	// The last update call should have given us a new updated position and rotation. We now pass those off to the view
-	// system. 
-	params.SaveLast();
-	params.position = m_cameraPose.GetPosition();
-	params.rotation = m_cameraPose.GetRotation();
+	// We only register action maps if we are the local player.
+	if (event.event == eGFE_BecomeLocalPlayer)
+	{
+		RegisterActionMaps();
+	}
+}
 
-	// TODO: Need to set a FoV or weird stuff happens. Set up a cvar or something.
-	// VR devices might need to be queried.
-	params.fov = DEG2RAD(60.0f);
+
+// ***
+// *** IActionListener
+// ***
+
+void CCameraManager::OnAction(const ActionId& action, int activationMode, float value)
+{
+	// We want to dispatch the action as if it were for the character that this player is currently attached onto.
+	m_actionHandler.Dispatch(this, GetEntityId(), action, activationMode, value);
 }
 
 
@@ -176,4 +164,89 @@ CCameraManager::~CCameraManager()
 	// Clean up the cameras.
 	GetGameObject()->ReleaseExtension("FirstPersonCamera");
 	GetGameObject()->ReleaseExtension("ActionRPGCamera");
+
+	// Clean up our action map usage.
+	IActionMapManager* pActionMapManager = gEnv->pGame->GetIGameFramework()->GetIActionMapManager();
+	pActionMapManager->EnableActionMap("camera", false);
+	pActionMapManager->RemoveExtraActionListener(this, "camera");
+	GetGameObject()->ReleaseActions(this);
+}
+
+
+void CCameraManager::RegisterActionMaps()
+{
+	// Populate the action handler callbacks so that we get action map events.
+	InitializeActionHandler();
+
+	// Try and enable the "camera" actions.
+	IActionMapManager* pActionMapManager = gEnv->pGame->GetIGameFramework()->GetIActionMapManager();
+	pActionMapManager->EnableActionMap("camera", true);
+	pActionMapManager->AddExtraActionListener(this, "camera");
+	GetGameObject()->CaptureActions(this);
+}
+
+
+void CCameraManager::InitializeActionHandler()
+{
+	// Camera movements.
+	m_actionHandler.AddHandler(ActionId("camera_shift_up"), &CCameraManager::OnActionCameraShiftUp);
+	m_actionHandler.AddHandler(ActionId("camera_shift_down"), &CCameraManager::OnActionCameraShiftDown);
+	m_actionHandler.AddHandler(ActionId("camera_shift_left"), &CCameraManager::OnActionCameraShiftLeft);
+	m_actionHandler.AddHandler(ActionId("camera_shift_right"), &CCameraManager::OnActionCameraShiftRight);
+	m_actionHandler.AddHandler(ActionId("camera_shift_forward"), &CCameraManager::OnActionCameraShiftForward);
+	m_actionHandler.AddHandler(ActionId("camera_shift_backward"), &CCameraManager::OnActionCameraShiftBackward);
+}
+
+
+bool CCameraManager::OnActionCameraShiftUp(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	if (activationMode && (eAAM_OnPress || eAAM_OnHold))
+		m_viewOffset += Vec3(0.0f, 0.0f, adjustmentAmount);
+
+	return false;
+}
+
+
+bool CCameraManager::OnActionCameraShiftDown(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	if (activationMode && (eAAM_OnPress || eAAM_OnHold))
+		m_viewOffset += Vec3(0.0f, 0.0f, -adjustmentAmount);
+
+	return false;
+}
+
+
+bool CCameraManager::OnActionCameraShiftLeft(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	if (activationMode && (eAAM_OnPress || eAAM_OnHold))
+		m_viewOffset += Vec3(-adjustmentAmount, 0.0f, 0.0f);
+
+	return false;
+}
+
+
+bool CCameraManager::OnActionCameraShiftRight(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	if (activationMode && (eAAM_OnPress || eAAM_OnHold))
+		m_viewOffset += Vec3(adjustmentAmount, 0.0f, 0.0f);
+
+	return false;
+}
+
+
+bool CCameraManager::OnActionCameraShiftForward(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	if (activationMode && (eAAM_OnPress || eAAM_OnHold))
+		m_viewOffset += Vec3(0.0f, adjustmentAmount, 0.0f);
+
+	return false;
+}
+
+
+bool CCameraManager::OnActionCameraShiftBackward(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	if (activationMode && (eAAM_OnPress || eAAM_OnHold))
+		m_viewOffset += Vec3(0.0f, -adjustmentAmount, 0.0f);
+
+	return false;
 }

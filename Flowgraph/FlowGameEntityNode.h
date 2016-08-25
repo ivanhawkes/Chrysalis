@@ -1,21 +1,26 @@
+// CryEngine Source File
+// Copyright (C), Crytek, 1999-2016
+
+
 #pragma once
 
-#include <CryEntitySystem/IEntityClass.h>
-#include <CryEntitySystem/IEntitySystem.h>
+
 #include "FlowBaseNode.h"
 
+#include <CryEntitySystem/IEntitySystem.h>
+#include <CryEntitySystem/IEntityClass.h>
 
 struct IEntityClass;
 
-typedef void(*FlowNodeInputFunction)(EntityId id, const TFlowInputData& data);
-typedef void(*FlowNodeOnActivateFunction)(EntityId id, IFlowNode::SActivationInfo* pActInfo, const class CFlowGameEntityNode* pNode);
+typedef void (*FlowNodeInputFunction)(EntityId id, const TFlowInputData& data);
+typedef void (*FlowNodeOnActivateFunction)(EntityId id, IFlowNode::SActivationInfo* pActInfo, const class CFlowGameEntityNode* pNode);
 
 class CGameEntityNodeFactory : public IFlowNodeFactory
 {
 public:
 	CGameEntityNodeFactory();
 	virtual ~CGameEntityNodeFactory();
-
+	
 	virtual void AddRef() { m_nRefCount++; }
 	virtual void Release() { if (0 == --m_nRefCount) delete this; }
 	virtual IFlowNodePtr Create(IFlowNode::SActivationInfo* pActInfo);
@@ -23,9 +28,9 @@ public:
 	virtual void GetMemoryUsage(ICrySizer* s) const
 	{
 		SIZER_SUBCOMPONENT_NAME(s, "CFlowGameEntityFactory");
-		s->AddObject(this, sizeof(*this));
+		s->AddObject(this, sizeof(*this) );
 		s->AddObject(m_inputs);
-		s->AddObject(m_outputs);
+		s->AddObject(m_outputs);	
 	}
 
 	void GetConfiguration(SFlowNodeConfig& configuration);
@@ -62,8 +67,8 @@ public:
 	{
 		UnregisterEvent();
 	}
-	virtual IFlowNodePtr Clone(SActivationInfo *pActInfo);
-	virtual void GetConfiguration(SFlowNodeConfig&);
+	virtual IFlowNodePtr Clone(SActivationInfo *pActInfo );
+	virtual void GetConfiguration( SFlowNodeConfig& );
 	virtual void ProcessEvent(EFlowEvent event, SActivationInfo* pActInfo);
 	virtual bool SerializeXML(SActivationInfo* pActInfo, const XmlNodeRef&, bool);
 
@@ -91,7 +96,7 @@ protected:
 		{
 			entityId = pActInfo->pEntity->GetId();
 		}
-
+		
 		return entityId;
 	}
 
@@ -104,18 +109,17 @@ protected:
 	void UnregisterEvent()
 	{
 		IEntitySystem* pEntitySystem = gEnv->pEntitySystem;
-		if (pEntitySystem && m_entityId)
+		if ( pEntitySystem && m_entityId )
 		{
 			pEntitySystem->RemoveEntityEventListener(m_entityId, ENTITY_EVENT_ACTIVATE_FLOW_NODE_OUTPUT, this);
 			pEntitySystem->RemoveEntityEventListener(m_entityId, ENTITY_EVENT_DONE, this);
 		}
 	}
 
-	void Serialize(SActivationInfo* pActInfo, TSerialize ser);
+	void Serialize(SActivationInfo* pActInfo, TSerialize ser) {}
 
 	IFlowGraph *m_pGraph;
 	TFlowNodeId m_nodeID;
 	_smart_ptr<CGameEntityNodeFactory> m_pClass;
-	int m_lastInitializeFrameId;
 	EntityId m_entityId;
 };

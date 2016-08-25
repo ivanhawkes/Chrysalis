@@ -6,10 +6,6 @@
     ]
   },
   "Chrysalis_uber_Game.cpp": {
-    "ActionMaps": [
-      "ActionMaps/GameActionMaps.h",
-      "ActionMaps/GameActionMaps.cpp"
-    ],
     "Actor": [
       "Actor/Actor.cpp",
       "Actor/Actor.h",
@@ -59,9 +55,7 @@
       "Actor/Character/Movement/StateMachine/CharacterStateSwim.cpp",
       "Actor/Character/Movement/StateMachine/CharacterStateSwim.h",
       "Actor/Character/Movement/StateMachine/CharacterStateSwimWaterTestProxy.cpp",
-      "Actor/Character/Movement/StateMachine/CharacterStateSwimWaterTestProxy.h",
-      "Actor/Character/Movement/StateMachine/CharacterStateUtil.cpp",
-      "Actor/Character/Movement/StateMachine/CharacterStateUtil.h"
+      "Actor/Character/Movement/StateMachine/CharacterStateSwimWaterTestProxy.h"
     ],
     "Actor/Inventory": [
       "Actor/Inventory/EntityInventory.cpp",
@@ -71,6 +65,15 @@
       "Actor/Mount/Mount.cpp",
       "Actor/Mount/Mount.h"
     ],
+    "Actor/Movement": [
+      "Actor/Movement/ActorMovementController.h",
+      "Actor/Movement/ActorMovementController.cpp"
+    ],
+    "Actor/Movement/StateMachine": [
+      "Actor/Movement/StateMachine/ActorStateEvents.h",
+      "Actor/Movement/StateMachine/ActorStateUtility.cpp",
+      "Actor/Movement/StateMachine/ActorStateUtility.h"
+    ],
     "Actor/Pet": [
       "Actor/Pet/Pet.cpp",
       "Actor/Pet/Pet.h"
@@ -78,6 +81,11 @@
     "Actor/Player": [
       "Actor/Player/Player.cpp",
       "Actor/Player/Player.h"
+    ],
+    "Actor/Player/PlayerInput": [
+      "Actor/Player/PlayerInput/IPlayerInput.h",
+      "Actor/Player/PlayerInput/PlayerInput.cpp",
+      "Actor/Player/PlayerInput/PlayerInput.h"
     ],
     "Animation/ProceduralContext": [
       "Animation/ProceduralContext/ProceduralContextAim.cpp",
@@ -153,13 +161,16 @@
       "Entity/EntityEffects.cpp",
       "Entity/EntityScriptCalls.h"
     ],
-    "EntitySensing": [
-      "EntitySensing/IEntityAwareness.h",
-      "EntitySensing/IEntityLocking.h",
-      "EntitySensing/EntityAwareness.h",
-      "EntitySensing/EntityAwareness.cpp",
-      "EntitySensing/EntityLocking.h",
-      "EntitySensing/EntityLocking.cpp"
+    "EntityInteraction": [
+      "EntityInteraction/EntityAwareness.cpp",
+      "EntityInteraction/EntityAwareness.h",
+      "EntityInteraction/EntityLocking.cpp",
+      "EntityInteraction/EntityLocking.h",
+      "EntityInteraction/EntityInteraction.cpp",
+      "EntityInteraction/EntityInteraction.h",
+      "EntityInteraction/IEntityAwareness.h",
+      "EntityInteraction/IEntityInteraction.h",
+      "EntityInteraction/IEntityLocking.h"
     ],
     "Environment/Ledge": [
       "Environment/Ledge/Ledge.h",
@@ -176,6 +187,10 @@
     "Environment/Water": [
       "Environment/Water/WaterRipplesGenerator.h",
       "Environment/Water/WaterRipplesGenerator.cpp"
+    ],
+    "Entities/Helpers": [
+      "Entities/Helpers/ISimpleActor.h",
+      "Entities/Helpers/ISimpleExtension.h"
     ],
     "Flowgraph": [
       "Flowgraph/FlowBaseNode.h",
@@ -271,11 +286,6 @@
       "ObjectID/ObjectIdMasterFactory.cpp",
       "ObjectID/ObjectIdMasterFactory.h"
     ],
-    "PlayerInput": [
-      "PlayerInput/IPlayerInput.h",
-      "PlayerInput/PlayerInput.cpp",
-      "PlayerInput/PlayerInput.h"
-    ],
     "ScriptBinds": [
       "ScriptBinds/ScriptBinds.cpp",
       "ScriptBinds/ScriptBinds.h"
@@ -303,6 +313,7 @@
       "Utility/LocalizeUtility.h",
       "Utility/Proxy.h",
       "Utility/StringUtils.cpp",
+      "Utility/StringConversions.h",
       "Utility/StringUtils.h"
     ]
   }

@@ -17,8 +17,9 @@
 #include <Actor/Pet/Pet.h>
 #include <Environment/Water/WaterRipplesGenerator.h>
 #include <Item/Flashlight/Flashlight.h>
-#include <EntitySensing/EntityAwareness.h>
-#include <EntitySensing/EntityLocking.h>
+#include <EntityInteraction/EntityInteraction.h>
+#include <EntityInteraction/EntityAwareness.h>
+#include <EntityInteraction/EntityLocking.h>
 #include <Openable/Containers/ContainerExtension.h>
 #include <Openable/Doors/DoorExtension.h>
 #include <Openable/Keys/KeyExtension.h>
@@ -26,7 +27,7 @@
 #include <Camera/CameraManager.h>
 #include <Camera/ActionRPGCamera.h>
 #include <Camera/FirstPersonCamera.h>
-#include <PlayerInput/PlayerInput.h>
+#include <Actor/Player/PlayerInput/PlayerInput.h>
 
 
 // TODO: Move call to register cvars and commands to here.
@@ -101,7 +102,7 @@ template<class T>
 void CGameRegistration::RegisterNoScriptGameObject(const string& name, const string& editorPath, uint32 flags)
 {
 	SEntityScriptProperties props;
-	CGameRegistration::CreateScriptTables(props, flags);
+	CGameFactory::CreateScriptTables(props, flags);
 	gEnv->pScriptSystem->SetGlobalValue(name.c_str(), props.pEntityTable);
 
 	CGameEntityNodeFactory* pNodeFactory = new CGameEntityNodeFactory();
@@ -176,6 +177,10 @@ void CGameRegistration::RegisterGameObjects(IGameFramework *pFramework)
 	RegisterGameObject<CCharacter>("Character", "Scripts/Entities/AI/Character.Lua", eGORF_None);
 	RegisterGameObject<CMount>("Mount", "Scripts/Entities/AI/Mount.Lua", eGORF_None);
 	RegisterGameObject<CPet>("Pet", "Scripts/Entities/AI/Pet.Lua", eGORF_None);
+
+	// Interactive entities.
+	RegisterGameObject<CEntityInteraction>("EntityInteraction", "", eGORF_HiddenInEditor);
+
 
 	// ***
 	// *** Items

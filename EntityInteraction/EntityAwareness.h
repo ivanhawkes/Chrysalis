@@ -8,7 +8,7 @@ with which the actor might wish to or need to interact.
 **/
 #pragma once
 
-#include <EntitySensing/IEntityAwareness.h>
+#include <EntityInteraction/IEntityAwareness.h>
 
 
 struct IActor;
@@ -23,27 +23,11 @@ public:
 	// *** IGameObjectExtension
 	// ***
 
-	void GetMemoryUsage(ICrySizer *pSizer) const override;
 	bool Init(IGameObject * pGameObject) override;
 	void PostInit(IGameObject * pGameObject) override;
-	void InitClient(int channelId) override {};
-	void PostInitClient(int channelId) override {};
-	bool ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override;
-	void PostReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override {};
-	bool GetEntityPoolSignature(TSerialize signature) override;
-	void Release() override { delete this; };
 	void FullSerialize(TSerialize ser) override;
-	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int pflags) override { return true; };
-	void PostSerialize() override {};
-	void SerializeSpawnInfo(TSerialize ser) override {};
-	ISerializableInfoPtr GetSpawnInfo() override { return 0; };
 	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
-	void HandleEvent(const SGameObjectEvent& event) override {};
-	void ProcessEvent(SEntityEvent& event) override {};
-	void SetChannelId(uint16 id) override {};
-	void SetAuthority(bool auth) override {};
-	void PostUpdate(float frameTime) override { CRY_ASSERT(false); };
-	void PostRemoteSpawn() override {};
+	void GetMemoryUsage(ICrySizer *pSizer) const override;
 
 
 	// ***
@@ -61,10 +45,10 @@ public:
 
 	/**
 	Gets the normalised direction the actor's eye are gazing.
-
+	
 	\return The direction.
 	**/
-	ILINE const Vec3& GetDir() const { return m_eyeDirection; }
+	ILINE const Quat& GetDir() const { return m_eyeDirection; }
 
 
 	/**
@@ -145,7 +129,7 @@ public:
 	A proximity based query that limits the results to only those entities which are considered
 	to be in front of the actor. These are limited based on a line segment from the actor's eyes,
 	forward in the direction they are looking.
-	
+
 	\return The entities in front of the actor.
 	**/
 	ILINE const Entities& GetEntitiesInFrontOf()
@@ -219,9 +203,9 @@ private:
 	query result is found it will run a query update and mark the new result as being useable within
 	this FrameId. This works like a simple cache that presents multiple calls from needing to run the
 	queries again.
-	
+
 	Results are returned as side-effects of this function.
-	
+
 	\param	query An enum indicating which query should be refreshed (if required).
 	**/
 	ILINE void RefreshQueryCache(EWorldQuery query)
@@ -255,27 +239,27 @@ private:
 	typedef void (CEntityAwareness::*UpdateQueryFunction)();
 
 	// Limit the size of the array used to track the raycasts.
-	static const int maxQueuedRays = 6;
+	static const int maxQueuedRays { 6 };
 
 	/** The proximity radius defines the maximum distance we will search for entities that are considered
 	"in-proximity". It is used to restrict both proximity queries and ray-cast queries. */
-	float m_proximityRadius = 6.0f;
+	float m_proximityRadius { 6.0f };
 
 	// A mask of queries which are currently valid for this FrameId.
-	uint32 m_validQueries = 0;
+	uint32 m_validQueries { 0 };
 
 	// Track the current render frame so we can drop query results that are too old.
-	int m_renderFrameId = -1;
+	int m_renderFrameId { -1 };
 
 	/** The actor associated with this instance. It's critical that this value is non-null or the queries
 	will fail to run correctly. */
-	IActor * m_pActor = nullptr;
+	IActor * m_pActor { nullptr };
 
 	/** The eye position for our actor. */
-	Vec3 m_eyePosition = Vec3(ZERO);
+	Vec3 m_eyePosition = Vec3 { ZERO };
 
 	/** The direction in which our actor is looking. */
-	Vec3 m_eyeDirection = Vec3(0, 1, 0);
+	Quat m_eyeDirection { IDENTITY };
 
 	// An array of functors which run the update queries.
 	static UpdateQueryFunction m_updateQueryFunctions [];
@@ -285,13 +269,13 @@ private:
 
 	// Keep a track of how many rays we have queued.
 	// TODO: Is there a safer way to handle all of this?
-	uint32 m_requestCounter = 0;
+	uint32 m_requestCounter { 0 };
 
 	// Track the time of the last deferred ray-cast.
-	float m_timeLastDeferredResult = 0.0f;
+	float m_timeLastDeferredResult { 0.0f };
 
 	// ray-cast query
-	bool m_rayHitAny = false;
+	bool m_rayHitAny { false };
 
 	// If there is a solid hit from the forward ray this is it's result. The result may become stale.
 	ray_hit m_rayHitSolid;
@@ -300,7 +284,7 @@ private:
 	ray_hit m_rayHitPierceable;
 
 	// The entity the object is currently looking towards.
-	EntityId m_lookAtEntityId = INVALID_ENTITYID;
+	EntityId m_lookAtEntityId { INVALID_ENTITYID };
 
 	// The entities within proximity of the AABB surrounding the actor. It may be worth highlighting these as being
 	// interactive for the player.

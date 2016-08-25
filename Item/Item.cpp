@@ -23,6 +23,8 @@ void CItem::GetMemoryUsage(ICrySizer *pSizer) const
 }
 
 
+// TODO: refactor this so most the code is in PostInit.
+
 bool CItem::Init(IGameObject * pGameObject)
 {
 	// Stores the specified IGameObject in this instance.

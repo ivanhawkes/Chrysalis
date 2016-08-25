@@ -11,7 +11,7 @@
 //#include <Actor/Character/Movement/CharacterRotation.h>
 
 class CPlayer;
-class CCharacterMovementController;
+class CActorMovementController;
 class IActionController;
 struct SAnimationContext;
 struct SActorMovementRequest;
@@ -82,7 +82,7 @@ public:
 	void ProcessEvent(SEntityEvent& event) override;
 	void SetChannelId(uint16 id) override;
 	void SetAuthority(bool auth) override;
-	void PostUpdate(float frameTime) override;
+	void PostUpdate(float frameTime) override {};
 	void PostRemoteSpawn() override;
 
 	// It is critical we override the event priority to ensure we handle the event before CAnimatedCharacter.
@@ -337,15 +337,17 @@ public:
 
 
 	/**
-	Gets this instance's local-space eye position (for a human, this is typically Vec3 (0, 0, 1.82f)). If only one eye is
-	available (left_eye, right_eye) then that is used as the local position. In the case of two eyes, the position is
-	the average of the two eyes.
-
-	Position is calculated each time using the attachment manager, so it will be better to cache the results if you
-	need to call this a few times in an update.
-
-	\return	This instance's local-space eye position.
-	*/
+	Gets this instance's local-space eye position (for a human, this is typically Vec3 (0, 0, 1.76f)).
+	
+	The code will first attempt to return a "#camera" helper if there is one. If only one eye is available (left_eye,
+	right_eye) then that is used as the local position. In the case of two eyes, the position is the average of the two
+	eyes.
+	
+	Position is calculated each time using the attachment manager, so it will be better to cache the results if you need
+	to call this a few times in an update.
+	
+	\return This instance's local-space eye position.
+	**/
 	Vec3 GetLocalEyePos() const override;
 
 
@@ -521,9 +523,9 @@ public:
 
 	/**
 	Gets the name of this instance's actor class (e.g. "CCharacter").
-	
+
 	NOTE: This must be overridden in derived classes.
-	
+
 	\return The name of this instance's actor class.
 	**/
 	const char* GetActorClassName() const override { return "CActor"; };
@@ -841,7 +843,7 @@ public:
 	**/
 	ILINE SCharacterMoveRequest& GetMoveRequest() { return m_moveRequest; }
 
-	
+
 	/**
 	Gets the actors's pre-determined fate.
 
@@ -849,7 +851,7 @@ public:
 	*/
 	ILINE const CFate& GetFate() { return m_fate; }
 
-	
+
 protected:
 
 	/**
@@ -889,40 +891,47 @@ protected:
 
 
 	/** The movement controller. */
-	CCharacterMovementController* m_pMovementController = nullptr;
+	CActorMovementController* m_pMovementController { nullptr };
+
+	/** The actor physics. */
+	SActorPhysics m_actorPhysics;
 
 
 private:
 
 	/** Specifies whether this instance is the client actor. */
-	bool m_bClient = false;
+	bool m_isClient { false };
 
 	/** True if this actor is using a third person camera. */
-	bool m_bIsThirdPerson = false;
+	bool m_bIsThirdPerson { false };
 
 	/** The actor's inventory. */
-	IInventory* m_pInventory = nullptr;
+	IInventory* m_pInventory { nullptr };
 
 	/** The actor's animated character. */
-	IAnimatedCharacter* m_pAnimatedCharacter = nullptr;
+	IAnimatedCharacter* m_pAnimatedCharacter { nullptr };
 
 	/** The action controller. */
-	IActionController* m_pActionController = nullptr;
+	IActionController* m_pActionController { nullptr };
 
 	/** Context for the animation. */
-	SAnimationContext* m_pAnimationContext = nullptr;
+	SAnimationContext* m_pAnimationContext { nullptr };
+
+	// HACK: to test switching movement and idle fragments. Should query physics instead.
+	// Keeping the actions here allows me to stop them, which is good for testing, but wrong in
+	// so many ways.
+	bool m_wasMovingLastFrame { false };
+	IActionPtr m_pActionIdle;
+	IActionPtr m_pActionMove;
 
 	/** Identifier for the team. */
-	int m_teamId = 0;
+	int m_teamId { 0 };
 
 	/** If a player is controlling this character, this pointer will be valid. */
-	CPlayer* m_pAttachedPlayer = nullptr;
+	CPlayer* m_pAttachedPlayer { nullptr };
 
 	/** The current state for a character. This is shared by a lot of the state machine code. */
 	SActorState m_actorState;
-
-	/** The actor physics. */
-	SActorPhysics m_actorPhysics;
 
 	/** The move request keeps track of how we wish to move this character based on input, state machine, and movement controllers. */
 	SCharacterMoveRequest m_moveRequest {};
@@ -1138,6 +1147,16 @@ public:
 	*/
 	void OnActionItemThrow(EntityId playerId);
 
+
+	/**
+	An action bar entry has been triggered. Take whatever action is appropriate.
+	
+	\param	playerId    Identifier for the player.
+	\param	actionBarId Identifier for the action bar.
+	**/
+	void OnActionBarUse(EntityId playerId, int actionBarId);
+
+
 private:
 	/**
 	Core part of the interactor lock routine. This is split out and private to ensure we can control extra parts
@@ -1150,5 +1169,5 @@ private:
 
 
 	/** An interactor which is used to handle 'Useable' / 'Used' logic in the world. */
-	IEntityLocking* m_pInteractor = nullptr;
+	IEntityLocking* m_pInteractor { nullptr };
 };

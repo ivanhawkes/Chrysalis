@@ -5,22 +5,40 @@ Declares the IPlayerInput interface.
 **/
 #pragma once
 
+#include <Entities/Helpers/ISimpleExtension.h>
 
-#include <IGameObject.h>
 
-
-struct IPlayerInput : public IGameObjectExtension
+enum EMovementStateFlags
 {
-	enum EInputType
-	{
-		NULL_INPUT = 0,
-		PLAYER_INPUT,
-		NETPLAYER_INPUT,
-		AI_INPUT,
-		DEDICATED_INPUT,
+	None =		0,
+	Forward =	BIT(0),
+	Backward =	BIT(1),
+	Left =		BIT(2),
+	Right =		BIT(3),
+};
 
-		LAST_INPUT_TYPE,
+
+enum EStanceFlags
+{
+	Standing,
+	Crouching,
+	Sitting,
+	Kneeling
+};
+
+
+struct IPlayerInput : public ISimpleExtension
+{
+	enum class EInputType
+	{
+		Null,
+		Player,
+		NetPlayer,
+		Ai,
+		DedicatedServer,
+		_LAST,
 	};
+
 
 	virtual ~IPlayerInput() {};
 
@@ -85,6 +103,13 @@ struct IPlayerInput : public IGameObjectExtension
 	**/
 	virtual float GetZoomDelta () = 0;
 
+
+	/**
+	Gets movement state flags.
+
+	\return The movement state flags.
+	**/
+	virtual uint32 GetMovementStateFlags() = 0;
 
 
 	// ***

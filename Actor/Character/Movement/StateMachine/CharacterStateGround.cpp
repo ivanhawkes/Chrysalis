@@ -5,7 +5,7 @@
 #include <ConsoleVariables/ConsoleVariables.h>
 #include <Actor/Character/Character.h>
 #include "CharacterStateJump.h"
-#include "CharacterStateUtil.h"
+#include <Actor/Movement/StateMachine/ActorStateUtility.h>
 #include "Utility/CryWatch.h"
 /*#include "GameCodeCoverage/GameCodeCoverageTracker.h"
 #include "MovementAction.h"*/
@@ -26,7 +26,7 @@ void CCharacterStateGround::OnEnter(CCharacter& Character)
 	Character.GetActorState()->inAir = 0.0f;
 
 	// Ensure inertia is set!
-	CCharacterStateUtil::RestoreCharacterPhysics(Character);
+	CCharacterStateUtil::RestorePhysics(Character);
 }
 
 
@@ -43,7 +43,7 @@ void CCharacterStateGround::OnPrePhysicsUpdate(CCharacter& Character, const SAct
 	// This is to restore inertia if the ProcessAlignToTarget set it previously.
 	if (m_inertiaIsZero)
 	{
-		CCharacterStateUtil::RestoreCharacterPhysics(Character);
+		CCharacterStateUtil::RestorePhysics(Character);
 
 		m_inertiaIsZero = false;
 	}
