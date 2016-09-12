@@ -2,7 +2,6 @@
 
 #include "CharacterStateGround.h"
 #include <Game/Game.h>
-#include <ConsoleVariables/ConsoleVariables.h>
 #include <Actor/Character/Character.h>
 #include "CharacterStateJump.h"
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
@@ -38,7 +37,7 @@ void CCharacterStateGround::OnPrePhysicsUpdate(CCharacter& Character, const SAct
 
 	const CAutoAimManager& autoAimManager = g_pGame->GetAutoAimManager();
 	const EntityId closeCombatTargetId = autoAimManager.GetCloseCombatSnapTarget();
-	const IActor* pCloseCombatTarget = isCharacter && closeCombatTargetId && Character.IsClient() ? g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(closeCombatTargetId) : NULL;
+	const IActor* pCloseCombatTarget = isCharacter && closeCombatTargetId && Character.IsClient() ? gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(closeCombatTargetId) : NULL;
 
 	// This is to restore inertia if the ProcessAlignToTarget set it previously.
 	if (m_inertiaIsZero)

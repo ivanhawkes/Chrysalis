@@ -86,7 +86,7 @@ namespace LocalizeUtility
 
 	const char * LocalizeString(const char *text, const char *arg1, const char *arg2, const char *arg3, const char *arg4)
 	{
-		ScopedSwitchToGlobalHeap globalHeap;
+		//ScopedSwitchToGlobalHeap globalHeap;
 		static string charstr;
 		LocalizeString(charstr, text, arg1, arg2, arg3, arg4);
 
@@ -108,7 +108,7 @@ namespace LocalizeUtility
 	{
 		ILocalizationManager* pLocMgr = gEnv->pSystem->GetLocalizationManager();
 
-		ScopedSwitchToGlobalHeap globalHeap;
+		//ScopedSwitchToGlobalHeap globalHeap;
 		static string charstr;
 		pLocMgr->LocalizeNumber(number, charstr);
 
@@ -134,7 +134,7 @@ namespace LocalizeUtility
 	{
 		ILocalizationManager* pLocMgr = gEnv->pSystem->GetLocalizationManager();
 
-		ScopedSwitchToGlobalHeap globalHeap;
+		//ScopedSwitchToGlobalHeap globalHeap;
 		static string charstr;
 		pLocMgr->LocalizeNumber(number, decimals, charstr);
 

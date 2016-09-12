@@ -3,7 +3,7 @@
 #include "ConsoleCommands.h"
 #include <Game/Game.h>
 #include <CrySystem/ISystem.h>
-#include <Actor/Player/Player.h>
+#include <Player/Player.h>
 #include <Actor/Character/Character.h>
 #include <ObjectID/ObjectId.h>
 #include <ObjectID/ObjectIdMasterFactory.h>

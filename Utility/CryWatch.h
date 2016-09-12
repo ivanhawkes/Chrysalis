@@ -1,16 +1,16 @@
 // Copyright 2001-2016 Crytek GmbH / Crytek Group. All rights reserved.
 
 /*************************************************************************
-   -------------------------------------------------------------------------
-   CryWatch.cpp
+-------------------------------------------------------------------------
+CryWatch.cpp
 
-   Description:
-   - basic onscreen watch
-   - in game.dll till it matures and can be moved into the engine
+Description:
+- basic onscreen watch
+- in game.dll till it matures and can be moved into the engine
 
-   -------------------------------------------------------------------------
-   History:
-   -	[03/08/2009] : Created by James Bamford
+-------------------------------------------------------------------------
+History:
+-	[03/08/2009] : Created by James Bamford
 
 *************************************************************************/
 
@@ -18,9 +18,9 @@
 #define __CRYWATCH_H__
 
 #if !defined(_RELEASE)
-#define CRY_WATCH_ENABLED      (1)
+#define CRY_WATCH_ENABLED			 (1)
 #else
-#define CRY_WATCH_ENABLED      (0)
+#define CRY_WATCH_ENABLED			 (0)
 #endif
 
 #define CryWatch(...) CryWatchFunc(string().Format(__VA_ARGS__))
@@ -28,9 +28,9 @@
 
 #if CRY_WATCH_ENABLED
 
-int  CryWatchFunc(const char* message);
-int  CryWatchLogFunc(const char* message);
-void CryWatch3DAdd(const char* text, const Vec3 &posIn, float lifetime = 2.f, const Vec3* velocity = NULL, float gravity = 3.f);
+int CryWatchFunc(const char * message);
+int CryWatchLogFunc(const char * message);
+void CryWatch3DAdd(const char * text, const Vec3 & posIn, float lifetime = 2.f, const Vec3 * velocity = NULL, float gravity = 3.f);
 void CryWatch3DReset();
 void CryWatch3DTick(float dt);
 

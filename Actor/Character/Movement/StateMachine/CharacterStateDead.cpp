@@ -2,7 +2,6 @@
 
 #include "CharacterStateDead.h"
 #include <Game/Game.h>
-#include <ConsoleVariables/ConsoleVariables.h>
 #include <Actor/Character/Character.h>
 /*#include "IActorEventListener.h"
 #include "HitDeathReactions.h"
@@ -81,7 +80,7 @@ void CCharacterStateDead::OnEnter(CCharacter& Character)
 		pGameRules->OnActorDeath (&Character);
 		if (gEnv->bMultiCharacter == false && Character.IsClient ())
 		{
-		g_pGame->GetIGameFramework ()->GetIGameplayRecorder ()->Event (Character.GetEntity (), eGE_Death);
+		gEnv->pGame->GetIGameFramework ()->GetIGameplayRecorder ()->Event (Character.GetEntity (), eGE_Death);
 		}
 
 		Character.SendMusicLogicEvent (eMUSICLOGICEVENT_CHARACTER_KILLED);

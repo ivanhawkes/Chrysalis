@@ -48,7 +48,7 @@ struct SDynamicLight : public ISharedParams
 	float projectorFoV = 90.0f;
 
     /** Set the near plane for the projector, any surfaces closer to the light source than this value will not be projected on.*/
-    float projectorNearPlane = 0.1;       
+    float projectorNearPlane = 0.1f;
 
     /** A texture to used for custom falloff.*/
     string projectorTexture;
@@ -86,4 +86,3 @@ struct SDynamicLight : public ISharedParams
 };
 
 DECLARE_SHARED_POINTERS(SDynamicLight);
-

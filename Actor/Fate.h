@@ -17,10 +17,7 @@ class CFate
 {
 public:
 
-	/** This instance's default constructor. */
 	CFate() {};
-
-	/** This instance's default destructor. */
 	virtual ~CFate() {};
 
 	/**

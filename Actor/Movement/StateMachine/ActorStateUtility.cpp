@@ -5,7 +5,6 @@
 #include <IItem.h>
 #include <Game/Game.h>
 #include <Actor/Character/Movement/StateMachine/CharacterStateJump.h>
-#include <ConsoleVariables/ConsoleVariables.h>
 #include <Actor/Actor.h>
 #include <Utility/CryWatch.h>
 /*#include "CharacterInput.h"

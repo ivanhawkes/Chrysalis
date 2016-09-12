@@ -371,7 +371,7 @@ void CAvianFlock::LeaveLandingPoint(Vec3& point)
 
 bool CAvianFlock::IsPlayerInProximity(const Vec3& pos) const
 {
-	const IActor* pClientPlayer = g_pGame->GetIGameFramework()->GetClientActor();
+	const IActor* pClientPlayer = gEnv->pGame->GetIGameFramework()->GetClientActor();
 	if(pClientPlayer != NULL && pClientPlayer->GetEntity())
 	{
 		if(Distance::Point_PointSq(pos,pClientPlayer->GetEntity()->GetPos()) <

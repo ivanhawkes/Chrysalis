@@ -70,6 +70,3 @@ void SDynamicLight::MemberSerialize(TSerialize ser)
 
     ser.EndGroup();
 }
-
-
-

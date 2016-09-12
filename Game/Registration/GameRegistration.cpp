@@ -9,25 +9,15 @@
 #include <CryGame/IGameVolumes.h>
 
 #include <Game/Game.h>
-#include <Game/Rules/GameRules.h>
-#include <Flowgraph/FlowGameEntityNode.h>
-#include <Actor/Player/Player.h>
+#include <Game/GameRules.h>
+#include <FlowNodes/Helpers/FlowGameEntityNode.h>
+#include <Player/Player.h>
 #include <Actor/Character/Character.h>
 #include <Actor/Mount/Mount.h>
 #include <Actor/Pet/Pet.h>
-#include <Environment/Water/WaterRipplesGenerator.h>
-#include <Item/Flashlight/Flashlight.h>
-#include <EntityInteraction/EntityInteraction.h>
-#include <EntityInteraction/EntityAwareness.h>
-#include <EntityInteraction/EntityLocking.h>
-#include <Openable/Containers/ContainerExtension.h>
-#include <Openable/Doors/DoorExtension.h>
-#include <Openable/Keys/KeyExtension.h>
-#include <Openable/Locks/LockExtension.h>
-#include <Camera/CameraManager.h>
-#include <Camera/ActionRPGCamera.h>
-#include <Camera/FirstPersonCamera.h>
-#include <Actor/Player/PlayerInput/PlayerInput.h>
+#include <Entities/Environment/Water/WaterRipplesGenerator.h>
+#include <Item/Flashlight/FlashlightComponent.h>
+#include <Player/Input/PlayerInputComponent.h>
 
 
 // TODO: Move call to register cvars and commands to here.
@@ -168,19 +158,12 @@ void CGameRegistration::RegisterGameObjects(IGameFramework *pFramework)
 
 	// Register player related components.
 	RegisterGameObject<CPlayer>("Player", "", eGORF_HiddenInEditor);
-	RegisterGameObject<CPlayerInput>("PlayerInput", "", eGORF_HiddenInEditor);
-	RegisterGameObject<CCameraManager>("CameraManager", "", eGORF_HiddenInEditor);
-	RegisterGameObject<CActionRPGCamera>("ActionRPGCamera", "", eGORF_HiddenInEditor);
-	RegisterGameObject<CFirstPersonCamera>("FirstPersonCamera", "", eGORF_HiddenInEditor);
+	RegisterGameObject<CPlayerInputComponent>("PlayerInput", "", eGORF_HiddenInEditor);
 
 	// Registers the character, pet and mount actors.
-	RegisterGameObject<CCharacter>("Character", "Scripts/Entities/AI/Character.Lua", eGORF_None);
-	RegisterGameObject<CMount>("Mount", "Scripts/Entities/AI/Mount.Lua", eGORF_None);
-	RegisterGameObject<CPet>("Pet", "Scripts/Entities/AI/Pet.Lua", eGORF_None);
-
-	// Interactive entities.
-	RegisterGameObject<CEntityInteraction>("EntityInteraction", "", eGORF_HiddenInEditor);
-
+	RegisterGameObject<CCharacter>("Character", "scripts/Entities/AI/Character.Lua", eGORF_None);
+	//RegisterGameObject<CMount>("Mount", "Scripts/Entities/AI/Mount.Lua", eGORF_None);
+	//RegisterGameObject<CPet>("Pet", "Scripts/Entities/AI/Pet.Lua", eGORF_None);
 
 	// ***
 	// *** Items
@@ -189,26 +172,9 @@ void CGameRegistration::RegisterGameObjects(IGameFramework *pFramework)
 	//REGISTER_FACTORY(pFramework, "Item", CItem, false);
 	//REGISTER_FACTORY(pFramework, "Accessory", CAccessory, false);
 
-	//REGISTER_FACTORY(pFramework, "Flashlight", CFlashlight, false);
-	//RegisterGameObject<CFlashlight>("Flashlight", "Scripts/Entities/Items/Flashlight.lua", eGORF_None);
-	RegisterFactory<CFlashlight>(pFramework, "Flashlight", false);
-
-
-	// ***
-	// *** Various GameObjecs
-	// ***
-	RegisterFactory<CEntityAwareness>(pFramework, "EntityAwareness", false);
-	RegisterFactory<CEntityLocking>(pFramework, "EntityLocking", false);
-
-
-	// ***
-	// *** Doors / Containers / Locks / Keys
-	// ***
-	RegisterFactory<CContainerExtension>(pFramework, "ContainerExtension", false);
-	RegisterFactory<CDoorExtension>(pFramework, "DoorExtension", false);
-	RegisterFactory<CKeyExtension>(pFramework, "KeyExtension", false);
-	RegisterFactory<CLockExtension>(pFramework, "LockExtension", false);
-
+	//REGISTER_FACTORY(pFramework, "Flashlight", CFlashlightComponent, false);
+	//RegisterGameObject<CFlashlightComponent>("Flashlight", "Scripts/Entities/Items/Flashlight.lua", eGORF_None);
+	RegisterFactory<CFlashlightComponent>(pFramework, "Flashlight", false);
 
 	// ***
 	// *** Weapons
@@ -222,70 +188,6 @@ void CGameRegistration::RegisterGameObjects(IGameFramework *pFramework)
 	// ***
 
 	IVehicleSystem* pVehicleSystem = pFramework->GetIVehicleSystem();
-
-	//REGISTER_VEHICLEOBJECT("Burn", CVehicleDamageBehaviorBurn);
-
-
-	// ***
-	// *** Vehicle movements
-	// ***
-
-	//REGISTER_FACTORY(pVehicleSystem, "DummyMovement", CVehicleMovementDummy, false);
-	//REGISTER_FACTORY(pVehicleSystem, "StdBoat", CVehicleMovementStdBoat, false);
-
-
-	// ***
-	// *** Custom GameObjects
-	// ***
-
-	//REGISTER_GAME_OBJECT(pFramework, Rain, "Scripts/Entities/Environment/Rain.lua");
-
-
-	// ***
-	// *** Shape / Volume objects
-	// ***
-
-	//REGISTER_GAME_OBJECT(pFramework, MPPath, "Scripts/Entities/Multiplayer/MPPath.lua");
-	//HIDE_FROM_EDITOR("MPPath");
-	//REGISTER_EDITOR_VOLUME_CLASS( pFramework, "MPPath" );
-
-	//REGISTER_GAME_OBJECT(pFramework, LedgeObject, "Scripts/Entities/ContextualNavigation/LedgeObject.lua");
-	//HIDE_FROM_EDITOR("LedgeObject");
-	//REGISTER_EDITOR_VOLUME_CLASS( pFramework, "LedgeObject" );
-
-	//REGISTER_GAME_OBJECT(pFramework, LedgeObjectStatic, "Scripts/Entities/ContextualNavigation/LedgeObjectStatic.lua");
-	//HIDE_FROM_EDITOR("LedgeObjectStatic");
-	//REGISTER_EDITOR_VOLUME_CLASS( pFramework, "LedgeObjectStatic" );
-
-	//REGISTER_GAME_OBJECT(pFramework, WaterPuddle, "Scripts/Entities/Environment/WaterPuddle.lua");
-	//HIDE_FROM_EDITOR("WaterPuddle");
-	//REGISTER_EDITOR_VOLUME_CLASS(pFramework, "WaterPuddle");
-
-
-	// ***
-	// *** Water
-	// ***
-
-	// TODO: Put this back in when you sort out a decent set of registration macros.
-	//REGISTER_GAME_OBJECT(pFramework, WaterRipplesGenerator, CWaterRipplesGenerator, Environment, false, "Scripts/Entities/Environment/WaterRipplesGenerator.lua");
-
-
-	// ***
-	// *** GameRules
-	// ***
-
-	// Registers The GameRules GameObject Extension. Needed for EVERY CRYENGINE game.
-	RegisterGameObject<CGameRules>("GameRules", "", eGORF_HiddenInEditor);
-
-	// Registers The SinglePlayer GameRules With The GameRules System. Needed For EVERY CRYENGINE Game.
-	//pFramework->GetIGameRulesSystem()->RegisterGameRules("SinglePlayer", "GameRules");
-	//pFramework->GetIGameRulesSystem()->AddGameRulesAlias("SinglePlayer", "sp");
-	pFramework->GetIGameRulesSystem()->RegisterGameRules("SoloExploration", "GameRules");
-	pFramework->GetIGameRulesSystem()->AddGameRulesAlias("SoloExploration", "SE");
-
-	// Registers The MultiPlayer GameRules With The GameRules System. Needed For EVERY CRYENGINE Game.
-	pFramework->GetIGameRulesSystem()->RegisterGameRules("MultiPlayer", "GameRules");
-	pFramework->GetIGameRulesSystem()->AddGameRulesAlias("MultiPlayer", "mp");
 }
 
 

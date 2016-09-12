@@ -1,7 +1,7 @@
 #pragma once
 
 #include <IAnimatedCharacter.h>
-#include <IActorSystem.h>
+#include <Actor/ISimpleActor.h>
 #include <Actor/Fate.h>
 #include <Actor/ActorState.h>
 #include <Actor/ActorPhysics.h>
@@ -15,7 +15,7 @@ class CActorMovementController;
 class IActionController;
 struct SAnimationContext;
 struct SActorMovementRequest;
-struct IEntityLocking;
+struct IEntityLockingComponent;
 
 
 /** Represents all of the available actor class types. */
@@ -49,345 +49,48 @@ Characters may have inventory.
 
 // TODO: probably needs to also implement IInventoryListener to listen for inventory changes.
 
-class CActor : public CGameObjectExtensionHelper<CActor, IActor, 40>, public IActorEventListener
+class CActor : public CGameObjectExtensionHelper<CActor, ISimpleActor, 40>, public IActorEventListener
 {
 public:
-	/** This instance's default constructor. */
-	CActor();
 
-	/** This instance's default destructor. */
+	CActor();
 	virtual ~CActor();
 
 
-	// ***
-	// *** IGameObjectExtension
-	// ***
-
-	void GetMemoryUsage(ICrySizer *pSizer) const override;
+	// ISimpleActor
 	bool Init(IGameObject * pGameObject) override;
 	void PostInit(IGameObject * pGameObject) override;
-	void InitClient(int channelId) override;
-	void PostInitClient(int channelId) override;
 	bool ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override;
 	void PostReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override;
-	bool GetEntityPoolSignature(TSerialize signature) override;
-	void Release() override;
 	void FullSerialize(TSerialize ser) override;
-	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int pflags) override;
 	void PostSerialize() override {};
 	void SerializeSpawnInfo(TSerialize ser) override {};
-	ISerializableInfoPtr GetSpawnInfo() override;
 	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
 	void HandleEvent(const SGameObjectEvent& event) override;
 	void ProcessEvent(SEntityEvent& event) override;
-	void SetChannelId(uint16 id) override;
-	void SetAuthority(bool auth) override;
-	void PostUpdate(float frameTime) override {};
-	void PostRemoteSpawn() override;
 
 	// It is critical we override the event priority to ensure we handle the event before CAnimatedCharacter.
 	virtual IComponent::ComponentEventPriority GetEventPriority(const int eventID) const override;
 
-
-	// *** 
-	// *** IActor
-	// *** 
-
-
-	/**
-	Sets this instance's current health.
-
-	\param	health	The health you want this instance to have.
-	*/
-	void SetHealth(float health) override;
-
-
-	/**
-	Gets the current health of this instance.
-
-	\return	The current health of this instance.
-	*/
-	float GetHealth() const override;
-
-
-	/**
-	Gets the current health as a rounded percentage.
-
-	\return	The current health as a rounded percentage.
-	*/
-	int	GetHealthAsRoundedPercentage() const override;
-
-
-	/**
-	Sets the maximum amount of health this instance can have.
-
-	\param	maxHealth	The maximum health you want this instance to have.
-	*/
-	void SetMaxHealth(float maxHealth) override;
-
-
-	/**
-	Gets the maximum amount of health this instance can have.
-
-	\return	The maximum amount of health this instance can have.
-	*/
-	float GetMaxHealth() const override;
-
-
-	/**
-	Gets the current amount of armour this instance has.
-
-	\return	The current amount of armour this instance has.
-	*/
-	int	GetArmor() const override;
-
-
-	/**
-	Gets the maximum amount of armour this instance can have.
-
-	\return	The maximum amount of armour this instance can have.
-	*/
-	int	GetMaxArmor() const override;
-
-
-	/**
-	Gets team identifier.
-
-	\return	The team identifier.
-	*/
 	int GetTeamId() const override { return m_teamId; };
 
 
 	/**
-	Gets whether this instance has fallen and needs revival.
-
-	\return	Whether this instance has fallen and needs revival.
-	*/
-	bool IsFallen() const override;
-
-
-	/**
-	Gets whether this instance is dead.
-
-	\return	Whether this instance is dead.
-	*/
-	bool IsDead() const override;
-
-
-	/**
-	Gets whether this instance is immune to damage.
-
-	\return	Whether this instance is immune to damage.
-	*/
-	int	IsGod() override;
-
-
-	/**
-	Causes this instance to fall down based on the specified impact it has received.
-
-	\param	hitPos	(Optional) the position of impact.
-	*/
-	void Fall(Vec3 hitPos = Vec3(0, 0, 0)) override;
-
-
-	/**
-	Gets whether this instance is allowed to perform a "landing bob".
-
-	\return	Whether this instance is allowed to perform a "landing bob".
-	*/
-	bool AllowLandingBob() override;
-
-
-	/**
-	Play The specified action (animation). this method is DEPRECATED, and not used.
-
-	\param	action   	The action (animation) to play.
-	\param	extension	The file extension? of the animation file to load in order to play the specified action
-	(animation).
-	\param	looping  	(Optional) Specifies whether the specified action (animation) should loop of not.
-	*/
-	void PlayAction(const char *action, const char *extension, bool looping = false) override;
-
-
-	/**
-	Gets this instance's current animation graph state.
-
-	An animation graph is used to decide animation logic (what animation should be played and on what condition they
-	should be played).
-
-	\return	This instance's current animation graph state.
-	*/
-	IAnimationGraphState* GetAnimationGraphState() override;
-
-
-	/**
-	Resets this instance's animation state.
-	*/
-	void ResetAnimationState() override;
-
-
-	/**
-	Calls the "ScriptEvent" script function on this instance's entity script. Used to forward responsibility of
-	handling this event to this instance's entity script.
-
-	\param	event	The script event that occurred.
-	\param	value	The event specific floating-point value used by the specified event.
-	\param	str  	(Optional) The event specific string value used by the specified event.
-	*/
-	void CreateScriptEvent(const char *event, float value, const char *str = NULL) override;
-
-
-	/**
-	Indicates that this instance should become aggressive towards the specified AI. Should maybe pull out this
-	instance's weapon and aim it at the specified AI.
-
-	\param	entityID	The EntityId of the AI to become aggressive towards.
-
-	\return	True If Successful. False otherwise.
-	*/
-	bool BecomeAggressiveToAgent(EntityId entityID) override;
-
-
-	/**
-	Sets the facial alertness level of this instance. Should maybe call some sort of facial animation on this
-	instance as well.
-
-	\param	alertness	The new facial alertness level of this instance.
-	*/
-	void SetFacialAlertnessLevel(int alertness) override;
-
-
-	/**
-	Requests this instance to play the specified facial expression (animation).
-
-	\param	pExpressionName		  	(Optional) The facial expression to play.
-	\param [in,out]	sequenceLength	(Optional) When this method returns, holds the length (in seconds) of the started
-	facial animation.
-	*/
-	void RequestFacialExpression(const char* pExpressionName = NULL, f32* sequenceLength = NULL) override;
-
-
-	/**
-	Pre-caches The specified facial expression.
-
-	\param	pExpressionName	The name of the facial expression to pre-cache.
-	*/
-	void PrecacheFacialExpression(const char* pExpressionName) override;
-
-
-	/**
-	Gets the AI that is currently held by this instance.
-
-	\return	The AI that is currently held by this instance.
-	*/
-	EntityId GetGrabbedEntityId() const override;
-
-
-	/**
-	Hides or shows all of this instance's attachments (typically weapons, but not necessarily).
-
-	\param	isHiding	Specifies whether the attachments should be hidden or not. True to hide, false to show.
-	*/
-	void HideAllAttachments(bool isHiding) override;
-
-
-	/**
-	Sets the position of the specified limb using IK.
-
-	\param	pLimbName	The name of the limb to set the position of.
-	\param	goalPos  	The position to set the specified limb.
-	\param	priority 	The priority to used while setting the specified limb's position.
-	*/
-	void SetIKPos(const char *pLimbName, const Vec3& goalPos, int priority) override;
-
-
-	/**
-	Sets the rotation of this instance's vehicle view.
-
-	\param	viewRotation	The rotation to set the vehicle view to.
-	*/
-	void SetViewInVehicle(Quat viewRotation) override;
-
-
-	/**
-	Sets The rotation of this instance's view.
-
-	\param	rotation	The rotation to set the view to.
-	*/
-	void SetViewRotation(const Quat &rotation) override;
-
-
-	/**
-	Gets the rotation of this instance's view.
-
-	\return	The rotation of this instance's view.
-	*/
-	Quat GetViewRotation() const override;
-
-
-	/**
-	Gets whether the specified AI is a friend of this instance or not.
-
-	\param	entityId				The EntityId of the AI you want to check for friendliness.
-	\param	bUsingAIIgnoreCharacter	(Optional) Specifies whether the specified AI is ignoring this instance.
-
-	\return	True If the specified AI is a friend of this instance. False otherwise.
-	*/
-	bool IsFriendlyEntity(EntityId entityId, bool bUsingAIIgnoreCharacter = true) const override;
-
-
-	/**
 	Gets this instance's local-space eye position (for a human, this is typically Vec3 (0, 0, 1.76f)).
-	
+
 	The code will first attempt to return a "#camera" helper if there is one. If only one eye is available (left_eye,
 	right_eye) then that is used as the local position. In the case of two eyes, the position is the average of the two
 	eyes.
-	
+
 	Position is calculated each time using the attachment manager, so it will be better to cache the results if you need
 	to call this a few times in an update.
-	
+
 	\return This instance's local-space eye position.
 	**/
 	Vec3 GetLocalEyePos() const override;
 
 
-	/**
-	Performs a camera shake on this instance's view using the specified parameters.
-
-	\param	angle	 	The angle (in degrees) of the shake (the tilting movement of the shake).
-	\param	shift	 	The shift of the shake (the strafing movement of the shave).
-	\param	duration 	The duration (in seconds) of the shake.
-	\param	frequency	The frequency on the shake (how rapidly it shakes).
-	\param	pos		 	The position of the camera at the time of the shake request.
-	\param	ID		 	The ID of the shake.
-	\param	source   	(Optional) The arbitrary source of the shake (typically the method that invoked the shake).
-	*/
-	void CameraShake(float angle, float shift, float duration, float frequency, Vec3 pos, int ID, const char* source = "") override;
-
-
-	/**
-	Gets the currently holstered item of this instance.
-
-	\return The currently holstered item of this instance.
-	**/
-	IItem* GetHolsteredItem() const override;
-
-
-	/**
-	Holsters or unholsters the specified item.
-
-	\param	holster			  	Specifies whether to holster the specified item or not. True to
-	holster, false to unholster.
-	\param	playSelect		  	Specifies whether to play the "select" animation or not (this is
-	typically a holstering animation or grabbing for the specified item
-	animation).
-	\param	selectSpeedBias   	The selection speed biased. used to control how fast the holstering /
-	unholstering animation is.
-	\param	hideLeftHandObject	Specifies whether to hide the item in the other hand while holstering
-	/ unholstering or not.
-	**/
-	void HolsterItem(bool holster, bool playSelect = true, float selectSpeedBias = 1.0f, bool hideLeftHandObject = true) override;
-
+	EntityId GetCurrentItemId(bool includeVehicle) const;
 
 	/**
 	Gets current item.
@@ -401,34 +104,6 @@ public:
 	IItem* GetCurrentItem(bool includeVehicle = false) const override;
 
 
-	/**
-	Drop the specified item to the ground.
-
-	\param	itemId		 The EntityId of the item to drop.
-	\param	impulseScale The amount of impulse to apply to the dropped item.
-	\param	selectNext   Specifies whether to select the next item.
-	\param	byDeath		 Specifies whether this drop was the result of this instance being killed.
-
-	\return True if the specified item was dropped. False otherwise.
-	**/
-	bool DropItem(EntityId itemId, float impulseScale = 1.0f, bool selectNext = true, bool byDeath = false) override;
-
-
-	/**
-	Gets this instance's inventory.
-
-	\return This instance's inventory.
-	**/
-	IInventory* GetInventory() const override;
-
-
-	/**
-	Notifies this instance's entity script? That this instance's current item has changed.
-
-	\param [in,out]	newItem The newly equipped item.
-	**/
-	void NotifyCurrentItemChanged(IItem* newItem) override;
-
 
 	/**
 	Gets this instance's movement controller (the class instance that controls how this instance moves around).
@@ -436,47 +111,6 @@ public:
 	\return	This instance's movement controller.
 	*/
 	IMovementController* GetMovementController() const override;
-
-
-	/**
-	Links this instance to the specified vehicle.
-
-	\param	vehicleId	The EntityId of the vehicle to link this instance to.
-
-	\return	The IEntity of the newly linked vehicle.
-	*/
-	IEntity* LinkToVehicle(EntityId vehicleId) override;
-
-
-	/**
-	Gets this instance's currently linked entity.
-
-	\return	This instance's currently linked entity.
-	*/
-	IEntity* GetLinkedEntity() const override;
-
-
-	/**
-	Gets this instance's current spectator mode.
-
-	\return	This instance's current spectator mode.
-	*/
-	uint8 GetSpectatorMode() const override;
-
-
-	/**
-	Gets whether this instance is using third person or not (typically means this instance is using the third person
-	model, not the first person arms).
-
-	\return	Whether This Instance Is Using 3RD Person Or Not.
-	*/
-	bool IsThirdPerson() const override;
-
-
-	/**
-	Toggles third person mode of this instance (typically means to toggle between third person and first person models).
-	*/
-	void ToggleThirdPerson() override;
 
 
 	/**
@@ -497,29 +131,6 @@ public:
 	\return	Whether this instance is the "client actor" or not.
 	*/
 	bool IsClient() const override;
-
-
-	/**
-	Gets whether this instance is currently migrating servers or not.
-
-	\return	Whether this instance is currently migrating servers or not.
-	*/
-	bool IsMigrating() const override;
-
-
-	/**
-	Sets whether this instance is migrating servers or not.
-
-	\param	isMigrating	specifies whether this instance is migrating servers or not. True if migrating, false otherwise.
-	*/
-	void SetMigrating(bool isMigrating) override;
-
-
-	/**
-	Initializes this instance. Used to initialize the local player (if this instance is the local player).
-	*/
-	void InitLocalPlayer() override;
-
 
 	/**
 	Gets the name of this instance's actor class (e.g. "CCharacter").
@@ -544,36 +155,11 @@ public:
 
 
 	/**
-	Gets the name of this instance's entity class.
-
-	\return	The name of this instance's entity class.
-	*/
-	const char* GetEntityClassName() const override;
-
-
-	/**
-	Serializes this instance to/from the specified XML.
-
-	\param [in,out]	node	The XML to serialize to/from.
-	\param	bLoading		Specifies whether we are serializing to or serializing from the specified XML.
-	*/
-	void SerializeXML(XmlNodeRef& node, bool bLoading) override;
-
-
-	/**
-	Serializes this instance between levels.
-
-	\param [in,out]	ser	The serializer to serialize to/from.
-	*/
-	void SerializeLevelToLevel(TSerialize &ser) override;
-
-
-	/**
 	Gets the animated character of this instance.
 
 	\return	The animated character of this instance.
 	*/
-	IAnimatedCharacter* GetAnimatedCharacter() override;
+	IAnimatedCharacter* GetAnimatedCharacter() override { return m_pAnimatedCharacter; }
 
 
 	/**
@@ -581,99 +167,7 @@ public:
 
 	\return	The non-modifiable version of the animated character of this instance.
 	*/
-	const IAnimatedCharacter* GetAnimatedCharacter() const override;
-
-
-	/**
-	Plays the specified animation using the specified parameters using exact positioning. (DEPRECATED?)
-
-	\param	sAnimationName	  	The name of the animation you want to play.
-	\param	bSignal			  	Specifies whether to notify other AI's about the specified animation?.
-	\param	vPosition		  	The position to play the specified animation at.
-	\param	vDirection		  	The direction to play the specified animation at.
-	\param	startWidth		  	The start width of the specified animation.
-	\param	startArcAngle	  	The start arc angle (in degrees) of the specified animation.
-	\param	directionTolerance	The direction tolerance of the specified animation.
-	*/
-	void PlayExactPositioningAnimation(const char* sAnimationName, bool bSignal, const Vec3& vPosition,
-		const Vec3& vDirection, float startWidth, float startArcAngle, float directionTolerance) override;
-
-
-	/**
-	Cancels the currently playing exact positioning animation.
-	*/
-	void CancelExactPositioningAnimation() override;
-
-
-	/**
-	Play the specified animation.
-
-	\param	sAnimationName	The name of the animation you want to play.
-	\param	bSignal		  	Specifies whether to notify other AI's about the specified animation?.
-	*/
-	void PlayAnimation(const char* sAnimationName, bool bSignal) override;
-
-
-	/**
-	Enables "Time Demo" mode (DEPRECATED?).
-
-	\param	bTimeDemo	Specifies whether to enable "Time Demo" mode or not.
-	*/
-	void EnableTimeDemo(bool bTimeDemo) override;
-
-
-	/**
-	Switch this instance to be a spectator. Only valid if "Time Demo" mode is also enabled.
-
-	\param	activate	Specifies whether to activate spectator mode or not.
-	*/
-	void SwitchDemoModeSpectator(bool activate) override;
-
-
-	/**
-	Gets this instance's currently linked vehicle.
-
-	\return	This instance's currently linked vehicle.
-	*/
-	IVehicle* GetLinkedVehicle() const override;
-
-
-	/**
-	Automatically called by the IAISystem? When this instance's AI Proxy has been enabled or disabled.
-
-	\param	enabled	Specifies whether this instance's AI Proxy was enabled or disabled.
-	*/
-	void OnAIProxyEnabled(bool enabled) override;
-
-
-	/**
-	Automatically called by the IEntitySystem? When this instance's entity has been returned to the entity pool.
-	*/
-	void OnReturnedToPool() override;
-
-
-	/**
-	Automatically called by the IEntitySystem? When this instance's entity is about to be spawned from the
-	entity pool. Used To Prepare This Instance's Entity Before It Is Spawned From The entity pool.
-	*/
-	void OnPreparedFromPool() override;
-
-
-	/**
-	Gets whether this instance should not play weapon sounds if it has been stimulated.
-
-	\return	Whether this instance should not play weapon sounds if it has been stimulated.
-	*/
-	bool ShouldMuteWeaponSoundStimulus() const override;
-
-
-	/**
-	Automatically called by the IEntitySystem when this instance's entity has been reused.
-
-	\param [in,out]	pEntity	The entity that has been reused.
-	\param	params		   	The parameters that were used to spawn the specified entity.
-	*/
-	void OnReused(IEntity *pEntity, SEntitySpawnParams &params) override;
+	const IAnimatedCharacter* GetAnimatedCharacter() const override { return m_pAnimatedCharacter; }
 
 
 	// ***
@@ -854,16 +348,6 @@ public:
 
 protected:
 
-	/**
-	Gets current item identifier.
-
-	\param	includeVehicle true to include, false to exclude the vehicles in the search.
-
-	\return The current item identifier.
-	**/
-	EntityId GetCurrentItemId(bool includeVehicle = false) const;
-
-
 	/** Called to indicate the entity must reset itself. This is often done during PostInit() and
 	additionally by the editor when you both enter and leave game mode. */
 	virtual void OnReset();
@@ -874,12 +358,6 @@ protected:
 	\return	True if physicalization was successful. False otherwise.
 	*/
 	virtual bool Physicalize();
-
-
-	/**
-	Pre physics update.
-	*/
-	virtual void PrePhysicsUpdate();
 
 
 	/**
@@ -901,9 +379,6 @@ private:
 
 	/** Specifies whether this instance is the client actor. */
 	bool m_isClient { false };
-
-	/** True if this actor is using a third person camera. */
-	bool m_bIsThirdPerson { false };
 
 	/** The actor's inventory. */
 	IInventory* m_pInventory { nullptr };
@@ -1091,7 +566,7 @@ public:
 
 	\return	null if it fails, else the interactor.
 	*/
-	IEntityLocking* GetInteractor();
+	IEntityLockingComponent* GetInteractor();
 
 
 	/**
@@ -1150,7 +625,7 @@ public:
 
 	/**
 	An action bar entry has been triggered. Take whatever action is appropriate.
-	
+
 	\param	playerId    Identifier for the player.
 	\param	actionBarId Identifier for the action bar.
 	**/
@@ -1169,5 +644,5 @@ private:
 
 
 	/** An interactor which is used to handle 'Useable' / 'Used' logic in the world. */
-	IEntityLocking* m_pInteractor { nullptr };
+	IEntityLockingComponent* m_pInteractor { nullptr };
 };

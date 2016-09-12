@@ -2,12 +2,10 @@
 
 #include "Item.h"
 #include <Game/Game.h>
-#include <Game/Rules/GameRules.h>
-#include "ScriptBindItem.h"
+#include <Game/GameRules.h>
 #include <Utility/Proxy.h>
 
 
-IGameFramework* CItem::m_pGameFramework = nullptr;
 IEntitySystem* CItem::m_pEntitySystem = nullptr;
 IItemSystem* CItem::m_pItemSystem = nullptr;
 
@@ -17,33 +15,11 @@ IItemSystem* CItem::m_pItemSystem = nullptr;
 // ***
 
 
-void CItem::GetMemoryUsage(ICrySizer *pSizer) const
-{
-	pSizer->Add(*this);
-}
-
-
 // TODO: refactor this so most the code is in PostInit.
 
 bool CItem::Init(IGameObject * pGameObject)
 {
-	// Stores the specified IGameObject in this instance.
-	SetGameObject(pGameObject);
-
-	// Perform a one time initialisation to set our convenience pointer into key system components.
-	if (!m_pGameFramework)
-	{
-		m_pGameFramework = gEnv->pGame->GetIGameFramework();
-		m_pEntitySystem = gEnv->pEntitySystem;
-		m_pItemSystem = m_pGameFramework->GetIItemSystem();
-
-		// This is also a good time to register the classes we will require, for example...
-		IEntityClassRegistry* pClassRegistry = gEnv->pEntitySystem->GetClassRegistry();
-		// TODO: Add item classes which need registering.
-		//sNoWeaponClass = pClassRegistry->FindClass("NoWeapon");
-
-		// TODO: Also initialise the fragments, tag and parameter CRCs.
-	}
+	ISimpleItem::Init(pGameObject);
 
 	// Capture the profile manager.
 	if (!GetGameObject()->CaptureProfileManager(this))
@@ -62,16 +38,11 @@ bool CItem::Init(IGameObject * pGameObject)
 	}
 
 	// Register with item system.
-	m_pItemSystem->AddItem(GetEntityId(), this);
+	gEnv->pGame->GetIGameFramework()->GetIItemSystem()->AddItem(GetEntityId(), this);
 
-	// attach script bind
-	g_pGame->GetScriptBinds()->GetItem()->AttachTo(this);
-
+	// Failed to find all appropriate shared parameters. Bailing out.
 	if (!ResetParams())
-	{
-		// Failed to find all appropriate shared parameters. Bailing out.
 		return false;
-	}
 
 	//ClearItemFlags(eIF_NoDrop);
 
@@ -90,79 +61,6 @@ bool CItem::Init(IGameObject * pGameObject)
 
 void CItem::PostInit(IGameObject * pGameObject)
 {
-	// Allow this instance to be updated every frame.
-	pGameObject->EnableUpdateSlot(this, 0);
-
-	// Allow this instance to be post-updated every frame.
-	pGameObject->EnablePostUpdates(this);
-}
-
-
-void CItem::InitClient(int channelId)
-{}
-
-
-void CItem::PostInitClient(int channelId)
-{}
-
-
-bool CItem::ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params)
-{
-	// It's very important that this gets called. Restores the IGameObject of the instance.
-	ResetGameObject();
-
-	return true;
-}
-
-
-void CItem::PostReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params)
-{}
-
-
-bool CItem::GetEntityPoolSignature(TSerialize signature)
-{
-	return true;
-}
-
-
-void CItem::Release()
-{
-	// Destroy this instance.
-	delete this;
-}
-
-
-void CItem::FullSerialize(TSerialize ser)
-{}
-
-
-bool CItem::NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int pflags)
-{
-	return true;
-}
-
-
-ISerializableInfoPtr CItem::GetSpawnInfo()
-{
-	return nullptr;
-}
-
-
-void CItem::Update(SEntityUpdateContext& ctx, int updateSlot)
-{
-	auto pEntity = GetEntity();
-	if (!pEntity)
-		return;
-}
-
-
-void CItem::HandleEvent(const SGameObjectEvent& event)
-{
-	//switch (event.event)
-	//{
-	//	default:
-	//		break;
-	//}
 }
 
 
@@ -190,32 +88,6 @@ void CItem::ProcessEvent(SEntityEvent& event)
 			break;
 	}
 }
-
-
-void CItem::SetChannelId(uint16 id)
-{}
-
-
-void CItem::SetAuthority(bool auth)
-{}
-
-
-const void* CItem::GetRMIBase() const
-{
-	return CGameObjectExtensionHelper::GetRMIBase();
-}
-
-
-void CItem::PostUpdate(float frameTime)
-{
-	auto pEntity = GetEntity();
-	if (!pEntity)
-		return;
-}
-
-
-void CItem::PostRemoteSpawn()
-{}
 
 
 // ***
@@ -279,51 +151,9 @@ bool CItem::SetAspectProfile(EEntityAspects aspect, uint8 profile)
 // TODO: IMPORTANT - Go through all the code to handle ownership of items.
 
 
-
-// ***
-// *** SETTINGS
-// ***
-
-void CItem::Reset()
-{
-	// TODO: What's needed here.
-}
-
-
-bool CItem::ResetParams()
-{
-	// TODO: Is this meant to reset params for this specific item? We will to implement this.
-
-	return true;
-}
-
-
-void CItem::PreResetParams()
-{
-}
-
-
 // ***
 // *** HOLDING
 // ***
-
-
-void CItem::DrawSlot(int slot, bool render, bool nearest)
-{
-	uint32 flags = GetEntity()->GetSlotFlags(slot);
-
-	if (render)
-		flags |= ENTITY_SLOT_RENDER;
-	else
-		flags &= ~ENTITY_SLOT_RENDER;
-
-	if (nearest)
-		flags |= ENTITY_SLOT_RENDER_NEAREST;
-	else
-		flags &= ~ENTITY_SLOT_RENDER_NEAREST;
-
-	GetEntity()->SetSlotFlags(slot, flags);
-}
 
 
 void CItem::EnablePicking(bool enable, bool dropped)
@@ -362,7 +192,7 @@ void CItem::EnablePicking(bool enable, bool dropped)
 
 void CItem::PickUp(EntityId actorId, bool sound, bool select, bool keepHistory, const char* setup)
 {
-	//IActor* pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(actorId);
+	//IActor* pActor = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(actorId);
 	//if (!pActor)
 	//	return;
 

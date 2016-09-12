@@ -1,7 +1,6 @@
 #include <StdAfx.h>
 
 #include "DesignerWarning.h"
-#include <ConsoleVariables/ConsoleVariables.h>
 /*#include "Testing/FeatureTester.h"
 #include "Testing/AutoTester.h"*/
 
@@ -16,7 +15,7 @@ static int s_numDesignerWarningsHit = 0;
 
 int DesignerWarningFunc(const char * message)
 {
-	/*	if (g_pGameCVars->designer_warning_enabled && (!gEnv->IsDedicated()))
+	/*	if (g_pGame->GetCVars().m_designer_warning_enabled && (!gEnv->IsDedicated()))
 		{
 		GameWarning("!DESIGNER WARNING\n%s", message);
 		}

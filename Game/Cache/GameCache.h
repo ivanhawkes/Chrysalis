@@ -8,8 +8,7 @@ trying to reduce the surface area and dependancies of the code.
 */
 #pragma once
 
-#include "Utility/CryHash.h"
-#include <CryEntitySystem/IEntityPoolManager.h>
+#include <Utility/CryHash.h>
 
 
 struct CItemParameter;
@@ -20,19 +19,13 @@ struct CItemParameter;
 // TODO: Add animation cache.
 // TODO: Flush caches.
 
-class CGameCache : public IEntityPoolListener
+class CGameCache
 {
-public:
-	// ***
-	// *** IEntityPoolListener
-	// ***
-
-	virtual void OnPoolBookmarkCreated(EntityId entityId, const SEntitySpawnParams& params, XmlNodeRef entityNode);
-
 	// ***
 	// *** CGameCache
 	// ***
 
+public:
 	/** Default constructor. */
 	CGameCache();
 

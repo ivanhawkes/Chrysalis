@@ -2,7 +2,7 @@
 
 #include <Utility/AutoEnum.h>
 #include <Actor/Character/Character.h>
-#include <Actor/Player/PlayerInput/IPlayerInput.h>
+#include <Player/Input/IPlayerInputComponent.h>
 #include <Actor/Character/Movement/StateMachine/CharacterStateEvents.h>
 
 

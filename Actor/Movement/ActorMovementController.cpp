@@ -5,9 +5,9 @@
 #include <Actor/Actor.h>
 #include <Actor/ActorStance.h>
 #include <Actor/ActorState.h>
-#include <Actor/Player/Player.h>
-#include <Camera/ICamera.h>
-#include <Actor/Player/PlayerInput/IPlayerInput.h>
+#include <Player/Player.h>
+#include <Player/Camera/ICameraComponent.h>
+#include <Player/Input/IPlayerInputComponent.h>
 #include <IMovementController.h>
 
 
@@ -225,6 +225,7 @@ void CActorMovementController::ComputeMovementRequest()
 	if (pPlayer)
 	{
 		auto pPlayerInput = pPlayer->GetPlayerInput();
+		auto pCamera = pPlayer->GetCamera();
 
 		// FIXME: This isn't a great place to reset the deltas for the movement and rotation, but it's the best option
 		// for quick testing. Improve this later. CPlayer did it in another function - check where and see if it's
@@ -235,7 +236,7 @@ void CActorMovementController::ComputeMovementRequest()
 		// Based on directional inputs, we calculate a vector in the direction the player wants to move.
 		// This is added as a delta movement.
 		// TODO: speed has to be handled somewhere - not sure where is best yet.
-		const Quat movementDirection = pPlayer->GetCamera()->GetRotation();
+		const Quat movementDirection = pCamera ? pPlayer->GetCamera()->GetRotation() : IDENTITY;
 		
 		// Player input always provides a unit or zero vector for the movement request.
 		const Vec3 unitMovement = pPlayerInput->GetMovement(movementDirection);
@@ -289,9 +290,12 @@ void CActorMovementController::ComputeMovementRequest()
 		// for player input (within turning limits of the head) allowing the head to track where the player
 		// is looking. Aim target should also be set here. AI input routines can work out their own needs.
 		// Camera should support a LookTarget () query to help out, since it knows if they are FP / TP / VR.
-		const Vec3 aimTarget = pPlayer->GetCamera()->GetAimTarget();
-		request.SetAimTarget(aimTarget);
-		request.SetLookTarget(aimTarget); // TODO: needs to be limited to amount neck can turn.
+		if (pCamera)
+		{
+			const Vec3 aimTarget = pPlayer->GetCamera()->GetAimTarget(m_pActor->GetEntity());
+			request.SetAimTarget(aimTarget);
+			request.SetLookTarget(aimTarget); // TODO: needs to be limited to amount neck can turn.
+		}
 	}
 
 	// Request the movement. 

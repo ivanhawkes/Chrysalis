@@ -4,10 +4,63 @@
 #include <Actor/Movement/ActorMovementController.h>
 #include <Actor/Character/Movement/StateMachine/CharacterStateEvents.h>
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
+#include <Game/GameFactory.h>
 
 
 // Definition of the state machine that controls character movement.
 DEFINE_STATE_MACHINE(CCharacter, Movement);
+
+
+class CCharacterRegistrator : public IEntityRegistrator
+{
+	virtual void Register() override
+	{
+		CCharacter::Register();
+	}
+};
+
+CCharacterRegistrator g_CharacterRegistrator;
+
+
+void CCharacter::Register()
+{
+	auto properties = new SNativeEntityPropertyInfo [eNumProperties];
+	memset(properties, 0, sizeof(SNativeEntityPropertyInfo) * eNumProperties);
+
+	RegisterEntityPropertyObject(properties, eProperty_Model, "Model", "", "Actor model");
+	RegisterEntityProperty<float>(properties, eProperty_Mass, "Mass", "", "Actor mass", 0, 10000);
+
+	// Finally, register the entity class so that instances can be created later on either via Launcher or Editor
+	CGameFactory::RegisterNativeEntity<CCharacter>("Character", "Actors", "Light.bmp", 0u, properties, eNumProperties);
+
+	// Create flownode
+	CGameEntityNodeFactory &nodeFactory = CGameFactory::RegisterEntityFlowNode("Character");
+
+	// Define input ports, and the callback function for when they are triggered
+	std::vector<SInputPortConfig> inputs;
+	inputs.push_back(InputPortConfig_Void("Open", "Open the door"));
+	inputs.push_back(InputPortConfig_Void("Close", "Close the door"));
+	nodeFactory.AddInputs(inputs, OnFlowgraphActivation);
+
+	// Mark the factory as complete, indicating that there will be no additional ports
+	nodeFactory.Close();
+}
+
+
+void CCharacter::OnFlowgraphActivation(EntityId entityId, IFlowNode::SActivationInfo *pActInfo, const class CFlowGameEntityNode *pNode)
+{
+	if (auto pExtension = static_cast<CCharacter *>(QueryExtension(entityId)))
+	{
+		if (IsPortActive(pActInfo, eInputPort_Open))
+		{
+			//			pExtension->SetPropertyBool(eProperty_IsOpen, true);
+		}
+		else if (IsPortActive(pActInfo, eInputPort_Close))
+		{
+			//			pExtension->SetPropertyBool(eProperty_IsOpen, false);
+		}
+	}
+}
 
 
 CCharacter::CCharacter()
@@ -23,21 +76,6 @@ CCharacter::~CCharacter()
 // ***
 // *** IGameObjectExtension
 // ***
-
-
-void CCharacter::GetMemoryUsage(ICrySizer *pSizer) const
-{
-	CActor::GetMemoryUsage(pSizer);
-	pSizer->Add(*this);
-}
-
-
-bool CCharacter::Init(IGameObject * pGameObject)
-{
-	CActor::Init(pGameObject);
-
-	return true;
-}
 
 
 void CCharacter::PostInit(IGameObject * pGameObject)
@@ -69,31 +107,6 @@ void CCharacter::PostReloadExtension(IGameObject * pGameObject, const SEntitySpa
 }
 
 
-void CCharacter::Release()
-{
-	// Destroy this instance.
-	delete this;
-}
-
-
-void CCharacter::FullSerialize(TSerialize ser)
-{
-	CActor::FullSerialize(ser);
-}
-
-
-bool CCharacter::NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int pflags)
-{
-	return true;
-}
-
-
-ISerializableInfoPtr CCharacter::GetSpawnInfo()
-{
-	return nullptr;
-}
-
-
 void CCharacter::Update(SEntityUpdateContext& ctx, int updateSlot)
 {
 	CActor::Update(ctx, updateSlot);
@@ -116,10 +129,6 @@ void CCharacter::ProcessEvent(SEntityEvent& event)
 
 		case ENTITY_EVENT_PREPHYSICSUPDATE:
 			PrePhysicsUpdate();
-			break;
-
-		case ENTITY_EVENT_SCRIPT_EVENT:
-			OnScriptEvent(event);
 			break;
 
 		case ENTITY_EVENT_EDITOR_PROPERTY_CHANGED:
@@ -147,18 +156,6 @@ IComponent::ComponentEventPriority CCharacter::GetEventPriority(const int eventI
 
 	return IGameObjectExtension::GetEventPriority(eventID);
 }
-
-
-// *** 
-// *** IActor
-// *** 
-
-
-
-// ***
-// *** CActor
-// ***
-
 
 
 // ***
@@ -275,12 +272,6 @@ void CCharacter::RegisterEvents()
 	// Register for the specified game object events.
 	GetGameObject()->UnRegisterExtForEvents(this, nullptr, 0);
 	GetGameObject()->RegisterExtForEvents(this, EventsToRegister, sizeof(EventsToRegister) / sizeof(int));
-}
-
-
-void CCharacter::OnScriptEvent(SEntityEvent& event)
-{
-	//CActor::OnScriptEvent(event);
 }
 
 

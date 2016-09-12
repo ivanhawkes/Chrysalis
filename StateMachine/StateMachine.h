@@ -1,8 +1,9 @@
 #pragma once
 
 #include <CryCore/CryFlags.h>
-#include "Utility/AutoEnum.h"
-#include "Utility/CryHash.h"
+#include <CryString/StringUtils.h>
+#include <Utility/AutoEnum.h>
+#include <Utility/CryHash.h>
 
 
 #if !defined(_RELEASE) && !CRY_PLATFORM_ORBIS
@@ -287,7 +288,6 @@ const SStateEvent STATE_DEBUG_RAW_EVENT_LOG(CStateHierarchy<HOST>* pState, SStat
 
 #endif
 
-#include "Utility/CryHash.h"
 
 struct SStateEvent;
 

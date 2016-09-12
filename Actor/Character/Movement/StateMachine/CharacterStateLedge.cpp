@@ -3,13 +3,12 @@
 #include <Actor/Character/Character.h>
 #include <IItemSystem.h>
 #include <Game/Game.h>
-#include <ConsoleVariables/ConsoleVariables.h>
 #include "CharacterStateLedge.h"
 #include "IAnimatedCharacter.h"
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
-#include "Environment/Ledge/LedgeManager.h"
+#include "Entities/Environment/Ledge/LedgeManager.h"
 #include "Utility/CryWatch.h"
-#include "Actor/Animation/Player/PlayerAnimation.h"
+#include <Player/Animations/PlayerAnimations.h>
 /*#include "Weapon.h"
 #include "StatsRecordingMgr.h"
 #include "PersistantStats.h"

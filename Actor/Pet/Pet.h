@@ -23,10 +23,7 @@ private:
 
 public:
 
-	/** This instance's default constructor. */
 	CPet();
-
-	/** This instance's default destructor. */
 	virtual ~CPet();
 
 

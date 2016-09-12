@@ -56,7 +56,7 @@ void CProceduralContextColliderMode::CancelRequest(const uint32 cancelRequestId)
 IAnimatedCharacter* CProceduralContextColliderMode::GetAnimatedCharacter() const
 {
 	const EntityId entityId = m_entity->GetId();
-	IActor* pActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(entityId);
+	IActor* pActor = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(entityId);
 	IAnimatedCharacter* pAnimatedCharacter = (pActor != NULL) ? pActor->GetAnimatedCharacter() : NULL;
 	return pAnimatedCharacter;
 }

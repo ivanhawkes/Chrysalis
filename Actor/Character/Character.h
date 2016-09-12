@@ -3,6 +3,7 @@
 #include <Actor/Actor.h>
 #include <Actor/Character/Movement/CharacterRotation.h>
 #include <StateMachine/StateMachine.h>
+#include <Entities/Helpers/NativeEntityBase.h>
 
 
 /**
@@ -23,55 +24,49 @@ private:
 	DECLARE_STATE_MACHINE(CCharacter, Movement);
 
 public:
+	enum EInputPorts
+	{
+		eInputPort_Open = 0,
+		eInputPort_Close
+	};
 
-	/** This instance's default constructor. */
-	CCharacter();
+	// Indices of the properties, registered in the Register function
+	enum EProperties
+	{
+		eProperty_Model = 0,
+		eProperty_Mass,
 
-	/** This instance's default destructor. */
-	virtual ~CCharacter();
+		eNumProperties
+	};
 
-
-	// ***
-	// *** IGameObjectExtension
-	// ***
-
-	void GetMemoryUsage(ICrySizer *pSizer) const override;
-	bool Init(IGameObject * pGameObject) override;
+	// IGameObjectExtension
 	void PostInit(IGameObject * pGameObject) override;
 	bool ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override;
 	void PostReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override;
-	void Release() override;
-	void FullSerialize(TSerialize ser) override;
-	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int pflags) override;
 	void PostSerialize() override {};
 	void SerializeSpawnInfo(TSerialize ser) override {};
-	ISerializableInfoPtr GetSpawnInfo() override;
 	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
 	void HandleEvent(const SGameObjectEvent& event) override;
 	void ProcessEvent(SEntityEvent& event) override;
 
 	// It is critical we override the event priority to ensure we handle the event before CAnimatedCharacter.
 	virtual IComponent::ComponentEventPriority GetEventPriority(const int eventID) const override;
+	// ~IGameObjectExtension
 
+	// Called to register the entity class and its properties
+	static void Register();
 
-	// *** 
-	// *** IActor
-	// *** 
+	// Called when one of the input Flowgraph ports are activated in one of the entity instances tied to this class
+	static void OnFlowgraphActivation(EntityId entityId, IFlowNode::SActivationInfo* pActInfo, const class CFlowGameEntityNode *pNode);
 
-public:
+	// IActor
 
 	/* You must override CActor for correct behaviour. */
 	const char* GetActorClassName() const override { return "CCharacter"; };
 
 	/* You must override CActor for correct behaviour. */
 	ActorClass GetActorClass() const override { return EActorClassType::EACT_ACTOR; };
-
-
-	// ***
-	// *** CActor
-	// ***
-
-public:
+	// ~IActor
 
 
 	// ***
@@ -79,6 +74,9 @@ public:
 	// ***
 
 public:
+
+	CCharacter();
+	virtual ~CCharacter();
 
 protected:
 
@@ -93,24 +91,13 @@ protected:
 	/**
 	Pre physics update.
 	*/
-	void PrePhysicsUpdate() override;
+	void PrePhysicsUpdate();
 
 
 	/**
 	Registers this instance for GameObject event notifications (will receive HandleEvent() calls).
 	*/
 	void RegisterEvents();
-
-
-	/**
-	Scripts are able to raise an event which is passed back to the c++ code though the ENTITY_EVENT_SCRIPT_EVENT.
-	This method handles those events.
-
-	\param	eventName	  	Name of the event.
-	\param	eventValueType	Type of the event value.
-	\param	pEventValue   	The event value.
-	*/
-	void OnScriptEvent(SEntityEvent& event);
 
 
 	/** Whenever a property in the editor is changed, this function is called. */

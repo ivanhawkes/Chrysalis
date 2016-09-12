@@ -1,7 +1,7 @@
 #include <StdAfx.h>
 /*
 #include "ProceduralContextRagdoll.h"
-#include <Actor/Player/Player.h>
+#include <Player/Player.h>
 #include <Game/Game.h>
 //#include "HitDeathReactions.h"
 
@@ -59,7 +59,7 @@ void CProceduralContextRagdoll::QueueRagdoll(bool bAlive)
 		m_targetEntityId = m_entity->GetId();
 	}
 
-	IActor* piActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_targetEntityId);
+	IActor* piActor = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_targetEntityId);
 
 	// NOTE: The case where piActor is NULL is when you're - in the CryMann preview!
 	if (piActor)
@@ -160,7 +160,7 @@ void CProceduralContextRagdoll::Update(float timePassedSeconds)
 
 		if (blendOutFactor == 0.0f)
 		{
-			IActor* piActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_targetEntityId);
+			IActor* piActor = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_targetEntityId);
 			if (piActor)
 			{
 				ForceRagdollFinish(piActor, false);
@@ -172,7 +172,7 @@ void CProceduralContextRagdoll::Update(float timePassedSeconds)
 	}
 	else if (m_bInRagdoll && !m_bEntityAlive && !m_bFromProcClip)
 	{
-		IActor* piActor = g_pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_targetEntityId);
+		IActor* piActor = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_targetEntityId);
 		if (piActor)
 		{
 			ForceRagdollFinish(piActor, true);

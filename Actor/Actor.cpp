@@ -10,12 +10,11 @@
 #include <IItemSystem.h>
 #include <Actor/Movement/ActorMovementController.h>
 #include <Actor/ActorPhysics.h>
-#include <Actor/Player/Player.h>
-#include <Actor/Animation/Player/PlayerAnimation.h>
-#include <Entity/EntityScriptCalls.h>
-#include <EntityInteraction/IEntityLocking.h>
-#include <EntityInteraction/IEntityAwareness.h>
-#include <EntityInteraction/EntityInteraction.h>
+#include <Player/Player.h>
+#include <Player/Animations/PlayerAnimations.h>
+#include <Entities/Interaction/IEntityLockingComponent.h>
+#include <Entities/Interaction/IEntityAwarenessComponent.h>
+#include <Entities/Interaction/EntityInteractionComponent.h>
 #include <Utility/CryWatch.h>
 
 
@@ -36,15 +35,6 @@ CActor::~CActor()
 	// Very important that this gets called. Removes the character from the system.
 	gEnv->pGame->GetIGameFramework()->GetIActorSystem()->RemoveActor(GetEntityId());
 
-	// Release any extensions we grabbed.
-	if (m_pAnimatedCharacter)
-	{
-		GetGameObject()->ReleaseExtension("AnimatedCharacter");
-		GetGameObject()->DeactivateExtension("AnimatedCharacter");
-	}
-	if (m_pInteractor)
-		GetGameObject()->ReleaseExtension("EntityLocking");
-
 	// Inventory takes a little extra work to break down.
 	if (m_pInventory)
 	{
@@ -56,8 +46,6 @@ CActor::~CActor()
 
 		if (gEnv->bServer)
 			m_pInventory->Destroy();
-
-		GetGameObject()->ReleaseExtension("Inventory");
 	}
 
 	// Release the controller first, then the animation context. Errors will occur if done the other way.
@@ -78,22 +66,9 @@ CActor::~CActor()
 // ***
 
 
-void CActor::GetMemoryUsage(ICrySizer *pSizer) const
-{
-	pSizer->Add(*this);
-
-	// Remember to add large memory objects in as needed.
-	pSizer->AddObject(m_pInventory);
-	pSizer->AddObject(m_pAnimatedCharacter);
-	pSizer->AddObject(m_pInteractor);
-	//pSizer->AddObject(m_pMovementController); // TODO: should include size of this object, but thanks to time pressure don't have time to figure out the correct way.
-}
-
-
 bool CActor::Init(IGameObject * pGameObject)
 {
-	// Stores the specified IGameObject in this instance.
-	SetGameObject(pGameObject);
+	ISimpleActor::Init(pGameObject);
 
 	// Add this instance to the network.
 	return pGameObject->BindToNetwork();
@@ -123,10 +98,9 @@ void CActor::PostInit(IGameObject * pGameObject)
 	if (m_pMovementController)
 		GetGameObject()->SetMovementController(m_pMovementController);
 
-	// Stores whether this instance is the client actor.
-	// TODO: Won't this be false every time? Find out if this needs to be the client actor, or player - and
-	// how to set it if needed. Ideally we will control it completely.
-	m_isClient = (((CGame*) gEnv->pGame)->GetClientActorID() == GetEntityId());
+	// TODO: Always false, for now, since the player is the actual client. Find out if it's ever
+	// right for an actor to be the client and simplify this code if it's not.
+	m_isClient = false;
 
 	// Registers this instance to the actor system.
 	gEnv->pGame->GetIGameFramework()->GetIActorSystem()->AddActor(GetEntityId(), this);
@@ -167,18 +141,7 @@ void CActor::PostInit(IGameObject * pGameObject)
 
 	// Load character
 	IEntity* const pEntity = GetEntity();
-	if (IScriptTable* pScriptTable = pEntity->GetScriptTable())
-	{
-		SmartScriptTable propertiesTable;
-		if (pScriptTable->GetValue("Properties", propertiesTable))
-		{
-			const char* modelName = NULL;
-			if (propertiesTable->GetValue("objModel", modelName) && modelName)
-			{
-				pEntity->LoadCharacter(0, modelName);
-			}
-		}
-	}
+	pEntity->LoadCharacter(0, "objects/characters/human/sdk_player/sdk_player.cdf");
 
 	// Mannequin Initialization
 	IMannequin& mannequin = gEnv->pGame->GetIGameFramework()->GetMannequinInterface();
@@ -238,9 +201,10 @@ void CActor::PostInit(IGameObject * pGameObject)
 	//IActionPtr pAction = new TAction<SAnimationContext>(0, fragmentId);
 	//m_pActionController->Queue(*pAction);
 
-	// If we are the client actor than notify the game of us being spawned.
-	if (m_isClient)
-		((CGame*) gEnv->pGame)->OnClientActorSpawned(this);
+// HACK: ILH removed when adding player back in, because it wasn't used in their template - if it's needed - find a way to make it happen.
+	//// If we are the client actor than notify the game of us being spawned.
+	//if (m_isClient)
+	//	((CGame*) gEnv->pGame)->OnClientActorSpawned(this);
 
 	// TODO: test code for now - want to get physics working on characters. This was being done in code
 	// when they became the local player, but that won't work for us.
@@ -268,26 +232,18 @@ void CActor::PostInit(IGameObject * pGameObject)
 }
 
 
-void CActor::InitClient(int channelId)
-{}
-
-
-void CActor::PostInitClient(int channelId)
-{}
-
-
 bool CActor::ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params)
 {
-	// Restores this instance's game object in case it has changed.
-	ResetGameObject();
+	//// Restores this instance's game object in case it has changed.
+	//ResetGameObject();
 
-	// Add this instance to the network.
-	if (!GetGameObject()->BindToNetwork())
-		return false;
+	//// Add this instance to the network.
+	//if (!GetGameObject()->BindToNetwork())
+	//	return false;
 
-	// Removes this instance's previous actor and adds it's new one.
-	gEnv->pGame->GetIGameFramework()->GetIActorSystem()->RemoveActor(params.prevId);
-	gEnv->pGame->GetIGameFramework()->GetIActorSystem()->AddActor(GetEntityId(), this);
+	//// Removes this instance's previous actor and adds it's new one.
+	//gEnv->pGame->GetIGameFramework()->GetIActorSystem()->RemoveActor(params.prevId);
+	//gEnv->pGame->GetIGameFramework()->GetIActorSystem()->AddActor(GetEntityId(), this);
 
 	return true;
 }
@@ -301,35 +257,10 @@ void CActor::PostReloadExtension(IGameObject * pGameObject, const SEntitySpawnPa
 }
 
 
-bool CActor::GetEntityPoolSignature(TSerialize signature)
-{
-	return true;
-}
-
-
-void CActor::Release()
-{
-	// Destroy this instance.
-	delete this;
-}
-
-
 void CActor::FullSerialize(TSerialize ser)
 {
 	// Serialise the movement state machine.
 	MovementHSMSerialize(ser);
-}
-
-
-bool CActor::NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int pflags)
-{
-	return true;
-}
-
-
-ISerializableInfoPtr CActor::GetSpawnInfo()
-{
-	return nullptr;
 }
 
 
@@ -530,162 +461,9 @@ void CActor::UpdateAnimationState(const SActorMovementRequest& movementRequest)
 }
 
 
-void CActor::PrePhysicsUpdate()
-{
-}
-
-
-void CActor::SetChannelId(uint16 id)
-{}
-
-
-void CActor::SetAuthority(bool auth)
-{}
-
-
-void CActor::PostRemoteSpawn()
-{}
-
-
 // *** 
 // *** IActor
 // *** 
-
-
-void CActor::SetHealth(float health)
-{}
-
-
-float CActor::GetHealth() const
-{
-	return 100;
-}
-
-
-int	CActor::GetHealthAsRoundedPercentage() const
-{
-	return 100;
-}
-
-
-void CActor::SetMaxHealth(float maxHealth)
-{}
-
-
-float CActor::GetMaxHealth() const
-{
-	return 100;
-}
-
-
-int CActor::GetArmor() const
-{
-	return 100;
-}
-
-
-int	CActor::GetMaxArmor() const
-{
-	return 100;
-}
-
-
-bool CActor::IsFallen() const
-{
-	return false;
-}
-
-
-bool CActor::IsDead() const
-{
-	return false;
-}
-
-
-int	CActor::IsGod()
-{
-	return true;
-}
-
-
-void CActor::Fall(Vec3 hitPos)
-{}
-
-
-bool CActor::AllowLandingBob()
-{
-	return true;
-}
-
-
-void CActor::PlayAction(const char *action, const char *extension, bool looping)
-{}
-
-
-IAnimationGraphState* CActor::GetAnimationGraphState()
-{
-	return nullptr;
-}
-
-
-void CActor::ResetAnimationState()
-{}
-
-
-void CActor::CreateScriptEvent(const char *event, float value, const char *str)
-{}
-
-
-bool CActor::BecomeAggressiveToAgent(EntityId entityID)
-{
-	return true;
-}
-
-
-void CActor::SetFacialAlertnessLevel(int alertness)
-{}
-
-
-void CActor::RequestFacialExpression(const char* pExpressionName, f32* sequenceLength)
-{}
-
-
-void CActor::PrecacheFacialExpression(const char* pExpressionName)
-{}
-
-
-EntityId CActor::GetGrabbedEntityId() const
-{
-	return -1;
-}
-
-
-void CActor::HideAllAttachments(bool isHiding)
-{}
-
-
-void CActor::SetIKPos(const char *pLimbName, const Vec3& goalPos, int priority)
-{}
-
-
-void CActor::SetViewInVehicle(Quat viewRotation)
-{}
-
-
-void CActor::SetViewRotation(const Quat &rotation)
-{}
-
-
-Quat CActor::GetViewRotation() const
-{
-	return GetEntity()->GetWorldRotation();
-}
-
-
-bool CActor::IsFriendlyEntity(EntityId entityId, bool bUsingAIIgnoreCharacter) const
-{
-	return true;
-}
 
 
 Vec3 CActor::GetLocalEyePos() const
@@ -767,83 +545,9 @@ Vec3 CActor::GetLocalEyePos() const
 }
 
 
-void CActor::CameraShake(float angle, float shift, float duration, float frequency, Vec3 pos, int ID, const char* source)
-{}
-
-
-IItem* CActor::GetHolsteredItem() const
-{
-	if (m_pInventory)
-	{
-		return g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(m_pInventory->GetHolsteredItem());
-	}
-
-	return nullptr;
-}
-
-
-void CActor::HolsterItem(bool holster, bool playSelect, float selectSpeedBias, bool hideLeftHandObject)
-{}
-
-
-EntityId CActor::GetCurrentItemId(bool includeVehicle) const
-{
-	// TODO: Add handling of vehicles in this routine.
-
-	// Let the inventory extension handle the hard work.
-	return m_pInventory ? m_pInventory->GetCurrentItem() : INVALID_ENTITYID;
-}
-
-
-bool CActor::DropItem(EntityId itemId, float impulseScale, bool selectNext, bool byDeath)
-{
-	return true;
-}
-
-
-IInventory* CActor::GetInventory() const
-{
-	return m_pInventory;
-}
-
-
-void CActor::NotifyCurrentItemChanged(IItem* newItem)
-{}
-
-
 IMovementController* CActor::GetMovementController() const
 {
 	return m_pMovementController;
-}
-
-
-IEntity* CActor::LinkToVehicle(EntityId vehicleId)
-{
-	return nullptr;
-}
-
-
-IEntity* CActor::GetLinkedEntity() const
-{
-	return nullptr;
-}
-
-
-uint8 CActor::GetSpectatorMode() const
-{
-	return 0;
-}
-
-
-bool CActor::IsThirdPerson() const
-{
-	return m_bIsThirdPerson;
-}
-
-
-void CActor::ToggleThirdPerson()
-{
-	m_bIsThirdPerson = !m_bIsThirdPerson;
 }
 
 
@@ -858,94 +562,6 @@ bool CActor::IsClient() const
 {
 	return m_isClient;
 }
-
-
-bool CActor::IsMigrating() const
-{
-	return false;
-}
-
-
-void CActor::SetMigrating(bool isMigrating)
-{}
-
-
-void CActor::InitLocalPlayer()
-{}
-
-
-const char* CActor::GetEntityClassName() const
-{
-	return GetEntity()->GetClass()->GetName();
-}
-
-
-void CActor::SerializeXML(XmlNodeRef& node, bool bLoading)
-{}
-
-
-void CActor::SerializeLevelToLevel(TSerialize &ser)
-{}
-
-
-IAnimatedCharacter* CActor::GetAnimatedCharacter()
-{
-	return m_pAnimatedCharacter;
-}
-
-
-const IAnimatedCharacter* CActor::GetAnimatedCharacter() const
-{
-	return nullptr;
-}
-
-
-void CActor::PlayExactPositioningAnimation(const char* sAnimationName, bool bSignal, const Vec3& vPosition, const Vec3& vDirection, float startWidth, float startArcAngle, float directionTolerance)
-{}
-
-
-void CActor::CancelExactPositioningAnimation()
-{}
-
-
-void CActor::PlayAnimation(const char* sAnimationName, bool bSignal)
-{}
-
-
-void CActor::EnableTimeDemo(bool bTimeDemo)
-{}
-
-
-void CActor::SwitchDemoModeSpectator(bool activate)
-{}
-
-
-IVehicle* CActor::GetLinkedVehicle() const
-{
-	return nullptr;
-}
-
-
-void CActor::OnAIProxyEnabled(bool enabled)
-{}
-
-
-void CActor::OnReturnedToPool()
-{}
-
-
-void CActor::OnPreparedFromPool()
-{}
-
-
-bool CActor::ShouldMuteWeaponSoundStimulus() const
-{
-	return false;
-}
-
-
-void CActor::OnReused(IEntity *pEntity, SEntitySpawnParams &params)
-{}
 
 
 bool CActor::Physicalize()
@@ -1114,7 +730,7 @@ void CActor::OnDeath(IActor* pActor, bool bIsGod)
 	ResetInteractor();
 
 	// Restore interactor.
-	IEntityLocking * pInteractor = GetInteractor();
+	IEntityLockingComponent * pInteractor = GetInteractor();
 	if (!GetGameObject()->GetUpdateSlotEnables(pInteractor, 0))
 		GetGameObject()->EnableUpdateSlot(pInteractor, 0);
 }
@@ -1173,10 +789,19 @@ void CActor::OnSprintStaminaChanged(IActor* pActor, float newStamina)
 // ***
 
 
+EntityId CActor::GetCurrentItemId(bool includeVehicle) const
+{
+	// TODO: Add handling of vehicles in this routine.
+
+	// Let the inventory extension handle the hard work.
+	return m_pInventory ? m_pInventory->GetCurrentItem() : INVALID_ENTITYID;
+}
+
+
 IItem* CActor::GetCurrentItem(bool includeVehicle) const
 {
 	if (EntityId itemId = GetCurrentItemId(includeVehicle))
-		return g_pGame->GetIGameFramework()->GetIItemSystem()->GetItem(itemId);
+		return gEnv->pGame->GetIGameFramework()->GetIItemSystem()->GetItem(itemId);
 
 	return nullptr;
 }
@@ -1269,13 +894,13 @@ void CActor::Revive(EReasonForRevive reasonForRevive)
 // ***
 
 
-IEntityLocking* CActor::GetInteractor()
+IEntityLockingComponent* CActor::GetInteractor()
 {
 	//if (IsClient()) // TODO: IsClient needs some rework for our situation.
 	// TODO: assured this call can be moved to the PostInit step. Check soon and move if it can.
 	{
 		if (!m_pInteractor)
-			m_pInteractor = static_cast<IEntityLocking*> (GetGameObject()->AcquireExtension("EntityLocking"));
+			m_pInteractor = static_cast<IEntityLockingComponent*> (GetGameObject()->AcquireExtension("EntityLocking"));
 		return m_pInteractor;
 	}
 
@@ -1306,25 +931,25 @@ void CActor::LockInteractor(EntityId lockId, bool lock)
 	// DEBUG: Adding some debug statements to make this easier to start working with.
 	CryLogAlways("LockInteractor: %s, Target Lock Id %d, lock %d", GetEntity()->GetName(), lockId, lock);
 
-	SmartScriptTable lockTable(gEnv->pScriptSystem);
-	lockTable->SetValue("lockTable", ScriptHandle(lockId));
-	lockTable->SetValue("lockId", ScriptHandle(lock ? lockId : 0));
-	lockTable->SetValue("lockIdx", lock ? 1 : 0);
+	//SmartScriptTable lockTable(gEnv->pScriptSystem);
+	//lockTable->SetValue("lockTable", ScriptHandle(lockId));
+	//lockTable->SetValue("lockId", ScriptHandle(lock ? lockId : 0));
+	//lockTable->SetValue("lockIdx", lock ? 1 : 0);
 
-	// Does this piece of code set the script table values on the CInteractor extension rather than our base component?
-	GetGameObject()->SetExtensionParams("EntityLocking", lockTable);
+	//// Does this piece of code set the script table values on the CInteractor extension rather than our base component?
+	//GetGameObject()->SetExtensionParams("EntityLocking", lockTable);
 }
 
 
 void CActor::ResetInteractor()
 {
-	EntityId lockedId = m_pInteractor ? m_pInteractor->GetLockedEntityId() : INVALID_ENTITYID;
-	if (lockedId)
-		LockInteractor(lockedId, false);
+	//EntityId lockedId = m_pInteractor ? m_pInteractor->GetLockedEntityId() : INVALID_ENTITYID;
+	//if (lockedId)
+	//	LockInteractor(lockedId, false);
 
-	// TODO: Looks like we need to add the player plugin abilities to this class.
-	//if (m_pLocalPlayerInteractionPlugin)
-	//	m_pLocalPlayerInteractionPlugin->Reset();
+	//// TODO: Looks like we need to add the player plugin abilities to this class.
+	////if (m_pLocalPlayerInteractionPlugin)
+	////	m_pLocalPlayerInteractionPlugin->Reset();
 }
 
 
@@ -1338,22 +963,19 @@ void CActor::OnActionItemUse(EntityId playerId)
 		CryLogAlways("GetLockedEntityId = %d", pInteractor->GetLockedEntityId());
 	}
 
-	// TODO: This should use IEntityLocking instead, and that should be given some useful interface. It might need a rename too.
-	auto pEntityAwareness = static_cast <IEntityAwareness*> (GetGameObject()->AcquireExtension("EntityAwareness"));
+	// TODO: This should use IEntityLockingComponent instead, and that should be given some useful interface. It might need a rename too.
+	auto pEntityAwareness = static_cast <IEntityAwarenessComponent*> (GetGameObject()->AcquireExtension("EntityAwareness"));
 	if (pEntityAwareness)
 	{
 		if (auto pEntity = pEntityAwareness->GetEntityInFrontOf())
 		{
-			//if (IScriptTable* pScriptTable = pEntity->GetScriptTable())
-			//{
-			//	// TODO: Figure out how to pass an IEntity to the function.				
-			//	EntityScripts::CallScriptFunction(pEntity, pScriptTable, "OnUsed", GetEntityId(), 1);
-			//}
+			// HACK: used to have code here to call into the Lua script. Replacing that with calls
+			// into c++.
 
 			// TEST: wrong place for this test - move it to somewhere i can see it try all the entities near us.
 			if (auto pGameObject = gEnv->pGame->GetIGameFramework()->GetGameObject(pEntity->GetId()))
 			{
-				if (auto pInteractor = static_cast<IEntityInteraction*> (pGameObject->QueryExtension("EntityInteraction")))
+				if (auto pInteractor = static_cast<IEntityInteractionComponent*> (pGameObject->QueryExtension("EntityInteraction")))
 				{
 					// There's an interactor component, so this is an interactive entity.
 					auto verbs = pInteractor->GetVerbs();
@@ -1395,15 +1017,15 @@ void CActor::OnActionBarUse(EntityId playerId, int actionBarId)
 	// Make sure we have the interaction extension.
 	if (GetInteractor())
 	{
-		// TODO: This should use IEntityLocking instead, and that should be given some useful interface. It might need a rename too.
-		auto pEntityAwareness = static_cast <IEntityAwareness*> (GetGameObject()->AcquireExtension("EntityAwareness"));
+		// TODO: This should use IEntityLockingComponent instead, and that should be given some useful interface. It might need a rename too.
+		auto pEntityAwareness = static_cast <IEntityAwarenessComponent*> (GetGameObject()->AcquireExtension("EntityAwareness"));
 		if (pEntityAwareness)
 		{
 			if (auto pEntity = pEntityAwareness->GetEntityInFrontOf())
 			{
 				if (auto pGameObject = gEnv->pGame->GetIGameFramework()->GetGameObject(pEntity->GetId()))
 				{
-					if (auto pInteractor = static_cast<IEntityInteraction*> (pGameObject->QueryExtension("EntityInteraction")))
+					if (auto pInteractor = static_cast<IEntityInteractionComponent*> (pGameObject->QueryExtension("EntityInteraction")))
 					{
 						// There's an interactor component, so this is an interactive entity.
 						auto verbs = pInteractor->GetVerbs();

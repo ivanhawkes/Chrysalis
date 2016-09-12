@@ -2,19 +2,18 @@
 
 #include "CharacterStateLadder.h"
 #include <Game/Game.h>
-#include <ConsoleVariables/ConsoleVariables.h>
 #include <Actor/Character/Character.h>
-#include "Actor/Animation/Player/PlayerAnimation.h"
+#include <Player/Animations/PlayerAnimations.h>
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
-#include "Entity/EntityScriptCalls.h"
+#include <Entities/EntityScriptCalls.h>
 #include "Utility/CryWatch.h"
 #include "CharacterStateEvents.h"
 /*#include "Weapon.h"*/
 
 
 #ifndef _RELEASE
-#define LadderLog(...) do { if (g_pGameCVars->ladder_logVerbosity > 0) { CryLog ("[LADDER] " __VA_ARGS__); } } while(0)
-#define LadderLogIndent() INDENT_LOG_DURING_SCOPE(g_pGameCVars->ladder_logVerbosity > 0)
+#define LadderLog(...) do { if (g_pGame->GetCVars().m_ladder_logVerbosity > 0) { CryLog ("[LADDER] " __VA_ARGS__); } } while(0)
+#define LadderLogIndent() INDENT_LOG_DURING_SCOPE(g_pGame->GetCVars().m_ladder_logVerbosity > 0)
 static AUTOENUM_BUILDNAMEARRAY(s_onOffAnimTypeNames, ladderAnimTypeList);
 #else
 #define LadderLog(...) (void)(0)
@@ -593,7 +592,7 @@ bool CCharacterStateLadder::OnPrePhysicsUpdate(CCharacter& Character, const SAct
 		CRY_ASSERT (Character.IsOnLadder ());
 
 		#ifndef _RELEASE
-		if (g_pGameCVars->ladder_logVerbosity)
+		if (g_pGame->GetCVars().m_ladder_logVerbosity)
 		{
 		CryWatch ("[LADDER] RUNG=$3%u/%u$o FRAC=$3%.2f$o: %s is %.2fm up a ladder, move=%.2f - %s, %s, %s, camAnim=%.2f, $7INERTIA=%.2f SETTLE=%.2f", m_numRungsFromBottomPosition, m_topRungNumber, m_fractionBetweenRungs, Character.GetEntity ()->GetEntityTextDescription (), Character.GetEntity ()->GetWorldPos ().z - m_ladderBottom.z, requiredMovement.z, Character.CanTurnBody () ? "$4can turn body$o" : "$3cannot turn body$o", (Character.GetEntity ()->GetSlotFlags (0) & ENTITY_SLOT_RENDER_NEAREST) ? "render nearest" : "render normal", Character.IsOnLadder () ? "$3on a ladder$o" : "$4not on a ladder$o", Character.GetActorState ()->partialCameraAnimFactor, m_climbInertia, m_scaleSettle);
 
@@ -752,7 +751,7 @@ bool CCharacterStateLadder::OnPrePhysicsUpdate(CCharacter& Character, const SAct
 		m_playGetOffAnim = (m_topRungNumber & 1) ? kLadderAnimType_atTopRightFoot : kLadderAnimType_atTopLeftFoot;
 		}
 		#ifndef _RELEASE
-		else if (g_pGameCVars->ladder_logVerbosity)
+		else if (g_pGame->GetCVars().m_ladder_logVerbosity)
 		{
 		CryWatch ("[LADDER] %s can't climb up and off %s - top is blocked", Character.GetEntity ()->GetName (), pLadder->GetEntityTextDescription ());
 		}
@@ -778,7 +777,7 @@ bool CCharacterStateLadder::OnPrePhysicsUpdate(CCharacter& Character, const SAct
 		const float animFraction = m_fractionBetweenRungs * 0.5f + ((m_numRungsFromBottomPosition & 1) ? 0.5f : 0.0f);
 
 		#ifndef _RELEASE
-		if (g_pGameCVars->ladder_logVerbosity)
+		if (g_pGame->GetCVars().m_ladder_logVerbosity)
 		{
 		CryWatch ("[LADDER] $7Setting anim fraction to %.4f", animFraction);
 		}
@@ -866,7 +865,7 @@ bool CCharacterStateLadder::IsUsableLadder(CCharacter& Character, IEntity* pLadd
 		}
 
 		#ifndef _RELEASE
-		if (g_pGameCVars->ladder_logVerbosity)
+		if (g_pGame->GetCVars().m_ladder_logVerbosity)
 		{
 		if (pLadder)
 		{

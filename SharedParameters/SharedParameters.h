@@ -27,7 +27,7 @@
 namespace SharedParameters
 {
 	/**
-	 Z coordinates shared parameters.
+	 Template for shared parameters.
 	
 	 \tparam	T	Generic type parameter.
 	 \param	rootParams	Generally this will be the root of the XML document that contains the struct
@@ -55,11 +55,11 @@ namespace SharedParameters
 		std::shared_ptr<const T> sharedParameter = CastSharedParamsPtr<T>(pSharedParamsManager->Get(sharedParameterName));
 		if (!sharedParameter)
 		{
-			// Load in the flashlight specific shared parameters then register a new set of parameters and retrieve a shared pointer to them.
+			// Load in the shared parameters then register a new set of parameters and retrieve a shared pointer to them.
 			T newSharedParameter;
-			XmlNodeRef flashlightNode = rootParams->findChild(nodeName);
-			if (flashlightNode)
-				newSharedParameter.Read(flashlightNode);
+			XmlNodeRef node = rootParams->findChild(nodeName);
+			if (node)
+				newSharedParameter.Read(node);
 			sharedParameter = CastSharedParamsPtr<T>(pSharedParamsManager->Register(sharedParameterName, newSharedParameter));
 		}
 

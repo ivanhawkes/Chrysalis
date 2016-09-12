@@ -11,7 +11,7 @@ class CCharacterStateSwim
 public:
 	static void SetParamsFromXml(const IItemParamsNode* pParams)
 	{
-		ScopedSwitchToGlobalHeap useGlobalHeap;
+		//ScopedSwitchToGlobalHeap useGlobalHeap;
 		GetSwimParams().SetParamsFromXml(pParams);
 	}
 

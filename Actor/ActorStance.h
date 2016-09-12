@@ -12,7 +12,7 @@ struct SActorStance
 	// Dimensions.
 	float heightCollider { 0.0f };
 	float heightPivot { 0.0f };
-	float groundContactEps { 0.025 };
+	float groundContactEps { 0.025f };
 
 	bool useCapsule = false;
 

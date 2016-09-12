@@ -3,18 +3,6 @@
 #include "Item.h"
 
 
-void CItem::SetParentId(EntityId parentId)
-{
-	m_parentId = parentId;
-}
-
-
-EntityId CItem::GetParentId() const
-{
-	return m_parentId;
-}
-
-
 CItem *CItem::AddAccessory(IEntityClass* pClass)
 {
 /*	if (!pClass)
@@ -297,7 +285,7 @@ void CItem::RemoveAllAccessories()
 //	//Luciano - send game event
 //	if (g_pGame) // game gets destroyed before entitysystem, who owns this CItem
 //	{
-//		g_pGame->GetIGameFramework()->GetIGameplayRecorder()->Event(GetOwner(), GameplayEvent(eGE_AttachedAccessory, pAccessoryClass->GetName(), (float) attach, (void*) (EXPAND_PTR) GetEntityId()));
+//		gEnv->pGame->GetIGameFramework()->GetIGameplayRecorder()->Event(GetOwner(), GameplayEvent(eGE_AttachedAccessory, pAccessoryClass->GetName(), (float) attach, (void*) (EXPAND_PTR) GetEntityId()));
 //
 //		CRecordingSystem* pRecordingSystem = g_pGame->GetRecordingSystem();
 //		if (pRecordingSystem)
@@ -554,7 +542,7 @@ void CItem::RemoveAllAccessories()
 //		IActionController* pController = GetActionController();
 //		if(pController)
 //		{
-//			CMannequinUserParamsManager& mannequinUserParams = g_pGame->GetIGameFramework()->GetMannequinInterface().GetMannequinUserParamsManager();
+//			CMannequinUserParamsManager& mannequinUserParams = gEnv->pGame->GetIGameFramework()->GetMannequinInterface().GetMannequinUserParamsManager();
 //			const SMannequinItemParams* pParams = mannequinUserParams.FindOrCreateParams<SMannequinItemParams>(pController);
 //			
 //			UpdateAccessoryTags(pParams, pController->GetContext().state, true);
@@ -571,7 +559,7 @@ void CItem::RemoveAllAccessories()
 //void CItem::SwitchAccessory(const ItemString& accessory)
 //{
 //	uint16 classId = 0;
-//	bool result = g_pGame->GetIGameFramework()->GetNetworkSafeClassId(classId, accessory.c_str());
+//	bool result = gEnv->pGame->GetIGameFramework()->GetNetworkSafeClassId(classId, accessory.c_str());
 //
 //#if !defined(_RELEASE)
 //	if(!result)
@@ -654,7 +642,7 @@ void CItem::RemoveAllAccessories()
 //void CItem::DetachAccessory(const ItemString& accessory)
 //{
 //	uint16 classId = 0;
-//	bool result = g_pGame->GetIGameFramework()->GetNetworkSafeClassId(classId, accessory.c_str());
+//	bool result = gEnv->pGame->GetIGameFramework()->GetNetworkSafeClassId(classId, accessory.c_str());
 //
 //#if !defined(_RELEASE)
 //	if(!result)

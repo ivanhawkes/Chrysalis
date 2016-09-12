@@ -2,7 +2,7 @@
 
 #include <CryNetwork/ISerialize.h>
 #include "CharacterStateEvents.h"
-#include "Environment/Ledge/LedgeManager.h"
+#include "Entities/Environment/Ledge/LedgeManager.h"
 
 
 class CCharacter;
@@ -24,7 +24,7 @@ class CCharacterStateLedge
 public:
 	static void SetParamsFromXml(const IItemParamsNode* pParams)
 	{
-		ScopedSwitchToGlobalHeap useGlobalHeap;
+		//ScopedSwitchToGlobalHeap useGlobalHeap;
 		GetLedgeGrabbingParams().SetParamsFromXml(pParams);
 	}
 

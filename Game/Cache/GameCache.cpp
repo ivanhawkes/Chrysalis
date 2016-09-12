@@ -1,49 +1,10 @@
 #include <StdAfx.h>
+
 #include "GameCache.h"
 #include <CryEntitySystem/IEntitySystem.h>
 #include <CryAnimation/ICryAnimation.h>
 #include "Item/Parameters/ItemParameter.h"
 #include <CryString/StringUtils.h>
-
-
-// ***
-// *** IEntityPoolListener
-// ***
-
-void CGameCache::OnPoolBookmarkCreated(EntityId entityId, const SEntitySpawnParams& params, XmlNodeRef entityNode)
-{
-	// TODO: find out what we need to do here, and do it.
-
-	/*if (IsCacheEnabled())
-	{
-	IScriptTable *pScriptTable = params.pClass->GetScriptTable();
-	IScriptTable *pArchetypeProperties = params.pArchetype ? params.pArchetype->GetProperties() : NULL;
-
-	if (m_pActorSystem && m_pActorSystem->IsActorClass(params.pClass))
-	{
-	CacheActorClass(params.pClass, pScriptTable);
-
-	int modelVariation = 0;
-	if (entityNode)
-	{
-	XmlNodeRef propertiesInstance = entityNode->findChild("Properties2");
-	if (propertiesInstance)
-	{
-	propertiesInstance->getAttr("nVariation", modelVariation);
-	}
-	}
-
-	CacheActorInstance(entityId, pScriptTable, pArchetypeProperties, modelVariation);
-
-	stack_string modularBehaviorTreeName("");
-	GetInstancePropertyValue("esModularBehaviorTree", modularBehaviorTreeName, entityNode, pScriptTable, pArchetypeProperties);
-	if (!modularBehaviorTreeName.empty())
-	{
-	gEnv->pAISystem->GetIBehaviorTreeManager()->LoadFromDiskIntoCache(modularBehaviorTreeName.c_str());
-	}
-	}
-	}*/
-}
 
 
 // ***
@@ -57,19 +18,11 @@ CGameCache::CGameCache()
 
 CGameCache::~CGameCache()
 {
-	// Add ourselves as a listener to the pool manager.
-	IEntityPoolManager *pEntityPoolManager = gEnv->pEntitySystem->GetIEntityPoolManager();
-	CRY_ASSERT(pEntityPoolManager);
-	pEntityPoolManager->RemoveListener(this);
 }
 
 
 void CGameCache::Init()
 {
-	// Remove ourselves from the pool manager's listeners list.
-	IEntityPoolManager *pEntityPoolManager = gEnv->pEntitySystem->GetIEntityPoolManager();
-	CRY_ASSERT(pEntityPoolManager);
-	pEntityPoolManager->AddListener(this, "GameCache", IEntityPoolListener::PoolBookmarkCreated);
 }
 
 
