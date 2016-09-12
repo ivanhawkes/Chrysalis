@@ -4,14 +4,13 @@
 #include <IViewSystem.h>
 #include <Player/Camera/CameraManagerComponent.h>
 
-
 /**
 An camera suitable for use in games requiring a first person view.
 
 \sa CGameObjectExtensionHelper&lt;CFirstPersonCameraComponent, IGameObjectExtension&gt;
 \sa IGameObjectView
 **/
-class CFirstPersonCameraComponent : public CGameObjectExtensionHelper <CFirstPersonCameraComponent, ICameraComponent>,public IGameObjectView
+class CFirstPersonCameraComponent : public CGameObjectExtensionHelper <CFirstPersonCameraComponent, ICameraComponent>, public IGameObjectView
 {
 public:
 
@@ -32,7 +31,7 @@ public:
 
 	/**
 	Called when the view should provide an update of it's current state.
-	
+
 	\param	params A structure with members that are used to control view parameters.
 	**/
 	void UpdateView(SViewParams& params) override;
@@ -40,7 +39,7 @@ public:
 
 	/**
 	Called when the view should provide a post update of it's current state.
-	
+
 	\param	params A variable-length parameters list containing view parameters.
 	**/
 	void PostUpdateView(SViewParams& params) override {};
@@ -56,7 +55,7 @@ public:
 
 	\param	entityID	If non-null, the entity.
 	*/
-	void AttachToEntity(EntityId entityID) override;
+	void AttachToEntity(EntityId entityId) override { m_targetEntityID = entityId; }
 
 	/** Executes the activate action. */
 	void OnActivate() override;
@@ -80,10 +79,10 @@ public:
 	const SExternalCVars &GetCVars() const;
 
 
-	CFirstPersonCameraComponent();
+	CFirstPersonCameraComponent() { ResetCamera(); }
+	virtual ~CFirstPersonCameraComponent() {};
 
-	virtual ~CFirstPersonCameraComponent();
-	virtual void ResetCamera();
+	virtual void ResetCamera() { m_viewPitch = (DEG2RAD(GetCVars().m_pitchMax) + DEG2RAD(GetCVars().m_pitchMin)) / 2; }
 
 
 private:

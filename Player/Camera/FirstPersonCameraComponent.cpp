@@ -166,32 +166,7 @@ void CFirstPersonCameraComponent::UpdateView(SViewParams& params)
 // ***
 
 
-CFirstPersonCameraComponent::CFirstPersonCameraComponent()
-{
-	ResetCamera();
-}
-
-
-CFirstPersonCameraComponent::~CFirstPersonCameraComponent()
-{
-}
-
-
 const CFirstPersonCameraComponent::SExternalCVars& CFirstPersonCameraComponent::GetCVars() const
 {
 	return g_firstPersonCameraRegistrator;
-}
-
-
-void CFirstPersonCameraComponent::ResetCamera()
-{
-	// Pitch can default to the mid-point.
-	m_viewPitch = (DEG2RAD(GetCVars().m_pitchMax) + DEG2RAD(GetCVars().m_pitchMin)) / 2;
-}
-
-
-void CFirstPersonCameraComponent::AttachToEntity(EntityId entityId)
-{
-	// Store the target entity.
-	m_targetEntityID = entityId;
 }

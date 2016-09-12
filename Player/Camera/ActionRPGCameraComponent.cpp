@@ -300,17 +300,6 @@ void CActionRPGCameraComponent::OnDeactivate()
 // ***
 
 
-CActionRPGCameraComponent::CActionRPGCameraComponent()
-{
-	ResetCamera();
-}
-
-
-CActionRPGCameraComponent::~CActionRPGCameraComponent()
-{
-}
-
-
 const CActionRPGCameraComponent::SExternalCVars& CActionRPGCameraComponent::GetCVars() const
 {
 	return g_actionRPGCameraRegistrator;

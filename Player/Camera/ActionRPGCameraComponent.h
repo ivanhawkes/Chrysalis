@@ -32,7 +32,7 @@ public:
 
 	/**
 	Called when the view should provide an update of it's current state.
-	
+
 	\param	params A structure with members that are used to control view parameters.
 	**/
 	void UpdateView(SViewParams& params) override;
@@ -40,7 +40,7 @@ public:
 
 	/**
 	Called when the view should provide a post update of it's current state.
-	
+
 	\param	params A variable-length parameters list containing view parameters.
 	**/
 	void PostUpdateView(SViewParams& params) override {};
@@ -53,7 +53,7 @@ public:
 
 	/**
 	Switch which entity the camera will treat as it's attachment.
-	
+
 	\param	entityID If non-null, the entity.
 	**/
 	virtual void AttachToEntity(EntityId entityID);
@@ -90,12 +90,12 @@ public:
 	const SExternalCVars &GetCVars() const;
 
 
-	CActionRPGCameraComponent();
-	virtual ~CActionRPGCameraComponent();
+	CActionRPGCameraComponent() { ResetCamera(); }
+	virtual ~CActionRPGCameraComponent() {};
 
 	/** Resets the results of all player based camera movements back to their defaults. */
 	virtual void ResetCamera();
-	
+
 	/**
 	Determines the position for camera to aim at on the target entity. It relies on the target being an actor for
 	accurate results, otherwise the position will be based on the average height for a person.
@@ -127,7 +127,7 @@ private:
 
 	/** If our entity has a camera manager, we store a pointer to it here. **/
 	ICameraManagerComponent* m_pCameraManager { nullptr };
-	
+
 	/** Identifier for the entity which this camera is targeted towards. */
 	EntityId m_targetEntityID { INVALID_ENTITYID };
 
