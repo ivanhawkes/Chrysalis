@@ -201,11 +201,6 @@ void CActor::PostInit(IGameObject * pGameObject)
 	//IActionPtr pAction = new TAction<SAnimationContext>(0, fragmentId);
 	//m_pActionController->Queue(*pAction);
 
-// HACK: ILH removed when adding player back in, because it wasn't used in their template - if it's needed - find a way to make it happen.
-	//// If we are the client actor than notify the game of us being spawned.
-	//if (m_isClient)
-	//	((CGame*) gEnv->pGame)->OnClientActorSpawned(this);
-
 	// TODO: test code for now - want to get physics working on characters. This was being done in code
 	// when they became the local player, but that won't work for us.
 	// You will get an assert like the following:

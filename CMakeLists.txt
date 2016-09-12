@@ -208,7 +208,7 @@ set (SourceGroup_Actor_Movement_StateMachine
 	"Actor/Movement/StateMachine/ActorStateUtility.cpp"
 	"Actor/Movement/StateMachine/ActorStateUtility.h"
 )
-source_group("SourceGroup\\Actor\\Movement\\StateMachine" FILES ${SourceGroup_Actor_Movement_StateMachine})
+source_group("Actor\\Movement\\StateMachine" FILES ${SourceGroup_Actor_Movement_StateMachine})
 
 #set (SourceGroup_Actor_Pet
 #	"Actor/Pet/Pet.cpp"
@@ -241,7 +241,7 @@ source_group("SourceGroup\\Actor\\Movement\\StateMachine" FILES ${SourceGroup_Ac
 #	"Boids/Flock.cpp"
 #	"Boids/Flock.h"
 #)
-#source_group("SourceGroup\\Boids" FILES ${SourceGroup_Boids})
+#source_group("Boids" FILES ${SourceGroup_Boids})
 
 #set (SourceGroup_Boids_Amphibian
 #	"Boids/Amphibian/FrogBoids.cpp"
