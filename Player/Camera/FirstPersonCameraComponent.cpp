@@ -97,7 +97,7 @@ void CFirstPersonCameraComponent::Update(SEntityUpdateContext& ctx, int updateSl
 			localEyePosition = pActor->GetLocalEyePos();
 
 		// Apply the player input rotation for this frame, and limit the pitch / yaw movement according to the set max and min values.
-		m_viewPitch -= pPlayerInput->GetPitchDelta();
+		m_viewPitch -= pPlayerInput->GetMousePitchDelta() - pPlayerInput->GetXiPitchDelta();
 		m_viewPitch = clamp_tpl(m_viewPitch, DEG2RAD(GetCVars().m_pitchMin), DEG2RAD(GetCVars().m_pitchMax));
 
 		// Pose is based on entity position and the eye position.

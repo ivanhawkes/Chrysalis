@@ -10,7 +10,7 @@ struct IInteraction
 	virtual void OnInteractionCancel() {};
 
 	bool IsUseable() { return true; };
-	virtual const string GetVerb() { return "@interact"; };
+	virtual const string GetVerb() { return "interaction_interact"; };
 
 	bool IsEnabled() { return m_isEnabled; };
 	void SetEnabled(bool isEnabled) { m_isEnabled = isEnabled; };
@@ -78,9 +78,24 @@ DECLARE_SHARED_POINTERS(CInteractionInteract);
 
 struct IInteractionSwitch
 {
-	virtual void SwitchOn() = 0;
+	virtual void SwitchToggle() = 0;
 	virtual void SwitchOff() = 0;
+	virtual void SwitchOn() = 0;
 };
+
+
+class CInteractionSwitchToggle : public IInteraction
+{
+public:
+	CInteractionSwitchToggle(IInteractionSwitch* subject) { m_subject = subject; };
+
+	const string GetVerb() override { return "interaction_switch_toggle"; };
+	void OnInteractionStart() override { m_subject->SwitchToggle(); };
+
+private:
+	IInteractionSwitch* m_subject { nullptr };
+};
+DECLARE_SHARED_POINTERS(CInteractionSwitchToggle);
 
 
 class CInteractionSwitchOn : public IInteraction
@@ -88,7 +103,7 @@ class CInteractionSwitchOn : public IInteraction
 public:
 	CInteractionSwitchOn(IInteractionSwitch* subject) { m_subject = subject; };
 
-	const string GetVerb() override { return "@switchon"; };
+	const string GetVerb() override { return "interaction_switch_on"; };
 	void OnInteractionStart() override { m_subject->SwitchOn(); };
 
 private:
@@ -102,7 +117,7 @@ class CInteractionSwitchOff : public IInteraction
 public:
 	CInteractionSwitchOff(IInteractionSwitch* subject) { m_subject = subject; };
 
-	const string GetVerb() override { return "@switchoff"; };
+	const string GetVerb() override { return "interaction_switch_off"; };
 	void OnInteractionStart() override { m_subject->SwitchOff(); };
 
 private:
@@ -129,7 +144,7 @@ class CInteractionPickup : public IInteraction
 public:
 	CInteractionPickup(IInteractionPickupAndDrop* subject) { m_subject = subject; };
 
-	const string GetVerb() override { return "@pickup"; };
+	const string GetVerb() override { return "interaction_pickup"; };
 	void OnInteractionStart() override { m_subject->Pickup(); };
 
 private:
@@ -143,7 +158,7 @@ class CInteractionDrop : public IInteraction
 public:
 	CInteractionDrop(IInteractionPickupAndDrop* subject) { m_subject = subject; };
 
-	const string GetVerb() override { return "@drop"; };
+	const string GetVerb() override { return "interaction_drop"; };
 	void OnInteractionStart() override { m_subject->Drop(); };
 
 private:
@@ -157,7 +172,7 @@ class CInteractionInspect : public IInteraction
 public:
 	CInteractionInspect(IInteractionPickupAndDrop* subject) { m_subject = subject; };
 
-	const string GetVerb() override { return "@inspect"; };
+	const string GetVerb() override { return "interaction_inspect"; };
 
 	void OnInteractionStart() override { m_subject->Inspect(); };
 
@@ -175,10 +190,10 @@ DECLARE_SHARED_POINTERS(CInteractionInspect);
 
 struct IInteractionContainer
 {
-	virtual void Open() = 0;
-	virtual void Close() = 0;
-	virtual void Lock() = 0;
-	virtual void Unlock() = 0;
+	virtual void ContainerOpen() = 0;
+	virtual void ContainerClose() = 0;
+	virtual void ContainerLock() = 0;
+	virtual void ContainerUnlock() = 0;
 };
 
 
@@ -187,8 +202,8 @@ class CInteractionOpen : public IInteraction
 public:
 	CInteractionOpen(IInteractionContainer* subject) { m_subject = subject; };
 
-	const string GetVerb() override { return "@open"; };
-	void OnInteractionStart() override { m_subject->Open(); };
+	const string GetVerb() override { return "interaction_open"; };
+	void OnInteractionStart() override { m_subject->ContainerOpen(); };
 
 private:
 	IInteractionContainer* m_subject { nullptr };
@@ -201,8 +216,8 @@ class CInteractionClose : public IInteraction
 public:
 	CInteractionClose(IInteractionContainer* subject) { m_subject = subject; };
 
-	const string GetVerb() override { return "@close"; };
-	void OnInteractionStart() override { m_subject->Close(); };
+	const string GetVerb() override { return "interaction_close"; };
+	void OnInteractionStart() override { m_subject->ContainerClose(); };
 
 private:
 	IInteractionContainer* m_subject { nullptr };
@@ -215,8 +230,8 @@ class CInteractionLock : public IInteraction
 public:
 	CInteractionLock(IInteractionContainer* subject) { m_subject = subject; };
 
-	const string GetVerb() override { return "@lock"; };
-	void OnInteractionStart() override { m_subject->Lock(); };
+	const string GetVerb() override { return "interaction_lock"; };
+	void OnInteractionStart() override { m_subject->ContainerLock(); };
 
 private:
 	IInteractionContainer* m_subject { nullptr };
@@ -229,8 +244,8 @@ class CInteractionUnlock : public IInteraction
 public:
 	CInteractionUnlock(IInteractionContainer* subject) { m_subject = subject; };
 
-	const string GetVerb() override { return "@unlock"; };
-	void OnInteractionStart() override { m_subject->Unlock(); };
+	const string GetVerb() override { return "interaction_unlock"; };
+	void OnInteractionStart() override { m_subject->ContainerUnlock(); };
 
 private:
 	IInteractionContainer* m_subject { nullptr };

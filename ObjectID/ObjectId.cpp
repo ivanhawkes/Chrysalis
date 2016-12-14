@@ -22,7 +22,7 @@ ObjectId CObjectIdFactory::CreateObjectId()
 
 	ObjectId objectId = InvalidId;
 
-	std::atomic<bool> spinLock;
+	std::atomic<bool> spinLock { false };
 	{
 		// Spin on this until we can get a lock.
 		while (spinLock.exchange(true)) {}

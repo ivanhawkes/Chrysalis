@@ -62,4 +62,12 @@ struct ICameraManagerComponent : public ISimpleExtension
 	Toggles third person mode of this instance (typically meant to toggle between third person and first person models and cameras).
 	*/
 	virtual void ToggleThirdPerson() = 0;
+
+	/**	Camera debug actions. **/
+	virtual bool OnActionCameraShiftUp(EntityId entityId, const ActionId& actionId, int activationMode, float value) = 0;
+	virtual bool OnActionCameraShiftDown(EntityId entityId, const ActionId& actionId, int activationMode, float value) = 0;
+	virtual bool OnActionCameraShiftLeft(EntityId entityId, const ActionId& actionId, int activationMode, float value) = 0;
+	virtual bool OnActionCameraShiftRight(EntityId entityId, const ActionId& actionId, int activationMode, float value) = 0;
+	virtual bool OnActionCameraShiftForward(EntityId entityId, const ActionId& actionId, int activationMode, float value) = 0;
+	virtual bool OnActionCameraShiftBackward(EntityId entityId, const ActionId& actionId, int activationMode, float value) = 0;
 };

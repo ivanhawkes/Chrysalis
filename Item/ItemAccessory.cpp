@@ -47,7 +47,7 @@ bool CItem::HasAccessory(IEntityClass* pClass)
 {
 	const int numAccessories = m_accessories.size();
 
-	for (int i = 0; i < numAccessories; i++)
+	for (int i = 0; i < numAccessories; ++i)
 	{
 		if (m_accessories [i].pClass == pClass)
 		{
@@ -63,7 +63,7 @@ CItem *CItem::GetAccessory(IEntityClass* pClass)
 {
 	const int numAccessories = m_accessories.size();
 
-	for (int i = 0; i < numAccessories; i++)
+	for (int i = 0; i < numAccessories; ++i)
 	{
 		if (m_accessories [i].pClass == pClass)
 		{
@@ -79,7 +79,7 @@ void CItem::RemoveAccessory(IEntityClass* pClass)
 {
 	const int numAccessories = m_accessories.size();
 
-	for(int i = 0; i < numAccessories; i++)
+	for(int i = 0; i < numAccessories; ++i)
 	{
 		if(m_accessories[i].pClass == pClass)
 		{
@@ -100,7 +100,7 @@ void CItem::RemoveAllAccessories()
 {
 	const int numAccessories = m_accessories.size();
 
-	for (int i = 0; i < numAccessories; i++)
+	for (int i = 0; i < numAccessories; ++i)
 	{
 		EntityId entityId = m_accessories [i].accessoryId;
 		IEntity* pEntity = m_pEntitySystem->GetEntity(entityId);
@@ -206,7 +206,7 @@ void CItem::RemoveAllAccessories()
 //			{
 //				const int numAccessories = m_sharedparams->accessoryparams.size();
 //
-//				for (int i = 0; i < numAccessories; i++)
+//				for (int i = 0; i < numAccessories; ++i)
 //				{
 //					const SAccessoryParams* pAccessoryParams = &m_sharedparams->accessoryparams [i];
 //
@@ -309,7 +309,7 @@ void CItem::RemoveAllAccessories()
 //{
 //	const int numAccessories = m_accessories.size();
 //
-//	for(int i = 0; i < numAccessories; i++)
+//	for(int i = 0; i < numAccessories; ++i)
 //	{
 //		const SAccessoryParams *params = GetAccessoryParams(m_accessories[i].pClass);
 //		if (!params || params->category == category)
@@ -444,7 +444,7 @@ void CItem::RemoveAllAccessories()
 //{
 //	const int numParams = m_sharedparams->accessoryparams.size();
 //
-//	for(int i = 0; i < numParams; i++)
+//	for(int i = 0; i < numParams; ++i)
 //	{
 //		if(m_sharedparams->accessoryparams[i].pAccessoryClass == pClass)
 //		{
@@ -477,7 +477,7 @@ void CItem::RemoveAllAccessories()
 //{
 //	const int numAccessories = m_accessories.size();
 //
-//	for(int i = 0; i < numAccessories; i++)
+//	for(int i = 0; i < numAccessories; ++i)
 //	{
 //		const SAccessoryParams *params = GetAccessoryParams(m_accessories[i].pClass);
 //
@@ -493,7 +493,7 @@ void CItem::RemoveAllAccessories()
 //{
 //	const int numParams = m_sharedparams->accessoryparams.size();
 //
-//	for (int i = 0; i < numParams; i++)
+//	for (int i = 0; i < numParams; ++i)
 //	{
 //		if(m_sharedparams->accessoryparams[i].attachToOwner)
 //		{
@@ -525,7 +525,7 @@ void CItem::RemoveAllAccessories()
 //{
 //	const int numAttachments = m_accessories.size();
 //
-//	for (int i = 0; i < numAttachments; i++)
+//	for (int i = 0; i < numAttachments; ++i)
 //	{
 //		ReAttachAccessory(m_accessories[i].pClass);
 //	}
@@ -590,7 +590,7 @@ void CItem::RemoveAllAccessories()
 //
 //			const int numAccessories = m_accessories.size();
 //
-//			for (int i = 0; i < numAccessories; i++)
+//			for (int i = 0; i < numAccessories; ++i)
 //			{
 //				const SAccessoryParams *p = GetAccessoryParams(m_accessories[i].pClass);
 //

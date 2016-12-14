@@ -12,6 +12,7 @@ const string ProjectName = "Chrysalis";
 class CConsoleCommands;
 class CPlayer;
 struct IActor;
+class CObjectIdMasterFactory;
 
 
 // A default value for times when an actor isn't available to find eye height.
@@ -97,12 +98,26 @@ public:
 	*/
 	static CPlayer* GetLocalPlayer();
 
+	CObjectIdMasterFactory* GetObjectId() { return m_pObjectIdMasterFactory; }
+
 
 protected:
 	void InitializePlayerProfile();
 
 private:
+	/** Registers Game-Specific Console Commands. */
+	void RegisterGameConsoleCommands();
+
+	/** Un-Registers Game-Specific Console Commands. */
+	void UnRegisterGameConsoleCommands();
+
+	/** The console commands. Used to register and unregister the console commands. */
+	CConsoleCommands* m_pConsoleCommands { nullptr };
+
 	IGameFramework* m_pGameFramework { nullptr };
+
+	/** The object identifier master factory. */
+	CObjectIdMasterFactory* m_pObjectIdMasterFactory { nullptr };
 
 
 	// ***	

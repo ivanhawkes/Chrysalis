@@ -14,7 +14,7 @@ The host entity will be used as a default for the entity which the camera operat
 #include "ICameraComponent.h"
 
 
-class CCameraManagerComponent : public CGameObjectExtensionHelper <CCameraManagerComponent, ICameraManagerComponent>, public IActionListener
+class CCameraManagerComponent : public CGameObjectExtensionHelper <CCameraManagerComponent, ICameraManagerComponent>
 {
 public:
 	// ***
@@ -23,27 +23,6 @@ public:
 
 	void PostInit(IGameObject * pGameObject) override;
 	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
-	void HandleEvent(const SGameObjectEvent &event) override;
-
-
-	// ***
-	// *** IActionListener
-	// ***
-
-public:
-
-	/**
-	Handles the action event.
-
-	\param	action		  	The action.
-	\param	activationMode	The activation mode.
-	\param	value		  	An optional value that may contain useful information for an action.
-	*/
-	virtual void OnAction(const ActionId& action, int activationMode, float value);
-
-
-	/** After action. */
-	virtual void AfterAction() {};
 
 
 	// ***
@@ -134,34 +113,16 @@ public:
 	**/
 	Vec3 GetViewOffset() override;
 
+	/**	Camera debug actions. **/
+	bool OnActionCameraShiftUp(EntityId entityId, const ActionId& actionId, int activationMode, float value) override;
+	bool OnActionCameraShiftDown(EntityId entityId, const ActionId& actionId, int activationMode, float value) override;
+	bool OnActionCameraShiftLeft(EntityId entityId, const ActionId& actionId, int activationMode, float value) override;
+	bool OnActionCameraShiftRight(EntityId entityId, const ActionId& actionId, int activationMode, float value) override;
+	bool OnActionCameraShiftForward(EntityId entityId, const ActionId& actionId, int activationMode, float value) override;
+	bool OnActionCameraShiftBackward(EntityId entityId, const ActionId& actionId, int activationMode, float value) override;
+
 
 private:
-	/** Registers the action maps and starts to listen for action map events. */
-	void RegisterActionMaps();
-
-	void InitializeActionHandler();
-
-	/**	Executes the camera shift up action.	**/
-	bool OnActionCameraShiftUp(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-
-	/**	Executes the camera shift down action.	**/
-	bool OnActionCameraShiftDown(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-
-	/**	Executes the camera shift left action.	**/
-	bool OnActionCameraShiftLeft(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-
-	/**	Executes the camera shift right action.	**/
-	bool OnActionCameraShiftRight(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-
-	/**	Executes the camera shift forward action.	**/
-	bool OnActionCameraShiftForward(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-
-	/**	Executes the camera shift backward action.	**/
-	bool OnActionCameraShiftBackward(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-
-	/** A static handler for the actions we are interested in hooking. */
-	TActionHandler<CCameraManagerComponent> m_actionHandler;
-
 	/**	An array large enough to hold one of each defined camera mode. **/
 	ICameraComponent* m_cameraModes [ECameraMode::eCameraMode_Last];
 

@@ -56,7 +56,7 @@ inline ColorF StringToColor(const char *sColor, bool adjustGamma)
 	ColorF color(1.f);
 	string colorString = sColor;
 
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 4; ++i)
 	{
 		size_t pos = colorString.find_first_of(",");
 		if (pos == string::npos)
@@ -86,7 +86,7 @@ inline Vec3 StringToVec3(const char *sVector)
 	Vec3 v(ZERO);
 	string vecString = sVector;
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 3; ++i)
 	{
 		size_t pos = vecString.find_first_of(",");
 		if (pos == string::npos)
@@ -112,7 +112,7 @@ inline Quat StringToQuat(const char *sQuat)
 	Quat q(ZERO);
 	string quatString = sQuat;
 
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 4; ++i)
 	{
 		size_t pos = quatString.find_first_of(",");
 		if (pos == string::npos)

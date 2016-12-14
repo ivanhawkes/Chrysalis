@@ -120,15 +120,15 @@ void CActionRPGCameraComponent::Update(SEntityUpdateContext& ctx, int updateSlot
 		m_lastZoomGoal = m_zoomGoal;
 
 		// Apply the player input rotation for this frame, and limit the pitch / yaw movement according to the set max and min values.
-		m_viewPitch += pPlayerInput->GetPitchDelta();
+		m_viewPitch += pPlayerInput->GetMousePitchDelta() + pPlayerInput->GetXiPitchDelta();
 		m_viewPitch = clamp_tpl(m_viewPitch, DEG2RAD(GetCVars().m_pitchMin), DEG2RAD(GetCVars().m_pitchMax));
-		m_viewYaw += pPlayerInput->GetYawDelta();
+		m_viewYaw += pPlayerInput->GetMouseYawDelta() - pPlayerInput->GetXiYawDelta();
 
 		// Yaw should wrap around if it exceeds it's values. This is a bit simplistic, but will work most of the time.
-		if (m_viewYaw > g_PI)
-			m_viewYaw -= static_cast<float>(g_PI2);
-		if (m_viewYaw < -g_PI)
-			m_viewYaw += static_cast<float>(g_PI2);
+		if (m_viewYaw > gf_PI)
+			m_viewYaw -= gf_PI2;
+		if (m_viewYaw < -gf_PI)
+			m_viewYaw += gf_PI2;
 
 		// Skip the update if we don't need to process the movement. Whenever we skip over frames we have to also skip
 		// running interpolation for the following frame. 

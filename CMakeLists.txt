@@ -101,29 +101,6 @@ set (SourceGroup_PlayerAnimations
 )
 source_group("Player\\Animations" FILES ${SourceGroup_PlayerAnimations})
 
-#set (SourceGroup_PlayerInput
-#	"Player/Input/PlayerInput.cpp"
-#	"Player/Input/PlayerInput.h"
-#)
-#source_group("Player\\Input" FILES ${SourceGroup_PlayerInput})
-
-#set (SourceGroup_PlayerMovement
-#	"Player/Movement/PlayerMovement.cpp"
-#	"Player/Movement/PlayerMovement.h"
-#)
-#source_group("Player\\Movement" FILES ${SourceGroup_PlayerMovement})
-
-#set (SourceGroup_PlayerView
-#	"Player/View/PlayerView.cpp"
-#	"Player/View/PlayerView.h"
-#)
-#source_group("Player\\View" FILES ${SourceGroup_PlayerView})
-
-#set (SourceGroup_Utility
-#	"Utility/StringConversions.h"
-#)
-#source_group("Utility" FILES ${SourceGroup_Utility})
-
 
 #
 # Chrysalis specific code.
@@ -276,11 +253,31 @@ source_group("Actor\\Movement\\StateMachine" FILES ${SourceGroup_Actor_Movement_
 #)
 #source_group("Boids\\Terran" FILES ${SourceGroup_Boids_Terran})
 
-#set (SourceGroup_ConsoleCommands
-#	"ConsoleCommands/ConsoleCommands.h"
-#	"ConsoleCommands/ConsoleCommands.cpp"
-#)
-#source_group("ConsoleCommands" FILES ${SourceGroup_ConsoleCommands})
+set (SourceGroup_ConsoleCommands
+	"ConsoleCommands/ConsoleCommands.h"
+	"ConsoleCommands/ConsoleCommands.cpp"
+)
+source_group("ConsoleCommands" FILES ${SourceGroup_ConsoleCommands})
+
+
+set (SourceGroup_DynamicResponseSystem
+	"DynamicResponseSystem/ActionClose.h"
+	"DynamicResponseSystem/ActionClose.cpp"
+	"DynamicResponseSystem/ActionLock.h"
+	"DynamicResponseSystem/ActionLock.cpp"
+	"DynamicResponseSystem/ActionOpen.h"
+	"DynamicResponseSystem/ActionOpen.cpp"
+	"DynamicResponseSystem/ActionPlayAnimation.h"
+	"DynamicResponseSystem/ActionPlayAnimation.cpp"
+	"DynamicResponseSystem/ActionSwitch.h"
+	"DynamicResponseSystem/ActionSwitch.cpp"
+	"DynamicResponseSystem/ActionUnlock.h"
+	"DynamicResponseSystem/ActionUnlock.cpp"
+	"DynamicResponseSystem/ConditionDistanceToEntity.h"
+	"DynamicResponseSystem/ConditionDistanceToEntity.cpp"
+)
+source_group("DynamicResponseSystem" FILES ${SourceGroup_DynamicResponseSystem})
+
 
 set (SourceGroup_Entities
 	"Entities/EntityEffects.h"
@@ -313,13 +310,10 @@ source_group("Entities\\Doors" FILES ${SourceGroup_Entities_Doors})
 set (SourceGroup_Entities_Interaction
 	"Entities/Interaction/EntityAwarenessComponent.cpp"
 	"Entities/Interaction/EntityAwarenessComponent.h"
-	"Entities/Interaction/EntityLockingComponent.cpp"
-	"Entities/Interaction/EntityLockingComponent.h"
 	"Entities/Interaction/EntityInteractionComponent.cpp"
 	"Entities/Interaction/EntityInteractionComponent.h"
 	"Entities/Interaction/IEntityAwarenessComponent.h"
 	"Entities/Interaction/IEntityInteractionComponent.h"
-	"Entities/Interaction/IEntityLockingComponent.h"
 )
 source_group("Entities\\Interaction" FILES ${SourceGroup_Entities_Interaction})
 
@@ -432,13 +426,13 @@ set (SourceGroup_PlayerInput
 )
 source_group("Player\\Input" FILES ${SourceGroup_PlayerInput})
 
-#set (SourceGroup_ObjectID
-#	"ObjectID/ObjectId.cpp"
-#	"ObjectID/ObjectId.h"
-#	"ObjectID/ObjectIdMasterFactory.cpp"
-#	"ObjectID/ObjectIdMasterFactory.h"
-#)
-#source_group("ObjectID" FILES ${SourceGroup_ObjectID})
+set (SourceGroup_ObjectID
+	"ObjectID/ObjectId.cpp"
+	"ObjectID/ObjectId.h"
+	"ObjectID/ObjectIdMasterFactory.cpp"
+	"ObjectID/ObjectIdMasterFactory.h"
+)
+source_group("ObjectID" FILES ${SourceGroup_ObjectID})
 
 set (SourceGroup_SharedParameters
 	"SharedParameters/DynamicLight.h"
@@ -488,9 +482,6 @@ set (SOURCE
 	${SourceGroup_Player}
 	${SourceGroup_PlayerAnimations}
 	${SourceGroup_PlayerInput}
-#	${SourceGroup_PlayerMovement}
-#	${SourceGroup_PlayerView}
-#	${SourceGroup_Utility}
 
 	${SourceGroup_Actor}
 	${SourceGroup_Actor_Animation_Player_Animation}
@@ -509,7 +500,8 @@ set (SOURCE
 #	${SourceGroup_Boids_Avian}
 #	${SourceGroup_Boids_Terran}
 	${SourceGroup_Player_Camera}
-#	${SourceGroup_ConsoleCommands}
+	${SourceGroup_ConsoleCommands}
+	${SourceGroup_DynamicResponseSystem}
 	${SourceGroup_Entities_Doors}
 	${SourceGroup_Entities}
 	${SourceGroup_Entities_Interaction}
@@ -526,7 +518,7 @@ set (SOURCE
 	${SourceGroup_Item_Accessory}
 	${SourceGroup_Item_Flashlight}
 	${SourceGroup_Item_Parameters}
-#	${SourceGroup_ObjectID}
+	${SourceGroup_ObjectID}
 	${SourceGroup_SharedParameters}
 	${SourceGroup_StateMachine}
 	${SourceGroup_Utility}

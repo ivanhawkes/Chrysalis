@@ -1,6 +1,8 @@
 #pragma once
 
 #include <Entities/Helpers/NativeEntityBase.h>
+#include <Entities/Interaction/IEntityInteractionComponent.h>
+
 
 struct ILockableComponent;
 
@@ -10,7 +12,7 @@ An animated door.
 
 \sa CGameObjectExtensionHelper<CAnimatedDoorComponent, CNativeEntityBase>
 **/
-class CAnimatedDoorComponent : public CGameObjectExtensionHelper<CAnimatedDoorComponent, CNativeEntityBase>
+class CAnimatedDoorComponent : public CGameObjectExtensionHelper<CAnimatedDoorComponent, CNativeEntityBase>, public IInteractionContainer
 {
 public:
 	enum EInputPorts
@@ -32,6 +34,17 @@ public:
 	CAnimatedDoorComponent();
 	virtual ~CAnimatedDoorComponent() {}
 
+
+	// ***
+	// *** IInteractionContainer
+	// ***
+
+	void ContainerOpen() override { gEnv->pLog->LogAlways("Interation Toggle fired."); /*ToggleSwitch();*/ };
+	void ContainerClose() override { gEnv->pLog->LogAlways("Interation Toggle fired."); /*ToggleSwitch();*/ };
+	void ContainerLock() override { gEnv->pLog->LogAlways("Interation Toggle fired."); /*ToggleSwitch();*/ };
+	void ContainerUnlock() override { gEnv->pLog->LogAlways("Interation Toggle fired."); /*ToggleSwitch();*/ };
+
+
 	// CNativeEntityBase
 	void PostInit(IGameObject* pGameObject) override;
 	void ProcessEvent(SEntityEvent& event) override;
@@ -47,17 +60,11 @@ protected:
 	// Called on entity spawn, or when the state of the entity changes in Editor
 	void Reset();
 
-	// Specifies the entity geometry slot in which the light is loaded, -1 if not currently loaded
-	// We default to using slot 1 for this light sample, in case the user would want to put geometry into slot 0.
-	int m_lightSlot { -1 };
-
-	// Light parameters, updated in the Reset function
-	CDLight m_light;
-
-
 	// ***
 	// *** CAnimatedDoorComponent
 	// ***
 
 	ILockableComponent* m_lockableExtension { nullptr };
+
+	IEntityInteractionComponent* m_interactor { nullptr };
 };

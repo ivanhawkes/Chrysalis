@@ -477,8 +477,8 @@
 ////		const Vec3 headPos(playerPosition + m_baseQuat * m_character.GetStanceViewOffset(stance, &noLean));
 ////		const Vec3 newPos(playerPosition + m_baseQuat * m_character.GetStanceViewOffset(stance, &m_leanAmount));
 ////
-////		/*gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(headPos, 0.05f, ColorB(0,0,255,255) );
-////		gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(newPos, 0.05f, ColorB(0,0,255,255) );
+////		/*gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(headPos, 0.04f, ColorB(0,0,255,255) );
+////		gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(newPos, 0.04f, ColorB(0,0,255,255) );
 ////		gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(headPos, ColorB(0,0,255,255), newPos, ColorB(0,0,255,255));*/
 ////
 ////		const int rayFlags(rwi_stop_at_pierceable | rwi_colltype_any);
@@ -497,7 +497,7 @@
 ////			const float invDist = dist > 0.f ? __fres(dist) : 0.f;
 ////			m_leanAmount *= ((limitPoint - headPos).len2() * invDist * distMultInv);
 ////
-////			//gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(hit.pt, 0.05f, ColorB(0,255,0,255) );
+////			//gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(hit.pt, 0.04f, ColorB(0,255,0,255) );
 ////		}
 ////	}
 ////

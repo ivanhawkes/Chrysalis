@@ -19,22 +19,13 @@ CFlashlightRegistrator g_flashlightRegistrator;
 
 
 // ***
-// *** IGameObjectExtension
+// *** ISimpleItem
 // ***
-
-
-void CFlashlightComponent::GetMemoryUsage(ICrySizer *pSizer) const
-{
-	pSizer->Add(*this);
-}
 
 
 bool CFlashlightComponent::Init(IGameObject * pGameObject)
 {
-	CItem::Init(pGameObject);
-
-	// Initialization successful.
-	return true;
+	return CItem::Init(pGameObject);
 }
 
 
@@ -44,6 +35,9 @@ void CFlashlightComponent::PostInit(IGameObject * pGameObject)
 	m_interactor = static_cast<IEntityInteractionComponent*> (GetGameObject()->AcquireExtension("EntityInteraction"));
 	if (m_interactor)
 	{
+		auto switchToggleInteractPtr = std::make_shared<CInteractionSwitchToggle>(this);
+		m_interactor->AddInteraction(switchToggleInteractPtr);
+
 		auto switchOnInteractPtr = std::make_shared<CInteractionSwitchOn>(this);
 		m_interactor->AddInteraction(switchOnInteractPtr);
 
@@ -71,70 +65,6 @@ void CFlashlightComponent::PostInit(IGameObject * pGameObject)
 }
 
 
-void CFlashlightComponent::InitClient(int channelId)
-{}
-
-
-void CFlashlightComponent::PostInitClient(int channelId)
-{}
-
-
-bool CFlashlightComponent::ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params)
-{
-	ResetGameObject();
-
-	return true;
-}
-
-
-void CFlashlightComponent::PostReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params)
-{}
-
-
-bool CFlashlightComponent::GetEntityPoolSignature(TSerialize signature)
-{
-	return true;
-}
-
-
-void CFlashlightComponent::Release()
-{
-	// Destroy this instance.
-	delete this;
-}
-
-
-void CFlashlightComponent::FullSerialize(TSerialize ser)
-{}
-
-
-bool CFlashlightComponent::NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int pflags)
-{
-	return true;
-}
-
-
-ISerializableInfoPtr CFlashlightComponent::GetSpawnInfo()
-{
-	return nullptr;
-}
-
-
-void CFlashlightComponent::Update(SEntityUpdateContext& ctx, int updateSlot)
-{
-}
-
-
-void CFlashlightComponent::HandleEvent(const SGameObjectEvent& event)
-{
-	//switch (event.event)
-	//{
-	//	default:
-	//		break;
-	//}
-}
-
-
 void CFlashlightComponent::ProcessEvent(SEntityEvent& event)
 {
 	switch (event.event)
@@ -150,23 +80,6 @@ void CFlashlightComponent::ProcessEvent(SEntityEvent& event)
 			break;
 	}
 }
-
-
-void CFlashlightComponent::SetChannelId(uint16 id)
-{}
-
-
-void CFlashlightComponent::SetAuthority(bool auth)
-{}
-
-
-void CFlashlightComponent::PostUpdate(float frameTime)
-{
-}
-
-
-void CFlashlightComponent::PostRemoteSpawn()
-{}
 
 
 // ***
@@ -188,8 +101,10 @@ void CFlashlightComponent::Reset()
 	// HACK: shouldn't do it at this time, making life easier for testing for now. Remove this!
 	LoadFromXML();
 
-	// TODO: more testing - doesn't belong here and should use the game cache for the load.
-	m_fpGeomSlotId = GetEntity()->LoadCharacter(eIGS_FirstPerson, "objects/FlashLight/FlashLight_Setup_v1/FlashLight.cdf");
+	// TODO: should check for FP / TP e.g. when in inventory / hand.
+	// NOTE: Weird stuff happens when flipping between FP and TP. The light doesn't get positioned in first person, and
+	// it's rotated and positioned wrong in third person. Need to find the issue and fix it.
+	m_fpGeomSlotId = GetEntity()->LoadCharacter(eIGS_ThirdPerson, "objects/FlashLight/FlashLight_Setup_v1/FlashLight.cdf");
 
 	// Setup the physics parameters this instance should use.
 	SEntityPhysicalizeParams PhysParams;

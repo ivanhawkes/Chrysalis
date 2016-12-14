@@ -101,4 +101,18 @@ struct IEntityAwarenessComponent : ISimpleExtension
 	scaled by proximityCloseByFactor, which should provide a fairly neat box around the actor - within reasonable reach
 	to indicate they can trigger actions on these entities. */
 	virtual Entities& NearQuery() = 0;
+
+
+	/**
+	Performs a near query, then narrows down the results to ones that fit within the range of dot product results.
+	The best match is sorted into the first position in the results vector. All other results are unsorted.
+
+	Results aren't cached for this query, except for the cacheing provided by the unlaying 'near' query.
+
+	\param	minDot (Optional) the minimum dot product.
+	\param	maxDot (Optional) the maximum dot product.
+
+	\return The near dot filtered.
+	**/
+	virtual const Entities& GetNearDotFiltered(float minDot = 0.9f, float maxDot = 1.0f) = 0;
 };

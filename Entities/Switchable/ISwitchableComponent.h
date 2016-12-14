@@ -17,13 +17,13 @@ struct ISwitchableComponent : public CNativeEntityBase, public ISwitchableListen
 {
 	void OnSwitchOn() override 
 	{
-		for each (auto it in m_listeners)
+		for (auto& it : m_listeners)
 			it->OnSwitchOn();
 	}
 
 	void OnSwitchOff() override 
 	{
-		for each (auto it in m_listeners)
+		for (auto& it : m_listeners)
 			it->OnSwitchOff();
 	}
 };

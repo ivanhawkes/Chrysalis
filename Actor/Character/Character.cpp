@@ -28,7 +28,10 @@ void CCharacter::Register()
 	memset(properties, 0, sizeof(SNativeEntityPropertyInfo) * eNumProperties);
 
 	RegisterEntityPropertyObject(properties, eProperty_Model, "Model", "", "Actor model");
-	RegisterEntityProperty<float>(properties, eProperty_Mass, "Mass", "", "Actor mass", 0, 10000);
+	RegisterEntityProperty<float>(properties, eProperty_Mass, "Mass", "82", "Actor mass", 0, 10000);
+	RegisterEntityProperty<string>(properties, eProperty_Controller_Definition, "ControllerDefinition", "sdk_tutorial3controllerdefs.xml", "Controller Definition", 0, 0);
+	RegisterEntityProperty<string>(properties, eProperty_Scope_Context, "ScopeContext", "MainCharacter", "Scope Context", 0, 0);
+	RegisterEntityProperty<string>(properties, eProperty_Animation_Database, "AnimationDatabase", "sdk_tutorial3database.adb", "Animation Database", 0, 0);
 
 	// Finally, register the entity class so that instances can be created later on either via Launcher or Editor
 	CGameFactory::RegisterNativeEntity<CCharacter>("Character", "Actors", "Light.bmp", 0u, properties, eNumProperties);
@@ -123,23 +126,18 @@ void CCharacter::ProcessEvent(SEntityEvent& event)
 {
 	switch (event.event)
 	{
-		// Called automatically at the start of every level.
+		// Physicalize on level start for Launcher
 		case ENTITY_EVENT_START_LEVEL:
+
+			// Editor specific, physicalize on reset, property change or transform change
+		case ENTITY_EVENT_RESET:
+		case ENTITY_EVENT_EDITOR_PROPERTY_CHANGED:
+		case ENTITY_EVENT_XFORM_FINISHED_EDITOR:
+			Reset();
 			break;
 
 		case ENTITY_EVENT_PREPHYSICSUPDATE:
 			PrePhysicsUpdate();
-			break;
-
-		case ENTITY_EVENT_EDITOR_PROPERTY_CHANGED:
-			OnEditorPropertyChanged();
-			break;
-
-		case ENTITY_EVENT_RESET:
-			OnReset();
-			break;
-
-		default:
 			break;
 	}
 }
@@ -272,12 +270,6 @@ void CCharacter::RegisterEvents()
 	// Register for the specified game object events.
 	GetGameObject()->UnRegisterExtForEvents(this, nullptr, 0);
 	GetGameObject()->RegisterExtForEvents(this, EventsToRegister, sizeof(EventsToRegister) / sizeof(int));
-}
-
-
-void CCharacter::OnEditorPropertyChanged()
-{
-	//CActor::OnEditorPropertyChanged(event);
 }
 
 

@@ -36,7 +36,7 @@ CEntityAwarenessRegistrator g_entityAwarenessRegistrator;
 static const float forwardCastDistance = 300.0f;
 
 /** Scales the proximity distance for what is considered 'close by' queries. */
-static const float proximityCloseByFactor = 0.8f;
+static const float proximityCloseByFactor = 0.5f;
 
 /** Allow previous ray-cast results to still be used for up to this long, in seconds. */
 static const float maxRaycastStaleness = 0.05f;
@@ -93,11 +93,17 @@ void CEntityAwarenessComponent::Update(SEntityUpdateContext& ctx, int slot)
 
 	// Using the local player's camera is fine for now. Arguably, you should get it from the actor skeleton instead
 	// but actor's don't allow you to query the eye direction, only it's position. Heisenberg much?
+	// TODO: make it work with the actor's eyes instead. That will work fine in FP, but might be tougher to control in TP - so test it.
 	auto localPlayer = CGame::GetLocalPlayer();
 	auto camera = localPlayer->GetCamera();
 
-	m_eyePosition = camera->GetPosition();
-	m_eyeDirection = camera->GetRotation().GetNormalized();
+	m_eyePosition = m_pActor->GetEntity()->GetPos() + m_pActor->GetLocalEyePos();
+	m_eyeDirection = camera->GetRotation();
+
+	// HACK: For now, I am just going to force these queries to run each update tick. We can finesse it later by allowing
+	// selection of which ones run.
+	GetNearDotFiltered();
+	RaycastQuery();
 }
 
 
@@ -171,8 +177,13 @@ void CEntityAwarenessComponent::UpdateRaycastQuery()
 
 		m_queuedRays [raySlot].counter = ++m_requestCounter;
 
-		//gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(m_eyePosition, ColorB(0, 0, 128), 
-		//	m_eyePosition + (m_eyeDirection * FORWARD_DIRECTION * forwardCastDistance), ColorB(0, 0, 255), 8.0f);
+#if defined(_DEBUG)
+		if (GetCVars().m_debug && eDB_RayCast)
+		{
+			gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(m_eyePosition, ColorB(0, 0, 128),
+				m_eyePosition + (m_eyeDirection * FORWARD_DIRECTION * forwardCastDistance), ColorB(0, 0, 255), 8.0f);
+		}
+#endif
 	}
 
 	// We've queued up the ray-cast, but since it's asynchronous we might not get a result for a little while. To
@@ -204,7 +215,7 @@ void CEntityAwarenessComponent::UpdateProximityQuery()
 	qry.box.max = m_eyePosition + positionOffset;
 
 #if defined(_DEBUG)
-	if (GetCVars().m_debug)
+	if (GetCVars().m_debug && eDB_ProximalEntities)
 	{
 		// DEBUG: Render the grid for debug purposes.
 		gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(qry.box, false, ColorB(255, 0, 0), EBoundingBoxDrawStyle::eBBD_Extremes_Color_Encoded);
@@ -216,14 +227,25 @@ void CEntityAwarenessComponent::UpdateProximityQuery()
 	m_entitiesInProximity.reserve(qry.nCount);
 
 	// Check each result.
-	for (int i = 0; i < qry.nCount; i++)
+	for (int i = 0; i < qry.nCount; ++i)
 	{
 		IEntity* pEntity = qry.pEntities [i];
 		EntityId entityId = pEntity ? pEntity->GetId() : INVALID_ENTITYID;
 
 		// Skip this entity.
-		if (!entityId || (entityId == ownerActorId))
+		if ((entityId == INVALID_ENTITYID) || (entityId == ownerActorId))
 			continue;
+
+#if defined(_DEBUG)
+		if (GetCVars().m_debug && eDB_ProximalEntities)
+		{
+			// DEBUG: Highlight each entity within the range.
+			AABB bbox;
+			pEntity->GetWorldBounds(bbox);
+			bbox.Expand(Vec3(0.01f, 0.01f, 0.01f));
+			gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(bbox, true, ColorB(0, 64, 0), EBoundingBoxDrawStyle::eBBD_Faceted);
+		}
+#endif
 
 		// Add to the collection.
 		m_entitiesInProximity.push_back(entityId);
@@ -236,15 +258,14 @@ void CEntityAwarenessComponent::UpdateNearQuery()
 	// We extend the grid out based on a scaling factor to give it extra reach.
 	const float proximityRadius = m_proximityRadius * proximityCloseByFactor;
 	const float flatDistanceSqr = proximityRadius * proximityRadius;
-	//const float heightThreshold = proximityRadius * 0.6f;
 
 #if defined(_DEBUG)
-	if (GetCVars().m_debug)
+	if (GetCVars().m_debug && eDB_NearEntities)
 	{
 		// DEBUG: Render the grid for debug purposes.
 		const Vec3 positionOffset(proximityRadius, proximityRadius, proximityRadius);
 		AABB aabb(m_eyePosition - positionOffset, m_eyePosition + positionOffset);
-		gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(aabb, false, ColorB(196, 0, 0), EBoundingBoxDrawStyle::eBBD_Extremes_Color_Encoded);
+		gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(aabb, false, ColorB(0, 196, 0), EBoundingBoxDrawStyle::eBBD_Extremes_Color_Encoded);
 	}
 #endif
 
@@ -256,18 +277,15 @@ void CEntityAwarenessComponent::UpdateNearQuery()
 	EntityId ownerActorId = m_pActor ? m_pActor->GetEntityId() : INVALID_ENTITYID;
 
 	// We parse the results of the latest proximity query, just selecting the ones that match our strict criteria.
-	for (auto entityId : m_entitiesInProximity)
+	for (auto& entityId : m_entitiesInProximity)
 	{
 		// Skip this entity.
-		if (!entityId || (entityId == ownerActorId))
+		if ((entityId == INVALID_ENTITYID) || (entityId == ownerActorId))
 			continue;
 
 		IEntity* pEntity = gEnv->pEntitySystem->GetEntity(entityId);
 
-		// The entity height is compared to a pre-set threshold which flattens the AABB, and discarded if it's outside that range.
-		//const Vec3 entityWorldPos = pEntity->GetWorldPos();
-		//if (fabs_tpl(entityWorldPos.z - m_eyePosition.z) > heightThreshold)
-		//	continue;
+		// TODO: The near query should really be based off distance from the actor, eye position is currently the camera in TP modes.
 
 		// Seems to discard anything too far based on radius, turning the cube into a flat circle.
 		AABB aabb;
@@ -277,11 +295,12 @@ void CEntityAwarenessComponent::UpdateNearQuery()
 			continue;
 
 #if defined(_DEBUG)
-		if (GetCVars().m_debug)
+		if (GetCVars().m_debug && eDB_NearEntities)
 		{
 			// DEBUG: Highlight the entity.
 			AABB bbox;
 			pEntity->GetWorldBounds(bbox);
+			bbox.Expand(Vec3(0.02f, 0.02f, 0.02f));
 			gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(bbox, true, ColorB(0, 196, 0), EBoundingBoxDrawStyle::eBBD_Faceted);
 		}
 #endif
@@ -302,12 +321,12 @@ void CEntityAwarenessComponent::UpdateInFrontOfQuery()
 	Lineseg lineseg(m_eyePosition, m_eyePosition + (m_eyeDirection * FORWARD_DIRECTION * m_proximityRadius));
 
 #if defined(_DEBUG)
-	if (GetCVars().m_debug)
+	if (GetCVars().m_debug && eDB_InFront)
 	{
 		// DEBUG: get the lineseg to show up.
 		gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(lineseg.start, ColorB(64, 0, 0), lineseg.end, ColorB(128, 0, 0), 8.0f);
-		gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(lineseg.start, 0.04f, ColorB(0, 0, 255, 255));
-		gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(lineseg.end, 0.04f, ColorB(0, 0, 255, 255));
+		gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(lineseg.start, 0.025f, ColorB(0, 0, 255, 255));
+		gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(lineseg.end, 0.025f, ColorB(0, 0, 255, 255));
 	}
 #endif
 
@@ -315,10 +334,10 @@ void CEntityAwarenessComponent::UpdateInFrontOfQuery()
 	EntityId ownerActorId = m_pActor ? m_pActor->GetEntityId() : INVALID_ENTITYID;
 
 	// We parse the results of the latest proximity query, just selecting the ones that match our strict criteria.
-	for (auto entityId : m_entitiesInProximity)
+	for (auto& entityId : m_entitiesInProximity)
 	{
 		// Skip this entity.
-		if (!entityId || (entityId == ownerActorId))
+		if ((entityId == INVALID_ENTITYID) || (entityId == ownerActorId))
 			continue;
 
 		IEntity* pEntity = gEnv->pEntitySystem->GetEntity(entityId);
@@ -332,14 +351,14 @@ void CEntityAwarenessComponent::UpdateInFrontOfQuery()
 			if (Overlap::Lineseg_OBB(lineseg, pEntity->GetWorldPos(), obb))
 			{
 #if defined(_DEBUG)
-				if (GetCVars().m_debug)
+				if (GetCVars().m_debug && eDB_InFront)
 				{
 					// DEBUG: let's see those boxes.
 					gEnv->pRenderer->GetIRenderAuxGeom()->DrawOBB(obb, pEntity->GetWorldTM(), true, ColorB(0, 0, 196), EBoundingBoxDrawStyle::eBBD_Extremes_Color_Encoded);
 				}
 #endif
 
-				// TEST: wrong place for this test - move it to somewhere i can see it try all the entities near us.
+				// HACK: TEST: wrong place for this test - move it to somewhere i can see it try all the entities near us.
 				auto pGameObject = gEnv->pGame->GetIGameFramework()->GetGameObject(pEntity->GetId());
 				if (pGameObject)
 				{
@@ -356,6 +375,82 @@ void CEntityAwarenessComponent::UpdateInFrontOfQuery()
 			}
 		}
 	}
+}
+
+
+const Entities& CEntityAwarenessComponent::GetNearDotFiltered(float minDot, float maxDot)
+{
+	int resultIndex = 0;
+	int bestResultIndex = 0;
+	float bestScore = 10000.0f;
+
+	// Clear previous results.
+	m_entitiesNearDotFiltered.reserve(m_entitiesInProximity.size());
+	m_entitiesNearDotFiltered.clear();
+
+	// Refresh the list of near entities.
+	auto entities = NearQuery();
+
+	// Check each entity to see which is the best fit.
+	for (auto& entityId : entities)
+	{
+		IEntity *pEntity = gEnv->pEntitySystem->GetEntity(entityId);
+		if (!pEntity)
+			continue;
+
+		AABB bbox;
+		pEntity->GetWorldBounds(bbox);
+
+		Vec3 itemPos = bbox.GetCenter();
+		Vec3 dirToItem = (itemPos - m_eyePosition).normalized();
+		Vec3 dirLooking = (m_eyeDirection * FORWARD_DIRECTION).normalized();
+		float dotToItem = dirToItem.dot(dirLooking);
+
+		if ((dotToItem >= minDot) && (dotToItem <= maxDot))
+		{
+#if defined(_DEBUG)
+			if (GetCVars().m_debug && eDB_DotFiltered)
+			{
+				// DEBUG: Highlight the entity.
+				bbox.Expand(Vec3(0.03f, 0.03f, 0.03f));
+				gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(bbox, true, ColorB(0, 0, 64), EBoundingBoxDrawStyle::eBBD_Faceted);
+			}
+#endif
+
+			// Provide a score for this result to qualify how good a match it is.
+			float distance = (itemPos - m_eyePosition).len();
+			float score = (1.0f - dotToItem) * distance;
+			if (score < bestScore)
+			{
+				bestResultIndex = resultIndex;
+				bestScore = score;
+			}
+
+			// Acceptable result, add to the collection.
+			m_entitiesNearDotFiltered.push_back(entityId);
+			resultIndex++;
+		}
+	}
+
+	// Before returning the result we should swap the best result into the first element.
+	if ((m_entitiesNearDotFiltered.size() > 1) && (bestResultIndex != 0))
+		std::swap(m_entitiesNearDotFiltered [0], m_entitiesNearDotFiltered [bestResultIndex]);
+
+#if defined(_DEBUG)
+	if (GetCVars().m_debug && eDB_DotFiltered)
+	{
+		IEntity *pEntity;
+		if ((m_entitiesNearDotFiltered.size() > 0) && (pEntity = gEnv->pEntitySystem->GetEntity(m_entitiesNearDotFiltered[0])))
+		{
+			AABB bbox;
+			pEntity->GetWorldBounds(bbox);
+			bbox.Expand(Vec3(0.04f, 0.04f, 0.04f));
+			gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(bbox, true, ColorB(192, 0, 0), EBoundingBoxDrawStyle::eBBD_Faceted);
+		}
+	}
+#endif
+
+	return m_entitiesNearDotFiltered;
 }
 
 
@@ -382,7 +477,7 @@ void CEntityAwarenessComponent::OnRayCastDataReceived(const QueuedRayID& rayID, 
 		m_rayHitSolid = result.hits [0];
 
 #if defined(_DEBUG)
-		if (GetCVars().m_debug)
+		if (GetCVars().m_debug && eDB_RayCast)
 		{
 			// Initial position for our target.
 			gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(m_rayHitSolid.pt, 0.04f, ColorB(255, 0, 0));
@@ -411,7 +506,7 @@ void CEntityAwarenessComponent::OnRayCastDataReceived(const QueuedRayID& rayID, 
 			m_rayHitPierceable.next = nullptr;
 
 #if defined(_DEBUG)
-			if (GetCVars().m_debug)
+			if (GetCVars().m_debug && eDB_RayCast)
 			{
 				gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(result.hits [1].pt, 0.04f, ColorB(0, 0, 255));
 			}

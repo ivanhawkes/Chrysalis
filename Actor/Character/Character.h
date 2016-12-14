@@ -30,15 +30,6 @@ public:
 		eInputPort_Close
 	};
 
-	// Indices of the properties, registered in the Register function
-	enum EProperties
-	{
-		eProperty_Model = 0,
-		eProperty_Mass,
-
-		eNumProperties
-	};
-
 	// IGameObjectExtension
 	void PostInit(IGameObject * pGameObject) override;
 	bool ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override;
@@ -98,10 +89,6 @@ protected:
 	Registers this instance for GameObject event notifications (will receive HandleEvent() calls).
 	*/
 	void RegisterEvents();
-
-
-	/** Whenever a property in the editor is changed, this function is called. */
-	void OnEditorPropertyChanged();
 
 
 private:

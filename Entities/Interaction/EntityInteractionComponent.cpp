@@ -69,14 +69,9 @@ void IEntityInteractionComponent::AddInteraction(IInteractionPtr interaction)
 
 void IEntityInteractionComponent::RemoveInteraction(string verb)
 {
-	for (auto it = m_Interactions.begin(); it != m_Interactions.end(); ++it)
-	{
-		if (it->get()->GetVerb().compare(verb) == 0)
-		{
-			m_Interactions.erase(it);
-			return;
-		}
-	}
+	m_Interactions.erase(std::remove_if(m_Interactions.begin(), m_Interactions.end(),
+		[&] (IInteractionPtr i) { return i->GetVerb().compare(verb) == 0; }),
+		m_Interactions.end());
 }
 
 
@@ -84,11 +79,11 @@ std::vector<string> IEntityInteractionComponent::GetVerbs(bool includeHidden)
 {
 	std::vector<string> verbs;
 
-	for each (auto it in m_Interactions)
+	for (auto& it : m_Interactions)
 	{
-		if (it.get()->IsEnabled())
+		if (it->IsEnabled())
 		{
-			if ((it.get()->IsHidden() == false) || ((it.get()->IsHidden() == true) && includeHidden))
+			if ((it->IsHidden() == false) || ((it->IsHidden() == true) && includeHidden))
 			{
 				verbs.push_back(it->GetVerb());
 			}
@@ -101,9 +96,9 @@ std::vector<string> IEntityInteractionComponent::GetVerbs(bool includeHidden)
 
 IInteractionWeakPtr IEntityInteractionComponent::GetInteraction(string verb)
 {
-	for each (auto it in m_Interactions)
+	for (auto& it : m_Interactions)
 	{
-		if ((it.get()->GetVerb().compare(verb) == 0) && (it.get()->IsEnabled()))
+		if ((it->GetVerb().compare(verb) == 0) && (it->IsEnabled()))
 		{
 			return it;
 		}
@@ -115,9 +110,9 @@ IInteractionWeakPtr IEntityInteractionComponent::GetInteraction(string verb)
 
 IInteractionWeakPtr IEntityInteractionComponent::SelectInteractionVerb(string verb)
 {
-	for each (auto it in m_Interactions)
+	for (auto& it : m_Interactions)
 	{
-		if ((it.get()->GetVerb().compare(verb) == 0) && (it.get()->IsEnabled()))
+		if ((it->GetVerb().compare(verb) == 0) && (it->IsEnabled()))
 		{
 			m_selectedInteraction = it;
 			return it;

@@ -451,7 +451,7 @@ void CCharacterStateLedge::OnPrePhysicsUpdate(CCharacter& Character, const SActo
 	Vec3 pos = Character.GetEntity ()->GetPos ();
 	gEnv->pRenderer->Draw2dLabel (XPOS, YPOS + 20.0f, FONT_SIZE, FONT_COLOUR, false, "Ledge Grab: Cur: (%f %f %f) Tgt: (%f %f %f) T:%f", pos.x, pos.y, pos.z, m_ledgeBlending.m_qtTargetLocation.t.x, m_ledgeBlending.m_qtTargetLocation.t.y, m_ledgeBlending.m_qtTargetLocation.t.z, frameTime);
 	gEnv->pRenderer->GetIRenderAuxGeom ()->DrawSphere (m_ledgeBlending.m_qtTargetLocation.t, 0.15f, ColorB (0, 0, 255, 255));
-	gEnv->pRenderer->GetIRenderAuxGeom ()->DrawSphere (pos, 0.1f, ColorB (255, 0, 0, 255));
+	gEnv->pRenderer->GetIRenderAuxGeom ()->DrawSphere (pos, 0.1f, ColorB(255, 0, 0, 255));
 
 	}
 	#endif //_RELEASE

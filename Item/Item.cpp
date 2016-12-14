@@ -330,7 +330,7 @@ void CItem::PickUp(EntityId actorId, bool sound, bool select, bool keepHistory, 
 	//if (!gEnv->bMultiplayer)
 	//{
 	//	int numAccessories = m_accessories.size();
-	//	for (int i = 0; i < numAccessories; i++)
+	//	for (int i = 0; i < numAccessories; ++i)
 	//	{
 	//		const SAccessoryParams* pParams = GetAccessoryParams(m_accessories [i].pClass);
 	//		if (pParams->extendsMagazine)
@@ -350,7 +350,7 @@ void CItem::PickUp(EntityId actorId, bool sound, bool select, bool keepHistory, 
 	//		if (CEquipmentLoadout* pLoadout = g_pGame->GetEquipmentLoadout())
 	//		{
 	//			int numAccessories = m_accessories.size();
-	//			for (int i = 0; i < numAccessories; i++)
+	//			for (int i = 0; i < numAccessories; ++i)
 	//			{
 	//				pLoadout->UpdateWeaponAttachments(GetEntity()->GetClass(), m_accessories [i].pClass);
 	//			}

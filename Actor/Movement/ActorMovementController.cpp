@@ -274,7 +274,7 @@ void CActorMovementController::ComputeMovementRequest()
 			request.AddDeltaMovement(movement);
 
 			// Rotate the actor based on player input.
-			request.AddDeltaRotation(Ang3(0.0f, 0.0f, pPlayerInput->GetYawDelta()));
+			request.AddDeltaRotation(Ang3(0.0f, 0.0f, pPlayerInput->GetMouseYawDelta () - pPlayerInput->GetXiYawDelta()));
 
 			// TODO: I also need to tilt the FP view camera up and down - and have this change the actor look / aim pose.
 			// camera isn't connected to a bone at present due to not having a suitable one that doesn't scan around in

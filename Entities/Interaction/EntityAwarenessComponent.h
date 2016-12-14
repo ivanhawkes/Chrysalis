@@ -19,15 +19,13 @@ class CEntityAwarenessComponent : public CGameObjectExtensionHelper<CEntityAware
 {
 public:
 
-	// ***
-	// *** IGameObjectExtension
-	// ***
-
+	// ISimpleExtension
 	bool Init(IGameObject * pGameObject) override;
 	void PostInit(IGameObject * pGameObject) override;
 	void FullSerialize(TSerialize ser) override;
 	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
 	void GetMemoryUsage(ICrySizer *pSizer) const override;
+	// ~ISimpleExtension
 
 
 	// ***
@@ -76,7 +74,7 @@ public:
 		RefreshQueryCache(eWQ_Proximity);
 		RefreshQueryCache(eWQ_CloseBy);
 
-		return m_entitiesInProximity;
+		return m_entitiesNear;
 	}
 
 
@@ -126,10 +124,9 @@ public:
 
 
 	/**
-	A proximity based query that limits the results to only those entities which are considered
-	to be in front of the actor. These are limited based on a line segment from the actor's eyes,
-	forward in the direction they are looking.
-
+	A proximity based query that limits the results to only those entities which are considered to be in front of the
+	actor. These are limited based on a line segment from the actor's eyes, forward in the direction they are looking.
+	
 	\return The entities in front of the actor.
 	**/
 	ILINE const Entities& GetEntitiesInFrontOf()
@@ -153,9 +150,33 @@ public:
 	}
 
 
+	/**
+	Performs a near query, then narrows down the results to ones that fit within the range of dot product results.
+	The best match is sorted into the first position in the results vector. All other results are unsorted.
+
+	Results aren't cached for this query, except for the cacheing provided by the unlaying 'near' query.
+	
+	\param	minDot (Optional) the minimum dot product.
+	\param	maxDot (Optional) the maximum dot product.
+	
+	\return The near dot filtered.
+	**/
+	const Entities& GetNearDotFiltered(float minDot = 0.9f, float maxDot = 1.0f) override;
+
+
 	// ***
 	// *** CEntityAwarenessComponent
 	// ***
+
+	enum EDebugBits
+	{
+		eDB_Debug					= BIT(0),
+		eDB_ProximalEntities		= BIT(1),
+		eDB_NearEntities			= BIT(2),
+		eDB_RayCast					= BIT(3),
+		eDB_InFront					= BIT(4),
+		eDB_DotFiltered				= BIT(5),
+	};
 
 	CEntityAwarenessComponent();
 	virtual ~CEntityAwarenessComponent();
@@ -194,8 +215,6 @@ private:
 		{
 			if (rayId != 0)
 			{
-				// TODO: Important - should we cancel or reset?
-//				g_pGame->GetRayCaster().Cancel(rayId);
 				g_pGame->GetRayCaster().Reset();
 				rayId = 0;
 			}
@@ -208,13 +227,12 @@ private:
 
 
 	/**
-	Checks to see if we have a query result that is still valid for this FrameId. If no fresh
-	query result is found it will run a query update and mark the new result as being useable within
-	this FrameId. This works like a simple cache that presents multiple calls from needing to run the
-	queries again.
-
+	Checks to see if we have a query result that is still valid for this FrameId. If no fresh query result is found
+	it will run a query update and mark the new result as being useable within this FrameId. This works like a simple
+	cache that presents multiple calls from needing to run the queries again.
+	
 	Results are returned as side-effects of this function.
-
+	
 	\param	query An enum indicating which query should be refreshed (if required).
 	**/
 	ILINE void RefreshQueryCache(EWorldQuery query)
@@ -280,16 +298,16 @@ private:
 	// TODO: Is there a safer way to handle all of this?
 	uint32 m_requestCounter { 0 };
 
-	// Track the time of the last deferred ray-cast.
+	/** Track the time of the last deferred ray-cast. */
 	float m_timeLastDeferredResult { 0.0f };
 
 	// ray-cast query
 	bool m_rayHitAny { false };
 
-	// If there is a solid hit from the forward ray this is it's result. The result may become stale.
+	/** If there is a solid hit from the forward ray this is it's result. The result may become stale. */
 	ray_hit m_rayHitSolid;
 
-	// If there is a pierceable hit from the forward ray this is it's result. The result may become stale.
+	/** If there is a pierceable hit from the forward ray this is it's result. The result may become stale. */
 	ray_hit m_rayHitPierceable;
 
 	// The entity the object is currently looking towards.
@@ -302,44 +320,58 @@ private:
 	// The entities which are close enough to the actor to be interactable or worth highlighting.
 	Entities m_entitiesNear;
 
+	// Dot product filtered version of the near entities.
+	Entities m_entitiesNearDotFiltered;
+
 	// The entities which are in front of the actor.
 	Entities m_entitiesInFrontOf;
 
 
 	/**
-	Performs a deferred raycast from the actors eye in the direction the actor is facing for
-	forwardCastDistance metres. OnRayCastDataReceived is called asynchronously with the result.
+	Performs a deferred raycast from the actors eye in the direction the actor is facing for forwardCastDistance
+	metres. OnRayCastDataReceived is called asynchronously with the result.
 	**/
 	void UpdateRaycastQuery();
 
 
-	/** Creates an AABB around the actor and performs a query on entities within that box. The size of
-	the box is based on m_proximityRadius. Any entities which are within the box will be made available
-	in the m_entitiesInProximity container as a side effect	of running this query. No culling is
-	performed on the entities returned from the query.
-
-	You can use this as a base on which to build more nuanced and precise queries. */
+	/**
+	Creates an AABB around the actor and performs a query on entities within that box. The size of the box is based
+	on m_proximityRadius. Any entities which are within the box will be made available in the m_entitiesInProximity
+	container as a side effect of running this query. No culling is performed on the entities returned from the query.
+	
+	You can use this as a base on which to build more nuanced and precise queries.
+	**/
 	void UpdateProximityQuery();
 
 
-	/** A proximity based query that limits the results to a smaller range centered around the actor's eyes. The area is
+	/**
+	A proximity based query that limits the results to a smaller range centered around the actor's eyes. The area is
 	scaled by proximityCloseByFactor, which should provide a fairly neat box around the actor - within reasonable reach
-	to indicate they can trigger actions on these entities. */
+	to indicate they can trigger actions on these entities.
+	**/
 	void UpdateNearQuery();
 
 
-	/** Performs a proximity query using an AABB based on the actor and m_proximityRadius. The results of this are culled by first converting the
-	returned AABB for each entity into an OBB and checking if a line intersection from the actor's eyes would intersect this OBB. Results are
-	saved as a side effect of running the query. You can get multiple hits in the results, and these are not sorted in any way. */
+	/**
+	Performs a proximity query using an AABB based on the actor and m_proximityRadius. The results of this are culled
+	by first converting the returned AABB for each entity into an OBB and checking if a line intersection from the
+	actor's eyes would intersect this OBB. Results are saved as a side effect of running the query. You can get multiple
+	hits in the results, and these are not sorted in any way.
+	**/
 	void UpdateInFrontOfQuery();
 
 
-	/** A proximity based query that limits the results to only those entities which are considered to be in front of the
-	actor. These are limited based on a line segment from the actor's eyes, forward in the direction they are looking. */
+	/**
+	A proximity based query that limits the results to only those entities which are considered to be in front of the
+	actor. These are limited based on a line segment from the actor's eyes, forward in the direction they are looking.
+	
+	\return A reference to a const Entities.
+	**/
 	ILINE const Entities& InFrontOfQuery()
 	{
 		RefreshQueryCache(eWQ_Proximity);
 		RefreshQueryCache(eWQ_InFrontOf);
+
 		return m_entitiesInFrontOf;
 	}
 

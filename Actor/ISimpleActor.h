@@ -1,6 +1,8 @@
 #pragma once
 
 #include <IActorSystem.h>
+#include <Utility/StringConversions.h>
+
 
 // Helper struct to avoid having to implement all IGameObjectExtension functions every time
 struct ISimpleActor : public IActor
@@ -129,6 +131,108 @@ struct ISimpleActor : public IActor
 	virtual int   GetTeamId() const override { return 0; }
 	virtual bool ShouldMuteWeaponSoundStimulus() const override { return false; }
 	// ~IActor
+	
+
+	// CNativeEntityBase
+	// I've duplicated the code here, because the current way it is factored would require multiple inheritance, and that's not smart.
+	// TODO: Refactor the CNativeEntityBase / etc to no longer require multiple inheritance.
+	const char *GetPropertyValue(int index) const
+	{
+		IEntity *pEntity = GetEntity();
+		if (pEntity == nullptr)
+		{
+			CryLog("[Warning] Failed to get entity property %i, entity was null!", index);
+			return "";
+		}
+
+		IEntityClass *pEntityClass = pEntity->GetClass();
+
+		IEntityPropertyHandler *pPropertyHandler = pEntityClass->GetPropertyHandler();
+		if (pPropertyHandler)
+		{
+			return pPropertyHandler->GetProperty(pEntity, index);
+		}
+
+		CryLog("[Warning] Failed to get entity property %i (class %s), property handler was null!", index, pEntity->GetClass()->GetName());
+		return "";
+	}
+
+	void SetPropertyValue(int index, const char *value)
+	{
+		IEntity *pEntity = GetEntity();
+		if (pEntity == nullptr)
+			return;
+
+		IEntityClass *pEntityClass = pEntity->GetClass();
+
+		IEntityPropertyHandler *pPropertyHandler = pEntityClass->GetPropertyHandler();
+		if (pPropertyHandler)
+		{
+			pPropertyHandler->SetProperty(pEntity, index, value);
+
+			// Notify the entity of its properties having changed
+			pPropertyHandler->PropertiesChanged(pEntity);
+		}
+	}
+
+	float GetPropertyFloat(int index) const
+	{
+		return (float) atof(GetPropertyValue(index));
+	}
+
+	int GetPropertyInt(int index) const
+	{
+		return atoi(GetPropertyValue(index));
+	}
+
+	ColorF GetPropertyColor(int index) const
+	{
+		return StringToColor(GetPropertyValue(index), false);
+	}
+
+	bool GetPropertyBool(int index) const
+	{
+		return GetPropertyInt(index) != 0;
+	}
+
+	Vec3 GetPropertyVec3(int index) const
+	{
+		return StringToVec3(GetPropertyValue(index));
+	}
+
+	void SetPropertyFloat(int index, float value)
+	{
+		string valueString;
+		valueString.Format("%f", value);
+
+		SetPropertyValue(index, valueString.c_str());
+	}
+
+	void SetPropertyInt(int index, int value)
+	{
+		string valueString;
+		valueString.Format("%i", value);
+
+		SetPropertyValue(index, valueString.c_str());
+	}
+
+	void SetPropertyBool(int index, bool value)
+	{
+		string valueString;
+		valueString.Format(value ? "1" : "0");
+
+		SetPropertyValue(index, valueString.c_str());
+	}
+
+	void SetPropertyVec3(int index, Vec3 value)
+	{
+		string valueString;
+		valueString.Format("%f,%f,%f", value.x, value.y, value.z);
+
+		SetPropertyValue(index, valueString.c_str());
+	}
+	// ~CNativeEntityBase
+
 
 	ISimpleActor() {}
 	virtual ~ISimpleActor() {}

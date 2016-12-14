@@ -22,7 +22,7 @@ namespace LocalizeUtility
 			static int lastNumberOfWs = 0;
 			if (lastNumberOfWs != numberOfWs)
 			{
-				for (int i = 0; i < numberOfWs; i++)
+				for (int i = 0; i < numberOfWs; ++i)
 				{
 					out.append("W");
 				}

@@ -53,12 +53,6 @@ void CCameraManagerComponent::PostInit(IGameObject * pGameObject)
 		SetCameraMode(ECameraMode::eCameraMode_ActionRpg, "Initial selection of camera.");
 	else
 		SetCameraMode(ECameraMode::eCameraMode_FirstPerson, "Initial selection of camera.");
-
-	// Detect when we become the local player.
-	const int requiredEvents [] = { eGFE_BecomeLocalPlayer };
-	pGameObject->UnRegisterExtForEvents(this, NULL, 0);
-	pGameObject->RegisterExtForEvents(this, requiredEvents, sizeof(requiredEvents) / sizeof(int));
-
 }
 
 
@@ -82,27 +76,6 @@ void CCameraManagerComponent::Update(SEntityUpdateContext& ctx, int updateSlot)
 				break;
 		}
 	}
-}
-
-
-void CCameraManagerComponent::HandleEvent(const SGameObjectEvent &event)
-{
-	// We only register action maps if we are the local player.
-	if (event.event == eGFE_BecomeLocalPlayer)
-	{
-		RegisterActionMaps();
-	}
-}
-
-
-// ***
-// *** IActionListener
-// ***
-
-void CCameraManagerComponent::OnAction(const ActionId& action, int activationMode, float value)
-{
-	// We want to dispatch the action as if it were for the character that this player is currently attached onto.
-	m_actionHandler.Dispatch(this, GetEntityId(), action, activationMode, value);
 }
 
 
@@ -202,11 +175,6 @@ CCameraManagerComponent::CCameraManagerComponent()
 
 CCameraManagerComponent::~CCameraManagerComponent()
 {
-	// Clean up our action map usage.
-	IActionMapManager* pActionMapManager = gEnv->pGame->GetIGameFramework()->GetIActionMapManager();
-	pActionMapManager->EnableActionMap("camera", false);
-	pActionMapManager->RemoveExtraActionListener(this, "camera");
-	GetGameObject()->ReleaseActions(this);
 }
 
 
@@ -225,31 +193,6 @@ CCameraManagerComponent::SExternalCVars& CCameraManagerComponent::SetCVars()
 Vec3 CCameraManagerComponent::GetViewOffset()
 {
 	return Vec3FromString(GetCVars().m_debugViewOffset->GetString()) + m_interactiveViewOffset; 
-}
-
-
-void CCameraManagerComponent::RegisterActionMaps()
-{
-	// Populate the action handler callbacks so that we get action map events.
-	InitializeActionHandler();
-
-	// Try and enable the "camera" actions.
-	IActionMapManager* pActionMapManager = gEnv->pGame->GetIGameFramework()->GetIActionMapManager();
-	pActionMapManager->EnableActionMap("camera", true);
-	pActionMapManager->AddExtraActionListener(this, "camera");
-	GetGameObject()->CaptureActions(this);
-}
-
-
-void CCameraManagerComponent::InitializeActionHandler()
-{
-	// Camera movements.
-	m_actionHandler.AddHandler(ActionId("camera_shift_up"), &CCameraManagerComponent::OnActionCameraShiftUp);
-	m_actionHandler.AddHandler(ActionId("camera_shift_down"), &CCameraManagerComponent::OnActionCameraShiftDown);
-	m_actionHandler.AddHandler(ActionId("camera_shift_left"), &CCameraManagerComponent::OnActionCameraShiftLeft);
-	m_actionHandler.AddHandler(ActionId("camera_shift_right"), &CCameraManagerComponent::OnActionCameraShiftRight);
-	m_actionHandler.AddHandler(ActionId("camera_shift_forward"), &CCameraManagerComponent::OnActionCameraShiftForward);
-	m_actionHandler.AddHandler(ActionId("camera_shift_backward"), &CCameraManagerComponent::OnActionCameraShiftBackward);
 }
 
 

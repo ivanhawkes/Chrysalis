@@ -15,7 +15,7 @@ class CActorMovementController;
 class IActionController;
 struct SAnimationContext;
 struct SActorMovementRequest;
-struct IEntityLockingComponent;
+struct IEntityAwarenessComponent;
 
 
 /** Represents all of the available actor class types. */
@@ -53,9 +53,23 @@ class CActor : public CGameObjectExtensionHelper<CActor, ISimpleActor, 40>, publ
 {
 public:
 
+	enum EProperties
+	{
+		// Animation.
+		eProperty_Model = 0,
+		eProperty_Controller_Definition,
+		eProperty_Scope_Context,
+		eProperty_Animation_Database,
+
+		// Physics.
+		eProperty_Mass,
+
+		eNumProperties
+	};
+
+
 	CActor();
 	virtual ~CActor();
-
 
 	// ISimpleActor
 	bool Init(IGameObject * pGameObject) override;
@@ -350,7 +364,7 @@ protected:
 
 	/** Called to indicate the entity must reset itself. This is often done during PostInit() and
 	additionally by the editor when you both enter and leave game mode. */
-	virtual void OnReset();
+	virtual void Reset();
 
 	/**
 	Physicalies this instance.
@@ -391,6 +405,12 @@ private:
 
 	/** Context for the animation. */
 	SAnimationContext* m_pAnimationContext { nullptr };
+
+	/** An component which is used to discover entities near the actor. */
+	IEntityAwarenessComponent* m_pAwareness { nullptr };
+
+	/**	A dynamic response proxy. **/
+	IEntityDynamicResponseProxyPtr m_pDrsProxy { nullptr };
 
 	// HACK: to test switching movement and idle fragments. Should query physics instead.
 	// Keeping the actions here allows me to stop them, which is good for testing, but wrong in
@@ -493,10 +513,6 @@ public:
 	};
 
 
-	/** Resets the character to an initial state. */
-	virtual void Reset();
-
-
 	/** Kill the character. */
 	virtual void Kill();
 
@@ -562,35 +578,6 @@ public:
 
 public:
 	/**
-	Gets the interactor.
-
-	\return	null if it fails, else the interactor.
-	*/
-	IEntityLockingComponent* GetInteractor();
-
-
-	/**
-	Locks the interactor.
-
-	\param	lockId	Identifier for the lock.
-	\param	lock  	true to lock, false to unlock.
-	*/
-	void LockInteractor(EntityId lockId);
-
-
-	/**
-	Unlocks the interactor.
-
-	\param	unlockId	Identifier for the unlock.
-	*/
-	void UnlockInteractor(EntityId unlockId);
-
-
-	/** Resets the interactor. */
-	void ResetInteractor();
-
-
-	/**
 	Action handler for the "use" verb for entities that provide a use function.
 
 	\param	playerId	The entityId for the player who invoked this action.
@@ -632,17 +619,50 @@ public:
 	void OnActionBarUse(EntityId playerId, int actionBarId);
 
 
-private:
 	/**
-	Core part of the interactor lock routine. This is split out and private to ensure we can control extra parts
-	required for both locking and unlocking.
+	Received when the player has indicated the actor should enter "inspection mode".
 
-	\param	lockId	Identifier for the lock.
-	\param	lock  	true to lock, false to unlock.
+	\param	playerId	The entityId for the player who invoked this action.
 	*/
-	void LockInteractor(EntityId lockId, bool lock);
+	void OnActionInspectStart(EntityId playerId);
 
 
-	/** An interactor which is used to handle 'Useable' / 'Used' logic in the world. */
-	IEntityLockingComponent* m_pInteractor { nullptr };
+	/**
+	Received when the player has indicated the actor should try and inspect a nearby entity.
+
+	\param	playerId	The entityId for the player who invoked this action.
+	*/
+	void OnActionInspect(EntityId playerId);
+
+
+	/**
+	Received when the player has indicated the actor should exit "inspection mode".
+
+	\param	playerId	The entityId for the player who invoked this action.
+	*/
+	void OnActionInspectEnd(EntityId playerId);
+
+
+	/**
+	Received when the player has indicated the actor should enter "interaction mode".
+
+	\param	playerId	The entityId for the player who invoked this action.
+	*/
+	void OnActionInteractionStart(EntityId playerId);
+
+
+	/**
+	Received when the player has indicated the actor should try and interact with a nearby entity.
+
+	\param	playerId	The entityId for the player who invoked this action.
+	*/
+	void OnActionInteraction(EntityId playerId);
+
+
+	/**
+	Received when the player has indicated the actor should exit "interaction mode".
+
+	\param	playerId	The entityId for the player who invoked this action.
+	*/
+	void OnActionInteractionEnd(EntityId playerId);
 };

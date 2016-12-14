@@ -203,7 +203,7 @@ void CFlowGameEntityNode::ProcessEvent(EFlowEvent event, SActivationInfo* pActIn
 			}
 			else
 			{
-				for (size_t i = 0; i < m_pClass->m_inputs.size()-1; i++)
+				for (size_t i = 0; i < m_pClass->m_inputs.size()-1; ++i)
 				{
 					if (IsPortActive(pActInfo,i))
 					{

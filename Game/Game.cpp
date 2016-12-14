@@ -7,6 +7,17 @@
 #include "GameFactory.h"
 #include <IPlayerProfiles.h>
 #include <IItemSystem.h>
+#include <ConsoleCommands/ConsoleCommands.h>
+#include <ObjectID/ObjectIdMasterFactory.h>
+
+#include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
+#include "DynamicResponseSystem/ConditionDistanceToEntity.h"
+#include "DynamicResponseSystem/ActionClose.h"
+#include "DynamicResponseSystem/ActionLock.h"
+#include "DynamicResponseSystem/ActionOpen.h"
+#include "DynamicResponseSystem/ActionPlayAnimation.h"
+#include "DynamicResponseSystem/ActionSwitch.h"
+#include "DynamicResponseSystem/ActionUnlock.h"
 
 
 CGame* g_pGame { nullptr };
@@ -64,6 +75,10 @@ CGame::~CGame()
 		SAFE_DELETE(m_pRayCaster);
 	}
 
+	SAFE_DELETE(m_pObjectIdMasterFactory);
+
+	// Un-Registers Game-Specific Console Commands.
+	UnRegisterGameConsoleCommands();
 
 	GetISystem()->SetIGame(nullptr);
 	g_pGame = nullptr;
@@ -76,9 +91,12 @@ bool CGame::Init(IGameFramework* pFramework)
 	CGameFactory::Init();
 	m_pGameFramework->SetGameGUID(GAME_GUID);
 
-	// We hafve to initialize the player profile system
-	// Otherwise level load will fail in action map initialization
+	// We have to initialize the player profile system otherwise level load will fail in action map initialization.
 	InitializePlayerProfile();
+
+	// Create a valid master factory which can provide instance unique Ids for us.
+	// TODO: Get the InstanceId from the command line or cvars.
+	m_pObjectIdMasterFactory = new CObjectIdMasterFactory(0);
 
 	// Create a new deferred ray-cast object and set it's quota limit.
 	m_pRayCaster = new GlobalRayCaster;
@@ -90,10 +108,20 @@ bool CGame::Init(IGameFramework* pFramework)
 	// Search the file system to find XML files with definitions for game weapons.
 	//m_pGameFramework->GetIActorSystem()->Scan("Parameters/Actors");
 
-	// Load and init the default action map profile.
-	IActionMapManager* pActionMapManager = gEnv->pGame->GetIGameFramework()->GetIActionMapManager();
-	pActionMapManager->InitActionMaps("libs/config/defaultprofile.xml");
-	pActionMapManager->Enable(true);
+	// Register Game-Specific Console Commands.
+	RegisterGameConsoleCommands();
+
+	if (gEnv->pDynamicResponseSystem)
+	{
+		// Register the custom DRS actions and conditions.
+		REGISTER_DRS_CUSTOM_CONDITION(CConditionDistanceToEntity);
+		REGISTER_DRS_CUSTOM_ACTION(CActionClose);
+		REGISTER_DRS_CUSTOM_ACTION(CActionLock);
+		REGISTER_DRS_CUSTOM_ACTION(CActionOpen);
+		REGISTER_DRS_CUSTOM_ACTION(CActionPlayAnimation);
+		REGISTER_DRS_CUSTOM_ACTION(CActionSwitch);
+		REGISTER_DRS_CUSTOM_ACTION(CActionUnlock);
+	}
 
 	return true;
 }
@@ -159,4 +187,20 @@ CPlayer* CGame::GetLocalPlayer()
 {
 	CRY_ASSERT_MESSAGE(g_pGame, "There is no game.");
 	return static_cast<CPlayer*>(g_pGame->GetIGameFramework()->GetClientActor());
+}
+
+
+void CGame::RegisterGameConsoleCommands()
+{
+	// Registers all the console commands.
+	m_pConsoleCommands = new CConsoleCommands();
+	m_pConsoleCommands->Register();
+}
+
+
+void CGame::UnRegisterGameConsoleCommands()
+{
+	// Un-registers all the console commands.
+	m_pConsoleCommands->Unregister();
+	SAFE_DELETE(m_pConsoleCommands);
 }

@@ -49,13 +49,13 @@ const Vec3 ICameraComponent::GetAimTarget(const IEntity* pRayCastingEntity) cons
 	{
 		// There's a hit, so return that as the aim target.
 //#if defined(_DEBUG)
-//		gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(rayhit.pt, 0.05f, ColorB(128, 0, 0));
+//		gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(rayhit.pt, 0.04f, ColorB(128, 0, 0));
 //#endif
 		return rayhit.pt;
 	}
 
 //#if defined(_DEBUG)
-//	gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(m_cameraPose.GetPosition() + aimDirection, 0.25f, ColorB(0, 0, 128));
+//	gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(m_cameraPose.GetPosition() + aimDirection, 0.04, ColorB(0, 0, 128));
 //#endif
 
 	// Default is to return a position a set distance from the camera in the direction it is facing.

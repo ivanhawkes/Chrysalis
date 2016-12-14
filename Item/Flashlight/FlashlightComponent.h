@@ -20,39 +20,12 @@ class IEntityInteractionComponent;
 class CFlashlightComponent : public CGameObjectExtensionHelper <CFlashlightComponent, CItem>, public IInteractionSwitch, public IInteractionPickupAndDrop, public IInteractionInteract
 {
 public:
-	// ***
-	// *** IGameObjectExtensionw
-	// ***
 
-	void GetMemoryUsage(ICrySizer *pSizer) const override;
+	// ISimpleItem
 	bool Init(IGameObject * pGameObject) override;
 	void PostInit(IGameObject * pGameObject) override;
-	void InitClient(int channelId) override;
-	void PostInitClient(int channelId) override;
-	bool ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override;
-	void PostReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override;
-	bool GetEntityPoolSignature(TSerialize signature) override;
-	void Release() override;
-	void FullSerialize(TSerialize ser) override;
-	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int pflags) override;
-	void PostSerialize() override {};
-	void SerializeSpawnInfo(TSerialize ser) override {};
-	ISerializableInfoPtr GetSpawnInfo() override;
-	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
-	void HandleEvent(const SGameObjectEvent& event) override;
 	void ProcessEvent(SEntityEvent& event) override;
-	void SetChannelId(uint16 id) override;
-	void SetAuthority(bool auth) override;
-	void PostUpdate(float frameTime) override;
-	void PostRemoteSpawn() override;
-
-
-	// ***
-	// *** IItem
-	// ***
-
-	//void PreResetParams() override {};
-	//bool ResetParams() override;
+	// ~ISimpleItem
 
 
 	// ***
@@ -65,6 +38,7 @@ public:
 	// *** IInteractionSwitch
 	// ***
 
+	void SwitchToggle() override { gEnv->pLog->LogAlways("Interation Toggle fired."); ToggleSwitch(); };
 	void SwitchOn() override { gEnv->pLog->LogAlways("Interation SwitchOn fired."); ToggleSwitch(); };
 	void SwitchOff() override { gEnv->pLog->LogAlways("Interation SwitchOff fired."); ToggleSwitch(); };
 

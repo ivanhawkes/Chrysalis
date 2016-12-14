@@ -580,7 +580,7 @@ namespace EntityEffects
 		const int numEffects = m_attachedEffects.size();
 
 		auto pOwnerEntity = gEnv->pEntitySystem->GetEntity(m_ownerEntityId);
-		for (int i = 0; i < numEffects; i++)
+		for (int i = 0; i < numEffects; ++i)
 		{
 			SEffectInfo& effectInfo = m_attachedEffects [i];
 

@@ -44,7 +44,7 @@ void CNativeEntityPropertyHandler::LoadEntityXMLProperties(IEntity *pEntity, con
 		LoadEntityXMLGroupProperties(entityPropertyStorageIt->second, properties, true);
 
 		// Load folders
-		for(auto i = 0; i < properties->getChildCount(); i++)
+		for(auto i = 0; i < properties->getChildCount(); ++i)
 		{
 			LoadEntityXMLGroupProperties(entityPropertyStorageIt->second, properties->getChild(i), false);
 		}
@@ -57,7 +57,7 @@ void CNativeEntityPropertyHandler::LoadEntityXMLGroupProperties(TPropertyStorage
 {
 	bool bFoundGroup = bRootNode;
 
-	for(auto i = 0; i < m_numProperties; i++)
+	for(auto i = 0; i < m_numProperties; ++i)
 	{
 		auto &info = m_pProperties[i].info;
 

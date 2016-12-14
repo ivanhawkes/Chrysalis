@@ -79,7 +79,7 @@ bool AutoEnum_GetEnumValFromString(const char* inString, const char** inArray, i
 		CryLog("AutoEnum_GetEnumValFromString: Parsing '%s' (skipping first %d chars '%s%s' of each string in array)", inString, skipChars, skipThisString, skipChars ? "_" : "");
 #endif
 
-		for (int i = 0; i < arraySize; i++)
+		for (int i = 0; i < arraySize; ++i)
 		{
 #if DO_PARSE_BITFIELD_STRING_LOGS
 			CryLog("AutoEnum_GetEnumValFromString: Searching... Enum val %d = '%s'", i, (inArray [i] + skipChars));

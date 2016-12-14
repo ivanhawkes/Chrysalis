@@ -80,25 +80,59 @@ struct IPlayerInputComponent : public ISimpleExtension
 
 
 	/**
-	Gets pitch delta.
-	
+	Gets the combined pitch delta from all devices.
+
 	\return The pitch delta.
 	**/
 	virtual float GetPitchDelta() = 0;
 
 
 	/**
-	Gets yaw delta.
-	
+	Gets the combined yaw delta from all devices.
+
 	\return The yaw delta.
 	**/
 	virtual float GetYawDelta() = 0;
 
 
 	/**
+	Gets the pitch delta from the mouse.
+
+	\return The pitch delta.
+	**/
+	virtual float GetMousePitchDelta() = 0;
+
+
+	/**
+	Gets the yaw delta from the mouse.
+
+	\return The yaw delta.
+	**/
+	virtual float GetMouseYawDelta() = 0;
+
+
+	/**
+	Gets the pitch delta from the XBOX controller.
+
+	\return The pitch delta.
+	**/
+	virtual float GetXiPitchDelta() = 0;
+
+
+	/**
+	Gets the yaw delta from the XBOX controller.
+
+	\return The yaw delta.
+	**/
+	virtual float GetXiYawDelta() = 0;
+
+	/**
 	Gets number of times the player has requested a change in zoom level since the last frame. Cameras can query this
-	value and use it to adjust their zoom.
-	
+	value and use it to adjust their zoom. Value is set in stone on PrePhysicsUpdate () so it can be consistently
+	queried during the Update() routine. It's provided as a float, even though currently implementation is integral
+	steps. This will give us more fine control if needed later.
+
+
 	\return The zoom delta.
 	**/
 	virtual float GetZoomDelta () = 0;

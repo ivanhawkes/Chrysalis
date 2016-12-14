@@ -69,6 +69,7 @@ void CPlayer::PostInit(IGameObject * pGameObject)
 
 	// Acquire a player input component. At a later time it will be useful to check if a network version is needed, or
 	// perhaps AI / NULL versions.
+	// NOTE: This component requires a pointer to a camera manager - so it must always load after that component.
 	m_pPlayerInput = static_cast<IPlayerInputComponent*> (GetGameObject()->AcquireExtension("PlayerInput"));
 
 	// HACK: hard coded effort to grab an entity to attach to as our pawn / character. It must occur after the camera has a chance to create itself.
