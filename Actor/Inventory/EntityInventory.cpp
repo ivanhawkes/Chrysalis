@@ -28,27 +28,11 @@ bool CEntityInventory::Init(IGameObject * pGameObject)
 
 void CEntityInventory::PostInit(IGameObject * pGameObject)
 {
-	// Allow this instance to be updated every frame.
-	pGameObject->EnableUpdateSlot(this, 0);
-
-	// Allow this instance to be post-updated every frame.
-	pGameObject->EnablePostUpdates(this);
 }
 
-
-bool CEntityInventory::ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params)
-{
-	// It's very important that this gets called. Restores the IGameObject of the instance.
-	ResetGameObject();
-
-	return true;
-}
 
 void CEntityInventory::Update(SEntityUpdateContext& ctx, int updateSlot)
 {
-	auto pEntity = GetEntity();
-	if (!pEntity)
-		return;
 }
 
 

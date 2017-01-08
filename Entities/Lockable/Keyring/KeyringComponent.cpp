@@ -1,6 +1,11 @@
 #include <StdAfx.h>
 
 #include "KeyringComponent.h"
+#include "Plugin/ChrysalisCorePlugin.h"
+#include <CrySerialization/Decorators/Resources.h>
+
+
+CRYREGISTER_CLASS(CKeyringComponent)
 
 
 class CKeyringExtensionRegistrator
@@ -9,9 +14,13 @@ class CKeyringExtensionRegistrator
 {
 	virtual void Register() override
 	{
-		CKeyringComponent::Register();
+		// Register the entity class.
+		RegisterEntityWithDefaultComponent<CKeyringComponent>("Keyring", "Locks", "Light.bmp");
+
 		RegisterCVars();
 	}
+
+	void Unregister() override {};
 
 	void RegisterCVars()
 	{
@@ -21,42 +30,41 @@ class CKeyringExtensionRegistrator
 
 CKeyringExtensionRegistrator g_KeyringExtensionRegistrator;
 
+
 const CKeyringComponent::SExternalCVars& CKeyringComponent::GetCVars() const
 {
 	return g_KeyringExtensionRegistrator;
 }
 
 
-// ***
-// *** IGameObjectExtension
-// *** 
+void CKeyringComponent::ProcessEvent(SEntityEvent& event)
+{
+	switch (event.event)
+	{
+		// Physicalize on level start for Launcher
+		case ENTITY_EVENT_START_LEVEL:
+
+			// Editor specific, physicalize on reset, property change or transform change
+		case ENTITY_EVENT_RESET:
+		case ENTITY_EVENT_EDITOR_PROPERTY_CHANGED:
+		case ENTITY_EVENT_XFORM_FINISHED_EDITOR:
+			Reset();
+			break;
+	}
+}
 
 
-void CKeyringComponent::PostInit(IGameObject * pGameObject)
+void CKeyringComponent::Reset()
 {
 }
 
 
-void CKeyringComponent::Update(SEntityUpdateContext& ctx, int updateSlot)
+void CKeyringComponent::SerializeProperties(Serialization::IArchive& archive)
 {
-}
+	archive(m_keys, "Keys", "Keys");
 
-
-// ***
-// *** CKeyringComponent
-// ***
-
-
-void CKeyringComponent::Register()
-{
-	auto properties = new SNativeEntityPropertyInfo [eNumProperties];
-	memset(properties, 0, sizeof(SNativeEntityPropertyInfo) * eNumProperties);
-
-	{	// Keyring
-		ENTITY_PROPERTY_GROUP("Keyring", ePropertyGroup_KeyringBegin, ePropertyGroup_KeyringEnd, properties);
-		RegisterEntityProperty<string>(properties, eProperty_Keyring_Keys, "Keys", "", "Comma separated list of key Ids.", 0.0f, 1.0f);
-	}	// ~Keyring
-
-	// Finally, register the entity class so that instances can be created later on either via Launcher or Editor
-	CGameFactory::RegisterNativeEntity<CKeyringComponent>("Keyring", "Keyring", "Light.bmp", CGameFactory::eGameObjectRegistrationFlags::eGORF_HiddenInEditor, properties, eNumProperties);
+	if (!archive.isInput())
+	{
+		Reset();
+	}
 }

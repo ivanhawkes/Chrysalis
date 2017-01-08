@@ -16,78 +16,45 @@ set (OPTION_PCH ON CACHE BOOL "Enable Precompiled headers")
 # Mostly generic game code.
 #
 
-set (SourceGroup_Dll_0
+set (SourceGroup_Main
 	"StdAfx.cpp"
 	"StdAfx.h"
 )
-source_group("Dll" FILES ${SourceGroup_Dll_0})
+source_group("Main" FILES ${SourceGroup_Main})
 
-set (SourceGroup_EditorSpecific
-	"EditorSpecific/EditorGame.cpp"
-	"EditorSpecific/EditorGame.h"
+set (SourceGroup_Plugin
+	"Plugin/ChrysalisCore.cpp"
+	"Plugin/ChrysalisCore.h"
+	"Plugin/ChrysalisCorePlugin.cpp"
+	"Plugin/ChrysalisCorePlugin.h"
 )
-source_group("EditorSpecific" FILES ${SourceGroup_EditorSpecific})
+source_group("Plugin" FILES ${SourceGroup_Plugin})
 
 set (SourceGroup_Game
-	"Game/Game.cpp"
-	"Game/Game.h"
-	"Game/GameFactory.cpp"
-	"Game/GameFactory.h"
 	"Game/GameRules.cpp"
 	"Game/GameRules.h"
 )
 source_group("Game" FILES ${SourceGroup_Game})
 
-set (SourceGroup_Flownodes
-	"FlowNodes/Helpers/FlowBaseNode.h"
-	"FlowNodes/Helpers/FlowGameEntityNode.cpp"
-	"FlowNodes/Helpers/FlowGameEntityNode.h"
-)
-source_group("Flownodes" FILES ${SourceGroup_Flownodes})
+#set (SourceGroup_WeaponEntities
+#	"Entities/Gameplay/Weapons/Bullet.cpp"
+#	"Entities/Gameplay/Weapons/Bullet.h"
+#	"Entities/Gameplay/Weapons/ISimpleWeapon.h"
+#	"Entities/Gameplay/Weapons/Rifle.cpp"
+#	"Entities/Gameplay/Weapons/Rifle.h"
+#)
+#source_group("Entities\\Gameplay\\Weapons" FILES ${SourceGroup_WeaponEntities})
 
-set (SourceGroup_Startup
-	"Startup/GameStartup.cpp"
-	"Startup/GameStartup.h"
-)
-source_group("Startup" FILES ${SourceGroup_Startup})
-
-set (SourceGroup_WeaponEntities
-	"Entities/Gameplay/Weapons/Bullet.cpp"
-	"Entities/Gameplay/Weapons/Bullet.h"
-	"Entities/Gameplay/Weapons/ISimpleWeapon.h"
-	"Entities/Gameplay/Weapons/Rifle.cpp"
-	"Entities/Gameplay/Weapons/Rifle.h"
-)
-source_group("Entities\\Gameplay\\Weapons" FILES ${SourceGroup_WeaponEntities})
-
-set (SourceGroup_GameplayEntities
-	"Entities/Gameplay/SpawnPoint.cpp"
-	"Entities/Gameplay/SpawnPoint.h"
-)
-source_group("Entities\\Gameplay" FILES ${SourceGroup_GameplayEntities})
+#set (SourceGroup_GameplayEntities
+#	"Entities/Gameplay/SpawnPoint.cpp"
+#	"Entities/Gameplay/SpawnPoint.h"
+#)
+#source_group("Entities\\Gameplay" FILES ${SourceGroup_GameplayEntities})
 
 set (SourceGroup_EntityHelpers
 	"Entities/Helpers/ISimpleExtension.h"
-	"Entities/Helpers/NativeEntityBase.cpp"
-	"Entities/Helpers/NativeEntityBase.h"
-	"Entities/Helpers/NativeEntityPropertyHandling.cpp"
-	"Entities/Helpers/NativeEntityPropertyHandling.h"
 )
 source_group("Entities\\Helpers" FILES ${SourceGroup_EntityHelpers})
-
-set (SourceGroup_LightEntities
-	"Entities/Lights/LightEntity.cpp"
-	"Entities/Lights/LightEntity.h"
-	"Entities/Lights/EnvironmentProbe.cpp"
-	"Entities/Lights/EnvironmentProbe.h"
-)
-source_group("Entities\\Lights" FILES ${SourceGroup_LightEntities})
-
-set (SourceGroup_PhysicsEntities
-	"Entities/Physics/RigidBody.cpp"
-	"Entities/Physics/RigidBody.h"
-)
-source_group("Entities\\Physics" FILES ${SourceGroup_PhysicsEntities})
 
 set (SourceGroup_Player
 	"Player/Player.cpp"
@@ -312,26 +279,21 @@ set (SourceGroup_Entities_Interaction
 	"Entities/Interaction/EntityAwarenessComponent.h"
 	"Entities/Interaction/EntityInteractionComponent.cpp"
 	"Entities/Interaction/EntityInteractionComponent.h"
-	"Entities/Interaction/IEntityAwarenessComponent.h"
-	"Entities/Interaction/IEntityInteractionComponent.h"
+	"Entities/Interaction/IEntityInteraction.h"
 )
 source_group("Entities\\Interaction" FILES ${SourceGroup_Entities_Interaction})
 
 set (SourceGroup_Entities_Lockable
-	"Entities/Lockable/Keyring/IKeyringComponent.h"
 	"Entities/Lockable/Keyring/KeyringComponent.cpp"
 	"Entities/Lockable/Keyring/KeyringComponent.h"
-	"Entities/Lockable/ILockableComponent.h"
 	"Entities/Lockable/LockableComponent.cpp"
 	"Entities/Lockable/LockableComponent.h"
 )
 source_group("Entities\\Lockable" FILES ${SourceGroup_Entities_Lockable})
 
 set (SourceGroup_Entities_Openable
-	"Entities/Openable/IOpenableComponent.h"
 	"Entities/Openable/Containers/ContainerComponent.cpp"
 	"Entities/Openable/Containers/ContainerComponent.h"
-	"Entities/Openable/Containers/IContainerComponent.h"
 )
 source_group("Entities\\Openable" FILES ${SourceGroup_Entities_Openable})
 
@@ -341,15 +303,15 @@ source_group("Entities\\Openable" FILES ${SourceGroup_Entities_Openable})
 #)
 #source_group("Entities\\Ownership" FILES ${SourceGroup_Entities_Ownership})
 
-set (SourceGroup_Entities_Switchable
-	"Entities/Switchable/ISwitchableComponent.h"
-	"Entities/Switchable/ISwitchComponent.h"
-	"Entities/Switchable/SwitchableComponent.cpp"
-	"Entities/Switchable/SwitchableComponent.h"
-	"Entities/Switchable/SwitchComponent.cpp"
-	"Entities/Switchable/SwitchComponent.h"
-)
-source_group("Entities\\Switchable" FILES ${SourceGroup_Entities_Switchable})
+#set (SourceGroup_Entities_Switchable
+#	"Entities/Switchable/ISwitchableComponent.h"
+#	"Entities/Switchable/ISwitchComponent.h"
+#	"Entities/Switchable/SwitchableComponent.cpp"
+#	"Entities/Switchable/SwitchableComponent.h"
+#	"Entities/Switchable/SwitchComponent.cpp"
+#	"Entities/Switchable/SwitchComponent.h"
+#)
+#source_group("Entities\\Switchable" FILES ${SourceGroup_Entities_Switchable})
 
 #set (SourceGroup_Game_Cache
 #	"Game/Cache/GameCache.cpp"
@@ -415,7 +377,6 @@ set (SourceGroup_Player_Camera
 	"Player/Camera/FirstPersonCameraComponent.h"
 	"Player/Camera/ICameraComponent.cpp"
 	"Player/Camera/ICameraComponent.h"
-	"Player/Camera/ICameraManagerComponent.h"
 )
 source_group("Player\\Camera" FILES ${SourceGroup_Player_Camera})
 
@@ -460,7 +421,6 @@ set (SourceGroup_Utility
 	"Utility/ItemString.h"
 	"Utility/LocalizeUtility.cpp"
 	"Utility/LocalizeUtility.h"
-	"Utility/Proxy.h"
 	"Utility/StringConversions.h"
 	"Utility/StringUtils.cpp"
 	"Utility/StringUtils.h"
@@ -469,16 +429,12 @@ source_group("Utility" FILES ${SourceGroup_Utility})
 
 
 set (SOURCE
-	${SourceGroup_Dll_0}
-	${SourceGroup_EditorSpecific}
+	${SourceGroup_Main}
+	${SourceGroup_Plugin}
 	${SourceGroup_Game}
-	${SourceGroup_Flownodes}
-	${SourceGroup_Startup}
-	${SourceGroup_WeaponEntities}
-	${SourceGroup_GameplayEntities}
+#	${SourceGroup_WeaponEntities}
+#	${SourceGroup_GameplayEntities}
 	${SourceGroup_EntityHelpers}
-	${SourceGroup_LightEntities}
-	${SourceGroup_PhysicsEntities}
 	${SourceGroup_Player}
 	${SourceGroup_PlayerAnimations}
 	${SourceGroup_PlayerInput}
@@ -513,7 +469,7 @@ set (SOURCE
 #	${SourceGroup_Game_Registration}
 	${SourceGroup_Entities_Lockable}
 	${SourceGroup_Entities_Openable}
-	${SourceGroup_Entities_Switchable}
+#	${SourceGroup_Entities_Switchable}
 	${SourceGroup_Item}
 	${SourceGroup_Item_Accessory}
 	${SourceGroup_Item_Flashlight}
@@ -524,53 +480,15 @@ set (SOURCE
 	${SourceGroup_Utility}
 )
 
-#--- Uber files
-
-if(OPTION_UNITY_BUILD)
-
-	function (uber_group UBER_FILE)
-		file(WRITE ${UBER_FILE} "// Unity Build generated by CMake\n")
-		if (OPTION_PCH)
-			file(APPEND ${UBER_FILE} "#include \"StdAfx.h\"\n")
-		endif(OPTION_PCH)
-		
-		set (extra_macro_args ${ARGN})
-		list(FILTER extra_macro_args INCLUDE REGEX "\\.c(pp)?$")
-		foreach (i IN LISTS extra_macro_args)
-			file (APPEND ${UBER_FILE} "#include \"${CMAKE_CURRENT_SOURCE_DIR}/${i}\"\n")
-		endforeach(i)
-	endfunction(uber_group)
-
-
-	set (HEADERS ${SOURCE})
-	list (REMOVE_ITEM HEADERS "StdAfx.cpp")
-	set_source_files_properties(${HEADERS} PROPERTIES HEADER_FILE_ONLY TRUE)
-
-
-	uber_group ("${CMAKE_CURRENT_BINARY_DIR}/Uber.cpp" ${SOURCE})
-
-	set (SOURCE
-		"${CMAKE_CURRENT_BINARY_DIR}/Uber.cpp"
-	)
-	source_group("UBER FILES" FILES ${SOURCE})
-
-endif(OPTION_UNITY_BUILD)
-
-list (APPEND SOURCE
-		${SourceGroup_Dll_0}
-)
-
-if(OPTION_PCH AND MSVC)
-	list(FILTER SOURCE EXCLUDE REGEX "\\.h$")
-	
-	set (PRECOMPILED_BINARY ${CMAKE_CURRENT_BINARY_DIR}/${MODULE_NAME}.pch)
-	set_source_files_properties (${SOURCE} PROPERTIES COMPILE_FLAGS "/Yu\"StdAfx.h\" /Fp\"${PRECOMPILED_BINARY}\"" OBJECT_DEPENDS "${PRECOMPILED_BINARY}")
+if(OPTION_PCH AND MSVC)	
+	set (PRECOMPILED_SOURCE ${SOURCE})
+	list(REMOVE_ITEM PRECOMPILED_SOURCE "StdAfx.cpp")
+	set (PRECOMPILED_BINARY ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pch)
+	set_source_files_properties (${PRECOMPILED_SOURCE} PROPERTIES COMPILE_FLAGS "/Yu\"StdAfx.h\" /Fp\"${PRECOMPILED_BINARY}\"" OBJECT_DEPENDS "${PRECOMPILED_BINARY}")
 	set_source_files_properties (StdAfx.cpp PROPERTIES COMPILE_FLAGS "/Yc\"StdAfx.h\" /Fp\"${PRECOMPILED_BINARY}\"" OBJECT_OUTPUTS "${PRECOMPILED_BINARY}")
 endif (OPTION_PCH AND MSVC)
 
-#END-FILE-LIST
-
-add_library(${PROJECT_NAME} MODULE ${SOURCE} ${HEADERS})
+add_library(${PROJECT_NAME} MODULE ${SOURCE})
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE CryCommon CryAction)
 

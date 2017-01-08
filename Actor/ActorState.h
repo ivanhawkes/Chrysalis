@@ -10,6 +10,7 @@ Provides a place to store the present state of an actor.
 #include <ICryMannequin.h>
 #include <CryAISystem/IAgent.h>
 #include <Utility/AutoEnum.h>
+#include <IAnimationGraph.h>
 
 
 typedef TBitfield TActorStatusFlags;

@@ -14,8 +14,6 @@ public:
 	virtual void PostInitClient(int channelId) override {}
 	virtual bool ReloadExtension(IGameObject* pGameObject, const SEntitySpawnParams& params) override { return false; }
 	virtual void PostReloadExtension(IGameObject* pGameObject, const SEntitySpawnParams& params) override {}
-  virtual bool GetEntityPoolSignature(TSerialize signature) override { return false; }
-  virtual void Release() override {};
 	virtual void FullSerialize(TSerialize ser) override {}
 	virtual bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int flags) override { return true; }
 	virtual void PostSerialize() override {}
@@ -45,7 +43,7 @@ public:
 	virtual void OnEntityRemoved(IEntity* pEntity) override {}
 	virtual void SendTextMessage(ETextMessageType type, const char* msg, uint32 to = eRMI_ToAllClients, int channelId = -1, const char* p0 = 0, const char* p1 = 0, const char* p2 = 0, const char* p3 = 0) override {}
 	virtual void SendChatMessage(EChatMessageType type, EntityId sourceId, EntityId targetId, const char* msg) override {}
-	virtual void ForbiddenAreaWarning(bool active, int timer, EntityId targetId){}
+	virtual void ForbiddenAreaWarning(bool active, int timer, EntityId targetId) {}
 	virtual float GetRemainingGameTime() const override { return 0.0f; }
 	virtual void SetRemainingGameTime(float seconds) override {}
 	virtual void ClearAllMigratingPlayers(void) override {}

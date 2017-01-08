@@ -1,30 +1,50 @@
 #pragma once
 
 #include <IGameObject.h>
-#include <Entities/Helpers/NativeEntityBase.h>
 #include <Item/Item.h>
 #include <Item/Flashlight/ItemFlashlightParameter.h>
 #include <Item/Flashlight/ItemFlashlightParameterShared.h>
 #include <SharedParameters/DynamicLight.h>
 #include <Entities/EntityEffects.h>
-#include <Entities/Interaction/IEntityInteractionComponent.h>
+#include <Entities/Interaction/IEntityInteraction.h>
+#include <CryEntitySystem/IEntityComponent.h>
+#include <CryEntitySystem/IEntitySystem.h>
 
 
-class IEntityInteractionComponent;
+class CEntityInteractionComponent;
 
 
 /**
-\sa	CGameObjectExtensionHelper&lt;CFlashlightComponent, IGameObjectExtension&gt;
-\sa	IGameObjectView
-*/
-class CFlashlightComponent : public CGameObjectExtensionHelper <CFlashlightComponent, CItem>, public IInteractionSwitch, public IInteractionPickupAndDrop, public IInteractionInteract
+A flashlight component.
+
+\sa CGameObjectExtensionHelper&lt;CFlashlightComponent, IGameObjectExtension&gt;
+\sa IGameObjectView
+\sa IInteractionSwitch
+\sa IInteractionPickupAndDrop
+\sa IInteractionInteract
+**/
+//class CFlashlightComponent : public CItem, public IEntityPropertyGroup, public IInteractionSwitch, public IInteractionPickupAndDrop, public IInteractionInteract
+class CFlashlightComponent : public CGameObjectExtensionHelper <CFlashlightComponent, CItem>, public IEntityPropertyGroup, public IInteractionSwitch, public IInteractionPickupAndDrop, public IInteractionInteract
 {
+	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CFlashlightComponent, "Flashlight", 0x6B4BFAC58E004F0E, 0xB09881AE0D6B2582)
+
 public:
+
+	// IEntityComponent
+	void Initialize() override {};
+	void ProcessEvent(SEntityEvent& event) override;
+	uint64 GetEventMask() const { return CItem::GetEventMask() | BIT64(ENTITY_EVENT_START_LEVEL) | BIT64(ENTITY_EVENT_RESET) | BIT64(ENTITY_EVENT_EDITOR_PROPERTY_CHANGED) | BIT64(ENTITY_EVENT_XFORM_FINISHED_EDITOR); }
+	struct IEntityPropertyGroup* GetPropertyGroup() override { return this; }
+	// ~IEntityComponent
+
+	// IEntityPropertyGroup
+	const char* GetLabel() const { return "Flashlight"; };
+	void SerializeProperties(Serialization::IArchive& archive);
+	// ~IEntityPropertyGroup
 
 	// ISimpleItem
 	bool Init(IGameObject * pGameObject) override;
 	void PostInit(IGameObject * pGameObject) override;
-	void ProcessEvent(SEntityEvent& event) override;
 	// ~ISimpleItem
 
 
@@ -56,13 +76,6 @@ public:
 	// *** CFlashlightComponent
 	// ***
 
-	enum EInputPorts
-	{
-		eInputPort_SwitchOn = 0,
-		eInputPort_SwitchOff
-	};
-
-
 	/**
 	This instance's default constructor.
 	*/
@@ -73,9 +86,6 @@ public:
 	This instance's default destructor.
 	*/
 	~CFlashlightComponent();
-
-	// Called to register the entity class and its properties
-	static void Register();
 
 
 	void GetSharedParameters(XmlNodeRef rootParams);
@@ -117,15 +127,15 @@ private:
 	SDynamicLightConstPtr m_dynamicLightParameterShared;
 
 	/** true if this object is switched on. */
-	bool m_isSwitchedOn = true;
+	bool m_isSwitchedOn { true };
 
 	/** The battery level - range 0.0f - 1.0f. */
-	float m_batteryLevel = 1.0f;
+	float m_batteryLevel { 1.0f };
 
 	/** Identifier for the light once it's attached to this entity. */
 	EntityEffects::TAttachedEffectId m_lightId { EntityEffects::EFFECTID_INVALID };
 
-	int m_fpGeomSlotId = -1;
+	int m_fpGeomSlotId { -1 };
 
-	IEntityInteractionComponent* m_interactor { nullptr };
+	CEntityInteractionComponent* m_interactor { nullptr };
 };

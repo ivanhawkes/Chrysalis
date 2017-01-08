@@ -2,7 +2,6 @@
 
 #include "ActionClose.h"
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
-#include <CryDynamicResponseSystem/IDynamicResponseAction.h>
 
 
 DRS::IResponseActionInstanceUniquePtr CActionClose::Execute(DRS::IResponseInstance* pResponseInstance)

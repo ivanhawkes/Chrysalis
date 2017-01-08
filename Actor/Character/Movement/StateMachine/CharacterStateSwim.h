@@ -1,5 +1,7 @@
 #pragma once
 
+#include <CryEntitySystem/IEntity.h>
+
 struct SActorMovementRequest;
 class CCharacter;
 class CCharacterStateSwimWaterTestProxy;

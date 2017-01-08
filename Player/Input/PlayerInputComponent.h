@@ -1,26 +1,33 @@
 #pragma once
 
 #include "IPlayerInputComponent.h"
-#include <IGameObject.h>
+#include <CryEntitySystem/IEntityComponent.h>
+#include <CryEntitySystem/IEntitySystem.h>
+#include <IActionMapManager.h>
+#include <Player/Player.h>
 
 
-struct IActionListener;
 class CPlayer;
-struct ICameraManagerComponent;
+class CCameraManagerComponent;
 
 
 class CPlayerInputComponent : public CGameObjectExtensionHelper <CPlayerInputComponent, IPlayerInputComponent>, public IActionListener
+//class CPlayerInputComponent : public IPlayerInputComponent, public IActionListener
 {
+	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CPlayerInputComponent, "PlayerInput", 0x2CFC1B6B78334AA8, 0x9A29C2C51B919DC0)
+
 public:
+	// IEntityComponent
+	void Initialize() override;
+	void ProcessEvent(SEntityEvent& event) override;
+	uint64 GetEventMask() const { return BIT64(ENTITY_EVENT_UPDATE); }
+	// ~IEntityComponent
 
-	// ***
-	// *** ISimpleExtension
-	// ***
-
+	// TODO: Refactor when 5.4 is released.
+	virtual bool Init(IGameObject* pGameObject) override { SetGameObject(pGameObject); return true; }
 	void PostInit(IGameObject * pGameObject) override;
-	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
-	void PostUpdate(float frameTime) override;
-	void HandleEvent(const SGameObjectEvent &event) override;
+	virtual void Update(SEntityUpdateContext& ctx, int updateSlot) override;
+	void PostUpdate(float frameTime);
 
 
 	// ***
@@ -65,7 +72,7 @@ public:
 	\param	activationMode	The activation mode.
 	\param	value		  	An optional value that may contain useful information for an action.
 	*/
-	virtual void OnAction(const ActionId& action, int activationMode, float value);
+	void OnAction(const ActionId& action, int activationMode, float value) override;
 
 
 	/** After action. */
@@ -77,8 +84,7 @@ public:
 	// ***
 
 public:
-
-	CPlayerInputComponent() {};
+	CPlayerInputComponent()	{};
 	virtual ~CPlayerInputComponent();
 
 
@@ -156,6 +162,12 @@ protected:
 	bool OnActionInspect(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 	bool OnActionInspectEnd(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 
+	/** The player. */
+	CPlayer* m_pPlayer { nullptr };
+
+	/** The camera that this instance uses. */
+	CCameraManagerComponent* m_pCameraManager { nullptr };
+
 
 private:
 
@@ -163,12 +175,6 @@ private:
 	void RegisterActionMaps();
 
 	void InitializeActionHandler();
-
-	/** The player. */
-	CPlayer* m_pPlayer { nullptr };
-
-	/** The camera that this instance uses. */
-	ICameraManagerComponent* m_pCameraManager { nullptr };
 
 	/** A static handler for the actions we are interested in hooking. */
 	TActionHandler<CPlayerInputComponent> m_actionHandler;

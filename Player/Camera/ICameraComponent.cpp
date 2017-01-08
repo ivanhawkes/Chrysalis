@@ -47,10 +47,11 @@ const Vec3 ICameraComponent::GetAimTarget(const IEntity* pRayCastingEntity) cons
 
 	if (hits)
 	{
-		// There's a hit, so return that as the aim target.
 //#if defined(_DEBUG)
 //		gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(rayhit.pt, 0.04f, ColorB(128, 0, 0));
 //#endif
+
+		// There's a hit, so return that as the aim target.
 		return rayhit.pt;
 	}
 

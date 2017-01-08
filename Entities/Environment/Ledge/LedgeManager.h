@@ -188,7 +188,7 @@ struct SLedgeMarker
 	Vec3 m_facingDirection;
 	bool m_endOrCorner;
 
-	// IMPORTANT: Update STRUCT definition in .cpp file for exporting if you change this struct
+	// IMPORTANT: Update2 STRUCT definition in .cpp file for exporting if you change this struct
 	AUTO_STRUCT_INFO;
 };
 
@@ -220,7 +220,7 @@ struct SLedgeObject
 	ELedgeFlagBitfield m_ledgeFlags [LedgeSide_Count];
 	float m_ledgeCornerEndAdjustAmount;
 
-	// IMPORTANT: Update STRUCT definition in .cpp file for exporting if you change this struct
+	// IMPORTANT: Update2 STRUCT definition in .cpp file for exporting if you change this struct
 	AUTO_STRUCT_INFO;
 };
 

@@ -13,13 +13,12 @@ Code should be added to armour against this.
 */
 #pragma once
 
-#include <Game/Game.h>
 #include <Actor/ISimpleActor.h>
 #include <Actor/Actor.h>
 
 
 struct ICameraComponent;
-struct ICameraManagerComponent;
+class CCameraManagerComponent;
 struct IPlayerInputComponent;
 class CCharacter;
 class CItem;
@@ -29,25 +28,26 @@ class CActor;
 
 /**
 An implementation of the IActor interface. Defines the player class. Used to provide the player a way to control
-a character in the game. This class provides heath / armour functionality, player camera / movement functionality and any
-other functionality needed for a fully playable character. Every CRYENGINE game NEEDS to have an IActor
+a character in the game. This class provides heath / armour functionality, player camera / movement functionality and
+any other functionality needed for a fully playable character. Every CRYENGINE game NEEDS to have an IActor
 implementation (e.g. "Player" class (client actor)).
 
-\sa	CGameObjectExtensionHelper&lt;CPlayer, IActor&gt;
-*/
-class CPlayer : public CGameObjectExtensionHelper <CPlayer, ISimpleActor>
+\sa CGameObjectExtensionHelper&lt;CPlayer, IActor&gt;
+\sa IEntityPropertyGroup
+**/
+class CPlayer : public CGameObjectExtensionHelper<CPlayer, ISimpleActor>
+	//class CPlayer : public ISimpleActor
 {
+	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CPlayer, "Player", 0x1AF7CD4CD82C490B, 0x9107516F612CF10D)
+
 public:
-	struct SExternalCVars
-	{
-		float m_mass;
-	};
+	// IEntityComponent
+	void Initialize() override;
+	// ~IEntityComponent
 
 	// ISimpleActor
-	bool Init(IGameObject * pGameObject) override;
-	void PostInit(IGameObject * pGameObject) override;
-	bool ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override;
-	void HandleEvent(const SGameObjectEvent& event) override;
+	virtual bool Init(IGameObject* pGameObject) override { SetGameObject(pGameObject); return true; }
+	virtual void PostInit(IGameObject* pGameObject);
 
 	bool IsThirdPerson() const override;
 	void ToggleThirdPerson() override;
@@ -84,6 +84,10 @@ public:
 	\param	characterId	Identifier for the character.
 	*/
 	void AttachToCharacter(EntityId characterId);
+
+
+	/** Attach to a character with the default name 'Hero'. */
+	void AttachToCharacter();
 
 
 	/**
@@ -139,7 +143,7 @@ public:
 
 	\return null if it fails, else the camera manager.
 	**/
-	ICameraManagerComponent* GetCameraManager() const;
+	CCameraManagerComponent* GetCameraManager() const;
 
 
 	/**
@@ -159,7 +163,12 @@ public:
 	*/
 	ILINE static CPlayer* GetLocalPlayer()
 	{
-		return static_cast<CPlayer*>(g_pGame->GetIGameFramework()->GetClientActor());
+		auto actorId = gEnv->pGameFramework->GetClientActorId();
+		auto pActor = gEnv->pEntitySystem->GetEntity(actorId);
+		if (pActor)
+			return pActor->GetComponent<CPlayer>();
+
+		return nullptr;
 	}
 
 
@@ -182,7 +191,12 @@ public:
 	*/
 	ILINE static CActor* GetLocalActor()
 	{
-		return reinterpret_cast<CActor*>(gEnv->pGame->GetIGameFramework()->GetClientActor());
+		auto actorId = gEnv->pGameFramework->GetClientActorId();
+		auto pActor = gEnv->pEntitySystem->GetEntity(actorId);
+		auto pPlayer = pActor->GetComponent<CPlayer>();
+		return reinterpret_cast<CActor*>(pPlayer);
+
+		//return reinterpret_cast<CActor*>(gEnv->pGameFramework->GetClientActor());
 	}
 
 
@@ -215,7 +229,7 @@ private:
 	bool m_isClient { false };
 
 	/** The camera that this instance uses. */
-	ICameraManagerComponent* m_pCameraManager { nullptr };
+	CCameraManagerComponent* m_pCameraManager { nullptr };
 
 	/**
 	EntityId for the character we are presently attached onto. This is the actor who will receive movement requests

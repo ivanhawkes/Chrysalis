@@ -3,6 +3,7 @@
 #include <CryMath/Cry_Math.h>
 #include <CryRenderer/Tarray.h>
 #include <Entities/Helpers/ISimpleExtension.h>
+//#include <CryEntitySystem/IEntityComponent.h>
 
 
 class CPlayer;
@@ -13,10 +14,12 @@ enum ECameraMode
 {
 	eCameraMode_NoCamera = -1,
 	eCameraMode_FirstPerson = 0,
-	eCameraMode_FirstPersonHmd,
 	eCameraMode_ActionRpg,
+	eCameraMode_FirstPersonHmd,
 	eCameraMode_Last
 };
+
+const Vec3 AverageEyePosition { 0.0f, 0.0f, 1.82f };
 
 
 /**
@@ -137,6 +140,7 @@ private:
 
 
 struct ICameraComponent : public ISimpleExtension
+//struct ICameraComponent : public IEntityComponent
 {
 	struct AnimationSettings
 	{

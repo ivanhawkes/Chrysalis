@@ -46,7 +46,7 @@ namespace SharedParameters
 	template< typename T >
 	std::shared_ptr<const T> GetSharedParameters(XmlNodeRef rootParams, string className, string entityName, string nodeName)
 	{
-		ISharedParamsManager* pSharedParamsManager = gEnv->pGame->GetIGameFramework()->GetISharedParamsManager();
+		ISharedParamsManager* pSharedParamsManager = gEnv->pGameFramework->GetISharedParamsManager();
 		CRY_ASSERT(pSharedParamsManager);
 
 		// If no parameter set exists we should attempt to create and register one.

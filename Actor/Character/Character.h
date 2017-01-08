@@ -3,7 +3,8 @@
 #include <Actor/Actor.h>
 #include <Actor/Character/Movement/CharacterRotation.h>
 #include <StateMachine/StateMachine.h>
-#include <Entities/Helpers/NativeEntityBase.h>
+#include <CryEntitySystem/IEntityComponent.h>
+#include <CryEntitySystem/IEntitySystem.h>
 
 
 /**
@@ -17,38 +18,41 @@ Characters may have inventory.
 
 // TODO: probably needs to also implement IInventoryListener to listen for inventory changes.
 
-class CCharacter : public CActor
+class CCharacter : public CGameObjectExtensionHelper<CCharacter, CActor>, public IEntityPropertyGroup
+//class CCharacter : public CActor, public IEntityPropertyGroup
 {
-private:
+	//CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CCharacter, "Character", 0xE03CE1AB90954702, 0xBFECD3E9E39F408B)
+
 	// Declaration of the state machine that controls character movement.
 	DECLARE_STATE_MACHINE(CCharacter, Movement);
 
 public:
-	enum EInputPorts
-	{
-		eInputPort_Open = 0,
-		eInputPort_Close
-	};
 
-	// IGameObjectExtension
+	// IEntityComponent
+	void Initialize() override;
+	void ProcessEvent(SEntityEvent& event) override;
+	uint64 GetEventMask() const { return BIT64(ENTITY_EVENT_UPDATE) | BIT64(ENTITY_EVENT_PREPHYSICSUPDATE); }
+	struct IEntityPropertyGroup* GetPropertyGroup() override { return this; }
+	// ~IEntityComponent
+
+	// IEntityPropertyGroup
+	const char* GetLabel() const { return "Character"; };
+	void SerializeProperties(Serialization::IArchive& archive);
+	// ~IEntityPropertyGroup
+
+	// ISimpleActor
 	void PostInit(IGameObject * pGameObject) override;
-	bool ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override;
-	void PostReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override;
 	void PostSerialize() override {};
 	void SerializeSpawnInfo(TSerialize ser) override {};
 	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
 	void HandleEvent(const SGameObjectEvent& event) override;
-	void ProcessEvent(SEntityEvent& event) override;
 
 	// It is critical we override the event priority to ensure we handle the event before CAnimatedCharacter.
-	virtual IComponent::ComponentEventPriority GetEventPriority(const int eventID) const override;
+	virtual IEntityComponent::ComponentEventPriority GetEventPriority(const int eventID) const override;
 	// ~IGameObjectExtension
 
 	// Called to register the entity class and its properties
 	static void Register();
-
-	// Called when one of the input Flowgraph ports are activated in one of the entity instances tied to this class
-	static void OnFlowgraphActivation(EntityId entityId, IFlowNode::SActivationInfo* pActInfo, const class CFlowGameEntityNode *pNode);
 
 	// IActor
 
@@ -66,8 +70,8 @@ public:
 
 public:
 
-	CCharacter();
-	virtual ~CCharacter();
+	CCharacter() {};
+	virtual ~CCharacter() {};
 
 protected:
 
@@ -90,8 +94,6 @@ protected:
 	*/
 	void RegisterEvents();
 
-
-private:
 
 	// ***
 	// *** Life-cycle

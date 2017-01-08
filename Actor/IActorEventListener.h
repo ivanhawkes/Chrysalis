@@ -9,7 +9,7 @@ e.g. ICharacterEventListener : public IActorEventListener
 #pragma once
 
 #include <CryAISystem/IAgent.h>
-#include <CryEntitySystem/IComponent.h>
+
 
 struct IActor;
 struct IEntityClass;

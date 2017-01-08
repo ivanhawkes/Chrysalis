@@ -3,6 +3,8 @@
 #include <SharedParameters/DynamicLight.h>
 #include <SharedParameters/FogVolume.h>
 #include <Item/Parameters/ItemGeometryParameter.h>
+#include <CryEntitySystem/IEntity.h>
+#include <CryParticleSystem\IParticles.h>
 
 
 namespace EntityEffects

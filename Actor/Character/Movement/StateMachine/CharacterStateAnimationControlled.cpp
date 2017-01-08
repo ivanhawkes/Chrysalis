@@ -1,6 +1,7 @@
 #include <StdAfx.h>
 
 #include "CharacterStateEvents.h"
+#include "Actor/Character/Character.h"
 //#include "InteractiveActionController.h"
 
 
@@ -64,7 +65,7 @@ const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationCo
 			m_flags.AddFlags(eActorStateFlags_Ground);
 			if (Character.IsPlayer())
 			{
-				gEnv->pGame->GetIGameFramework()->AllowSave(false);
+				gEnv->pGameFramework->AllowSave(false);
 			}
 			break;
 
@@ -73,7 +74,7 @@ const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationCo
 			m_flags.ClearFlags(eActorStateFlags_Ground);
 			if (Character.IsPlayer())
 			{
-				gEnv->pGame->GetIGameFramework()->AllowSave(true);
+				gEnv->pGameFramework->AllowSave(true);
 			}
 			break;
 	}

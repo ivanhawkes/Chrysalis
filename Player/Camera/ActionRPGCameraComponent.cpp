@@ -1,11 +1,14 @@
 #include <StdAfx.h>
 
 #include "ActionRPGCameraComponent.h"
-#include <Game/Game.h>
+#include "Plugin/ChrysalisCorePlugin.h"
 #include <IActorSystem.h>
 #include <Player/Player.h>
 #include <Player/Input/IPlayerInputComponent.h>
 #include <Utility/StringConversions.h>
+
+
+CRYREGISTER_CLASS(CActionRPGCameraComponent)
 
 
 // TODO: ILH I've dumped this here to get the code to compile again, but it really needs to be switched to whatever
@@ -23,16 +26,21 @@ ILINE void Interpolate(float& actual, float goal, float speed, float frameTime, 
 }
 
 
-class CActionRPGCameraRegistrator
-	: public IEntityRegistrator
-	, public CActionRPGCameraComponent::SExternalCVars
+class CActionRPGCameraRegistrator : public IEntityRegistrator, public CActionRPGCameraComponent::SExternalCVars
 {
 	virtual void Register() override
 	{
-		CGameFactory::RegisterGameObjectExtension<CActionRPGCameraComponent>("ActionRPGCamera");
+		CChrysalisCorePlugin::RegisterEntityWithDefaultComponent<CActionRPGCameraComponent>("ActionRPGCamera");
+		//RegisterEntityWithDefaultComponent<CActionRPGCameraComponent>("ActionRPGCamera", "Camera", "Light.bmp");
+
+		// This should make the entity class invisible in the editor.
+		auto cls = gEnv->pEntitySystem->GetClassRegistry()->FindClass("ActionRPGCamera");
+		cls->SetFlags(cls->GetFlags() | ECLF_INVISIBLE);
 
 		RegisterCVars();
 	}
+
+	void Unregister() override {};
 
 	void RegisterCVars()
 	{
@@ -60,44 +68,53 @@ CActionRPGCameraRegistrator g_actionRPGCameraRegistrator;
 // ***
 
 
+void CActionRPGCameraComponent::Initialize()
+{
+}
+
+
 void CActionRPGCameraComponent::PostInit(IGameObject * pGameObject)
 {
+	pGameObject->EnableUpdateSlot(this, 0);
+
+	// Required for 5.3 to call update.
+	GetEntity()->Activate(true);
+
 	// It's a good idea to use the entity as a default for our target entity.
 	m_targetEntityID = GetEntityId();
 
 	// Create a new view and link it to this entity.
-	auto pViewSystem = gEnv->pGame->GetIGameFramework()->GetIViewSystem();
+	auto pViewSystem = gEnv->pGameFramework->GetIViewSystem();
 	m_pView = pViewSystem->CreateView();
 	m_pView->LinkTo(GetGameObject());
 
 	// We are usually hosted in the same entity as a camera manager. Use it if you can find one.
-	m_pCameraManager = static_cast<ICameraManagerComponent*> (pGameObject->QueryExtension("CameraManager"));
+	m_pCameraManager = GetEntity()->GetComponent<CCameraManagerComponent>();
 }
 
 
-bool CActionRPGCameraComponent::ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params)
+void CActionRPGCameraComponent::ProcessEvent(SEntityEvent& event)
 {
-	ResetGameObject();
-
-	// If we're meant to be active, capture the view.
-	OnActivate();
-
-	return true;
+	switch (event.event)
+	{
+		case ENTITY_EVENT_UPDATE:
+			//Update2();
+			break;
+	}
 }
 
 
-void CActionRPGCameraComponent::Release()
+void CActionRPGCameraComponent::OnShutDown()
 {
 	// Release the view.
 	GetGameObject()->ReleaseView(this);
-	gEnv->pGame->GetIGameFramework()->GetIViewSystem()->RemoveView(m_pView);
+	gEnv->pGameFramework->GetIViewSystem()->RemoveView(m_pView);
 	m_pView = nullptr;
-
-	delete this;
 }
 
 
 void CActionRPGCameraComponent::Update(SEntityUpdateContext& ctx, int updateSlot)
+//void CActionRPGCameraComponent::Update2()
 {
 	// Default on failure is to return a cleanly constructed blank camera pose.
 	CCameraPose newCameraPose { CCameraPose() };
@@ -135,7 +152,7 @@ void CActionRPGCameraComponent::Update(SEntityUpdateContext& ctx, int updateSlot
 		if ((pEntity) && (!gEnv->IsCutscenePlaying()))
 		{
 			// Interpolate towards the desired zoom position.
-			Interpolate(m_zoom, m_zoomGoal, GetCVars().m_zoomSpeed, ctx.fFrameTime);
+			Interpolate(m_zoom, m_zoomGoal, GetCVars().m_zoomSpeed, gEnv->pTimer->GetFrameTime());
 
 			// Get the entity we are targeting.
 			auto pTargetEntity = gEnv->pEntitySystem->GetEntity(m_targetEntityID);
@@ -161,7 +178,7 @@ void CActionRPGCameraComponent::Update(SEntityUpdateContext& ctx, int updateSlot
 				}
 				else
 				{
-					quatTargetRotation = Quat::CreateSlerp(m_quatLastTargetRotation, quatTargetRotationGoal, ctx.fFrameTime * GetCVars().m_slerpSpeed);
+					quatTargetRotation = Quat::CreateSlerp(m_quatLastTargetRotation, quatTargetRotationGoal, gEnv->pTimer->GetFrameTime() * GetCVars().m_slerpSpeed);
 					m_quatLastTargetRotation = quatTargetRotation;
 				}
 
@@ -185,7 +202,7 @@ void CActionRPGCameraComponent::Update(SEntityUpdateContext& ctx, int updateSlot
 				}
 				else
 				{
-					quatViewRotation = Quat::CreateSlerp(m_quatLastViewRotation, quatViewRotationGoal, ctx.fFrameTime * GetCVars().m_slerpSpeed);
+					quatViewRotation = Quat::CreateSlerp(m_quatLastViewRotation, quatViewRotationGoal, gEnv->pTimer->GetFrameTime() * GetCVars().m_slerpSpeed);
 					m_quatLastViewRotation = quatViewRotation;
 				}
 
@@ -282,9 +299,10 @@ void CActionRPGCameraComponent::AttachToEntity(EntityId entityId)
 
 void CActionRPGCameraComponent::OnActivate()
 {
-	gEnv->pGame->GetIGameFramework()->GetIViewSystem()->SetActiveView(m_pView);
+	gEnv->pGameFramework->GetIViewSystem()->SetActiveView(m_pView);
 	GetGameObject()->CaptureView(this);
 	GetGameObject()->EnableUpdateSlot(this, CPlayer::EPlayerUpdateSlot::ePlayerUpdateSlot_CameraThirdPerson);
+	m_EventMask |= BIT64(ENTITY_EVENT_UPDATE);
 }
 
 
@@ -292,6 +310,7 @@ void CActionRPGCameraComponent::OnDeactivate()
 {
 	GetGameObject()->ReleaseView(this);
 	GetGameObject()->DisableUpdateSlot(this, CPlayer::EPlayerUpdateSlot::ePlayerUpdateSlot_CameraThirdPerson);
+	m_EventMask &= ~BIT64(ENTITY_EVENT_UPDATE);
 }
 
 
@@ -327,7 +346,7 @@ Vec3 CActionRPGCameraComponent::GetTargetAimPosition(IEntity* const pEntity)
 	{
 		// If we are attached to an entity that is an actor we can use their eye position.
 		Vec3 localEyePosition = position;
-		auto pActor = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_targetEntityID);
+		auto pActor = gEnv->pGameFramework->GetIActorSystem()->GetActor(m_targetEntityID);
 		if (pActor)
 			localEyePosition = pActor->GetLocalEyePos();
 

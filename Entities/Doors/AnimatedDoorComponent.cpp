@@ -1,33 +1,37 @@
 #include <StdAfx.h>
 
 #include "AnimatedDoorComponent.h"
-#include <Game/GameFactory.h>
-#include <FlowNodes/Helpers/FlowGameEntityNode.h>
-#include <Entities/Lockable/ILockableComponent.h>
+#include "Plugin/ChrysalisCorePlugin.h"
+#include <Entities/Lockable/LockableComponent.h>
+#include <CrySerialization/Decorators/Resources.h>
 
+
+CRYREGISTER_CLASS(CAnimatedDoorComponent)
 
 class CDoorRegistrator : public IEntityRegistrator
 {
-	virtual void Register() override
+	void Register() override
 	{
-		CAnimatedDoorComponent::Register();
+		RegisterEntityWithDefaultComponent<CAnimatedDoorComponent>("AnimatedDoor", "Doors", "Light.bmp");
 	}
+
+	void Unregister() override {};
 };
 
 CDoorRegistrator g_doorRegistrator;
 
 
-CAnimatedDoorComponent::CAnimatedDoorComponent()
+void CAnimatedDoorComponent::Initialize()
 {
-}
+	auto pEntity = GetEntity();
+	
+	// TODO: The geometry should come from a Geom component instead.
+	// Add one here.
 
-
-void CAnimatedDoorComponent::PostInit(IGameObject* pGameObject)
-{
-	m_lockableExtension = static_cast<ILockableComponent*> (GetGameObject()->AcquireExtension("Lockable"));
+	auto m_lockableExtension = pEntity->GetOrCreateComponent<CLockableComponent>();
 
 	// We want to supply interaction verbs.
-	m_interactor = static_cast<IEntityInteractionComponent*> (GetGameObject()->AcquireExtension("EntityInteraction"));
+	auto m_interactor = pEntity->GetOrCreateComponent<CEntityInteractionComponent>();
 	if (m_interactor)
 	{
 		auto openInteractPtr = std::make_shared<CInteractionOpen>(this);
@@ -37,6 +41,7 @@ void CAnimatedDoorComponent::PostInit(IGameObject* pGameObject)
 		m_interactor->AddInteraction(closeInteractPtr);
 	}
 
+	Reset();
 }
 
 
@@ -47,7 +52,7 @@ void CAnimatedDoorComponent::ProcessEvent(SEntityEvent& event)
 		// Physicalize on level start for Launcher
 		case ENTITY_EVENT_START_LEVEL:
 
-		// Editor specific, physicalize on reset, property change or transform change
+			// Editor specific, physicalize on reset, property change or transform change
 		case ENTITY_EVENT_RESET:
 		case ENTITY_EVENT_EDITOR_PROPERTY_CHANGED:
 		case ENTITY_EVENT_XFORM_FINISHED_EDITOR:
@@ -56,61 +61,29 @@ void CAnimatedDoorComponent::ProcessEvent(SEntityEvent& event)
 	}
 }
 
-void CAnimatedDoorComponent::Reset()
+
+void CAnimatedDoorComponent::SerializeProperties(Serialization::IArchive& archive)
 {
-	const char *modelPath = GetPropertyValue(eProperty_Model);
-	if (strlen(modelPath) > 0)
+	archive(Serialization::ModelFilename(m_geometry), "Geometry", "Geometry");
+	archive(m_mass, "Mass", "Mass");
+
+	if (!archive.isInput())
 	{
-		auto &gameObject = *GetGameObject();
-
-		const int geometrySlot = 0;
-		LoadMesh(geometrySlot, modelPath);
-
-		SEntityPhysicalizeParams physicalizationParams;
-		physicalizationParams.type = PE_RIGID;
-		physicalizationParams.mass = GetPropertyFloat(eProperty_Mass);
-
-		GetEntity()->Physicalize(physicalizationParams);
+		Reset();
 	}
 }
 
 
-void CAnimatedDoorComponent::Register()
+void CAnimatedDoorComponent::Reset()
 {
-	auto properties = new SNativeEntityPropertyInfo [eNumProperties];
-	memset(properties, 0, sizeof(SNativeEntityPropertyInfo) * eNumProperties);
-
-	RegisterEntityPropertyObject(properties, eProperty_Model, "Model", "", "Sets the object of the entity");
-	RegisterEntityProperty<float>(properties, eProperty_Mass, "Mass", "", "Sets the object's mass", 0, 10000);
-
-	// Finally, register the entity class so that instances can be created later on either via Launcher or Editor
-	CGameFactory::RegisterNativeEntity<CAnimatedDoorComponent>("AnimatedDoor", "Doors", "Light.bmp", 0u, properties, eNumProperties);
-
-	// Create flownode
-	CGameEntityNodeFactory &nodeFactory = CGameFactory::RegisterEntityFlowNode("AnimatedDoor");
-
-	// Define input ports, and the callback function for when they are triggered
-	std::vector<SInputPortConfig> inputs;
-	inputs.push_back(InputPortConfig_Void("Open", "Open the door"));
-	inputs.push_back(InputPortConfig_Void("Close", "Close the door"));
-	nodeFactory.AddInputs(inputs, OnFlowgraphActivation);
-
-	// Mark the factory as complete, indicating that there will be no additional ports
-	nodeFactory.Close();
-}
-
-
-void CAnimatedDoorComponent::OnFlowgraphActivation(EntityId entityId, IFlowNode::SActivationInfo *pActInfo, const class CFlowGameEntityNode *pNode)
-{
-	if (auto pExtension = static_cast<CAnimatedDoorComponent *>(QueryExtension(entityId)))
+	if (strlen(m_geometry) > 0)
 	{
-		if (IsPortActive(pActInfo, eInputPort_Open))
-		{
-			//			pExtension->SetPropertyBool(eProperty_IsOpen, true);
-		}
-		else if (IsPortActive(pActInfo, eInputPort_Close))
-		{
-			//			pExtension->SetPropertyBool(eProperty_IsOpen, false);
-		}
+		GetEntity()->LoadGeometry(0, m_geometry);
+
+		SEntityPhysicalizeParams params;
+		params.type = PE_RIGID;
+		params.mass = m_mass;
+
+		GetEntity()->Physicalize(params);
 	}
 }

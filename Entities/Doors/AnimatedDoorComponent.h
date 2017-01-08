@@ -1,70 +1,56 @@
 #pragma once
 
-#include <Entities/Helpers/NativeEntityBase.h>
-#include <Entities/Interaction/IEntityInteractionComponent.h>
+#include <CryEntitySystem/IEntityComponent.h>
+#include <CryEntitySystem/IEntitySystem.h>
+#include <Entities/Interaction/EntityInteractionComponent.h>
 
 
-struct ILockableComponent;
+class CLockableComponent;
 
 
 /**
 An animated door.
 
-\sa CGameObjectExtensionHelper<CAnimatedDoorComponent, CNativeEntityBase>
+\sa IEntityComponent
+\sa IEntityPropertyGroup
+\sa IInteractionContainer
 **/
-class CAnimatedDoorComponent : public CGameObjectExtensionHelper<CAnimatedDoorComponent, CNativeEntityBase>, public IInteractionContainer
+class CAnimatedDoorComponent : public IEntityComponent, public IEntityPropertyGroup, public IInteractionContainer
 {
+	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CAnimatedDoorComponent, "AnimatedDoor", 0xD246E11FE7E248F0, 0xB512402908F84496)
+
 public:
-	enum EInputPorts
-	{
-		eInputPort_Open = 0,
-		eInputPort_Close
-	};
+	// IEntityComponent
+	void Initialize() override;
+	void ProcessEvent(SEntityEvent& event) override;
+	uint64 GetEventMask() const { return BIT64(ENTITY_EVENT_START_LEVEL) | BIT64(ENTITY_EVENT_RESET) | BIT64(ENTITY_EVENT_EDITOR_PROPERTY_CHANGED) | BIT64(ENTITY_EVENT_XFORM_FINISHED_EDITOR); }
+	struct IEntityPropertyGroup* GetPropertyGroup() override { return this; }
+	// ~IEntityComponent
+	
+	// IEntityPropertyGroup
+	const char* GetLabel() const { return "AnimatedDoor"; };
+	void SerializeProperties(Serialization::IArchive& archive);
+	// ~IEntityPropertyGroup
 
-	// Indices of the properties, registered in the Register function
-	enum EProperties
-	{
-		eProperty_Model = 0,
-		eProperty_Mass,
+	// IInteractionContainer
+	void ContainerOpen() override { gEnv->pLog->LogAlways("Interation Toggle fired."); };
+	void ContainerClose() override { gEnv->pLog->LogAlways("Interation Toggle fired."); };
+	void ContainerLock() override { gEnv->pLog->LogAlways("Interation Toggle fired."); };
+	void ContainerUnlock() override { gEnv->pLog->LogAlways("Interation Toggle fired."); };
+	// ~IInteractionContainer
 
-		eNumProperties
-	};
-
-
-	CAnimatedDoorComponent();
+	// CAnimatedDoorComponent
+	CAnimatedDoorComponent() {};
 	virtual ~CAnimatedDoorComponent() {}
 
-
-	// ***
-	// *** IInteractionContainer
-	// ***
-
-	void ContainerOpen() override { gEnv->pLog->LogAlways("Interation Toggle fired."); /*ToggleSwitch();*/ };
-	void ContainerClose() override { gEnv->pLog->LogAlways("Interation Toggle fired."); /*ToggleSwitch();*/ };
-	void ContainerLock() override { gEnv->pLog->LogAlways("Interation Toggle fired."); /*ToggleSwitch();*/ };
-	void ContainerUnlock() override { gEnv->pLog->LogAlways("Interation Toggle fired."); /*ToggleSwitch();*/ };
-
-
-	// CNativeEntityBase
-	void PostInit(IGameObject* pGameObject) override;
-	void ProcessEvent(SEntityEvent& event) override;
-	// ~CNativeEntityBase
-
-	// Called to register the entity class and its properties
-	static void Register();
-
-	// Called when one of the input Flowgraph ports are activated in one of the entity instances tied to this class
-	static void OnFlowgraphActivation(EntityId entityId, IFlowNode::SActivationInfo* pActInfo, const class CFlowGameEntityNode *pNode);
-
-protected:
+private:
 	// Called on entity spawn, or when the state of the entity changes in Editor
 	void Reset();
 
-	// ***
-	// *** CAnimatedDoorComponent
-	// ***
+	string m_geometry { "objects/default/primitive_box.cgf" };
+	float m_mass { 1.0f };
 
-	ILockableComponent* m_lockableExtension { nullptr };
+	CLockableComponent* m_lockableExtension { nullptr };
 
-	IEntityInteractionComponent* m_interactor { nullptr };
+	CEntityInteractionComponent* m_interactor { nullptr };
 };

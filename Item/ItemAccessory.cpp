@@ -285,7 +285,7 @@ void CItem::RemoveAllAccessories()
 //	//Luciano - send game event
 //	if (g_pGame) // game gets destroyed before entitysystem, who owns this CItem
 //	{
-//		gEnv->pGame->GetIGameFramework()->GetIGameplayRecorder()->Event(GetOwner(), GameplayEvent(eGE_AttachedAccessory, pAccessoryClass->GetName(), (float) attach, (void*) (EXPAND_PTR) GetEntityId()));
+//		gEnv->pGameFramework->GetIGameplayRecorder()->Event(GetOwner(), GameplayEvent(eGE_AttachedAccessory, pAccessoryClass->GetName(), (float) attach, (void*) (EXPAND_PTR) GetEntityId()));
 //
 //		CRecordingSystem* pRecordingSystem = g_pGame->GetRecordingSystem();
 //		if (pRecordingSystem)
@@ -542,7 +542,7 @@ void CItem::RemoveAllAccessories()
 //		IActionController* pController = GetActionController();
 //		if(pController)
 //		{
-//			CMannequinUserParamsManager& mannequinUserParams = gEnv->pGame->GetIGameFramework()->GetMannequinInterface().GetMannequinUserParamsManager();
+//			CMannequinUserParamsManager& mannequinUserParams = gEnv->pGameFramework->GetMannequinInterface().GetMannequinUserParamsManager();
 //			const SMannequinItemParams* pParams = mannequinUserParams.FindOrCreateParams<SMannequinItemParams>(pController);
 //			
 //			UpdateAccessoryTags(pParams, pController->GetContext().state, true);
@@ -559,7 +559,7 @@ void CItem::RemoveAllAccessories()
 //void CItem::SwitchAccessory(const ItemString& accessory)
 //{
 //	uint16 classId = 0;
-//	bool result = gEnv->pGame->GetIGameFramework()->GetNetworkSafeClassId(classId, accessory.c_str());
+//	bool result = gEnv->pGameFramework->GetNetworkSafeClassId(classId, accessory.c_str());
 //
 //#if !defined(_RELEASE)
 //	if(!result)
@@ -642,7 +642,7 @@ void CItem::RemoveAllAccessories()
 //void CItem::DetachAccessory(const ItemString& accessory)
 //{
 //	uint16 classId = 0;
-//	bool result = gEnv->pGame->GetIGameFramework()->GetNetworkSafeClassId(classId, accessory.c_str());
+//	bool result = gEnv->pGameFramework->GetNetworkSafeClassId(classId, accessory.c_str());
 //
 //#if !defined(_RELEASE)
 //	if(!result)

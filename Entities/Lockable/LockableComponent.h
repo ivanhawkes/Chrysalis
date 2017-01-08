@@ -1,16 +1,19 @@
 #pragma once
 
-#include <Entities/Lockable/ILockableComponent.h>
+#include <CryEntitySystem/IEntityComponent.h>
+#include <CryEntitySystem/IEntitySystem.h>
 
 
 /**
 A lock extension.
 
-\sa CGameObjectExtensionHelper&lt;CLockableComponent, CNativeEntityBase&gt;
-\sa ILockExtension
+\sa IEntityComponent
+\sa IEntityPropertyGroup
 **/
-class CLockableComponent : public CGameObjectExtensionHelper <CLockableComponent, ILockableComponent>
+class CLockableComponent : public IEntityComponent, public IEntityPropertyGroup
 {
+	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CLockableComponent, "Lockable", 0x819A4630CA1840F9, 0xB4C7F93B3F13A69A)
+
 public:
 	enum EInputPorts
 	{
@@ -18,21 +21,17 @@ public:
 		eInputPort_Lock
 	};
 
-	// Indices of the properties, registered in the Register function
-	enum EProperties
-	{
-		ePropertyGroup_LockableBegin,
-		eProperty_Lockable_IsLocked,
-		ePropertyGroup_LockableEnd,
+	// IEntityComponent
+	void Initialize() override {};
+	void ProcessEvent(SEntityEvent& event) override;
+	uint64 GetEventMask() const { return BIT64(ENTITY_EVENT_START_LEVEL) | BIT64(ENTITY_EVENT_RESET) | BIT64(ENTITY_EVENT_EDITOR_PROPERTY_CHANGED) | BIT64(ENTITY_EVENT_XFORM_FINISHED_EDITOR); }
+	struct IEntityPropertyGroup* GetPropertyGroup() override { return this; }
+	// ~IEntityComponent
 
-		eNumProperties
-	};
-
-	// CNativeEntityBase
-	void PostInit(IGameObject * pGameObject) override;
-	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
-	// ~CNativeEntityBase
-
+	// IEntityPropertyGroup
+	const char* GetLabel() const { return "Lockable"; };
+	void SerializeProperties(Serialization::IArchive& archive);
+	// ~IEntityPropertyGroup
 
 	// ***
 	// *** CLockableComponent
@@ -47,9 +46,8 @@ public:
 	};
 	const SExternalCVars &GetCVars() const;
 
-	// Called to register the entity class and its properties
-	static void Register();
+private:
+	bool m_isLocked { true };
 
-	// Called when one of the input Flowgraph ports are activated in one of the entity instances tied to this class
-	static void OnFlowgraphActivation(EntityId entityId, IFlowNode::SActivationInfo* pActInfo, const class CFlowGameEntityNode *pNode);
+	void Reset();
 };

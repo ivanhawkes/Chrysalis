@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Item/ISimpleItem.h>
-//#include <CryCore/BoostHelpers.h>
 #include <IActorSystem.h>
 #include <Item/Parameters/ItemBaseParameter.h>
 #include <Entities/EntityEffects.h>

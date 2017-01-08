@@ -1,8 +1,12 @@
 #include <StdAfx.h>
 
 #include "EntityInteractionComponent.h"
+#include "Plugin/ChrysalisCorePlugin.h"
 #include <Player/Input/IPlayerInputComponent.h>
 #include <Player/Player.h>
+
+
+CRYREGISTER_CLASS(CEntityInteractionComponent)
 
 
 class CEntityInteractionRegistrator
@@ -11,10 +15,16 @@ class CEntityInteractionRegistrator
 {
 	virtual void Register() override
 	{
-		CGameFactory::RegisterGameObjectExtension<CEntityInteractionComponent>("EntityInteraction");
+		RegisterEntityWithDefaultComponent<CEntityInteractionComponent>("EntityInteraction", "Entities");
+
+		// This should make the entity class invisible in the editor.
+		auto cls = gEnv->pEntitySystem->GetClassRegistry()->FindClass("EntityInteraction");
+		cls->SetFlags(cls->GetFlags() | ECLF_INVISIBLE);
 
 		RegisterCVars();
 	}
+
+	void Unregister() override {};
 
 	void RegisterCVars()
 	{
@@ -26,19 +36,40 @@ CEntityInteractionRegistrator g_entityInteractionRegistrator;
 
 
 // ***
-// *** IGameObjectExtension
+// *** IEntityComponent
 // ***
 
 
-void CEntityInteractionComponent::PostInit(IGameObject * pGameObject)
+void CEntityInteractionComponent::Initialize()
 {
-	// Allow this instance to be updated every frame.
-	pGameObject->EnableUpdateSlot(this, 0);
+	// Required for 5.3 to call update.
+	GetEntity()->Activate(true);
 }
 
 
-void CEntityInteractionComponent::Update(SEntityUpdateContext& ctx, int updateSlot)
+void CEntityInteractionComponent::ProcessEvent(SEntityEvent& event)
 {
+	switch (event.event)
+	{
+		case ENTITY_EVENT_UPDATE:
+			Update();
+			break;
+	}
+}
+
+
+void CEntityInteractionComponent::SerializeProperties(Serialization::IArchive& archive)
+{
+	//if (!archive.isInput())
+	//{
+	//	Reset();
+	//}
+}
+
+
+void CEntityInteractionComponent::Update()
+{
+	// TODO: Remove this if it's not actually needed.
 	auto pEntity = GetEntity();
 	if (!pEntity)
 		return;
@@ -57,17 +88,17 @@ void CEntityInteractionComponent::Update(SEntityUpdateContext& ctx, int updateSl
 
 
 // ***
-// *** IEntityInteractionComponent
+// *** CEntityInteractionComponent
 // ***
 
 
-void IEntityInteractionComponent::AddInteraction(IInteractionPtr interaction)
+void CEntityInteractionComponent::AddInteraction(IInteractionPtr interaction)
 {
 	m_Interactions.push_back(interaction);
 }
 
 
-void IEntityInteractionComponent::RemoveInteraction(string verb)
+void CEntityInteractionComponent::RemoveInteraction(string verb)
 {
 	m_Interactions.erase(std::remove_if(m_Interactions.begin(), m_Interactions.end(),
 		[&] (IInteractionPtr i) { return i->GetVerb().compare(verb) == 0; }),
@@ -75,7 +106,7 @@ void IEntityInteractionComponent::RemoveInteraction(string verb)
 }
 
 
-std::vector<string> IEntityInteractionComponent::GetVerbs(bool includeHidden)
+std::vector<string> CEntityInteractionComponent::GetVerbs(bool includeHidden)
 {
 	std::vector<string> verbs;
 
@@ -94,7 +125,7 @@ std::vector<string> IEntityInteractionComponent::GetVerbs(bool includeHidden)
 }
 
 
-IInteractionWeakPtr IEntityInteractionComponent::GetInteraction(string verb)
+IInteractionWeakPtr CEntityInteractionComponent::GetInteraction(string verb)
 {
 	for (auto& it : m_Interactions)
 	{
@@ -108,7 +139,7 @@ IInteractionWeakPtr IEntityInteractionComponent::GetInteraction(string verb)
 }
 
 
-IInteractionWeakPtr IEntityInteractionComponent::SelectInteractionVerb(string verb)
+IInteractionWeakPtr CEntityInteractionComponent::SelectInteractionVerb(string verb)
 {
 	for (auto& it : m_Interactions)
 	{
@@ -123,31 +154,13 @@ IInteractionWeakPtr IEntityInteractionComponent::SelectInteractionVerb(string ve
 }
 
 
-void IEntityInteractionComponent::ClearInteractionVerb()
+void CEntityInteractionComponent::ClearInteractionVerb()
 {
 	m_selectedInteraction = IInteractionPtr();
 }
 
 
-//void IEntityInteractionComponent::OnInit()
-//{
-//	if (m_selectedInteraction)
-//	{
-//		m_selectedInteraction->OnInit();
-//	}
-//}
-//
-//
-//void IEntityInteractionComponent::OnReset()
-//{
-//	if (m_selectedInteraction)
-//	{
-//		m_selectedInteraction->OnReset();
-//	}
-//}
-
-
-void IEntityInteractionComponent::OnInteractionStart()
+void CEntityInteractionComponent::OnInteractionStart()
 {
 	if (m_selectedInteraction)
 	{
@@ -156,16 +169,7 @@ void IEntityInteractionComponent::OnInteractionStart()
 }
 
 
-//void IEntityInteractionComponent::OnUpdate(float deltaX, float deltaY)
-//{
-//	if (m_selectedInteraction)
-//	{
-//		m_selectedInteraction->OnUpdate(deltaX, deltaY);
-//	}
-//}
-
-
-void IEntityInteractionComponent::OnInteractionComplete()
+void CEntityInteractionComponent::OnInteractionComplete()
 {
 	if (m_selectedInteraction)
 	{
@@ -174,27 +178,13 @@ void IEntityInteractionComponent::OnInteractionComplete()
 }
 
 
-void IEntityInteractionComponent::OnInteractionCancel()
+void CEntityInteractionComponent::OnInteractionCancel()
 {
 	if (m_selectedInteraction)
 	{
 		m_selectedInteraction->OnInteractionCancel();
 	}
 }
-
-
-//void IEntityInteractionComponent::OnPost()
-//{
-//	if (m_selectedInteraction)
-//	{
-//		m_selectedInteraction->OnPost();
-//	}
-//}
-
-
-// ***
-// *** CEntityInteractionComponent
-// ***
 
 
 const CEntityInteractionComponent::SExternalCVars& CEntityInteractionComponent::GetCVars() const

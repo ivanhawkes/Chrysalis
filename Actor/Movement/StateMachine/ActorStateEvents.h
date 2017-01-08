@@ -2,6 +2,7 @@
 
 #include <StateMachine/StateMachine.h>
 #include <Actor/ActorState.h>
+#include <IActionMapManager.h>
 
 
 class CActor;

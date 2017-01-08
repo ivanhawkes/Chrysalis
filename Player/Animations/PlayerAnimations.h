@@ -5,7 +5,8 @@ Helper interface for player animation control.
 */
 #pragma once
 
-#include "ICryMannequin.h"
+#include <ICryMannequin.h>
+
 
 typedef TAction<SAnimationContext> TPlayerAction;
 

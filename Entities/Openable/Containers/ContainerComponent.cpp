@@ -1,18 +1,22 @@
 #include <StdAfx.h>
 
 #include "ContainerComponent.h"
+#include "Plugin/ChrysalisCorePlugin.h"
 
 
-class CContainerExtensionRegistrator
-	: public IEntityRegistrator
-	, public CContainerComponent::SExternalCVars
+CRYREGISTER_CLASS(CContainerComponent)
+
+
+class CContainerExtensionRegistrator : public IEntityRegistrator, public CContainerComponent::SExternalCVars
 {
 	virtual void Register() override
 	{
-		CGameFactory::RegisterGameObjectExtension<CContainerComponent>("Container");
+		RegisterEntityWithDefaultComponent<CContainerComponent>("Container", "Containers", "Light.bmp");
 
 		RegisterCVars();
 	}
+
+	void Unregister() override {};
 
 	void RegisterCVars()
 	{
@@ -28,21 +32,33 @@ const CContainerComponent::SExternalCVars& CContainerComponent::GetCVars() const
 }
 
 
-// ***
-// *** IGameObjectExtension
-// ***
+void CContainerComponent::ProcessEvent(SEntityEvent& event)
+{
+	switch (event.event)
+	{
+		// Physicalize on level start for Launcher
+		case ENTITY_EVENT_START_LEVEL:
+
+			// Editor specific, physicalize on reset, property change or transform change
+		case ENTITY_EVENT_RESET:
+		case ENTITY_EVENT_EDITOR_PROPERTY_CHANGED:
+		case ENTITY_EVENT_XFORM_FINISHED_EDITOR:
+			Reset();
+			break;
+	}
+}
 
 
-void CContainerComponent::PostInit(IGameObject * pGameObject)
+void CContainerComponent::Reset()
 {
 }
 
 
-void CContainerComponent::Update(SEntityUpdateContext& ctx, int updateSlot)
+
+void CContainerComponent::SerializeProperties(Serialization::IArchive& archive)
 {
+	if (!archive.isInput())
+	{
+		Reset();
+	}
 }
-
-
-// ***
-// *** CContainerComponent
-// ***

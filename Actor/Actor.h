@@ -8,6 +8,8 @@
 #include <Actor/ActorStance.h>
 #include <Actor/IActorEventListener.h>
 #include <CryAISystem/IAgent.h>
+#include <CryEntitySystem/IEntityComponent.h>
+#include <CryEntitySystem/IEntitySystem.h>
 //#include <Actor/Character/Movement/CharacterRotation.h>
 
 class CPlayer;
@@ -15,7 +17,7 @@ class CActorMovementController;
 class IActionController;
 struct SAnimationContext;
 struct SActorMovementRequest;
-struct IEntityAwarenessComponent;
+class CEntityAwarenessComponent;
 
 
 /** Represents all of the available actor class types. */
@@ -53,6 +55,13 @@ class CActor : public CGameObjectExtensionHelper<CActor, ISimpleActor, 40>, publ
 {
 public:
 
+	// IEntityComponent
+	void Initialize() override;
+	void ProcessEvent(SEntityEvent& event) override;
+	uint64 GetEventMask() const { return BIT64(ENTITY_EVENT_UPDATE) | BIT64(ENTITY_EVENT_PREPHYSICSUPDATE); }
+	//struct IEntityPropertyGroup* GetPropertyGroup() override { return this; }
+	// ~IEntityComponent
+
 	enum EProperties
 	{
 		// Animation.
@@ -74,17 +83,13 @@ public:
 	// ISimpleActor
 	bool Init(IGameObject * pGameObject) override;
 	void PostInit(IGameObject * pGameObject) override;
-	bool ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override;
-	void PostReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override;
 	void FullSerialize(TSerialize ser) override;
 	void PostSerialize() override {};
 	void SerializeSpawnInfo(TSerialize ser) override {};
 	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
-	void HandleEvent(const SGameObjectEvent& event) override;
-	void ProcessEvent(SEntityEvent& event) override;
 
 	// It is critical we override the event priority to ensure we handle the event before CAnimatedCharacter.
-	virtual IComponent::ComponentEventPriority GetEventPriority(const int eventID) const override;
+	virtual IEntityComponent::ComponentEventPriority GetEventPriority(const int eventID) const override;
 
 	int GetTeamId() const override { return m_teamId; };
 
@@ -362,6 +367,12 @@ public:
 
 protected:
 
+	string m_geometry { "objects/default/primitive_box.cgf" };
+	float m_mass { 82.0f };
+	string m_controllerDefinition { "sdk_tutorial3controllerdefs.xml" };
+	string m_scopeContext { "MainCharacter" };
+	string m_animationDatabase { "sdk_tutorial3database.adb" };
+
 	/** Called to indicate the entity must reset itself. This is often done during PostInit() and
 	additionally by the editor when you both enter and leave game mode. */
 	virtual void Reset();
@@ -390,7 +401,6 @@ protected:
 
 
 private:
-
 	/** Specifies whether this instance is the client actor. */
 	bool m_isClient { false };
 
@@ -407,10 +417,10 @@ private:
 	SAnimationContext* m_pAnimationContext { nullptr };
 
 	/** An component which is used to discover entities near the actor. */
-	IEntityAwarenessComponent* m_pAwareness { nullptr };
+	CEntityAwarenessComponent* m_pAwareness { nullptr };
 
 	/**	A dynamic response proxy. **/
-	IEntityDynamicResponseProxyPtr m_pDrsProxy { nullptr };
+	IEntityDynamicResponseComponent* m_pDrsComponent;
 
 	// HACK: to test switching movement and idle fragments. Should query physics instead.
 	// Keeping the actions here allows me to stop them, which is good for testing, but wrong in

@@ -70,7 +70,7 @@ bool CCharacterStateFly::OnPrePhysicsUpdate(CCharacter& Character, const SActorM
 	//					break;
 	//			}
 
-	//			gEnv->pRenderer->Draw2dLabel (20.f, 20.f, 1.5f, Col_White, 0, buffer);
+	//			IRenderAuxText::Draw2dLabel (20.f, 20.f, 1.5f, Col_White, 0, buffer);
 	//			m_flyModeDisplayTime -= gEnv->pTimer->GetFrameTime ();
 	//		}
 	//	}

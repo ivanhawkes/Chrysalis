@@ -1,7 +1,6 @@
 #include <StdAfx.h>
 
 #include "CharacterStateSwim.h"
-#include <Game/Game.h>
 #include <Actor/Character/Character.h>
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
 #include "CharacterStateEvents.h"

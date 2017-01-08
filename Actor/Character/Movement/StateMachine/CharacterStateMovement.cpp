@@ -10,7 +10,6 @@ Use "OnSetStance" if you need this functionality!
 
 #include <StateMachine/StateMachine.h>
 #include <IAnimatedCharacter.h>
-#include <Game/Game.h>
 #include <Actor/Character/Character.h>
 #include <Actor/Movement/StateMachine/ActorStateEvents.h>
 #include "CharacterStateEvents.h"

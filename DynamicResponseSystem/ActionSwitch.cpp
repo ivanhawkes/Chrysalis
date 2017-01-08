@@ -2,7 +2,6 @@
 
 #include "ActionSwitch.h"
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
-#include <CryDynamicResponseSystem/IDynamicResponseAction.h>
 
 
 DRS::IResponseActionInstanceUniquePtr CActionSwitch::Execute(DRS::IResponseInstance* pResponseInstance)

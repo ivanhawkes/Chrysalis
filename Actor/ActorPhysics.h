@@ -2,6 +2,7 @@
 
 #include <CryNetwork/ISerialize.h>
 #include <CryMath/Cry_Vector3.h>
+#include <CryCore/CryFlags.h>
 #include <IGameObject.h>
 
 
@@ -31,7 +32,7 @@ struct SActorPhysics
 		, groundColliderId(0)*/
 	{}
 
-	void Serialize(TSerialize ser, EEntityAspects aspects);
+	void Serialize(TSerialize ser, EEntityAspects aspects) {};
 
 	CCryFlags<uint32> flags;
 

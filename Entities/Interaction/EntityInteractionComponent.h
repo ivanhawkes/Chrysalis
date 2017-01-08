@@ -1,24 +1,32 @@
 #pragma once
 
-#include <IGameObject.h>
-#include <Entities/Interaction/IEntityInteractionComponent.h>
+#include <CryEntitySystem/IEntityComponent.h>
+#include <CryEntitySystem/IEntitySystem.h>
+#include <Entities/Interaction/IEntityInteraction.h>
 
 
 /**
 TODO: Document this class.
 
-\sa	CGameObjectExtensionHelper&lt;CEntityInteractionComponent, IGameObjectExtension&gt;
-\sa	IGameObjectView
-*/
-class CEntityInteractionComponent : public CGameObjectExtensionHelper <CEntityInteractionComponent, IEntityInteractionComponent>
+\sa IEntityComponent
+\sa IEntityPropertyGroup
+**/
+class CEntityInteractionComponent : public IEntityComponent, public IEntityPropertyGroup
 {
-public:
-	// ***
-	// *** IGameObjectExtension
-	// ***
+	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CEntityInteractionComponent, "EntityInteraction", 0xE2F360C6F7FF41DE, 0xA1A2D7C7C64AD730)
 
-	void PostInit(IGameObject * pGameObject) override;
-	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
+public:
+	// IEntityComponent
+	void Initialize() override;
+	void ProcessEvent(SEntityEvent& event) override;
+	uint64 GetEventMask() const { return BIT64(ENTITY_EVENT_UPDATE); }
+	struct IEntityPropertyGroup* GetPropertyGroup() override { return this; }
+	// ~IEntityComponent
+
+	// IEntityPropertyGroup
+	const char* GetLabel() const { return "EntityInteraction"; };
+	void SerializeProperties(Serialization::IArchive& archive);
+	// ~IEntityPropertyGroup
 
 
 	// ***
@@ -28,11 +36,28 @@ public:
 	CEntityInteractionComponent() {};
 	virtual ~CEntityInteractionComponent() {};
 
+	/** Updates this instance. */
+	void Update();
+
+	std::vector<string> GetVerbs(bool includeHidden = false);
+
+	void AddInteraction(IInteractionPtr interaction);
+	void RemoveInteraction(string verb);
+	IInteractionWeakPtr GetInteraction(string verb);
+	IInteractionWeakPtr SelectInteractionVerb(string verb);
+	void ClearInteractionVerb();
+
+	void OnInteractionStart();
+	void OnInteractionComplete();
+	void OnInteractionCancel();
+
 	struct SExternalCVars
 	{
 		int m_debug;
 	};
 	const SExternalCVars &GetCVars() const;
 
-	IInteraction* m_selectedInteraction { nullptr };
+private:
+	std::vector<IInteractionPtr> m_Interactions;
+	IInteractionPtr m_selectedInteraction { IInteractionPtr() };
 };

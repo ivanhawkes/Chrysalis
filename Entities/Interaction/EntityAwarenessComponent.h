@@ -8,29 +8,75 @@ with which the actor might wish to or need to interact.
 **/
 #pragma once
 
-#include <Entities/Interaction/IEntityAwarenessComponent.h>
+#include <CryEntitySystem/IEntityComponent.h>
+#include <CryEntitySystem/IEntitySystem.h>
+#include <CryPhysics/RayCastQueue.h>
+#include <CryAction.h>
+#include <CryActionPhysicQueues.h>
 
 
 struct IActor;
 struct IViewSystem;
 
+struct ray_hit;
+typedef std::vector<EntityId> Entities;
 
-class CEntityAwarenessComponent : public CGameObjectExtensionHelper<CEntityAwarenessComponent, IEntityAwarenessComponent>
+
+class CEntityAwarenessComponent : public IEntityComponent, public IEntityPropertyGroup
 {
+	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CEntityAwarenessComponent, "EntityAwareness", 0xB077AB1547AF4BEB, 0x9BF9D68EE49399E1)
+
 public:
 
-	// ISimpleExtension
-	bool Init(IGameObject * pGameObject) override;
-	void PostInit(IGameObject * pGameObject) override;
-	void FullSerialize(TSerialize ser) override;
-	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
-	void GetMemoryUsage(ICrySizer *pSizer) const override;
-	// ~ISimpleExtension
+	// IEntityComponent
+	void Initialize() override;
+	void ProcessEvent(SEntityEvent& event) override;
+	uint64 GetEventMask() const { return BIT64(ENTITY_EVENT_UPDATE); }
+	struct IEntityPropertyGroup* GetPropertyGroup() override { return this; }
+	virtual void GetMemoryUsage(ICrySizer* pSizer) const;
+	// ~IEntityComponent
 
+	// IEntityPropertyGroup
+	const char* GetLabel() const { return "EntityAwareness"; };
+	void SerializeProperties(Serialization::IArchive& archive);
+	// ~IEntityPropertyGroup
 
 	// ***
-	// *** IEntityAwarenessComponent
+	// *** CEntityAwarenessComponent
 	// ***
+
+	enum EDebugBits
+	{
+		eDB_Debug					= BIT(0),
+		eDB_ProximalEntities		= BIT(1),
+		eDB_NearEntities			= BIT(2),
+		eDB_RayCast					= BIT(3),
+		eDB_InFront					= BIT(4),
+		eDB_DotFiltered				= BIT(5),
+	};
+
+	CEntityAwarenessComponent();
+	virtual ~CEntityAwarenessComponent();
+
+
+	struct SExternalCVars
+	{
+		int m_debug;
+	};
+	const SExternalCVars &GetCVars() const;
+
+
+	/** Updates this instance. */
+	void Update();
+
+
+	/**
+	Functor that receives the results of deferred ray-cast operations.
+
+	\param	rayID  Identifier for the ray.
+	\param	result The result.
+	**/
+	void OnRayCastDataReceived(const QueuedRayID& rayID, const RayCastResult& result);
 
 
 	/**
@@ -43,7 +89,7 @@ public:
 
 	/**
 	Gets the normalised direction the actor's eye are gazing.
-	
+
 	\return The direction.
 	**/
 	ILINE const Quat& GetDir() const { return m_eyeDirection; }
@@ -54,14 +100,14 @@ public:
 
 	\param	proximityRadius The proximity radius.
 	**/
-	ILINE void SetProximityRadius(float proximityRadius) override
+	ILINE void SetProximityRadius(float proximityRadius)
 	{
 		m_proximityRadius = proximityRadius;
 		m_validQueries &= ~(eWQ_Proximity | eWQ_InFrontOf);
 	}
 
 
-	ILINE Entities& ProximityQuery() override
+	ILINE Entities& ProximityQuery()
 	{
 		RefreshQueryCache(eWQ_Proximity);
 
@@ -69,7 +115,7 @@ public:
 	}
 
 
-	ILINE Entities& NearQuery() override
+	ILINE Entities& NearQuery()
 	{
 		RefreshQueryCache(eWQ_Proximity);
 		RefreshQueryCache(eWQ_CloseBy);
@@ -117,7 +163,7 @@ public:
 
 	\return null if it fails, else the successful raycast data.
 	**/
-	ILINE const ray_hit* RaycastQuery() override
+	ILINE const ray_hit* RaycastQuery()
 	{
 		return GetLookAtPoint(m_proximityRadius);
 	}
@@ -126,7 +172,7 @@ public:
 	/**
 	A proximity based query that limits the results to only those entities which are considered to be in front of the
 	actor. These are limited based on a line segment from the actor's eyes, forward in the direction they are looking.
-	
+
 	\return The entities in front of the actor.
 	**/
 	ILINE const Entities& GetEntitiesInFrontOf()
@@ -155,47 +201,13 @@ public:
 	The best match is sorted into the first position in the results vector. All other results are unsorted.
 
 	Results aren't cached for this query, except for the cacheing provided by the unlaying 'near' query.
-	
+
 	\param	minDot (Optional) the minimum dot product.
 	\param	maxDot (Optional) the maximum dot product.
-	
+
 	\return The near dot filtered.
 	**/
-	const Entities& GetNearDotFiltered(float minDot = 0.9f, float maxDot = 1.0f) override;
-
-
-	// ***
-	// *** CEntityAwarenessComponent
-	// ***
-
-	enum EDebugBits
-	{
-		eDB_Debug					= BIT(0),
-		eDB_ProximalEntities		= BIT(1),
-		eDB_NearEntities			= BIT(2),
-		eDB_RayCast					= BIT(3),
-		eDB_InFront					= BIT(4),
-		eDB_DotFiltered				= BIT(5),
-	};
-
-	CEntityAwarenessComponent();
-	virtual ~CEntityAwarenessComponent();
-
-
-	struct SExternalCVars
-	{
-		int m_debug;
-	};
-	const SExternalCVars &GetCVars() const;
-
-
-	/**
-	Functor that receives the results of deferred ray-cast operations.
-
-	\param	rayID  Identifier for the ray.
-	\param	result The result.
-	**/
-	void OnRayCastDataReceived(const QueuedRayID& rayID, const RayCastResult& result);
+	const Entities& GetNearDotFiltered(float minDot = 0.9f, float maxDot = 1.0f);
 
 
 private:
@@ -214,8 +226,9 @@ private:
 		void Reset()
 		{
 			if (rayId != 0)
-			{
-				g_pGame->GetRayCaster().Reset();
+			{			
+				// HACK: Massive issue, removed due to problems linking to CryAction in 5.3.
+				//static_cast<CCryAction*>(gEnv->pGameFramework)->GetPhysicQueues().GetRayCaster().Reset();
 				rayId = 0;
 			}
 			counter = 0;

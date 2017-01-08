@@ -2,7 +2,6 @@
 
 #include "ItemBaseParameter.h"
 #include <GameXmlParamReader.h>
-#include <Game/Game.h>
 #include <Game/Cache/GameCache.h>
 #include <Item/Parameters/ItemParameter.h>
 

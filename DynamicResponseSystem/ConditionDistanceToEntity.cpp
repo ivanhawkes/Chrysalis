@@ -1,9 +1,8 @@
 #include "StdAfx.h"
 
 #include "ConditionDistanceToEntity.h"
-#include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
 #include <CrySerialization/IArchive.h>
-#include <cmath>
+#include <CryEntitySystem/IEntitySystem.h>
 
 
 CConditionDistanceToEntity::CConditionDistanceToEntity()

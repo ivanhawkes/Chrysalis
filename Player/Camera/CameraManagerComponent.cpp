@@ -1,24 +1,33 @@
 #include <StdAfx.h>
 
 #include "CameraManagerComponent.h"
+#include "Plugin/ChrysalisCorePlugin.h"
 #include "ActionRPGCameraComponent.h"
 #include "FirstPersonCameraComponent.h"
 #include <Player/Player.h>
 #include <Utility/StringConversions.h>
 
 
-class CCameraManagerRegistrator
-	: public IEntityRegistrator
-	, public CCameraManagerComponent::SExternalCVars
+CRYREGISTER_CLASS(CCameraManagerComponent)
+
+
+class CCameraManagerRegistrator : public IEntityRegistrator, public CCameraManagerComponent::SExternalCVars
 {
 	virtual void Register() override
 	{
-		CGameFactory::RegisterGameObjectExtension<CCameraManagerComponent>("CameraManager");
+//		RegisterEntityWithDefaultComponent<CCameraManagerComponent>("CameraManager", "Camera", "Light.bmp");
+		CChrysalisCorePlugin::RegisterEntityWithDefaultComponent<CCameraManagerComponent>("CameraManager");
+
+		// This should make the entity class invisible in the editor.
+		auto cls = gEnv->pEntitySystem->GetClassRegistry()->FindClass("CameraManager");
+		cls->SetFlags(cls->GetFlags() | ECLF_INVISIBLE);
 
 		REGISTER_CVAR2("camera_manager_IsThirdPerson", &m_isThirdPerson, 0, VF_CHEAT, "Is the player camera in first person or third person mode? 0 = first person, any else third person.");
 
 		m_debugViewOffset = REGISTER_STRING("camera_manager_DebugViewOffset", "0, 0, 0", VF_CHEAT, "A translation vector which is applied after the camera is initially positioned.");
 	}
+
+	void Unregister() override {};
 };
 
 CCameraManagerRegistrator g_cameraManagerRegistrator;
@@ -29,24 +38,35 @@ CCameraManagerRegistrator g_cameraManagerRegistrator;
 // ***
 
 
+void CCameraManagerComponent::Initialize()
+{
+}
+
+
 void CCameraManagerComponent::PostInit(IGameObject * pGameObject)
 {
+	// Required for 5.3 to call update.
+	GetEntity()->Activate(true);
+
 	// Allow this instance to be updated every frame.
-	pGameObject->EnableUpdateSlot(this, CPlayer::EPlayerUpdateSlot::ePlayerUpdateSlot_Main);
+	auto pEntity = GetEntity();
 
 	// Query for the player that owns this extension.
-	m_pPlayer = static_cast<CPlayer *>(pGameObject->QueryExtension("Player"));
+	m_pPlayer = pEntity->GetComponent<CPlayer>();
 
 	// Start with a clean slate and a known state.
 	memset(m_cameraModes, 0, sizeof(m_cameraModes));
 
 	// First person camera.
-	m_cameraModes [ECameraMode::eCameraMode_FirstPerson] = static_cast<ICameraComponent*>(GetGameObject()->AcquireExtension("FirstPersonCamera"));
-
-	//m_cameraModes [ECameraMode::eCameraMode_FirstPersonHmd] = new CFirstPersonCameraComponent (); // TODO: make a special one for HMD
+	m_cameraModes [ECameraMode::eCameraMode_FirstPerson] = static_cast<CFirstPersonCameraComponent*> (GetGameObject()->AcquireExtension("FirstPersonCamera"));
+	//m_cameraModes [ECameraMode::eCameraMode_FirstPerson] = pEntity->GetOrCreateComponent<CFirstPersonCameraComponent>();
 
 	// Action RPG Camera.
-	m_cameraModes [ECameraMode::eCameraMode_ActionRpg] = static_cast<ICameraComponent*>(GetGameObject()->AcquireExtension("ActionRPGCamera"));
+	m_cameraModes [ECameraMode::eCameraMode_ActionRpg] = static_cast<CActionRPGCameraComponent*> (GetGameObject()->AcquireExtension("ActionRPGCamera"));
+	//m_cameraModes [ECameraMode::eCameraMode_ActionRpg] = pEntity->GetOrCreateComponent<CActionRPGCameraComponent>();
+
+	// TODO: make a special one for HMD	
+	//m_cameraModes [ECameraMode::eCameraMode_FirstPersonHmd] = pEntity->GetOrCreateComponent<CActionRPGCameraComponent>();
 
 	// Select the initial camera based on their cvar setting for third person.
 	if (GetCVars().m_isThirdPerson)
@@ -56,7 +76,18 @@ void CCameraManagerComponent::PostInit(IGameObject * pGameObject)
 }
 
 
-void CCameraManagerComponent::Update(SEntityUpdateContext& ctx, int updateSlot)
+void CCameraManagerComponent::ProcessEvent(SEntityEvent& event)
+{
+	switch (event.event)
+	{
+		case ENTITY_EVENT_UPDATE:
+			Update2();
+			break;
+	}
+}
+
+
+void CCameraManagerComponent::Update2()
 {
 	if (m_cameraModes [m_cameraMode])
 	{
@@ -66,13 +97,13 @@ void CCameraManagerComponent::Update(SEntityUpdateContext& ctx, int updateSlot)
 			case ECameraMode::eCameraMode_FirstPerson:
 			case ECameraMode::eCameraMode_FirstPersonHmd:
 				if (GetCVars().m_isThirdPerson)
-					SetCameraMode(ECameraMode::eCameraMode_ActionRpg, "ToggleThirdPerson()");
+					SetCameraMode(ECameraMode::eCameraMode_ActionRpg, "ToggleThirdPerson(true)");
 				break;
 
 			case ECameraMode::eCameraMode_ActionRpg:
 				// TODO: Handle HMD displays gracefully.
 				if (!GetCVars().m_isThirdPerson)
-					SetCameraMode(ECameraMode::eCameraMode_FirstPerson, "ToggleThirdPerson()");
+					SetCameraMode(ECameraMode::eCameraMode_FirstPerson, "ToggleThirdPerson(false)");
 				break;
 		}
 	}
@@ -80,7 +111,7 @@ void CCameraManagerComponent::Update(SEntityUpdateContext& ctx, int updateSlot)
 
 
 // ***
-// *** ICameraManagerComponent
+// *** CCameraManagerComponent
 // ***
 
 
@@ -159,11 +190,6 @@ void CCameraManagerComponent::ToggleThirdPerson()
 {
 	SetCVars().m_isThirdPerson = !GetCVars().m_isThirdPerson;
 }
-
-
-// ***
-// *** CCameraManagerComponent
-// ***
 
 
 CCameraManagerComponent::CCameraManagerComponent()

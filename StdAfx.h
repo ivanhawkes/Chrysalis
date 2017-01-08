@@ -1,8 +1,8 @@
 #pragma once
 
 #include <CryCore/Project/CryModuleDefs.h>
-#define eCryModule eCryM_Game
-#define GAME_API   DLL_EXPORT
+#define eCryModule eCryM_EnginePlugin
+#define GAME_API DLL_EXPORT
 
 #include <CryCore/Platform/platform.h>
 #include <CrySystem/ISystem.h>

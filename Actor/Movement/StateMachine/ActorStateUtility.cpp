@@ -3,7 +3,6 @@
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
 #include <IAnimatedCharacter.h>
 #include <IItem.h>
-#include <Game/Game.h>
 #include <Actor/Character/Movement/StateMachine/CharacterStateJump.h>
 #include <Actor/Actor.h>
 #include <Utility/CryWatch.h>
@@ -360,7 +359,7 @@ void CCharacterStateUtil::UpdatePhysicsState(CActor& actor, SActorPhysics& actor
 		{
 			if (actorPhysics.groundColliderId)
 			{
-				if (IGameObject* pGameObject = gEnv->pGame->GetIGameFramework()->GetGameObject(actorPhysics.groundColliderId))
+				if (IGameObject* pGameObject = gEnv->pGameFramework->GetGameObject(actorPhysics.groundColliderId))
 				{
 					SGameObjectEvent event(eGFE_StoodOnChange, eGOEF_ToExtensions);
 					event.ptr = &actor;
@@ -371,7 +370,7 @@ void CCharacterStateUtil::UpdatePhysicsState(CActor& actor, SActorPhysics& actor
 
 			if (newGroundColliderId)
 			{
-				if (IGameObject* pGameObject = gEnv->pGame->GetIGameFramework()->GetGameObject(newGroundColliderId))
+				if (IGameObject* pGameObject = gEnv->pGameFramework->GetGameObject(newGroundColliderId))
 				{
 					SGameObjectEvent event(eGFE_StoodOnChange, eGOEF_ToExtensions);
 					event.ptr = &actor;

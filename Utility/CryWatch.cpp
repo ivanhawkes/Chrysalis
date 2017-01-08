@@ -19,8 +19,10 @@ History:
 #include "CryWatch.h"
 #include <CrySystem/ISystem.h>
 #include <CryRenderer/IRenderer.h>
-#include <Game/Game.h>
 #include <CryString/StringUtils.h>
+#include "Plugin/ChrysalisCorePlugin.h"
+#include "Plugin/ChrysalisCore.h"
+
 
 #if CRY_WATCH_ENABLED
 
@@ -32,9 +34,9 @@ static float s_max_width_this_col = 0.f;
 static float GetWatchTextYPos()
 {
 	int frame = gEnv->pRenderer->GetFrameID(false);
-
+	
 	// Apply overscan borders to console text pos when console is visible
-	float belowConsolePosY = g_pGame->GetCVars().m_watch_text_render_start_pos_y;
+	float belowConsolePosY = CChrysalisCorePlugin::Get()->GetChrysalisCore()->GetCVars().m_watch_text_render_start_pos_y;
 	const bool bConsoleVisible = GetISystem()->GetIConsole()->GetStatus();
 	if (bConsoleVisible)
 	{
@@ -48,8 +50,8 @@ static float GetWatchTextYPos()
 
 	if (s_watchTextLastPrintedDuringFrame == frame)
 	{
-		s_watchTextYPos += g_pGame->GetCVars().m_watch_text_render_size * g_pGame->GetCVars().m_watch_text_render_lineSpacing;
-		if (s_watchTextYPos + (g_pGame->GetCVars().m_watch_text_render_size * g_pGame->GetCVars().m_watch_text_render_lineSpacing) > gEnv->pRenderer->GetHeight())
+		s_watchTextYPos += CChrysalisCorePlugin::Get()->GetChrysalisCore()->GetCVars().m_watch_text_render_size * CChrysalisCorePlugin::Get()->GetChrysalisCore()->GetCVars().m_watch_text_render_lineSpacing;
+		if (s_watchTextYPos + (CChrysalisCorePlugin::Get()->GetChrysalisCore()->GetCVars().m_watch_text_render_size * CChrysalisCorePlugin::Get()->GetChrysalisCore()->GetCVars().m_watch_text_render_lineSpacing) > gEnv->pRenderer->GetHeight())
 		{
 			s_watchTextYPos = belowConsolePosY;
 			s_watchTextXPos += s_max_width_this_col + 15;
@@ -66,21 +68,24 @@ static float GetWatchTextYPos()
 	return s_watchTextYPos;
 }
 
+
+#include <CryRenderer/IRenderAuxGeom.h>
+
 int CryWatchFunc(const char * message)
 {
 	// Fran: we need these guards for the testing framework to work
-	if (gEnv && gEnv->pRenderer && g_pGame->GetCVars().m_watch_enabled)
+	if (gEnv && gEnv->pRenderer && CChrysalisCorePlugin::Get() && CChrysalisCorePlugin::Get()->GetChrysalisCore()->GetCVars().m_watch_enabled)
 	{
 		float color [4] = { 1,1,1,1 };
 		IFFont* pFont = gEnv->pCryFont->GetFont("default");
-		float xscale = g_pGame->GetCVars().m_watch_text_render_size*g_pGame->GetCVars().m_watch_text_render_fxscale;
+		float xscale = CChrysalisCorePlugin::Get()->GetChrysalisCore()->GetCVars().m_watch_text_render_size*CChrysalisCorePlugin::Get()->GetChrysalisCore()->GetCVars().m_watch_text_render_fxscale;
 		STextDrawContext ctx;
 		ctx.SetSize(Vec2(xscale, xscale));
 		float width = pFont->GetTextSize(message, true, ctx).x;
 		if (width>s_max_width_this_col)
 			s_max_width_this_col = width;
 		float yPos = GetWatchTextYPos(); // also updates s_watchTextXPos
-		gEnv->pRenderer->Draw2dLabel(g_pGame->GetCVars().m_watch_text_render_start_pos_x + s_watchTextXPos, yPos, g_pGame->GetCVars().m_watch_text_render_size, color, false, "%s", message);
+		IRenderAuxText::Draw2dLabel(CChrysalisCorePlugin::Get()->GetChrysalisCore()->GetCVars().m_watch_text_render_start_pos_x + s_watchTextXPos, yPos, CChrysalisCorePlugin::Get()->GetChrysalisCore()->GetCVars().m_watch_text_render_size, color, false, "%s", message);
 		return 1;
 	}
 
@@ -139,7 +144,7 @@ void CryWatch3DTick(float dt)
 		{
 			float fadeaway = min(1.f, s_lingeringWatch3D [i].m_timeLeft);
 			const float col [] = { 1.f, 1.f, 1.f, fadeaway };
-			gEnv->pRenderer->DrawLabelEx(s_lingeringWatch3D [i].m_pos, 3.f, col, false, true, "%s", s_lingeringWatch3D [i].m_text);
+			IRenderAuxText::DrawLabelEx(s_lingeringWatch3D [i].m_pos, 3.f, col, false, true, s_lingeringWatch3D [i].m_text);
 
 			if (s_lingeringWatch3D [i].m_timeLeft > dt)
 			{

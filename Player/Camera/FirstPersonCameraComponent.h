@@ -4,6 +4,7 @@
 #include <IViewSystem.h>
 #include <Player/Camera/CameraManagerComponent.h>
 
+
 /**
 An camera suitable for use in games requiring a first person view.
 
@@ -11,16 +12,23 @@ An camera suitable for use in games requiring a first person view.
 \sa IGameObjectView
 **/
 class CFirstPersonCameraComponent : public CGameObjectExtensionHelper <CFirstPersonCameraComponent, ICameraComponent>, public IGameObjectView
+//class CFirstPersonCameraComponent : public ICameraComponent, public IGameObjectView
 {
+	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CFirstPersonCameraComponent, "FirstPersonCamera", 0xD61307A7547B42CF, 0xA3BDBD9BC13A0064)
+
 public:
+	// IEntityComponent
+	void Initialize() override;
+	void ProcessEvent(SEntityEvent& event) override;
+	uint64 GetEventMask() const { return m_EventMask; }
+	void OnShutDown() override;
+	// ~IEntityComponent
 
-	// ***
-	// *** IGameObjectExtension
-	// ***
-
+	virtual bool Init(IGameObject* pGameObject) override { SetGameObject(pGameObject); return true; }
 	void PostInit(IGameObject * pGameObject) override;
-	bool ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override;
-	void Release() override;
+
+	// TODO: Refactor when 5.4 is released.
+	//void Update2();
 	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
 
 
@@ -87,7 +95,7 @@ public:
 
 private:
 	/** If our entity has a camera manager, we store a pointer to it here. **/
-	ICameraManagerComponent* m_pCameraManager { nullptr };
+	CCameraManagerComponent* m_pCameraManager { nullptr };
 
 	/** Identifier for the entity which this camera is targeted towards. */
 	EntityId m_targetEntityID { INVALID_ENTITYID };
@@ -97,4 +105,7 @@ private:
 
 	/** A delta value (degrees) to apply to the camera's initial calculated pitch. */
 	float m_viewPitch;
+
+	/** Provides a way to avoid updates when they are not required. **/
+	uint64 m_EventMask { 0L };
 };

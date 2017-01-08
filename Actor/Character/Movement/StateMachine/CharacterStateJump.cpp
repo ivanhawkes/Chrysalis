@@ -2,7 +2,6 @@
 
 #include "CharacterStateJump.h"
 #include <IVehicleSystem.h>
-#include <Game/Game.h>
 #include <Actor/Character/Character.h>
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
 #include "Utility/CryWatch.h"
@@ -337,7 +336,7 @@ void CCharacterStateJump::Landed(CCharacter& Character, const bool isHeavyWeapon
 
 	Vec3 CharacterPosition = Character.GetEntity ()->GetWorldPos ();
 	IPhysicalEntity *phys = Character.GetEntity ()->GetPhysics ();
-	IMaterialEffects *mfx = gEnv->pGame->GetIGameFramework ()->GetIMaterialEffects ();
+	IMaterialEffects *mfx = gEnv->pGameFramework->GetIMaterialEffects ();
 
 	const SActorPhysics& actorPhysics = Character.GetActorPhysics ();
 	int matID = actorPhysics.groundMaterialIdx != -1 ? actorPhysics.groundMaterialIdx : mfx->GetDefaultSurfaceIndex ();
@@ -416,7 +415,7 @@ void CCharacterStateJump::Landed(CCharacter& Character, const bool isHeavyWeapon
 	pGameScreenEffects->CamShake (rotation*intensity, Vec3 (0, 0, 0), shakeTime, shakeTime, 0.05f, CScreenEffects::eCS_GID_Character);
 	}
 
-	IForceFeedbackSystem* pForceFeedback = gEnv->pGame->GetIGameFramework ()->GetIForceFeedbackSystem ();
+	IForceFeedbackSystem* pForceFeedback = gEnv->pGameFramework->GetIForceFeedbackSystem ();
 	CRY_ASSERT (pForceFeedback);
 
 	ForceFeedbackFxId fxId = pForceFeedback->GetEffectIdByName ("landFF");

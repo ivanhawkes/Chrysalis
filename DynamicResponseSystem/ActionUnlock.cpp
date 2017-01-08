@@ -2,7 +2,6 @@
 
 #include "ActionUnlock.h"
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
-#include <CryDynamicResponseSystem/IDynamicResponseAction.h>
 
 
 DRS::IResponseActionInstanceUniquePtr CActionUnlock::Execute(DRS::IResponseInstance* pResponseInstance)

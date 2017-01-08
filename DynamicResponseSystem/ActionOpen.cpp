@@ -2,7 +2,6 @@
 
 #include "ActionOpen.h"
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
-#include <CryDynamicResponseSystem/IDynamicResponseAction.h>
 
 
 DRS::IResponseActionInstanceUniquePtr CActionOpen::Execute(DRS::IResponseInstance* pResponseInstance)

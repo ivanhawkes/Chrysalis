@@ -10,24 +10,25 @@ The host entity will be used as a default for the entity which the camera operat
 #pragma once
 
 #include <IGameObject.h>
-#include "ICameraManagerComponent.h"
+#include <CryEntitySystem/IEntityComponent.h>
 #include "ICameraComponent.h"
 
 
-class CCameraManagerComponent : public CGameObjectExtensionHelper <CCameraManagerComponent, ICameraManagerComponent>
+class CCameraManagerComponent : public CGameObjectExtensionHelper<CCameraManagerComponent, ISimpleExtension>
+//class CCameraManagerComponent : public IEntityComponent
 {
+	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CCameraManagerComponent, "CameraManager", 0xFD6C17B7CE134204, 0x89BCFEA2F2E2C2AB)
+
 public:
-	// ***
-	// *** ISimpleExtension
-	// ***
+	// IEntityComponent
+	void Initialize() override;
+	void ProcessEvent(SEntityEvent& event) override;
+	uint64 GetEventMask() const { return BIT64(ENTITY_EVENT_UPDATE); }
+	// ~IEntityComponent
 
+	virtual bool Init(IGameObject* pGameObject) override { SetGameObject(pGameObject); return true; }
 	void PostInit(IGameObject * pGameObject) override;
-	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
-
-
-	// ***
-	// *** ICameraManagerComponent
-	// ***
+	void Update2();
 
 public:
 
@@ -37,7 +38,7 @@ public:
 
 	\param	entityID	If non-null, the entity.
 	*/
-	void AttachToEntity(EntityId entityID) override;
+	void AttachToEntity(EntityId entityID);
 
 
 	/**
@@ -45,7 +46,7 @@ public:
 
 	\return	The current camera mode.
 	*/
-	ECameraMode GetCameraMode() override;
+	ECameraMode GetCameraMode();
 
 
 	/**
@@ -54,7 +55,7 @@ public:
 	\param	mode  	The mode.
 	\param	reason	The reason.
 	*/
-	void SetCameraMode(ECameraMode mode, const char* reason) override;
+	void SetCameraMode(ECameraMode mode, const char* reason);
 
 
 	/**
@@ -62,7 +63,7 @@ public:
 
 	\return	null if it fails, else the camera.
 	*/
-	ICameraComponent* GetCamera() const override;
+	ICameraComponent* GetCamera() const;
 
 
 	/**
@@ -70,13 +71,13 @@ public:
 
 	\return	Whether this instance is in third person or not.
 	*/
-	bool IsThirdPerson() const override;
+	bool IsThirdPerson() const;
 
 
 	/**
 	Toggle between the first and third person camera modes, if either is selected.
 	*/
-	void ToggleThirdPerson() override;
+	void ToggleThirdPerson();
 
 
 	// ***
@@ -111,15 +112,15 @@ public:
 	
 	\return The view offset.
 	**/
-	Vec3 GetViewOffset() override;
+	Vec3 GetViewOffset();
 
 	/**	Camera debug actions. **/
-	bool OnActionCameraShiftUp(EntityId entityId, const ActionId& actionId, int activationMode, float value) override;
-	bool OnActionCameraShiftDown(EntityId entityId, const ActionId& actionId, int activationMode, float value) override;
-	bool OnActionCameraShiftLeft(EntityId entityId, const ActionId& actionId, int activationMode, float value) override;
-	bool OnActionCameraShiftRight(EntityId entityId, const ActionId& actionId, int activationMode, float value) override;
-	bool OnActionCameraShiftForward(EntityId entityId, const ActionId& actionId, int activationMode, float value) override;
-	bool OnActionCameraShiftBackward(EntityId entityId, const ActionId& actionId, int activationMode, float value) override;
+	bool OnActionCameraShiftUp(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionCameraShiftDown(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionCameraShiftLeft(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionCameraShiftRight(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionCameraShiftForward(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionCameraShiftBackward(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 
 
 private:

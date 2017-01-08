@@ -6,6 +6,8 @@ Declares the IPlayerInputComponent interface.
 #pragma once
 
 #include <Entities/Helpers/ISimpleExtension.h>
+//#include <CryEntitySystem/IEntitySystem.h>
+
 
 
 enum EMovementStateFlags
@@ -28,6 +30,7 @@ enum EStanceFlags
 
 
 struct IPlayerInputComponent : public ISimpleExtension
+//struct IPlayerInputComponent : public IEntityComponent
 {
 	enum class EInputType
 	{

@@ -2,7 +2,8 @@
 
 #include "ActionPlayAnimation.h"
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
-#include <CryDynamicResponseSystem/IDynamicResponseAction.h>
+#include <CryAnimation/CryCharAnimationParams.h>
+#include <CryAnimation/ICryAnimation.h>
 
 
 // NOTE: This is a cheap and dirty way to get a token that should always be unique for long enough to not matter any more.
@@ -169,7 +170,7 @@ void CActionPlayAnimation::StartAnimation(DRS::IResponseInstance* pResponseInsta
 				//	bool needsManualUpdate = (m_animationLayer == 0);
 				//	if (IGameObject* pGameObject = CCryAction::GetCryAction()->GetGameObject(pEntity->GetId()))
 				//	{
-				//		if (IAnimatedCharacter* pAnimatedCharacter = static_cast<IAnimatedCharacter*>(pGameObject->QueryExtension("AnimatedCharacter")))
+				//		if (auto pAnimatedCharacter = pEntity->GetComponent<IAnimatedCharacter>())
 				//		{
 				//			needsManualUpdate = false;
 				//		}

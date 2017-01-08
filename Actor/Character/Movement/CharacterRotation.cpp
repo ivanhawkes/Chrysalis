@@ -7,8 +7,9 @@
 //#include <Utility/CryWatch.h>
 //#include <IItemSystem.h>
 //#include <Actor/ActorState.h>
-//#include <Game/Game.h>
 //#include <IVehicleSystem.h>
+//#include <CryAction.h>
+//#include <CryActionPhysicQueues.h>
 //
 ////#include <GameCVars.h>
 ////#include <GameRules.h>
@@ -201,7 +202,7 @@
 ////	{
 ////		if (EntityId weaponId = pVehicle->GetCurrentWeaponId(m_character.GetEntity()->GetId()))
 ////		{
-////			if (IItem* pItem = gEnv->pGame->GetIGameFramework()->GetIItemSystem()->GetItem(weaponId))
+////			if (IItem* pItem = gEnv->pGameFramework->GetIItemSystem()->GetItem(weaponId))
 ////			{
 ////				if (IWeapon* pWeapon = pItem->GetIWeapon())
 ////					pCurrentItem = pItem;
@@ -605,7 +606,7 @@
 //	// Only queue ray cast if we're not waiting for another one.
 //	if (m_queuedRayID == 0)
 //	{
-//		m_queuedRayID = g_pGame->GetRayCaster().Queue(
+//		m_queuedRayID = CCryAction::GetCryAction()->GetPhysicQueues().GetRayCaster().Queue(
 //			RayCastRequest::MediumPriority,
 //			RayCastRequest(startPos, dir,
 //				objTypes,
@@ -635,6 +636,6 @@
 //void CCharacterRotation::SLeanAndPeekInfo::CancelPendingRay()
 //{
 //	if (m_queuedRayID != 0)
-//		g_pGame->GetRayCaster().Cancel(m_queuedRayID);
+//		CCryAction::GetCryAction()->GetPhysicQueues().GetRayCaster().Cancel(m_queuedRayID);
 //	m_queuedRayID = 0;
 //}

@@ -1,9 +1,7 @@
 #include <StdAfx.h>
 
 #include "Item.h"
-#include <Game/Game.h>
 #include <Game/GameRules.h>
-#include <Utility/Proxy.h>
 
 
 IEntitySystem* CItem::m_pEntitySystem = nullptr;
@@ -38,7 +36,7 @@ bool CItem::Init(IGameObject * pGameObject)
 	}
 
 	// Register with item system.
-	gEnv->pGame->GetIGameFramework()->GetIItemSystem()->AddItem(GetEntityId(), this);
+	gEnv->pGameFramework->GetIItemSystem()->AddItem(GetEntityId(), this);
 
 	// Failed to find all appropriate shared parameters. Bailing out.
 	if (!ResetParams())
@@ -76,7 +74,7 @@ void CItem::ProcessEvent(SEntityEvent& event)
 					m_itemStatus.flying = false;
 
 					// Add a small impulse since this sometimes keeps an item floating in the air.
-					auto pPhysics = Proxy::GetPhysicalProxy(GetEntity());
+					//auto pPhysics = Proxy::GetPhysicalProxy(GetEntity());
 					//if (pPhysics)
 					//	pPhysics->AddImpulse(-1, Vec3(0.0f, 0.0f, 0.0f), Vec3(0.0f, 0.0f, -1.0f) * m_sharedparams->params.drop_impulse, false, 1.0f);
 					break;
@@ -192,7 +190,7 @@ void CItem::EnablePicking(bool enable, bool dropped)
 
 void CItem::PickUp(EntityId actorId, bool sound, bool select, bool keepHistory, const char* setup)
 {
-	//IActor* pActor = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(actorId);
+	//IActor* pActor = gEnv->pGameFramework->GetIActorSystem()->GetActor(actorId);
 	//if (!pActor)
 	//	return;
 
@@ -390,7 +388,7 @@ void CItem::GetSharedParameters(XmlNodeRef rootParams)
 	CryFixedStringT<256> sharedName;
 	sharedName.Format("item::%s::%s", GetEntity()->GetClass()->GetName(), "itemBase");
 
-	ISharedParamsManager* pSharedParamsManager = gEnv->pGame->GetIGameFramework()->GetISharedParamsManager();
+	ISharedParamsManager* pSharedParamsManager = gEnv->pGameFramework->GetISharedParamsManager();
 	CRY_ASSERT(pSharedParamsManager);
 	m_itemBaseParameter = CastSharedParamsPtr<SItemBaseParameter>(pSharedParamsManager->Get(sharedName));
 

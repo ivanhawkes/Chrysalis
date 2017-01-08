@@ -1,21 +1,30 @@
 #include <StdAfx.h>
 
 #include "FirstPersonCameraComponent.h"
+#include "Plugin/ChrysalisCorePlugin.h"
 #include <IActorSystem.h>
 #include <Player/Player.h>
 #include <Player/Input/IPlayerInputComponent.h>
 
 
-class CFirstPersonCameraRegistrator
-	: public IEntityRegistrator
-	, public CFirstPersonCameraComponent::SExternalCVars
+CRYREGISTER_CLASS(CFirstPersonCameraComponent)
+
+
+class CFirstPersonCameraRegistrator : public IEntityRegistrator, public CFirstPersonCameraComponent::SExternalCVars
 {
 	virtual void Register() override
 	{
-		CGameFactory::RegisterGameObjectExtension<CFirstPersonCameraComponent>("FirstPersonCamera");
+		CChrysalisCorePlugin::RegisterEntityWithDefaultComponent<CFirstPersonCameraComponent>("FirstPersonCamera");
+		//RegisterEntityWithDefaultComponent<CFirstPersonCameraComponent>("FirstPersonCamera", "Camera", "Light.bmp");
+		
+		// This should make the entity class invisible in the editor.
+		auto cls = gEnv->pEntitySystem->GetClassRegistry()->FindClass("FirstPersonCamera");
+		cls->SetFlags(cls->GetFlags() | ECLF_INVISIBLE);
 
 		RegisterCVars();
 	}
+
+	void Unregister() override {};
 
 	void RegisterCVars()
 	{
@@ -32,44 +41,53 @@ CFirstPersonCameraRegistrator g_firstPersonCameraRegistrator;
 // ***
 
 
+void CFirstPersonCameraComponent::Initialize()
+{
+}
+
+
 void CFirstPersonCameraComponent::PostInit(IGameObject * pGameObject)
 {
+	pGameObject->EnableUpdateSlot(this, 0);
+
+	// Required for 5.3 to call update.
+	GetEntity()->Activate(true);
+
 	// It's a good idea to use the entity as a default for our target entity.
 	m_targetEntityID = GetEntityId();
 
 	// Create a new view and link it to this entity.
-	auto pViewSystem = gEnv->pGame->GetIGameFramework()->GetIViewSystem();
+	auto pViewSystem = gEnv->pGameFramework->GetIViewSystem();
 	m_pView = pViewSystem->CreateView();
 	m_pView->LinkTo(GetGameObject());
 
 	// We are usually hosted in the same entity as a camera manager. Use it if you can find one.
-	m_pCameraManager = static_cast<ICameraManagerComponent*> (pGameObject->QueryExtension("CameraManager"));
+	m_pCameraManager = GetEntity()->GetComponent<CCameraManagerComponent>();
 }
 
 
-bool CFirstPersonCameraComponent::ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params)
+void CFirstPersonCameraComponent::ProcessEvent(SEntityEvent& event)
 {
-	ResetGameObject();
-
-	// If we're meant to be active, capture the view.
-	OnActivate();
-
-	return true;
+	switch (event.event)
+	{
+		case ENTITY_EVENT_UPDATE:
+			//Update2();
+			break;
+	}
 }
 
 
-void CFirstPersonCameraComponent::Release()
+void CFirstPersonCameraComponent::OnShutDown()
 {
 	// Release the view.
 	GetGameObject()->ReleaseView(this);
-	gEnv->pGame->GetIGameFramework()->GetIViewSystem()->RemoveView(m_pView);
+	gEnv->pGameFramework->GetIViewSystem()->RemoveView(m_pView);
 	m_pView = nullptr;
-
-	delete this;
 }
 
 
 void CFirstPersonCameraComponent::Update(SEntityUpdateContext& ctx, int updateSlot)
+//void CFirstPersonCameraComponent::Update2()
 {
 	auto pPlayerInput = CPlayer::GetLocalPlayer()->GetPlayerInput();
 
@@ -92,7 +110,7 @@ void CFirstPersonCameraComponent::Update(SEntityUpdateContext& ctx, int updateSl
 		Vec3 localEyePosition { AverageEyePosition };
 
 		// If we are attached to an entity that is an actor we can use their eye position.
-		auto pActor = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_targetEntityID);
+		auto pActor = gEnv->pGameFramework->GetIActorSystem()->GetActor(m_targetEntityID);
 		if (pActor)
 			localEyePosition = pActor->GetLocalEyePos();
 
@@ -126,9 +144,10 @@ void CFirstPersonCameraComponent::Update(SEntityUpdateContext& ctx, int updateSl
 
 void CFirstPersonCameraComponent::OnActivate()
 {
-	gEnv->pGame->GetIGameFramework()->GetIViewSystem()->SetActiveView(m_pView);
+	gEnv->pGameFramework->GetIViewSystem()->SetActiveView(m_pView);
 	GetGameObject()->CaptureView(this);
 	GetGameObject()->EnableUpdateSlot(this, CPlayer::EPlayerUpdateSlot::ePlayerUpdateSlot_CameraFirstPerson);
+	m_EventMask |= BIT64(ENTITY_EVENT_UPDATE);
 }
 
 
@@ -136,6 +155,7 @@ void CFirstPersonCameraComponent::OnDeactivate()
 {
 	GetGameObject()->ReleaseView(this);
 	GetGameObject()->DisableUpdateSlot(this, CPlayer::EPlayerUpdateSlot::ePlayerUpdateSlot_CameraFirstPerson);
+	m_EventMask &= ~BIT64(ENTITY_EVENT_UPDATE);
 }
 
 

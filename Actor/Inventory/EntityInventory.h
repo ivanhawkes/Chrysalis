@@ -6,7 +6,6 @@ Class will perform instantiation and management of inventory systems for all ent
 */
 #pragma once
 
-#include "CryAction.h"
 #include "IGameObject.h"
 #include "IItemSystem.h"
 #include <CryEntitySystem/IEntitySystem.h>
@@ -15,10 +14,9 @@ Class will perform instantiation and management of inventory systems for all ent
 /**
 An entity inventory.
 
-\sa	CGameObjectExtensionHelper<CEntityInventory, IInventory>
-*/
-class CEntityInventory
-	: public CGameObjectExtensionHelper < CEntityInventory, IInventory >
+\sa CGameObjectExtensionHelper<CEntityInventory, IInventory>
+**/
+class CEntityInventory : public CGameObjectExtensionHelper <CEntityInventory, IInventory>
 {
 	// ***
 	// *** IGameObjectExtension
@@ -29,10 +27,6 @@ class CEntityInventory
 	void PostInit(IGameObject * pGameObject) override;
 	void InitClient(int channelId) override {};
 	void PostInitClient(int channelId) override {};
-	bool ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override;
-	void PostReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override {};
-	bool GetEntityPoolSignature(TSerialize signature) override { return true; };
-	void Release() override { delete this; };
 	void FullSerialize(TSerialize ser) override {};
 	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int pflags) override { return true; };
 	void PostSerialize() override {};
@@ -43,7 +37,6 @@ class CEntityInventory
 	void ProcessEvent(SEntityEvent& event) override {};
 	void SetChannelId(uint16 id) override {};
 	void SetAuthority(bool auth) override {};
-	void PostUpdate(float frameTime) override {};
 	void PostRemoteSpawn() override {};
 
 

@@ -235,14 +235,14 @@ struct SStateDebugContext
 {\
 va_list args; \
 va_start(args,n); \
-gEnv->pRenderer->Draw2dLabel(horz, vert, 1.5f, state_white, false, n, args ); \
+IRenderAuxText::Draw2dLabel(horz, vert, 1.5f, state_white, false, n, args ); \
 va_end(args); \
 }*/
 
 #define STATE_DEBUG_EVENT_LOG( state, debugEvent, logit, colour, n, ... ) \
 		{\
 			const SStateDebugContext& stateDebugCtx = *static_cast<const SStateDebugContext*>(debugEvent.GetData(debugEvent.m_debugContextAt).GetPtr()); \
-			stateDebugCtx.m_renderer.Draw2dLabel(stateDebugCtx.m_baseHorizontal, stateDebugCtx.m_currentVertical, 1.5f, colour, false, n, __VA_ARGS__ ); \
+			IRenderAuxText::Draw2dLabel(stateDebugCtx.m_baseHorizontal, stateDebugCtx.m_currentVertical, 1.5f, colour, false, n, __VA_ARGS__ ); \
 			stateDebugCtx.m_currentVertical += 15.f; \
 			if( logit )	state->m_historyDebug.AddToHistory( n, __VA_ARGS__ ); \
 		}\
@@ -886,7 +886,7 @@ public:
 			//History
 			debugCtx.m_baseHorizontal = 450.0f;
 			debugCtx.m_currentVertical = 50.0f;
-			debugCtx.m_renderer.Draw2dLabel(debugCtx.m_baseHorizontal, debugCtx.m_currentVertical, 1.5f, white, false, "=== HISTORY ===");
+			IRenderAuxText::Draw2dLabel(debugCtx.m_baseHorizontal, debugCtx.m_currentVertical, 1.5f, white, false, "=== HISTORY ===");
 
 			debugCtx.m_baseHorizontal += 10.0f;
 
@@ -894,14 +894,14 @@ public:
 			{
 				debugCtx.m_currentVertical += 15.0f;
 
-				debugCtx.m_renderer.Draw2dLabel(debugCtx.m_baseHorizontal, debugCtx.m_currentVertical, 1.4f, white, false, "%s", m_pCurrentStateHierarchy->m_historyDebug.GetStateAt(i).c_str());
+				IRenderAuxText::Draw2dLabel(debugCtx.m_baseHorizontal, debugCtx.m_currentVertical, 1.4f, white, false, "%s", m_pCurrentStateHierarchy->m_historyDebug.GetStateAt(i).c_str());
 			}
 
 			for (int i = m_pCurrentStateHierarchy->m_historyDebug.GetBack(); i > m_pCurrentStateHierarchy->m_historyDebug.GetFront(); --i)
 			{
 				debugCtx.m_currentVertical += 15.0f;
 
-				debugCtx.m_renderer.Draw2dLabel(debugCtx.m_baseHorizontal, debugCtx.m_currentVertical, 1.4f, white, false, "%s", m_pCurrentStateHierarchy->m_historyDebug.GetStateAt(i).c_str());
+				IRenderAuxText::Draw2dLabel(debugCtx.m_baseHorizontal, debugCtx.m_currentVertical, 1.4f, white, false, "%s", m_pCurrentStateHierarchy->m_historyDebug.GetStateAt(i).c_str());
 			}
 
 			SStateEvent debugEvent(STATE_EVENT_DEBUG);

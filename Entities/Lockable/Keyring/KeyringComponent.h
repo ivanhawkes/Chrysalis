@@ -1,33 +1,31 @@
 #pragma once
 
-#include <Entities/Lockable/Keyring/IKeyringComponent.h>
+#include <CryEntitySystem/IEntityComponent.h>
+#include <CryEntitySystem/IEntitySystem.h>
 
 
 /**
 A key extension.
 
-\sa CGameObjectExtensionHelper&lt;CKeyringComponent, CNativeEntityBase&gt;
-\sa IKeyringComponent
+\sa IEntityComponent
+\sa IEntityPropertyGroup
 **/
-class CKeyringComponent : public CGameObjectExtensionHelper <CKeyringComponent, IKeyringComponent>
+class CKeyringComponent : public IEntityComponent, public IEntityPropertyGroup
 {
+	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CKeyringComponent, "Keyring", 0xA0E8260A5B67C71, 0x814ECD1EAC0A85BC)
+
 public:
-	// Indices of the properties, registered in the Register function
-	enum EProperties
-	{
-		ePropertyGroup_KeyringBegin,
-		eProperty_Keyring_Keys,
-		ePropertyGroup_KeyringEnd,
+	// IEntityComponent
+	void Initialize() override {};
+	void ProcessEvent(SEntityEvent& event) override;
+	uint64 GetEventMask() const { return BIT64(ENTITY_EVENT_START_LEVEL) | BIT64(ENTITY_EVENT_RESET) | BIT64(ENTITY_EVENT_EDITOR_PROPERTY_CHANGED) | BIT64(ENTITY_EVENT_XFORM_FINISHED_EDITOR); }
+	struct IEntityPropertyGroup* GetPropertyGroup() override { return this; }
+	// ~IEntityComponent
 
-		eNumProperties
-	};
-
-
-	// CNativeEntityBase
-	void PostInit(IGameObject * pGameObject) override;
-	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
-	// ~CNativeEntityBase
-
+	// IEntityPropertyGroup
+	const char* GetLabel() const { return "Keyring"; };
+	void SerializeProperties(Serialization::IArchive& archive);
+	// ~IEntityPropertyGroup
 
 	// ***
 	// *** CKeyringComponent
@@ -42,6 +40,8 @@ public:
 	};
 	const SExternalCVars &GetCVars() const;
 
-	// Called to register the entity class and its properties
-	static void Register();
+private:
+	string m_keys;
+
+	void Reset();
 };

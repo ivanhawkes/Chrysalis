@@ -1,22 +1,27 @@
 #include <StdAfx.h>
 
 #include "PlayerInputComponent.h"
-#include <IActionMapManager.h>
+#include "Plugin/ChrysalisCorePlugin.h"
+#include "Plugin/ChrysalisCore.h"
 #include <CryMath/Cry_Math.h>
-#include <Game/Game.h>
 #include <Player/Player.h>
 #include <Actor/Character/Character.h>
-#include <Game/GameFactory.h>
-#include <Player/Camera/ICameraManagerComponent.h>
+#include <Player/Camera/CameraManagerComponent.h>
 #include <Player/Camera/ICameraComponent.h>
+
+
+CRYREGISTER_CLASS(CPlayerInputComponent)
 
 
 class CPlayerInputRegistrator : public IEntityRegistrator
 {
 	virtual void Register() override
 	{
-		CGameFactory::RegisterGameObject<CPlayerInputComponent>("PlayerInput");
+		CChrysalisCorePlugin::RegisterEntityWithDefaultComponent<CPlayerInputComponent>("PlayerInput");
+		//RegisterEntityWithDefaultComponent<CPlayerInputComponent>("PlayerInput", "Input", "Light.bmp");
 	}
+
+	void Unregister() override {};
 };
 
 CPlayerInputRegistrator g_PlayerInputRegistrator;
@@ -27,24 +32,44 @@ CPlayerInputRegistrator g_PlayerInputRegistrator;
 // ***
 
 
+void CPlayerInputComponent::Initialize()
+{
+}
+
+
 void CPlayerInputComponent::PostInit(IGameObject * pGameObject)
 {
-	// Allow this instance to be updated every frame.
-	pGameObject->EnableUpdateSlot(this, CPlayer::EPlayerUpdateSlot::ePlayerUpdateSlot_Main);
+	//pGameObject->EnableUpdateSlot(this, CPlayer::EPlayerUpdateSlot::ePlayerUpdateSlot_Main);
 
-	// Allow this instance to be post-updated every frame.
-	pGameObject->EnablePostUpdates(this);
+	// Required for 5.3 to call update.
+	GetEntity()->Activate(true);
+
+	auto pEntity = GetEntity();
 
 	// Query for the player that owns this extension.
-	m_pPlayer = static_cast<CPlayer*>(pGameObject->QueryExtension("Player"));
+	m_pPlayer = pEntity->GetComponent<CPlayer>();
 
 	// Grab the camera manager.
-	m_pCameraManager = static_cast<ICameraManagerComponent*> (pGameObject->QueryExtension("CameraManager"));
+	m_pCameraManager = pEntity->GetComponent<CCameraManagerComponent>();
 
-	// Detect when we become the local player.
-	const int requiredEvents [] = { eGFE_BecomeLocalPlayer };
-	pGameObject->UnRegisterExtForEvents(this, NULL, 0);
-	pGameObject->RegisterExtForEvents(this, requiredEvents, sizeof(requiredEvents) / sizeof(int));
+	// HACK: TODO: Is this right? We only want to register action maps on the local client.
+	if (GetEntityId() == gEnv->pGameFramework->GetClientActorId())
+		RegisterActionMaps();
+}
+
+
+void CPlayerInputComponent::ProcessEvent(SEntityEvent& event)
+{
+	switch (event.event)
+	{
+		case ENTITY_EVENT_UPDATE:
+			// TODO: Switch over to this with 5.4.
+
+			// HACK: Where did the post update event go?
+			// Until then, just call it from here, and hope it's good enough for now.
+			PostUpdate(gEnv->pTimer->GetFrameTime());
+			break;
+	}
 }
 
 
@@ -84,16 +109,6 @@ void CPlayerInputComponent::PostUpdate(float frameTime)
 	// Handle zoom level changes, result is stored for query by cameras on Update.
 	m_lastZoomDelta = m_zoomDelta;
 	m_zoomDelta = 0.0f;
-}
-
-
-void CPlayerInputComponent::HandleEvent(const SGameObjectEvent &event)
-{
-	// We only register action maps if we are the local player.
-	if (event.event == eGFE_BecomeLocalPlayer)
-	{
-		RegisterActionMaps();
-	}
 }
 
 
@@ -191,7 +206,7 @@ CPlayerInputComponent::~CPlayerInputComponent()
 {
 	// Clean up our action map usage.
 	m_allowActions = false;
-	IActionMapManager* pActionMapManager = gEnv->pGame->GetIGameFramework()->GetIActionMapManager();
+	IActionMapManager* pActionMapManager = gEnv->pGameFramework->GetIActionMapManager();
 	pActionMapManager->EnableActionMap("player", false);
 	pActionMapManager->RemoveExtraActionListener(this, "player");
 	pActionMapManager->EnableActionMap("camera", false);
@@ -209,12 +224,13 @@ void CPlayerInputComponent::RegisterActionMaps()
 	InitializeActionHandler();
 
 	// Load and init the default action map profile.
-	IActionMapManager* pActionMapManager = gEnv->pGame->GetIGameFramework()->GetIActionMapManager();
+	IActionMapManager* pActionMapManager = gEnv->pGameFramework->GetIActionMapManager();
+	pActionMapManager->SetDefaultActionEntity(GetEntityId());
 	pActionMapManager->InitActionMaps("libs/config/defaultprofile.xml");
 	pActionMapManager->Enable(true);
 
 	// Try and enable the "player" actions, which control our player.
-	pActionMapManager->AddExtraActionListener(this, "player"); // NOTE: Only seem to need one for all the action maps to work.
+	//pActionMapManager->AddExtraActionListener(this, "player"); // NOTE: Only seem to need one for all the action maps to work.
 	pActionMapManager->EnableActionMap("player", true);
 	pActionMapManager->EnableActionMap("camera", true);
 	pActionMapManager->EnableActionMap("inspection", true);
@@ -360,8 +376,10 @@ bool CPlayerInputComponent::OnActionMoveBackward(EntityId entityId, const Action
 
 bool CPlayerInputComponent::OnActionRotateYaw(EntityId entityId, const ActionId& actionId, int activationMode, float value)
 {
+	float cl_mouseSensitivity = CChrysalisCorePlugin::Get() ? CChrysalisCorePlugin::Get()->GetChrysalisCore()->GetCVars().m_cl_mouseSensitivity : 1.0f;
+
 	// Sensible scaling value for rotations in radians.
-	float mouseSensitivity = 0.00032f * MAX(0.01f, g_pGame->GetCVars().m_cl_mouseSensitivity * m_mousePitchYawSensitivity);
+	float mouseSensitivity = 0.00032f * max(0.01f, cl_mouseSensitivity * m_mousePitchYawSensitivity);
 
 	// Add the yaw delta.
 	m_mouseYawDelta -= value * mouseSensitivity;
@@ -372,12 +390,14 @@ bool CPlayerInputComponent::OnActionRotateYaw(EntityId entityId, const ActionId&
 
 bool CPlayerInputComponent::OnActionRotatePitch(EntityId entityId, const ActionId& actionId, int activationMode, float value)
 {
+	float cl_mouseSensitivity = CChrysalisCorePlugin::Get() ? CChrysalisCorePlugin::Get()->GetChrysalisCore()->GetCVars().m_cl_mouseSensitivity : 1.0f;
+
 	// Have they inverted their mouse control?
-	if (g_pGame->GetCVars().m_cl_invertPitch)
+	if ((CChrysalisCorePlugin::Get()) && (CChrysalisCorePlugin::Get()->GetChrysalisCore()->GetCVars().m_cl_invertPitch))
 		value *= -1.0f;
 
 	// Sensible scaling value for rotations in radians.
-	float mouseSensitivity = 0.00032f * MAX(0.01f, g_pGame->GetCVars().m_cl_mouseSensitivity * m_mousePitchYawSensitivity);
+	float mouseSensitivity = 0.00032f * max(0.01f, cl_mouseSensitivity * m_mousePitchYawSensitivity);
 
 	// Add the delta, taking into account mouse inversion.  Clamp the result.
 	float invertYAxis = m_mouseInvertPitch ? -1.0f : 1.0f;
@@ -567,6 +587,7 @@ bool CPlayerInputComponent::OnActionBar(EntityId entityId, const ActionId& actio
 {
 	if (activationMode == eAAM_OnPress || activationMode == eAAM_OnHold)
 	{
+		CryLogAlways("OnActionBar");
 		if (auto pCharacter = CPlayer::GetLocalCharacter())
 		{
 			pCharacter->OnActionBarUse(entityId, buttonId);

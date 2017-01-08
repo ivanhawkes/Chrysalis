@@ -1,7 +1,6 @@
 #include <StdAfx.h>
 
 #include "Actor.h"
-#include <Game/Game.h>
 #include <CryMath/Cry_Math.h>
 #include <CryCore/Assert/CryAssert.h>
 #include <ICryMannequin.h>
@@ -12,10 +11,9 @@
 #include <Actor/ActorPhysics.h>
 #include <Player/Player.h>
 #include <Player/Animations/PlayerAnimations.h>
-#include <Entities/Interaction/IEntityAwarenessComponent.h>
+#include <Entities/Interaction/EntityAwarenessComponent.h>
 #include <Entities/Interaction/EntityInteractionComponent.h>
 #include <Utility/CryWatch.h>
-#include <CryEntitySystem/IEntityProxy.h>
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
 
 
@@ -34,7 +32,7 @@ CActor::CActor()
 CActor::~CActor()
 {
 	// Very important that this gets called. Removes the character from the system.
-	gEnv->pGame->GetIGameFramework()->GetIActorSystem()->RemoveActor(GetEntityId());
+	gEnv->pGameFramework->GetIActorSystem()->RemoveActor(GetEntityId());
 
 	// Inventory takes a little extra work to break down.
 	if (m_pInventory)
@@ -62,6 +60,13 @@ CActor::~CActor()
 }
 
 
+void CActor::Initialize()
+{
+	// TODO: Move the PostInit into here once we are free of GameObjects.
+	//PostInit(gEnv->pGameFramework->GetGameObject(GetEntityId()));
+}
+
+
 // ***
 // *** IGameObjectExtension
 // ***
@@ -78,17 +83,22 @@ bool CActor::Init(IGameObject * pGameObject)
 
 void CActor::PostInit(IGameObject * pGameObject)
 {
+	// Required for 5.3 to call update.
+	GetEntity()->Activate(true);
+
+	// We need until we can remove the old style of update.
+	pGameObject->EnableUpdateSlot(this, 0);
+
+	auto pEntity = GetEntity();
+
 	// Register for pre-physics update.
-	RegisterEvent(ENTITY_EVENT_PREPHYSICSUPDATE, IComponent::EComponentFlags_Enable);
+	//RegisterEvent(ENTITY_EVENT_PREPHYSICSUPDATE, IComponent::EComponentFlags_Enable);
 
 	// We will require pre-physics updates.
 	pGameObject->EnablePrePhysicsUpdate(ePPU_Always);
 
 	// Animated characters need to register for the post step immediate event.
 	pGameObject->EnablePhysicsEvent(true, eEPE_OnPostStepImmediate);
-
-	// Allow this instance to be updated every frame.
-	pGameObject->EnableUpdateSlot(this, 0);
 
 	// Initialise the movement state machine.
 	MovementHSMInit();
@@ -104,7 +114,7 @@ void CActor::PostInit(IGameObject * pGameObject)
 	m_isClient = false;
 
 	// Registers this instance to the actor system.
-	gEnv->pGame->GetIGameFramework()->GetIActorSystem()->AddActor(GetEntityId(), this);
+	gEnv->pGameFramework->GetIActorSystem()->AddActor(GetEntityId(), this);
 
 	// Default is for a character to be controlled by AI.
 	//	m_isAIControlled = true;
@@ -117,7 +127,6 @@ void CActor::PostInit(IGameObject * pGameObject)
 	m_pInventory = static_cast<IInventory*>(GetGameObject()->AcquireExtension("Inventory"));
 
 	// Tells this instance to trigger areas.
-	IEntity* const pEntity = GetEntity();
 	pEntity->AddFlags(ENTITY_FLAG_TRIGGER_AREAS);
 
 	// Since we are the client always update this instance's character.
@@ -126,38 +135,27 @@ void CActor::PostInit(IGameObject * pGameObject)
 
 	// For now, all actors will have awareness built-in, but this should default to not having it at some stage unless they are
 	// the player target.
-	m_pAwareness = static_cast<IEntityAwarenessComponent*> (GetGameObject()->AcquireExtension("EntityAwareness"));
+	m_pAwareness = pEntity->GetOrCreateComponent<CEntityAwarenessComponent>();
 
 	// Give the actor a DRS proxy, since it will probably need one.
-	m_pDrsProxy = crycomponent_cast<IEntityDynamicResponseProxyPtr>(GetEntity()->CreateProxy(ENTITY_PROXY_DYNAMICRESPONSE));
+	m_pDrsComponent = crycomponent_cast<IEntityDynamicResponseComponent*> (pEntity->CreateProxy(ENTITY_PROXY_DYNAMICRESPONSE));
+
+	// HACK: TODO: Is this right? We only want to register action maps on the local client.
+	if (GetEntityId() == gEnv->pGameFramework->GetClientActorId())
+	{
+		// Tells this instance to trigger areas and that it's the local player.
+		auto pEntity = GetEntity();
+		pEntity->AddFlags(ENTITY_FLAG_TRIGGER_AREAS | ENTITY_FLAG_LOCAL_PLAYER);
+
+		//// Since we are the client always update this instance's character.
+		//if (ICharacterInstance * pCharacter = pEntity->GetCharacter(0))
+		//	pCharacter->SetFlags(pCharacter->GetFlags() | CS_FLAG_UPDATE_ALWAYS);
+
+		gEnv->pLog->LogAlways("CActor::HandleEvent(): Entity \"%s\" became the local character!", pEntity->GetName());
+	}
 
 	// Reset the entity.
 	Reset();
-}
-
-
-bool CActor::ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params)
-{
-	//// Restores this instance's game object in case it has changed.
-	//ResetGameObject();
-
-	//// Add this instance to the network.
-	//if (!GetGameObject()->BindToNetwork())
-	//	return false;
-
-	//// Removes this instance's previous actor and adds it's new one.
-	//gEnv->pGame->GetIGameFramework()->GetIActorSystem()->RemoveActor(params.prevId);
-	//gEnv->pGame->GetIGameFramework()->GetIActorSystem()->AddActor(GetEntityId(), this);
-
-	return true;
-}
-
-
-void CActor::PostReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params)
-{
-	// Ensure the movement controller is set and reset any current movements on it.
-	pGameObject->SetMovementController(m_pMovementController);
-	m_pMovementController->Reset();
 }
 
 
@@ -184,38 +182,6 @@ void CActor::Update(SEntityUpdateContext& ctx, int updateSlot)
 }
 
 
-void CActor::HandleEvent(const SGameObjectEvent& event)
-{
-	switch (event.event)
-	{
-		// Called automatically by various systems when this instance should become the client actor.
-		// TODO: Not getting called yet, have to figure out how to trigger this.
-		case eGFE_BecomeLocalPlayer:
-		{
-			// Tells this instance to trigger areas and that it's the local player.
-			auto pEntity = GetEntity();
-			pEntity->AddFlags(ENTITY_FLAG_TRIGGER_AREAS | ENTITY_FLAG_LOCAL_PLAYER);
-
-			//// Invalidates this instance's transformation matrix in order to force an update of the area manager and other location sensitive systems.
-			// NOTE: We may need to do something like this to make player related things trigger when jumping from one
-			// character to another.
-			//pEntity->InvalidateTM(ENTITY_XFORM_POS);
-
-			//// Since we are the client always update this instance's character.
-			//if (ICharacterInstance * pCharacter = pEntity->GetCharacter(0))
-			//	pCharacter->SetFlags(pCharacter->GetFlags() | CS_FLAG_UPDATE_ALWAYS);
-
-			gEnv->pLog->LogAlways("CActor::HandleEvent(): Entity \"%s\" became the local character!", pEntity->GetName());
-		}
-		break;
-
-		default:
-			// TODO: add HitDeathReactions event handling.
-			break;
-	}
-}
-
-
 void CActor::ProcessEvent(SEntityEvent& event)
 {
 	switch (event.event)
@@ -233,7 +199,7 @@ void CActor::ProcessEvent(SEntityEvent& event)
 }
 
 
-IComponent::ComponentEventPriority CActor::GetEventPriority(const int eventID) const
+IEntityComponent::ComponentEventPriority CActor::GetEventPriority(const int eventID) const
 {
 	switch (eventID)
 	{
@@ -252,8 +218,8 @@ void CActor::UpdateAnimationState(const SActorMovementRequest& movementRequest)
 		// NOTE: should use actor physics to get the veloctiy, last velocity, movement flags, etc.
 		// 	auto physics = GetActorPhysics();
 
-		// HACK: get some debug
-		m_pActionController->SetFlag(AC_DebugDraw, 1);
+		// HACK: get some debug. NOTE: This draws a big sphere over the character's head.
+		//m_pActionController->SetFlag(AC_DebugDraw, true);
 
 		// HACK: Really dirty way to switch between movement and idle states.
 		// FIXME: Switch to using priority levels and requeing the actions on completion.
@@ -289,7 +255,7 @@ void CActor::UpdateAnimationState(const SActorMovementRequest& movementRequest)
 		CWeapon *pWeapon = GetWeapon(GetCurrentItemId());
 		ICharacterInstance *pICharInst = pWeapon ? pWeapon->GetEntity()->GetCharacter(0) : nullptr;
 		IActionController *pActionController = GetAnimatedCharacter()->GetActionController();
-		IMannequin &mannequinSys = gEnv->pGame->GetIGameFramework()->GetMannequinInterface();
+		IMannequin &mannequinSys = gEnv->pGameFramework->GetMannequinInterface();
 
 		if (IsAIControlled())
 		{
@@ -376,7 +342,7 @@ void CActor::UpdateAnimationState(const SActorMovementRequest& movementRequest)
 Vec3 CActor::GetLocalEyePos() const
 {
 	// The default, in case we can't find the actual eye position, will be to use an average male's height.
-	Vec3 eyePosition { AverageEyePosition };
+	Vec3 eyePosition { 0.0f, 0.0f, 1.82f };
 
 	// Get their character or bail early.
 	ICharacterInstance* pCharacter = GetEntity()->GetCharacter(0);
@@ -694,7 +660,7 @@ EntityId CActor::GetCurrentItemId(bool includeVehicle) const
 IItem* CActor::GetCurrentItem(bool includeVehicle) const
 {
 	if (EntityId itemId = GetCurrentItemId(includeVehicle))
-		return gEnv->pGame->GetIGameFramework()->GetIItemSystem()->GetItem(itemId);
+		return gEnv->pGameFramework->GetIItemSystem()->GetItem(itemId);
 
 	return nullptr;
 }
@@ -751,15 +717,15 @@ void CActor::Reset()
 	}
 
 	// Load character
-	pEntity->LoadCharacter(0, GetPropertyValue(eProperty_Model));
+	pEntity->LoadCharacter(0, m_geometry);
 
 	// Mannequin Initialization
-	IMannequin& mannequin = gEnv->pGame->GetIGameFramework()->GetMannequinInterface();
+	IMannequin& mannequin = gEnv->pGameFramework->GetMannequinInterface();
 	IAnimationDatabaseManager& animationDatabaseManager = mannequin.GetAnimationDatabaseManager();
 
 	// Loading the controller definition that we previously created.
 	// This is owned by the animation database manager
-	const SControllerDef* const pControllerDef = animationDatabaseManager.LoadControllerDef(MANNEQUIN_FOLDER + GetPropertyValue(eProperty_Controller_Definition));
+	const SControllerDef* const pControllerDef = animationDatabaseManager.LoadControllerDef(MANNEQUIN_FOLDER + m_controllerDefinition);
 	if (pControllerDef == nullptr)
 	{
 		CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_ERROR, "Failed to load controller definition for MannequinSample.");
@@ -775,7 +741,7 @@ void CActor::Reset()
 	// Scope Context Setup. In our controller definition we have a scope context that we called MainCharacter. The Scope
 	// Context Setup will associate this entity, the character instance we loaded at the beginning, and the animation
 	// database where we saved our fragments to this scope context.
-	const TagID scopeContextId = m_pAnimationContext->controllerDef.m_scopeContexts.Find(GetPropertyValue(eProperty_Scope_Context));
+	const TagID scopeContextId = m_pAnimationContext->controllerDef.m_scopeContexts.Find(m_scopeContext);
 	if (scopeContextId == TAG_ID_INVALID)
 	{
 		CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_ERROR, "Failed to find MainCharacter scope context id for MannequinSample in controller definition.");
@@ -786,7 +752,7 @@ void CActor::Reset()
 	CRY_ASSERT(pCharacterInstance != nullptr);
 
 	// Loading a database
-	const IAnimationDatabase* const pAnimationDatabase = animationDatabaseManager.Load(MANNEQUIN_FOLDER + GetPropertyValue(eProperty_Animation_Database));
+	const IAnimationDatabase* const pAnimationDatabase = animationDatabaseManager.Load(MANNEQUIN_FOLDER + m_animationDatabase);
 	if (pAnimationDatabase == nullptr)
 	{
 		CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_ERROR, "Failed to load animation database for MannequinSample.");
@@ -881,35 +847,31 @@ void CActor::OnActionBarUse(EntityId playerId, int actionBarId)
 		auto results = m_pAwareness->GetNearDotFiltered();
 		if (results.size() > 0)
 		{
-			auto entityId = results [0];
-			auto pTargetGameObject = gEnv->pGame->GetIGameFramework()->GetGameObject(entityId);
-			if (pTargetGameObject)
+			auto pTargetEntity = gEnv->pEntitySystem->GetEntity(results [0]);
+
+			if (auto pInteractor = pTargetEntity->GetComponent<CEntityInteractionComponent>())
 			{
-				auto pTargetEntity = pTargetGameObject->GetEntity();
-				if (auto pInteractor = static_cast<IEntityInteractionComponent*> (pTargetGameObject->QueryExtension("EntityInteraction")))
+				// There's an interactor component, so this is an interactive entity.
+				auto verbs = pInteractor->GetVerbs();
+				if (verbs.size() >= actionBarId)
 				{
-					// There's an interactor component, so this is an interactive entity.
-					auto verbs = pInteractor->GetVerbs();
-					if (verbs.size() >= actionBarId)
-					{
-						IEntityDynamicResponseProxyPtr pDrsProxy = crycomponent_cast<IEntityDynamicResponseProxyPtr>(pTargetEntity->CreateProxy(ENTITY_PROXY_DYNAMICRESPONSE));
+					auto pDrsProxy = crycomponent_cast<IEntityDynamicResponseComponent*> (pTargetEntity->CreateProxy(ENTITY_PROXY_DYNAMICRESPONSE));
 
-						// Create a context variable collection and populate it based on information from the target entity.
-						DRS::IVariableCollectionSharedPtr pContextVariableCollection = gEnv->pDynamicResponseSystem->CreateContextCollection();
-						auto verb = verbs [actionBarId - 1];
-						auto pInteraction = pInteractor->GetInteraction(verb)._Get();
+					// Create a context variable collection and populate it based on information from the target entity.
+					DRS::IVariableCollectionSharedPtr pContextVariableCollection = gEnv->pDynamicResponseSystem->CreateContextCollection();
+					auto verb = verbs [actionBarId - 1];
+					auto pInteraction = pInteractor->GetInteraction(verb)._Get();
 
-						// It might be useful to know which verb triggered the interaction.
-						pContextVariableCollection->CreateVariable("Verb", CHashedString(verb));
-						pContextVariableCollection->CreateVariable("CharacterId", static_cast<int>(GetEntityId()));
+					// It might be useful to know which verb triggered the interaction.
+					pContextVariableCollection->CreateVariable("Verb", CHashedString(verb));
+					pContextVariableCollection->CreateVariable("CharacterId", static_cast<int>(GetEntityId()));
 
-						// Queue it and let the DRS handle it now.
-						pDrsProxy->GetResponseActor()->QueueSignal(verb, pContextVariableCollection);
-					}
-					else
-					{
-						CryLogAlways("No action defined.");
-					}
+					// Queue it and let the DRS handle it now.
+					pDrsProxy->GetResponseActor()->QueueSignal(verb, pContextVariableCollection);
+				}
+				else
+				{
+					CryLogAlways("No action defined.");
 				}
 			}
 		}
@@ -930,20 +892,16 @@ void CActor::OnActionInspect(EntityId playerId)
 		auto results = m_pAwareness->GetNearDotFiltered();
 		if (results.size() > 0)
 		{
-			auto entityId = results [0];
-			auto pTargetGameObject = gEnv->pGame->GetIGameFramework()->GetGameObject(entityId);
-			auto pTargetEntity = pTargetGameObject->GetEntity();
-			if (pTargetGameObject)
+			auto pTargetEntity = gEnv->pEntitySystem->GetEntity(results [0]);
+
+			if (auto pInteractor = pTargetEntity->GetComponent<CEntityInteractionComponent>())
 			{
-				if (auto pInteractor = static_cast<IEntityInteractionComponent*> (pTargetGameObject->QueryExtension("EntityInteraction")))
+				// There's an interactor component, so this is an interactive entity.
+				auto verbs = pInteractor->GetVerbs();
+				if (verbs.size() > 0)
 				{
-					// There's an interactor component, so this is an interactive entity.
-					auto verbs = pInteractor->GetVerbs();
-					if (verbs.size() > 0)
-					{
-						IEntityDynamicResponseProxyPtr pDrsProxy = crycomponent_cast<IEntityDynamicResponseProxyPtr>(pTargetEntity->CreateProxy(ENTITY_PROXY_DYNAMICRESPONSE));
-						pDrsProxy->GetResponseActor()->QueueSignal(verbs [0]);
-					}
+					auto pDrsProxy = crycomponent_cast<IEntityDynamicResponseComponent*> (pTargetEntity->CreateProxy(ENTITY_PROXY_DYNAMICRESPONSE));
+					pDrsProxy->GetResponseActor()->QueueSignal(verbs [0]);
 				}
 			}
 		}
@@ -960,45 +918,41 @@ void CActor::OnActionInspectEnd(EntityId playerId)
 void CActor::OnActionInteractionStart(EntityId playerId)
 {
 	CryLogAlways("Player started interacting with things.");
-	
+
 	// TODO: disable direct control of character via input
-	
+
 	if (m_pAwareness)
 	{
 		auto results = m_pAwareness->GetNearDotFiltered();
 		if (results.size() > 0)
 		{
-			auto entityId = results [0];
-			auto pTargetGameObject = gEnv->pGame->GetIGameFramework()->GetGameObject(entityId);
-			auto pTargetEntity = pTargetGameObject->GetEntity();
-			if (pTargetGameObject)
+			auto pTargetEntity = gEnv->pEntitySystem->GetEntity(results [0]);
+
+			if (auto pInteractor = pTargetEntity->GetComponent<CEntityInteractionComponent>())
 			{
-				if (auto pInteractor = static_cast<IEntityInteractionComponent*> (pTargetGameObject->QueryExtension("EntityInteraction")))
+				// There's an interactor component, so this is an interactive entity.
+				// TODO: We should really only process an 'interact' verb - not simply the first entry.
+				auto verbs = pInteractor->GetVerbs();
+				if (verbs.size() > 0)
 				{
-					// There's an interactor component, so this is an interactive entity.
-					// TODO: We should really only process an 'interact' verb - not simply the first entry.
-					auto verbs = pInteractor->GetVerbs();
-					if (verbs.size() > 0)
-					{
-						IEntityDynamicResponseProxyPtr pDrsProxy = crycomponent_cast<IEntityDynamicResponseProxyPtr>(pTargetEntity->CreateProxy(ENTITY_PROXY_DYNAMICRESPONSE));
+					auto pDrsProxy = crycomponent_cast<IEntityDynamicResponseComponent*> (pTargetEntity->CreateProxy(ENTITY_PROXY_DYNAMICRESPONSE));
 
-						// Create a context variable collection and populate it based on information from the target entity.
-						DRS::IVariableCollectionSharedPtr pContextVariableCollection = gEnv->pDynamicResponseSystem->CreateContextCollection();
-						auto verb = verbs [0];
-						auto pInteraction = pInteractor->GetInteraction(verb)._Get();
+					// Create a context variable collection and populate it based on information from the target entity.
+					DRS::IVariableCollectionSharedPtr pContextVariableCollection = gEnv->pDynamicResponseSystem->CreateContextCollection();
+					auto verb = verbs [0];
+					auto pInteraction = pInteractor->GetInteraction(verb)._Get();
 
-						// It might be useful to know which verb triggered the interaction.
-						pContextVariableCollection->CreateVariable("Verb", CHashedString(verb));
-						pContextVariableCollection->CreateVariable("CharacterId", static_cast<int>(GetEntityId()));
+					// It might be useful to know which verb triggered the interaction.
+					pContextVariableCollection->CreateVariable("Verb", CHashedString(verb));
+					pContextVariableCollection->CreateVariable("CharacterId", static_cast<int>(GetEntityId()));
 
-						// Queue it and let the DRS handle it now.
-						pDrsProxy->GetResponseActor()->QueueSignal(verb, pContextVariableCollection);
+					// Queue it and let the DRS handle it now.
+					pDrsProxy->GetResponseActor()->QueueSignal(verb, pContextVariableCollection);
 
-						// HACK: For testing!
-						// TODO: We need a solidly thought out way to populate the variable collections using our entities.
-						pContextVariableCollection->CreateVariable("PlayAnimationFile", CHashedString("dooropen"));						
-						pDrsProxy->GetResponseActor()->QueueSignal("PlayAnimation", pContextVariableCollection);
-					}
+					// HACK: For testing!
+					// TODO: We need a solidly thought out way to populate the variable collections using our entities.
+					pContextVariableCollection->CreateVariable("PlayAnimationFile", CHashedString("dooropen"));
+					pDrsProxy->GetResponseActor()->QueueSignal("PlayAnimation", pContextVariableCollection);
 				}
 			}
 		}

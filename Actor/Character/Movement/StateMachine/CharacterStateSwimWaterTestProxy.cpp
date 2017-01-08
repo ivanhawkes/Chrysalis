@@ -1,8 +1,9 @@
 #include <StdAfx.h>
 
 #include "CharacterStateSwimWaterTestProxy.h"
-#include <Game/Game.h>
 #include <Actor/Character/Character.h>
+#include <CryAction.h>
+#include <CryActionPhysicQueues.h>
 /*#include "CharacterRotation.h"*/
 
 
@@ -335,7 +336,7 @@ void CCharacterStateSwimWaterTestProxy::RayTestBottomLevel(const CCharacter& Cha
 		// We should not have entered this function if still waiting for the last result
 		CRY_ASSERT (m_bottomLevelRayID == 0);
 
-		m_bottomLevelRayID = g_pGame->GetRayCaster ().Queue (
+		m_bottomLevelRayID = CCryAction::GetCryAction()->GetPhysicQueues().GetRayCaster().Queue (
 		Character.IsClient () ? RayCastRequest::HighPriority : RayCastRequest::MediumPriority,
 		RayCastRequest (referencePosition + Vec3 (0, 0, padding), Vec3 (0, 0, -rayLength),
 		entityFlags,
@@ -350,7 +351,7 @@ void CCharacterStateSwimWaterTestProxy::CancelPendingRays()
 {
 	/*	if (m_bottomLevelRayID != 0)
 		{
-		g_pGame->GetRayCaster ().Cancel (m_bottomLevelRayID);
+			CCryAction::GetCryAction()->GetPhysicQueues().GetRayCaster().Cancel (m_bottomLevelRayID);
 		}
 		m_bottomLevelRayID = 0;*/
 }

@@ -1,21 +1,65 @@
 #include <StdAfx.h>
 
 #include "FlashlightComponent.h"
-#include <Game/GameFactory.h>
+#include "Plugin/ChrysalisCorePlugin.h"
 #include <GameXmlParamReader.h>
 #include <Entities/Interaction/EntityInteractionComponent.h>
+
+
+CRYREGISTER_CLASS(CFlashlightComponent)
 
 
 class CFlashlightRegistrator : public IEntityRegistrator
 {
 	virtual void Register() override
 	{
-		CFlashlightComponent::Register();
+		// Register the class as a factory.
+		gEnv->pGameFramework->RegisterFactory("Flashlight", static_cast<CFlashlightComponent*> (nullptr), false, static_cast<CFlashlightComponent*> (nullptr));
+		
+		// This should make the entity class invisible in the editor.
+		//auto cls = gEnv->pEntitySystem->GetClassRegistry()->FindClass("CFlashlight");
+		//cls->SetFlags(cls->GetFlags() | ECLF_INVISIBLE);
 	}
+
+	void Unregister() override {};
 };
 
 CFlashlightRegistrator g_flashlightRegistrator;
 
+
+
+// ***
+// *** IEntityComponent
+// ***
+
+
+void CFlashlightComponent::ProcessEvent(SEntityEvent& event)
+{
+	switch (event.event)
+	{
+		// Physicalize on level start for Launcher
+		case ENTITY_EVENT_START_LEVEL:
+
+			// Editor specific, physicalize on reset, property change or transform change
+		case ENTITY_EVENT_RESET:
+		case ENTITY_EVENT_EDITOR_PROPERTY_CHANGED:
+		case ENTITY_EVENT_XFORM_FINISHED_EDITOR:
+			Reset();
+			break;
+	}
+}
+
+
+void CFlashlightComponent::SerializeProperties(Serialization::IArchive& archive)
+{
+	archive(m_batteryLevel, "BatteryLevel", "Battery Level");
+	archive(m_isSwitchedOn, "IsSwitchedOn", "Is Switched On?");
+
+	if (!archive.isInput())
+	{
+		Reset();
+	}
+}
 
 
 // ***
@@ -32,7 +76,7 @@ bool CFlashlightComponent::Init(IGameObject * pGameObject)
 void CFlashlightComponent::PostInit(IGameObject * pGameObject)
 {
 	// We want to supply interaction verbs.
-	m_interactor = static_cast<IEntityInteractionComponent*> (GetGameObject()->AcquireExtension("EntityInteraction"));
+	m_interactor = GetEntity()->GetOrCreateComponent<CEntityInteractionComponent> ();
 	if (m_interactor)
 	{
 		auto switchToggleInteractPtr = std::make_shared<CInteractionSwitchToggle>(this);
@@ -62,23 +106,6 @@ void CFlashlightComponent::PostInit(IGameObject * pGameObject)
 
 	// Reset the entity.
 	Reset();
-}
-
-
-void CFlashlightComponent::ProcessEvent(SEntityEvent& event)
-{
-	switch (event.event)
-	{
-		// Physicalize on level start for Launcher
-		case ENTITY_EVENT_START_LEVEL:
-
-		// Editor specific, physicalize on reset, property change or transform change
-		case ENTITY_EVENT_RESET:
-		case ENTITY_EVENT_EDITOR_PROPERTY_CHANGED:
-		case ENTITY_EVENT_XFORM_FINISHED_EDITOR:
-			Reset();
-			break;
-	}
 }
 
 
@@ -130,7 +157,7 @@ void CFlashlightComponent::LoadFromXML()
 {
 	// We use the class name to determine which XML file contains our parameters. The item system scan means it's
 	// location is already known.
-	auto pItemSystem = gEnv->pGame->GetIGameFramework()->GetIItemSystem();
+	auto pItemSystem = gEnv->pGameFramework->GetIItemSystem();
 	auto xmlFilename = pItemSystem->GetItemParamsDescriptionFile(GetEntity()->GetClass()->GetName());
 	XmlNodeRef rootParams = gEnv->pSystem->LoadXmlFromFile(xmlFilename);
 
@@ -170,11 +197,4 @@ void CFlashlightComponent::Switch(bool isSwitchedOn)
 			DetachEffect(m_lightId);
 		m_lightId = EntityEffects::EFFECTID_INVALID;
 	}
-}
-
-
-void CFlashlightComponent::Register()
-{
-	// Register the class as a factory.
-	CGameFactory::RegisterFactory<CFlashlightComponent>("Flashlight", false);
 }

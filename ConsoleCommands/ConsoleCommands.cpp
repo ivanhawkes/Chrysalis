@@ -1,12 +1,13 @@
 #include <StdAfx.h>
 
 #include "ConsoleCommands.h"
-#include <Game/Game.h>
 #include <CrySystem/ISystem.h>
 #include <Player/Player.h>
 #include <Actor/Character/Character.h>
 #include <ObjectID/ObjectId.h>
 #include <ObjectID/ObjectIdMasterFactory.h>
+#include "Plugin/ChrysalisCorePlugin.h"
+#include "Plugin/ChrysalisCore.h"
 
 
 void CConsoleCommands::Register(void)
@@ -29,11 +30,11 @@ void CConsoleCommands::OnAttach(IConsoleCmdArgs* pConsoleCommandArgs)
 {
 	if (pConsoleCommandArgs->GetArgCount() == 2)
 	{
-		auto clientActorId = gEnv->pGame->GetIGameFramework()->GetClientActorId();
+		auto clientActorId = gEnv->pGameFramework->GetClientActorId();
 		if (clientActorId)
 		{
 			// The client actor should always be a CPlayer, so we can up-cast to that.
-			auto pPlayer = static_cast<CPlayer*>(gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(clientActorId));
+			auto pPlayer = static_cast<CPlayer*>(gEnv->pGameFramework->GetIActorSystem()->GetActor(clientActorId));
 
 			// See if they gave us a valid entity name. Attach if they did.
 			// TODO: put in a check to ensure only characters will ever be cast.
@@ -60,19 +61,19 @@ void CConsoleCommands::OnCreateObjectId(IConsoleCmdArgs* pConsoleCommandArgs)
 
 		if (strcmp (pClass, "account") == 0)
 		{
-			objectId = g_pGame->GetObjectId()->GetAccount()->CreateObjectId();
+			objectId = CChrysalisCorePlugin::Get()->GetChrysalisCore()->GetObjectId()->GetAccount()->CreateObjectId();
 		}
 		else if (strcmp(pClass, "character") == 0)
 		{ 
-			objectId = g_pGame->GetObjectId()->GetCharacter()->CreateObjectId();
+			objectId = CChrysalisCorePlugin::Get()->GetChrysalisCore()->GetObjectId()->GetCharacter()->CreateObjectId();
 		}
 		else if (strcmp(pClass, "item") == 0)
 		{
-			objectId = g_pGame->GetObjectId()->GetItem()->CreateObjectId();
+			objectId = CChrysalisCorePlugin::Get()->GetChrysalisCore()->GetObjectId()->GetItem()->CreateObjectId();
 		}
 		else if (strcmp(pClass, "faction") == 0)
 		{
-			objectId = g_pGame->GetObjectId()->GetFaction()->CreateObjectId();
+			objectId = CChrysalisCorePlugin::Get()->GetChrysalisCore()->GetObjectId()->GetFaction()->CreateObjectId();
 		}
 
 		if (objectId != CObjectIdFactory::InvalidId)

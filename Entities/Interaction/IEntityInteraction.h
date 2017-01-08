@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Entities/Helpers/ISimpleExtension.h>
+#include <CryCore/Platform/platform.h>
 
 
 struct IInteraction
@@ -23,30 +23,6 @@ private:
 };
 DECLARE_SHARED_POINTERS(IInteraction);
 
-
-class IEntityInteractionComponent : public ISimpleExtension
-{
-public:
-	std::vector<string> GetVerbs(bool includeHidden = false);
-
-	void AddInteraction(IInteractionPtr interaction);
-	void RemoveInteraction(string verb);
-	IInteractionWeakPtr GetInteraction(string verb);
-	IInteractionWeakPtr SelectInteractionVerb(string verb);
-	void ClearInteractionVerb();
-
-	//void OnInit();
-	//void OnReset();
-	void OnInteractionStart();
-	//void OnUpdate(float deltaX, float deltaY);
-	void OnInteractionComplete();
-	void OnInteractionCancel();
-	//void OnPost();
-
-private:
-	std::vector<IInteractionPtr> m_Interactions;
-	IInteractionPtr m_selectedInteraction { IInteractionPtr() };
-};
 
 // ***
 // *** Generic interactions e.g. "use", "interact". Good for when then is really only one

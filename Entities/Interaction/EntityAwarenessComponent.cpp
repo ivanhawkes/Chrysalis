@@ -1,7 +1,7 @@
 #include <StdAfx.h>
 
 #include "EntityAwarenessComponent.h"
-#include <Game/Game.h>
+#include "Plugin/ChrysalisCorePlugin.h"
 #include <GameObjects/GameObject.h>
 #include <IActorSystem.h>
 #include <IMovementController.h>
@@ -11,16 +11,25 @@
 #include <Entities/Interaction/EntityInteractionComponent.h>
 
 
+CRYREGISTER_CLASS(CEntityAwarenessComponent)
+
+
 class CEntityAwarenessRegistrator
 	: public IEntityRegistrator
 	, public CEntityAwarenessComponent::SExternalCVars
 {
 	virtual void Register() override
 	{
-		CGameFactory::RegisterGameObjectExtension<CEntityAwarenessComponent>("EntityAwareness");
+		RegisterEntityWithDefaultComponent<CEntityAwarenessComponent>("EntityAwareness", "Entities");
+
+		// This should make the entity class invisible in the editor.
+		auto cls = gEnv->pEntitySystem->GetClassRegistry()->FindClass("EntityAwareness");
+		cls->SetFlags(cls->GetFlags() | ECLF_INVISIBLE);
 
 		RegisterCVars();
 	}
+
+	void Unregister() override {};
 
 	void RegisterCVars()
 	{
@@ -29,7 +38,6 @@ class CEntityAwarenessRegistrator
 };
 
 CEntityAwarenessRegistrator g_entityAwarenessRegistrator;
-
 
 
 /** The distance forward of the actor we will ray-cast in search of entities. */
@@ -48,57 +56,72 @@ static const float maxRaycastStaleness = 0.05f;
 // *** IGameObjectExtension
 // ***
 
-bool CEntityAwarenessComponent::Init(IGameObject * pGameObject)
+void CEntityAwarenessComponent::Initialize()
 {
-	SetGameObject(pGameObject);
+	// Required for 5.3 to call update.
+	GetEntity()->Activate(true);
 
 	// This extension is only valid for actors.
-	m_pActor = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(GetEntityId());
+	m_pActor = gEnv->pGameFramework->GetIActorSystem()->GetActor(GetEntityId());
 	if (!m_pActor)
-	{
 		GameWarning("EntityAwareness extension only available for actors");
-		return false;
-	}
-
-	return true;
 }
 
 
-void CEntityAwarenessComponent::PostInit(IGameObject * pGameObject)
+void CEntityAwarenessComponent::ProcessEvent(SEntityEvent& event)
 {
-	pGameObject->EnableUpdateSlot(this, 0);
-}
-
-
-void CEntityAwarenessComponent::FullSerialize(TSerialize ser)
-{
-	if (ser.GetSerializationTarget() == eST_Network)
-		return;
-
-	ser.Value("proximityRadius", m_proximityRadius);
-	m_validQueries = 0;
-
-	if (GetISystem()->IsSerializingFile() == 1)
+	switch (event.event)
 	{
-		m_pActor = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(GetEntityId());
-		CRY_ASSERT(m_pActor);
+		case ENTITY_EVENT_UPDATE:
+			Update();
+			break;
 	}
 }
 
 
-void CEntityAwarenessComponent::Update(SEntityUpdateContext& ctx, int slot)
+void CEntityAwarenessComponent::SerializeProperties(Serialization::IArchive& archive)
+{
+	//if (!archive.isInput())
+	//{
+	//	Reset();
+	//}
+}
+
+
+//void CEntityAwarenessComponent::FullSerialize(TSerialize ser)
+//{
+//	if (ser.GetSerializationTarget() == eST_Network)
+//		return;
+//
+//	ser.Value("proximityRadius", m_proximityRadius);
+//	m_validQueries = 0;
+//
+//	if (GetISystem()->IsSerializingFile() == 1)
+//	{
+//		m_pActor = gEnv->pGameFramework->GetIActorSystem()->GetActor(GetEntityId());
+//		CRY_ASSERT(m_pActor);
+//	}
+//}
+
+
+void CEntityAwarenessComponent::Update()
 {
 	if (!m_pActor)
 		return;
+
+	m_eyePosition = m_pActor->GetEntity()->GetPos() + m_pActor->GetLocalEyePos();
 
 	// Using the local player's camera is fine for now. Arguably, you should get it from the actor skeleton instead
 	// but actor's don't allow you to query the eye direction, only it's position. Heisenberg much?
 	// TODO: make it work with the actor's eyes instead. That will work fine in FP, but might be tougher to control in TP - so test it.
-	auto localPlayer = CGame::GetLocalPlayer();
-	auto camera = localPlayer->GetCamera();
-
-	m_eyePosition = m_pActor->GetEntity()->GetPos() + m_pActor->GetLocalEyePos();
-	m_eyeDirection = camera->GetRotation();
+	auto localPlayer = CPlayer::GetLocalPlayer();
+	
+	// HACK: It should never come back null, but it does right now so we need this test.
+	if (localPlayer)
+	{
+		auto camera = localPlayer->GetCamera();
+		m_eyeDirection = camera->GetRotation();
+	}
 
 	// HACK: For now, I am just going to force these queries to run each update tick. We can finesse it later by allowing
 	// selection of which ones run.
@@ -152,48 +175,51 @@ const CEntityAwarenessComponent::SExternalCVars& CEntityAwarenessComponent::GetC
 
 void CEntityAwarenessComponent::UpdateRaycastQuery()
 {
-	if (!m_pActor || m_pActor->GetEntity()->IsHidden())
-		return;
+	// HACK: Really big hack, I've removed the ability to ray-cast due to link errors against 5.3
 
-	if (m_eyeDirection.IsValid())
-	{
-		IEntity * pEntity = m_pActor->GetEntity();
-		IPhysicalEntity * pPhysEnt = pEntity ? pEntity->GetPhysics() : nullptr;
-		IPhysicalEntity *skipEntities [1];
-		skipEntities [0] = pPhysEnt;
 
-		int raySlot = GetRaySlot();
-		CRY_ASSERT(raySlot != -1);
-
-		m_queuedRays [raySlot].rayId = g_pGame->GetRayCaster().Queue(
-			RayCastRequest::HighPriority,
-			RayCastRequest(m_eyePosition, m_eyeDirection * FORWARD_DIRECTION * forwardCastDistance,
-				ent_all,
-				rwi_pierceability(PIERCE_GLASS) | rwi_colltype_any,
-				skipEntities,
-				pPhysEnt ? 1 : 0,
-				2),
-			functor(*this, &CEntityAwarenessComponent::OnRayCastDataReceived));
-
-		m_queuedRays [raySlot].counter = ++m_requestCounter;
-
-#if defined(_DEBUG)
-		if (GetCVars().m_debug && eDB_RayCast)
-		{
-			gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(m_eyePosition, ColorB(0, 0, 128),
-				m_eyePosition + (m_eyeDirection * FORWARD_DIRECTION * forwardCastDistance), ColorB(0, 0, 255), 8.0f);
-		}
-#endif
-	}
-
-	// We've queued up the ray-cast, but since it's asynchronous we might not get a result for a little while. To
-	// counter this, we allow the old result to be valid for a short period of time, until the new result replaces it.
-	const float staleness = gEnv->pTimer->GetCurrTime() - m_timeLastDeferredResult;
-	if (staleness > maxRaycastStaleness)
-	{
-		m_rayHitAny = false;
-		m_lookAtEntityId = 0;
-	}
+//	if (!m_pActor || m_pActor->GetEntity()->IsHidden())
+//		return;
+//
+//	if (m_eyeDirection.IsValid())
+//	{
+//		IEntity * pEntity = m_pActor->GetEntity();
+//		IPhysicalEntity * pPhysEnt = pEntity ? pEntity->GetPhysics() : nullptr;
+//		IPhysicalEntity *skipEntities [1];
+//		skipEntities [0] = pPhysEnt;
+//
+//		int raySlot = GetRaySlot();
+//		CRY_ASSERT(raySlot != -1);
+//
+//		m_queuedRays [raySlot].rayId = static_cast<CCryAction*>(gEnv->pGameFramework)->GetPhysicQueues().GetRayCaster().Queue(
+//			RayCastRequest::HighPriority,
+//			RayCastRequest(m_eyePosition, m_eyeDirection * FORWARD_DIRECTION * forwardCastDistance,
+//				ent_all,
+//				rwi_pierceability(PIERCE_GLASS) | rwi_colltype_any,
+//				skipEntities,
+//				pPhysEnt ? 1 : 0,
+//				2),
+//			functor(*this, &CEntityAwarenessComponent::OnRayCastDataReceived));
+//
+//		m_queuedRays [raySlot].counter = ++m_requestCounter;
+//
+//#if defined(_DEBUG)
+//		if (GetCVars().m_debug && eDB_RayCast)
+//		{
+//			gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(m_eyePosition, ColorB(0, 0, 128),
+//				m_eyePosition + (m_eyeDirection * FORWARD_DIRECTION * forwardCastDistance), ColorB(0, 0, 255), 8.0f);
+//		}
+//#endif
+//	}
+//
+//	// We've queued up the ray-cast, but since it's asynchronous we might not get a result for a little while. To
+//	// counter this, we allow the old result to be valid for a short period of time, until the new result replaces it.
+//	const float staleness = gEnv->pTimer->GetCurrTime() - m_timeLastDeferredResult;
+//	if (staleness > maxRaycastStaleness)
+//	{
+//		m_rayHitAny = false;
+//		m_lookAtEntityId = 0;
+//	}
 }
 
 
@@ -359,19 +385,15 @@ void CEntityAwarenessComponent::UpdateInFrontOfQuery()
 #endif
 
 				// HACK: TEST: wrong place for this test - move it to somewhere i can see it try all the entities near us.
-				auto pGameObject = gEnv->pGame->GetIGameFramework()->GetGameObject(pEntity->GetId());
-				if (pGameObject)
+				auto pInteractor = pEntity->GetComponent<CEntityInteractionComponent>();
+				if (pInteractor)
 				{
-					auto pInteractor = static_cast<IEntityInteractionComponent*> (pGameObject->QueryExtension("EntityInteraction"));
-					if (pInteractor)
-					{
-						// There's an interactor component, so this is an interactive entity.
-						// 
-						auto verbs = pInteractor->GetVerbs();
-					}
-
-					m_entitiesInFrontOf.push_back(pEntity->GetId());
+					// There's an interactor component, so this is an interactive entity.
+					// 
+					auto verbs = pInteractor->GetVerbs();
 				}
+
+				m_entitiesInFrontOf.push_back(pEntity->GetId());
 			}
 		}
 	}
@@ -440,7 +462,7 @@ const Entities& CEntityAwarenessComponent::GetNearDotFiltered(float minDot, floa
 	if (GetCVars().m_debug && eDB_DotFiltered)
 	{
 		IEntity *pEntity;
-		if ((m_entitiesNearDotFiltered.size() > 0) && (pEntity = gEnv->pEntitySystem->GetEntity(m_entitiesNearDotFiltered[0])))
+		if ((m_entitiesNearDotFiltered.size() > 0) && (pEntity = gEnv->pEntitySystem->GetEntity(m_entitiesNearDotFiltered [0])))
 		{
 			AABB bbox;
 			pEntity->GetWorldBounds(bbox);

@@ -1,11 +1,14 @@
 #include <StdAfx.h>
 
 #include "Character.h"
+#include "Plugin/ChrysalisCorePlugin.h"
 #include <Actor/Movement/ActorMovementController.h>
 #include <Actor/Character/Movement/StateMachine/CharacterStateEvents.h>
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
-#include <Game/GameFactory.h>
+#include <CrySerialization/Decorators/Resources.h>
 
+
+//CRYREGISTER_CLASS(CCharacter)
 
 // Definition of the state machine that controls character movement.
 DEFINE_STATE_MACHINE(CCharacter, Movement);
@@ -17,6 +20,8 @@ class CCharacterRegistrator : public IEntityRegistrator
 	{
 		CCharacter::Register();
 	}
+
+	void Unregister() override {};
 };
 
 CCharacterRegistrator g_CharacterRegistrator;
@@ -24,55 +29,60 @@ CCharacterRegistrator g_CharacterRegistrator;
 
 void CCharacter::Register()
 {
-	auto properties = new SNativeEntityPropertyInfo [eNumProperties];
-	memset(properties, 0, sizeof(SNativeEntityPropertyInfo) * eNumProperties);
-
-	RegisterEntityPropertyObject(properties, eProperty_Model, "Model", "", "Actor model");
-	RegisterEntityProperty<float>(properties, eProperty_Mass, "Mass", "82", "Actor mass", 0, 10000);
-	RegisterEntityProperty<string>(properties, eProperty_Controller_Definition, "ControllerDefinition", "sdk_tutorial3controllerdefs.xml", "Controller Definition", 0, 0);
-	RegisterEntityProperty<string>(properties, eProperty_Scope_Context, "ScopeContext", "MainCharacter", "Scope Context", 0, 0);
-	RegisterEntityProperty<string>(properties, eProperty_Animation_Database, "AnimationDatabase", "sdk_tutorial3database.adb", "Animation Database", 0, 0);
-
-	// Finally, register the entity class so that instances can be created later on either via Launcher or Editor
-	CGameFactory::RegisterNativeEntity<CCharacter>("Character", "Actors", "Light.bmp", 0u, properties, eNumProperties);
-
-	// Create flownode
-	CGameEntityNodeFactory &nodeFactory = CGameFactory::RegisterEntityFlowNode("Character");
-
-	// Define input ports, and the callback function for when they are triggered
-	std::vector<SInputPortConfig> inputs;
-	inputs.push_back(InputPortConfig_Void("Open", "Open the door"));
-	inputs.push_back(InputPortConfig_Void("Close", "Close the door"));
-	nodeFactory.AddInputs(inputs, OnFlowgraphActivation);
-
-	// Mark the factory as complete, indicating that there will be no additional ports
-	nodeFactory.Close();
+	// Register the entity class so that instances can be created later on either via Launcher or Editor.
+	CChrysalisCorePlugin::RegisterEntityWithDefaultComponent<CCharacter>("Character");
+	//RegisterEntityWithDefaultComponent<CCharacter>("Character", "Actors", "Light.bmp");
 }
 
 
-void CCharacter::OnFlowgraphActivation(EntityId entityId, IFlowNode::SActivationInfo *pActInfo, const class CFlowGameEntityNode *pNode)
+void CCharacter::Initialize()
 {
-	if (auto pExtension = static_cast<CCharacter *>(QueryExtension(entityId)))
+	CActor::Initialize();
+
+	//// TODO: Move the PostInit into here once we are free of GameObjects.
+	//PostInit(gEnv->pGameFramework->GetGameObject(GetEntityId()));
+}
+
+
+void CCharacter::ProcessEvent(SEntityEvent& event)
+{
+	switch (event.event)
 	{
-		if (IsPortActive(pActInfo, eInputPort_Open))
-		{
-			//			pExtension->SetPropertyBool(eProperty_IsOpen, true);
-		}
-		else if (IsPortActive(pActInfo, eInputPort_Close))
-		{
-			//			pExtension->SetPropertyBool(eProperty_IsOpen, false);
-		}
+		// Physicalize on level start for Launcher
+		case ENTITY_EVENT_START_LEVEL:
+
+			// Editor specific, physicalize on reset, property change or transform change
+		case ENTITY_EVENT_RESET:
+		case ENTITY_EVENT_EDITOR_PROPERTY_CHANGED:
+		case ENTITY_EVENT_XFORM_FINISHED_EDITOR:
+			Reset();
+			break;
+
+		case ENTITY_EVENT_UPDATE:
+			// TODO: HACK: We don't have an update with ctx, updateslot - figure out how to do it the new way then switch
+			// this on.
+			//Update();
+			break;
+
+		case ENTITY_EVENT_PREPHYSICSUPDATE:
+			PrePhysicsUpdate();
+			break;
 	}
 }
 
 
-CCharacter::CCharacter()
+void CCharacter::SerializeProperties(Serialization::IArchive& archive)
 {
-}
+	archive(Serialization::ModelFilename(m_geometry), "Geometry", "Geometry");
+	archive(m_mass, "Mass", "Mass");
+	archive(Serialization::CharacterAnimationPicker(m_controllerDefinition), "ControllerDefinition", "Controller Definition");
+	archive(Serialization::CharacterAnimationPicker(m_scopeContext), "ScopeContext", "Scope Context");
+	archive(Serialization::CharacterAnimationPicker(m_animationDatabase), "AnimationDatabase", "Animation Database");
 
-
-CCharacter::~CCharacter()
-{
+	if (!archive.isInput())
+	{
+		Reset();
+	}
 }
 
 
@@ -93,23 +103,6 @@ void CCharacter::PostInit(IGameObject * pGameObject)
 }
 
 
-bool CCharacter::ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params)
-{
-	CActor::ReloadExtension(pGameObject, params);
-
-	// Register for game object events again.
-	RegisterEvents();
-
-	return true;
-}
-
-
-void CCharacter::PostReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params)
-{
-	CActor::PostReloadExtension(pGameObject, params);
-}
-
-
 void CCharacter::Update(SEntityUpdateContext& ctx, int updateSlot)
 {
 	CActor::Update(ctx, updateSlot);
@@ -122,28 +115,7 @@ void CCharacter::HandleEvent(const SGameObjectEvent& event)
 }
 
 
-void CCharacter::ProcessEvent(SEntityEvent& event)
-{
-	switch (event.event)
-	{
-		// Physicalize on level start for Launcher
-		case ENTITY_EVENT_START_LEVEL:
-
-			// Editor specific, physicalize on reset, property change or transform change
-		case ENTITY_EVENT_RESET:
-		case ENTITY_EVENT_EDITOR_PROPERTY_CHANGED:
-		case ENTITY_EVENT_XFORM_FINISHED_EDITOR:
-			Reset();
-			break;
-
-		case ENTITY_EVENT_PREPHYSICSUPDATE:
-			PrePhysicsUpdate();
-			break;
-	}
-}
-
-
-IComponent::ComponentEventPriority CCharacter::GetEventPriority(const int eventID) const
+IEntityComponent::ComponentEventPriority CCharacter::GetEventPriority(const int eventID) const
 {
 	switch (eventID)
 	{
@@ -263,7 +235,6 @@ void CCharacter::RegisterEvents()
 	const int EventsToRegister [] =
 	{
 		eGFE_OnCollision,			// Collision events.
-		eGFE_BecomeLocalPlayer,		// Become client actor events.
 		eGFE_OnPostStep,			// Not sure if it's needed for character animation here...but it is required for us to trap that event in this code.
 	};
 

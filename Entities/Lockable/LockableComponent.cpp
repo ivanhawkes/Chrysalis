@@ -1,18 +1,23 @@
 #include <StdAfx.h>
 
 #include "LockableComponent.h"
-#include <Game/GameFactory.h>
+#include "Plugin/ChrysalisCorePlugin.h"
 
 
-class CLockableExtensionRegistrator
-	: public IEntityRegistrator
-	, public CLockableComponent::SExternalCVars
+CRYREGISTER_CLASS(CLockableComponent)
+
+
+class CLockableExtensionRegistrator : public IEntityRegistrator, public CLockableComponent::SExternalCVars
 {
 	virtual void Register() override
 	{
-		CLockableComponent::Register();
+		// Register the entity class.
+		RegisterEntityWithDefaultComponent<CLockableComponent>("Lockable", "Locks", "Light.bmp");
+
 		RegisterCVars();
 	}
+
+	void Unregister() override {};
 
 	void RegisterCVars()
 	{
@@ -22,58 +27,41 @@ class CLockableExtensionRegistrator
 
 CLockableExtensionRegistrator g_LockableExtensionRegistrator;
 
+
 const CLockableComponent::SExternalCVars& CLockableComponent::GetCVars() const
 {
 	return g_LockableExtensionRegistrator;
 }
 
 
-// ***
-// *** IGameObjectExtension
-// ***
-
-
-void CLockableComponent::PostInit(IGameObject * pGameObject)
+void CLockableComponent::ProcessEvent(SEntityEvent& event)
 {
-}
-
-
-void CLockableComponent::Update(SEntityUpdateContext& ctx, int updateSlot)
-{
-}
-
-
-// ***
-// *** CLockableComponent
-// ***
-
-
-void CLockableComponent::Register()
-{
-	auto properties = new SNativeEntityPropertyInfo [eNumProperties];
-	memset(properties, 0, sizeof(SNativeEntityPropertyInfo) * eNumProperties);
-
-	{	// Lockable
-		ENTITY_PROPERTY_GROUP("Lockable", ePropertyGroup_LockableBegin, ePropertyGroup_LockableEnd, properties);
-		RegisterEntityProperty<bool>(properties, eProperty_Lockable_IsLocked, "IsLocked", "1", "Is this entity locked?", 0.0f, 1.0f);
-	}	// ~Lockable
-
-	// Finally, register the entity class so that instances can be created later on either via Launcher or Editor
-	CGameFactory::RegisterNativeEntity<CLockableComponent>("Lockable", "Locks", "Light.bmp", CGameFactory::eGameObjectRegistrationFlags::eGORF_HiddenInEditor, properties, eNumProperties);
-}
-
-
-void CLockableComponent::OnFlowgraphActivation(EntityId entityId, IFlowNode::SActivationInfo *pActInfo, const class CFlowGameEntityNode *pNode)
-{
-	if (auto pExtension = static_cast<CLockableComponent *>(QueryExtension(entityId)))
+	switch (event.event)
 	{
-		if (IsPortActive(pActInfo, eInputPort_Unlock))
-		{
-			pExtension->SetPropertyBool(eProperty_Lockable_IsLocked, false);
-		}
-		else if (IsPortActive(pActInfo, eInputPort_Lock))
-		{
-			pExtension->SetPropertyBool(eProperty_Lockable_IsLocked, true);
-		}
+		// Physicalize on level start for Launcher
+		case ENTITY_EVENT_START_LEVEL:
+
+			// Editor specific, physicalize on reset, property change or transform change
+		case ENTITY_EVENT_RESET:
+		case ENTITY_EVENT_EDITOR_PROPERTY_CHANGED:
+		case ENTITY_EVENT_XFORM_FINISHED_EDITOR:
+			Reset();
+			break;
+	}
+}
+
+
+void CLockableComponent::Reset()
+{
+}
+
+
+void CLockableComponent::SerializeProperties(Serialization::IArchive& archive)
+{
+	archive(m_isLocked, "IsLocked", "IsLocked");
+
+	if (!archive.isInput())
+	{
+		Reset();
 	}
 }

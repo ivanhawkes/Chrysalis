@@ -1,7 +1,6 @@
 #include <StdAfx.h>
 
 #include "CharacterStateGround.h"
-#include <Game/Game.h>
 #include <Actor/Character/Character.h>
 #include "CharacterStateJump.h"
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
@@ -37,7 +36,7 @@ void CCharacterStateGround::OnPrePhysicsUpdate(CCharacter& Character, const SAct
 
 	const CAutoAimManager& autoAimManager = g_pGame->GetAutoAimManager();
 	const EntityId closeCombatTargetId = autoAimManager.GetCloseCombatSnapTarget();
-	const IActor* pCloseCombatTarget = isCharacter && closeCombatTargetId && Character.IsClient() ? gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(closeCombatTargetId) : NULL;
+	const IActor* pCloseCombatTarget = isCharacter && closeCombatTargetId && Character.IsClient() ? gEnv->pGameFramework->GetIActorSystem()->GetActor(closeCombatTargetId) : NULL;
 
 	// This is to restore inertia if the ProcessAlignToTarget set it previously.
 	if (m_inertiaIsZero)
@@ -217,11 +216,11 @@ void CCharacterStateGround::OnPrePhysicsUpdate(CCharacter& Character, const SAct
 		if ((strcmp(filter, "0") == 0) || (strcmp(filter, name) == 0))
 		{
 			float white [] = { 1.0f, 1.0f, 1.0f, 1.0f };
-			gEnv->pRenderer->Draw2dLabel(20, 450, 2.0f, white, false, "Speed: %.3f m/s", Character.GetMoveRequest().velocity.len());
+			IRenderAuxText::Draw2dLabel(20, 450, 2.0f, white, false, "Speed: %.3f m/s", Character.GetMoveRequest().velocity.len());
 
 			if (g_pGameCVars->pl_debug_movement > 1)
 			{
-				gEnv->pRenderer->Draw2dLabel(35, 470, 1.8f, white, false, "Stance Speed: %.3f m/s - (%sSprinting)", Character.GetStanceMaxSpeed(Character.GetStance()), Character.IsSprinting() ? "" : "Not ");
+				IRenderAuxText::Draw2dLabel(35, 470, 1.8f, white, false, "Stance Speed: %.3f m/s - (%sSprinting)", Character.GetStanceMaxSpeed(Character.GetStance()), Character.IsSprinting() ? "" : "Not ");
 			}
 		}
 	}
@@ -305,9 +304,9 @@ bool CCharacterStateGround::CheckForVaultTrigger(CCharacter & Character, float f
 							const float iconColor [4] = { 0.3f, 1.f, 0.3f, 1.0f };
 							const char * iconText = "A";
 
-							gEnv->pRenderer->Draw2dLabel((gEnv->pRenderer->GetWidth() * 0.5f), (gEnv->pRenderer->GetHeight() * 0.65f), iconSize, bracketColor, true, "( )");
-							gEnv->pRenderer->Draw2dLabel((gEnv->pRenderer->GetWidth() * 0.5f), (gEnv->pRenderer->GetHeight() * 0.65f), iconSize, iconColor, true, "%s", iconText);
-							gEnv->pRenderer->Draw2dLabel((gEnv->pRenderer->GetWidth() * 0.5f), (gEnv->pRenderer->GetHeight() * 0.72f), textSize, textColor, true, "%s", message);
+							IRenderAuxText::Draw2dLabel((gEnv->pRenderer->GetWidth() * 0.5f), (gEnv->pRenderer->GetHeight() * 0.65f), iconSize, bracketColor, true, "( )");
+							IRenderAuxText::Draw2dLabel((gEnv->pRenderer->GetWidth() * 0.5f), (gEnv->pRenderer->GetHeight() * 0.65f), iconSize, iconColor, true, "%s", iconText);
+							IRenderAuxText::Draw2dLabel((gEnv->pRenderer->GetWidth() * 0.5f), (gEnv->pRenderer->GetHeight() * 0.72f), textSize, textColor, true, "%s", message);
 						}
 					}
 #endif
