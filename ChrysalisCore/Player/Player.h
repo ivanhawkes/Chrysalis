@@ -217,7 +217,22 @@ public:
 	*/
 	static CWeapon* GetLocalWeapon();
 
+	bool GetAllowCharacterMovement() const { return m_allowCharacterMovement; }
+	bool GetAllowCharacterRotation() const { return m_allowCharacterRotation; }
+	bool GetAllowCameraMovement() const { return m_allowCameraMovement; }
+
+	void SetCharacterInteractionMode(bool val)
+	{
+		m_allowCharacterMovement = !val;
+		m_allowCharacterRotation = !val;
+		m_allowCameraMovement = !val;
+	}
+
 private:
+	void SetAllowCharacterMovement(bool val) { m_allowCharacterMovement = val; }
+	void SetAllowCharacterRotation(bool val) { m_allowCharacterRotation = val; }
+	void SetAllowCameraMovement(bool val) { m_allowCameraMovement = val; }
+
 	/** Specifies whether this instance is the client actor. */
 	bool m_isClient { false };
 
@@ -239,4 +254,13 @@ private:
 
 	/** Identifier for the team. */
 	int m_teamId { 0 };
+
+	/** Is the player allowed to move their character? */
+	bool m_allowCharacterMovement { true };
+
+	/** Is the player allowed to rotate their character? */
+	bool m_allowCharacterRotation { true };
+
+	/** Is the player allowed to move the camera? */
+	bool m_allowCameraMovement { true };
 };

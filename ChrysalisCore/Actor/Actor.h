@@ -8,6 +8,7 @@
 #include <Actor/ActorStance.h>
 #include <Actor/IActorEventListener.h>
 #include <CryAISystem/IAgent.h>
+#include <Player/Input/IPlayerInputComponent.h>
 //#include <Actor/Character/Movement/CharacterRotation.h>
 
 class CPlayer;
@@ -105,7 +106,6 @@ public:
 	\return This instance's local-space eye position.
 	**/
 	Vec3 GetLocalEyePos() const override;
-
 
 	EntityId GetCurrentItemId(bool includeVehicle) const;
 
@@ -363,9 +363,13 @@ public:
 	ILINE const CFate& GetFate() { return m_fate; }
 
 
+	// HACK: remove this in favour of a more cohesive approach.
+	bool GetMovingLastFrame() const { return m_wasMovingLastFrame; }
+
+
 protected:
 
-	string m_geometry { "objects/default/primitive_box.cgf" };
+	string m_geometry;
 	float m_mass { 82.0f };
 	string m_controllerDefinition { "sdk_tutorial3controllerdefs.xml" };
 	string m_scopeContext { "MainCharacter" };
@@ -397,7 +401,6 @@ protected:
 	/** The actor physics. */
 	SActorPhysics m_actorPhysics;
 
-
 private:
 	/** Specifies whether this instance is the client actor. */
 	bool m_isClient { false };
@@ -424,8 +427,6 @@ private:
 	// Keeping the actions here allows me to stop them, which is good for testing, but wrong in
 	// so many ways.
 	bool m_wasMovingLastFrame { false };
-	IActionPtr m_pActionIdle;
-	IActionPtr m_pActionMove;
 
 	/** Identifier for the team. */
 	int m_teamId { 0 };
@@ -533,6 +534,9 @@ public:
 	virtual void Revive(EReasonForRevive reasonForRevive = RFR_Spawn);
 
 
+	virtual void ResetMannequin();
+
+
 	// ***
 	// *** Hierarchical State Machine Support - this allows us to abstract the HSM away from the base
 	// *** actor class - giving the flexibility to use different state machines for different
@@ -590,15 +594,15 @@ public:
 
 	\param	playerId	The entityId for the player who invoked this action.
 	*/
-	void OnActionItemUse(EntityId playerId);
+	virtual void OnActionItemUse(EntityId playerId);
 
 
 	/**
-	Action handler for picking up an item / entitiy.
+	Action handler for picking up an item / entity.
 
 	\param	playerId	The entityId for the player who invoked this action.
 	*/
-	void OnActionItemPickup(EntityId playerId);
+	virtual void OnActionItemPickup(EntityId playerId);
 
 
 	/**
@@ -606,7 +610,7 @@ public:
 
 	\param	playerId	The entityId for the player who invoked this action.
 	*/
-	void OnActionItemDrop(EntityId playerId);
+	virtual void OnActionItemDrop(EntityId playerId);
 
 
 	/**
@@ -615,7 +619,7 @@ public:
 
 	\param	playerId	The entityId for the player who invoked this action.
 	*/
-	void OnActionItemThrow(EntityId playerId);
+	virtual void OnActionItemToss(EntityId playerId);
 
 
 	/**
@@ -673,4 +677,74 @@ public:
 	\param	playerId	The entityId for the player who invoked this action.
 	*/
 	void OnActionInteractionEnd(EntityId playerId);
+
+
+private:
+	/** If we are interacting with an entity, it is this entity. */
+	EntityId m_interactionEntityId { INVALID_ENTITYID };
+
+
+	// ***
+	// *** Movement Requests
+	// ***
+
+public:
+
+	/**
+	Handle requests to toggle between walking and jogging.
+
+	\param	playerId	The entityId for the player who invoked this action.
+	*/
+	virtual void OnActionJogToggle(EntityId playerId);
+
+
+	/**
+	Handle requests to begin sprinting.
+
+	\param	playerId	The entityId for the player who invoked this action.
+	*/
+	virtual void OnActionSprintStart(EntityId playerId);
+
+
+	/**
+	Handle requests to stop sprinting.
+
+	\param	playerId	The entityId for the player who invoked this action.
+	*/
+	virtual void OnActionSprintStop(EntityId playerId);
+
+
+	/** Is the actor currently sprinting?  */
+	bool IsSprinting() const { return m_isSprinting; }
+
+	/** Is the actor currently jogging?  */
+	bool IsJogging() const { return m_isJogging; }
+
+
+	/**
+	Return a base movement speed for this actor, given the direction (local to character) in which they are moving.
+	This allows for slower speeds when moving backwards or sideways. It doesn't take into account slope or terrain.
+
+	\param	movementStateFlags The movement state flags.
+
+	\return The movement base speed.
+	**/
+	float GetMovementBaseSpeed(uint32 movementStateFlags) const;
+
+private:
+	/** The actor is sprinting. */
+	bool m_isSprinting { false };
+
+	/** The actor is jogging. */
+	bool m_isJogging { false };
+
+
+	// ***
+	// *** Misc
+	// ***
+
+public:
+	virtual Vec3 GetLocalLeftHandPos() const;
+
+	virtual Vec3 GetLocalRightHandPos() const;
 };

@@ -7,7 +7,7 @@
 #include <Player/Player.h>
 #include <Actor/Character/Character.h>
 #include <Player/Camera/ICameraComponent.h>
-#include <Entities/Interaction/EntityInteractionComponent.h>
+#include <Components/Interaction/EntityInteractionComponent.h>
 
 
 CRYREGISTER_CLASS(CEntityAwarenessComponent)
@@ -201,7 +201,7 @@ void CEntityAwarenessComponent::UpdateRaycastQuery()
 //		m_queuedRays [raySlot].counter = ++m_requestCounter;
 //
 //#if defined(_DEBUG)
-//		if (GetCVars().m_debug && eDB_RayCast)
+//		if (GetCVars().m_debug & eDB_RayCast)
 //		{
 //			gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(m_eyePosition, ColorB(0, 0, 128),
 //				m_eyePosition + (m_eyeDirection * FORWARD_DIRECTION * forwardCastDistance), ColorB(0, 0, 255), 8.0f);
@@ -238,7 +238,7 @@ void CEntityAwarenessComponent::UpdateProximityQuery()
 	qry.box.max = m_eyePosition + positionOffset;
 
 #if defined(_DEBUG)
-	if (GetCVars().m_debug && eDB_ProximalEntities)
+	if (GetCVars().m_debug & eDB_ProximalEntities)
 	{
 		// DEBUG: Render the grid for debug purposes.
 		gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(qry.box, false, ColorB(255, 0, 0), EBoundingBoxDrawStyle::eBBD_Extremes_Color_Encoded);
@@ -260,7 +260,7 @@ void CEntityAwarenessComponent::UpdateProximityQuery()
 			continue;
 
 #if defined(_DEBUG)
-		if (GetCVars().m_debug && eDB_ProximalEntities)
+		if (GetCVars().m_debug & eDB_ProximalEntities)
 		{
 			// DEBUG: Highlight each entity within the range.
 			AABB bbox;
@@ -283,7 +283,7 @@ void CEntityAwarenessComponent::UpdateNearQuery()
 	const float flatDistanceSqr = proximityRadius * proximityRadius;
 
 #if defined(_DEBUG)
-	if (GetCVars().m_debug && eDB_NearEntities)
+	if (GetCVars().m_debug & eDB_NearEntities)
 	{
 		// DEBUG: Render the grid for debug purposes.
 		const Vec3 positionOffset(proximityRadius, proximityRadius, proximityRadius);
@@ -318,7 +318,7 @@ void CEntityAwarenessComponent::UpdateNearQuery()
 			continue;
 
 #if defined(_DEBUG)
-		if (GetCVars().m_debug && eDB_NearEntities)
+		if (GetCVars().m_debug & eDB_NearEntities)
 		{
 			// DEBUG: Highlight the entity.
 			AABB bbox;
@@ -344,7 +344,7 @@ void CEntityAwarenessComponent::UpdateInFrontOfQuery()
 	Lineseg lineseg(m_eyePosition, m_eyePosition + (m_eyeDirection * FORWARD_DIRECTION * m_proximityRadius));
 
 #if defined(_DEBUG)
-	if (GetCVars().m_debug && eDB_InFront)
+	if (GetCVars().m_debug & eDB_InFront)
 	{
 		// DEBUG: get the lineseg to show up.
 		gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(lineseg.start, ColorB(64, 0, 0), lineseg.end, ColorB(128, 0, 0), 8.0f);
@@ -374,7 +374,7 @@ void CEntityAwarenessComponent::UpdateInFrontOfQuery()
 			if (Overlap::Lineseg_OBB(lineseg, pEntity->GetWorldPos(), obb))
 			{
 #if defined(_DEBUG)
-				if (GetCVars().m_debug && eDB_InFront)
+				if (GetCVars().m_debug & eDB_InFront)
 				{
 					// DEBUG: let's see those boxes.
 					gEnv->pRenderer->GetIRenderAuxGeom()->DrawOBB(obb, pEntity->GetWorldTM(), true, ColorB(0, 0, 196), EBoundingBoxDrawStyle::eBBD_Extremes_Color_Encoded);
@@ -428,7 +428,7 @@ const Entities& CEntityAwarenessComponent::GetNearDotFiltered(float minDot, floa
 		if ((dotToItem >= minDot) && (dotToItem <= maxDot))
 		{
 #if defined(_DEBUG)
-			if (GetCVars().m_debug && eDB_DotFiltered)
+			if (GetCVars().m_debug & eDB_DotFiltered)
 			{
 				// DEBUG: Highlight the entity.
 				bbox.Expand(Vec3(0.03f, 0.03f, 0.03f));
@@ -456,7 +456,7 @@ const Entities& CEntityAwarenessComponent::GetNearDotFiltered(float minDot, floa
 		std::swap(m_entitiesNearDotFiltered [0], m_entitiesNearDotFiltered [bestResultIndex]);
 
 #if defined(_DEBUG)
-	if (GetCVars().m_debug && eDB_DotFiltered)
+	if (GetCVars().m_debug & eDB_DotFiltered)
 	{
 		IEntity *pEntity;
 		if ((m_entitiesNearDotFiltered.size() > 0) && (pEntity = gEnv->pEntitySystem->GetEntity(m_entitiesNearDotFiltered [0])))
@@ -496,7 +496,7 @@ void CEntityAwarenessComponent::OnRayCastDataReceived(const QueuedRayID& rayID, 
 		m_rayHitSolid = result.hits [0];
 
 #if defined(_DEBUG)
-		if (GetCVars().m_debug && eDB_RayCast)
+		if (GetCVars().m_debug & eDB_RayCast)
 		{
 			// Initial position for our target.
 			gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(m_rayHitSolid.pt, 0.04f, ColorB(255, 0, 0));
@@ -525,7 +525,7 @@ void CEntityAwarenessComponent::OnRayCastDataReceived(const QueuedRayID& rayID, 
 			m_rayHitPierceable.next = nullptr;
 
 #if defined(_DEBUG)
-			if (GetCVars().m_debug && eDB_RayCast)
+			if (GetCVars().m_debug & eDB_RayCast)
 			{
 				gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(result.hits [1].pt, 0.04f, ColorB(0, 0, 255));
 			}

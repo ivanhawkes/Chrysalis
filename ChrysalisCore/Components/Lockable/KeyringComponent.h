@@ -3,7 +3,7 @@
 #include "Helpers/DesignerEntityComponent.h"
 
 
-struct IKeyringComponent : public IEntityComponent
+struct IKeyringComponent : public CDesignerEntityComponent<>
 {
 	CRY_ENTITY_COMPONENT_INTERFACE(IKeyringComponent, 0x37D981514F55495F, 0x91C09099BCCA2300)
 };
@@ -23,8 +23,6 @@ class CKeyringComponent final : public IKeyringComponent, public IEntityProperty
 public:
 	// IEntityComponent
 	void Initialize() override {};
-	void ProcessEvent(SEntityEvent& event) override;
-	uint64 GetEventMask() const { return BIT64(ENTITY_EVENT_START_LEVEL) | BIT64(ENTITY_EVENT_RESET) | BIT64(ENTITY_EVENT_EDITOR_PROPERTY_CHANGED) | BIT64(ENTITY_EVENT_XFORM_FINISHED_EDITOR); }
 	struct IEntityPropertyGroup* GetPropertyGroup() override { return this; }
 	// ~IEntityComponent
 
@@ -46,9 +44,9 @@ public:
 	};
 	const SExternalCVars &GetCVars() const;
 
+	void OnResetState() override;
+
 private:
 	string m_keys;
 	bool m_bActive { true };
-
-	void OnResetState();
 };

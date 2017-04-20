@@ -7,12 +7,13 @@
 #include <IAnimatedCharacter.h>
 #include <IGameObject.h>
 #include <IItemSystem.h>
+#include <Actor/Animation/ActorAnimation.h>
+#include <Actor/Animation/Actions/ActorAnimationActionLocomotion.h>
 #include <Actor/Movement/ActorMovementController.h>
 #include <Actor/ActorPhysics.h>
 #include <Player/Player.h>
-#include <Player/Animations/PlayerAnimations.h>
-#include <Entities/Interaction/EntityAwarenessComponent.h>
-#include <Entities/Interaction/EntityInteractionComponent.h>
+#include <Components/Interaction/EntityAwarenessComponent.h>
+#include <Components/Interaction/EntityInteractionComponent.h>
 #include <Utility/CryWatch.h>
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
 
@@ -140,7 +141,7 @@ void CActor::PostInit(IGameObject * pGameObject)
 	// Give the actor a DRS proxy, since it will probably need one.
 	m_pDrsComponent = crycomponent_cast<IEntityDynamicResponseComponent*> (pEntity->CreateProxy(ENTITY_PROXY_DYNAMICRESPONSE));
 
-	// #HACK: #TODO: Is this right? We only want to register action maps on the local client.
+	// Are we the local player?
 	if (GetEntityId() == gEnv->pGameFramework->GetClientActorId())
 	{
 		// Tells this instance to trigger areas and that it's the local player.
@@ -187,14 +188,14 @@ void CActor::ProcessEvent(SEntityEvent& event)
 	switch (event.event)
 	{
 		// Physicalize on level start for Launcher
-		case ENTITY_EVENT_START_LEVEL:
+	case ENTITY_EVENT_START_LEVEL:
 
-			// Editor specific, physicalize on reset, property change or transform change
-		case ENTITY_EVENT_RESET:
-		case ENTITY_EVENT_EDITOR_PROPERTY_CHANGED:
-		case ENTITY_EVENT_XFORM_FINISHED_EDITOR:
-			OnResetState();
-			break;
+		// Editor specific, physicalize on reset, property change or transform change
+	case ENTITY_EVENT_RESET:
+	case ENTITY_EVENT_EDITOR_PROPERTY_CHANGED:
+	case ENTITY_EVENT_XFORM_FINISHED_EDITOR:
+		OnResetState();
+		break;
 	}
 }
 
@@ -203,8 +204,8 @@ IEntityComponent::ComponentEventPriority CActor::GetEventPriority(const int even
 {
 	switch (eventID)
 	{
-		case ENTITY_EVENT_PREPHYSICSUPDATE:
-			return ENTITY_PROXY_LAST - ENTITY_PROXY_USER + EEntityEventPriority_Actor + EEntityEventPriority_Client; // #HACK: only used for when we are the client, fix later.
+	case ENTITY_EVENT_PREPHYSICSUPDATE:
+		return ENTITY_PROXY_LAST - ENTITY_PROXY_USER + EEntityEventPriority_Actor + EEntityEventPriority_Client; // #HACK: only used for when we are the client, fix later.
 	}
 
 	return IGameObjectExtension::GetEventPriority(eventID);
@@ -219,32 +220,15 @@ void CActor::UpdateAnimationState(const SActorMovementRequest& movementRequest)
 		// 	auto physics = GetActorPhysics();
 
 		// #HACK: get some debug. NOTE: This draws a big sphere over the character's head.
-		//m_pActionController->SetFlag(AC_DebugDraw, true);
+		m_pActionController->SetFlag(AC_DebugDraw, true);
 
-		// #HACK: Really dirty way to switch between movement and idle states.
-		// FIXME: Switch to using priority levels and requeing the actions on completion.
+		// #HACK: Tracking if we moved this frame / last frame. Move this into a more cohesive solution.
 		if (movementRequest.desiredVelocity.len() > FLT_EPSILON)
 		{
-			if (!m_wasMovingLastFrame)
-			{
-				// Switch to movement fragment.
-				if (m_pActionIdle)
-					m_pActionIdle->Stop();
-				m_pActionMove = new TAction<SAnimationContext>(0, m_pAnimationContext->controllerDef.m_fragmentIDs.Find("Move"));
-				m_pActionController->Queue(*m_pActionMove);
-			}
 			m_wasMovingLastFrame = true;
 		}
 		else
 		{
-			if (m_wasMovingLastFrame)
-			{
-				// Switch to idle fragment.
-				if (m_pActionMove)
-					m_pActionMove->Stop();
-				m_pActionIdle = new TAction<SAnimationContext>(0, m_pAnimationContext->controllerDef.m_fragmentIDs.Find("Idle"));
-				m_pActionController->Queue(*m_pActionIdle);
-			}
 			m_wasMovingLastFrame = false;
 		}
 	}
@@ -283,16 +267,16 @@ void CActor::UpdateAnimationState(const SActorMovementRequest& movementRequest)
 				}
 			}
 
-			if (!animContext.state.GetDef().IsGroupSet(animContext.state.GetMask(), PlayerMannequin.tagGroupIDs.item))
+			if (!animContext.state.GetDef().IsGroupSet(animContext.state.GetMask(), ActorMannequin.tagGroupIDs.item))
 			{
-				animContext.state.Set(PlayerMannequin.tagIDs.nw, true);
-				animContext.state.SetGroup(PlayerMannequin.tagGroupIDs.zoom, TAG_ID_INVALID);
-				animContext.state.SetGroup(PlayerMannequin.tagGroupIDs.firemode, TAG_ID_INVALID);
+				animContext.state.Set(ActorMannequin.tagIDs.nw, true);
+				animContext.state.SetGroup(ActorMannequin.tagGroupIDs.zoom, TAG_ID_INVALID);
+				animContext.state.SetGroup(ActorMannequin.tagGroupIDs.firemode, TAG_ID_INVALID);
 			}
 
-			animContext.state.Set(PlayerMannequin.tagIDs.outOfAmmo, isOutOfAmmo);
+			animContext.state.Set(ActorMannequin.tagIDs.outOfAmmo, isOutOfAmmo);
 			const bool aimEnabled = !IsSprinting() || (pWeapon && pWeapon->IsReloading());
-			animContext.state.Set(PlayerMannequin.tagIDs.aiming, (movement.aimIK || m_isPlayer) && aimEnabled);
+			animContext.state.Set(ActorMannequin.tagIDs.aiming, (movement.aimIK || m_isPlayer) && aimEnabled);
 
 			const Vec3 referenceVel = GetActorPhysics().velocity;
 			float speedXY = referenceVel.GetLength2D();
@@ -301,7 +285,7 @@ void CActor::UpdateAnimationState(const SActorMovementRequest& movementRequest)
 			//		CryWatch("LastRequestedVel (%f, %f, %f)", m_lastRequestedVelocity.x, m_lastRequestedVelocity.y, m_lastRequestedVelocity.z);
 			//		CryWatch("DesVel (%f, %f, %f)", desiredVelocity.x, desiredVelocity.y, desiredVelocity.z);
 
-			TagID movementTag = IsSprinting() ? PlayerMannequin.tagIDs.sprint : TAG_ID_INVALID;
+			TagID movementTag = IsSprinting() ? ActorMannequin.tagIDs.sprint : TAG_ID_INVALID;
 			TagID moveDir = TAG_ID_INVALID;
 			if (speedXY > 0.5f)
 			{
@@ -312,24 +296,24 @@ void CActor::UpdateAnimationState(const SActorMovementRequest& movementRequest)
 				const float unsignedAngle = fabs_tpl(signedAngle);
 				if (unsignedAngle < gf_PI*0.25f)
 				{
-					moveDir = PlayerMannequin.tagIDs.forward;
+					moveDir = ActorMannequin.tagIDs.forward;
 				}
 				else if (unsignedAngle > gf_PI*0.75f)
 				{
-					moveDir = PlayerMannequin.tagIDs.backward;
+					moveDir = ActorMannequin.tagIDs.backward;
 				}
 				else if (signedAngle > 0.0f)
 				{
-					moveDir = PlayerMannequin.tagIDs.right;
+					moveDir = ActorMannequin.tagIDs.right;
 				}
 				else
 				{
-					moveDir = PlayerMannequin.tagIDs.left;
+					moveDir = ActorMannequin.tagIDs.left;
 				}
 			}
 
-			animContext.state.SetGroup(PlayerMannequin.tagGroupIDs.moveDir, moveDir);
-			animContext.state.SetGroup(PlayerMannequin.tagGroupIDs.moveSpeed, movementTag);
+			animContext.state.SetGroup(ActorMannequin.tagGroupIDs.moveDir, moveDir);
+			animContext.state.SetGroup(ActorMannequin.tagGroupIDs.moveSpeed, movementTag);
 		}*/
 }
 
@@ -387,34 +371,92 @@ Vec3 CActor::GetLocalEyePos() const
 		static bool alreadyWarned { false };
 		switch (eyeFlags)
 		{
-			case 0:
-				// Failure, didn't find any eyes.
-				// This will most likely spam the log. Disable it if it's annoying.
-				if (!alreadyWarned)
-				{
-					CryLogAlways("Character class %s does not have '#camera', 'left_eye' or 'right_eye' defined.", GetActorClassName());
-					alreadyWarned = true;
-				}
-				break;
+		case 0:
+			// Failure, didn't find any eyes.
+			// This will most likely spam the log. Disable it if it's annoying.
+			if (!alreadyWarned)
+			{
+				CryLogAlways("Character class %s does not have '#camera', 'left_eye' or 'right_eye' defined.", GetActorClassName());
+				alreadyWarned = true;
+			}
+			break;
 
-			case 1:
-				// Left eye only.
-				eyePosition = eyeLeftPosition;
-				break;
+		case 1:
+			// Left eye only.
+			eyePosition = eyeLeftPosition;
+			break;
 
-			case 2:
-				// Right eye only.
-				eyePosition = eyeRightPosition;
-				break;
+		case 2:
+			// Right eye only.
+			eyePosition = eyeRightPosition;
+			break;
 
-			case 3:
-				// Both eyes, position between the two points.
-				eyePosition = (eyeLeftPosition + eyeRightPosition) / 2.0f;
-				break;
+		case 3:
+			// Both eyes, position between the two points.
+			eyePosition = (eyeLeftPosition + eyeRightPosition) / 2.0f;
+			break;
 		}
 	}
 
 	return eyePosition;
+}
+
+
+Vec3 CActor::GetLocalLeftHandPos() const
+{
+	// The default, in case we can't find the actual hand position.
+	const Vec3 handPosition { -0.2f, 0.3f, 1.3f };
+
+	// Get their character or bail early.
+	ICharacterInstance* pCharacter = GetEntity()->GetCharacter(0);
+	if (pCharacter)
+	{
+		// Determine the position of the left and right eyes, using their average for eyePosition.
+		const IAttachmentManager* pAttachmentManager = pCharacter->GetIAttachmentManager();
+		if (pAttachmentManager)
+		{
+			// Did the animators define a hand bone for us to use?
+			// #TODO: This is from SDK guys. Change this to a well defined name for our skeleton attachments.
+			const auto handBone = pAttachmentManager->GetIndexByName("left_weapon");
+			const IAttachment* pAttachment = pAttachmentManager->GetInterfaceByIndex(handBone);
+			if (pAttachment)
+			{
+				// We have an exact position to return.
+				return GetEntity()->GetRotation() * pAttachment->GetAttModelRelative().t;
+			}
+		}
+	}
+
+	return handPosition;
+}
+
+
+Vec3 CActor::GetLocalRightHandPos() const
+{
+	// The default, in case we can't find the actual hand position.
+	const Vec3 handPosition { 0.2f, 0.3f, 1.3f };
+
+	// Get their character or bail early.
+	ICharacterInstance* pCharacter = GetEntity()->GetCharacter(0);
+	if (pCharacter)
+	{
+		// Determine the position of the left and right eyes, using their average for eyePosition.
+		const IAttachmentManager* pAttachmentManager = pCharacter->GetIAttachmentManager();
+		if (pAttachmentManager)
+		{
+			// Did the animators define a hand bone for us to use?
+			// #TODO: This is from SDK guys. Change this to a well defined name for our skeleton attachments.
+			const auto handBone = pAttachmentManager->GetIndexByName("weapon");
+			const IAttachment* pAttachment = pAttachmentManager->GetInterfaceByIndex(handBone);
+			if (pAttachment)
+			{
+				// We have an exact position to return.
+				return GetEntity()->GetRotation() * pAttachment->GetAttModelRelative().t;
+			}
+		}
+	}
+
+	return handPosition;
 }
 
 
@@ -687,7 +729,7 @@ void CActor::OnPlayerDetach()
 
 	// #TODO: Detach the camera.
 
-	// #TODO: We can remove the entity awareness component if that's desireable.
+	// #TODO: We can remove the entity awareness component if that's desirable.
 
 	// #TODO: handle transitioning this character back into the loving hands of the AI.
 	m_isAIControlled = true;
@@ -716,79 +758,88 @@ void CActor::OnResetState()
 		}
 	}
 
-	// Load character
-	pEntity->LoadCharacter(0, m_geometry);
-
-	// Mannequin Initialization
-	IMannequin& mannequin = gEnv->pGameFramework->GetMannequinInterface();
-	IAnimationDatabaseManager& animationDatabaseManager = mannequin.GetAnimationDatabaseManager();
-
-	// Loading the controller definition that we previously created.
-	// This is owned by the animation database manager
-	const SControllerDef* const pControllerDef = animationDatabaseManager.LoadControllerDef(MANNEQUIN_FOLDER + m_controllerDefinition);
-	if (pControllerDef == nullptr)
+	if (!m_geometry.IsEmpty())
 	{
-		CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_ERROR, "Failed to load controller definition for MannequinSample.");
-		return;
+		// Load character
+		pEntity->LoadCharacter(0, m_geometry);
+
+		// Mannequin Initialization
+		IMannequin& mannequin = gEnv->pGameFramework->GetMannequinInterface();
+		IAnimationDatabaseManager& animationDatabaseManager = mannequin.GetAnimationDatabaseManager();
+
+		// Loading the controller definition that we previously created.
+		// This is owned by the animation database manager
+		const SControllerDef* const pControllerDef = animationDatabaseManager.LoadControllerDef(MANNEQUIN_FOLDER + m_controllerDefinition);
+		if (pControllerDef == nullptr)
+		{
+			CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_ERROR, "Failed to load controller definition for actor.");
+			return;
+		}
+
+		// Creation of the animation context and action controller. Don't re-order these lines.
+		SAFE_RELEASE(m_pActionController);
+		SAFE_DELETE(m_pAnimationContext);
+		m_pAnimationContext = new SAnimationContext(*pControllerDef);
+		m_pActionController = mannequin.CreateActionController(pEntity, *m_pAnimationContext);
+
+		// Scope Context Setup. In our controller definition we have a scope context that we called MainCharacter. The Scope
+		// Context Setup will associate this entity, the character instance we loaded at the beginning, and the animation
+		// database where we saved our fragments to this scope context.
+		const TagID scopeContextId = m_pAnimationContext->controllerDef.m_scopeContexts.Find(m_scopeContext);
+		if (scopeContextId == TAG_ID_INVALID)
+		{
+			CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_ERROR, "Failed to find MainCharacter scope context id for MannequinSample in controller definition.");
+			return;
+		}
+
+		ICharacterInstance* const pCharacterInstance = pEntity->GetCharacter(0);
+		CRY_ASSERT(pCharacterInstance != nullptr);
+
+		// Loading a database
+		const IAnimationDatabase* const pAnimationDatabase = animationDatabaseManager.Load(MANNEQUIN_FOLDER + m_animationDatabase);
+		if (pAnimationDatabase == nullptr)
+		{
+			CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_ERROR, "Failed to load animation database for MannequinSample.");
+			return;
+		}
+
+		// Setting Scope contexts can happen at any time, and what entity or character instance we have bound to a particular scope context
+		// can change during the lifetime of an action controller.
+		if (pCharacterInstance)
+		{
+			m_pActionController->SetScopeContext(scopeContextId, *pEntity, pCharacterInstance, pAnimationDatabase);
+		}
+
+		// Set up the mannequin fragments and tags.
+		if (m_pActionController)
+		{
+			auto& mannequinUserParams = gEnv->pGameFramework->GetMannequinInterface().GetMannequinUserParamsManager();
+			mannequinUserParams.RegisterParams<SActorMannequinParams>(m_pActionController, &ActorMannequin);
+		}
+
+		// Invalidates this instance's transformation matrix in order to force an update of the area manager and other location sensitive systems.
+		pEntity->InvalidateTM(ENTITY_XFORM_POS);
+
+		// The assumption is I need to physicalise on each change - though this might not be true.
+		// #TODO: check if this has to happen every reset.
+		Physicalize();
+
+		// Reset the HSM for character movement.
+		MovementHSMReset();
+
+		// Select which HSM to use for our character's movement. This relies on it's AI status being
+		// correctly set first.
+		SelectMovementHierarchy();
+
+		// Mannequin should also be reset.
+		ResetMannequin();
+
+		//SetLastTimeInLedge (0.0f);
+		//SetupAimIKProperties ();
+		//DisableStumbling ();
+		//m_playerStateSwim_WaterTestProxy.Reset (true);
+		//GetSpectacularKill ().Reset ();
 	}
-
-	// Creation of the animation context and action controller. Don't re-order these lines.
-	SAFE_RELEASE(m_pActionController);
-	SAFE_DELETE(m_pAnimationContext);
-	m_pAnimationContext = new SAnimationContext(*pControllerDef);
-	m_pActionController = mannequin.CreateActionController(pEntity, *m_pAnimationContext);
-
-	// Scope Context Setup. In our controller definition we have a scope context that we called MainCharacter. The Scope
-	// Context Setup will associate this entity, the character instance we loaded at the beginning, and the animation
-	// database where we saved our fragments to this scope context.
-	const TagID scopeContextId = m_pAnimationContext->controllerDef.m_scopeContexts.Find(m_scopeContext);
-	if (scopeContextId == TAG_ID_INVALID)
-	{
-		CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_ERROR, "Failed to find MainCharacter scope context id for MannequinSample in controller definition.");
-		return;
-	}
-
-	ICharacterInstance* const pCharacterInstance = pEntity->GetCharacter(0);
-	CRY_ASSERT(pCharacterInstance != nullptr);
-
-	// Loading a database
-	const IAnimationDatabase* const pAnimationDatabase = animationDatabaseManager.Load(MANNEQUIN_FOLDER + m_animationDatabase);
-	if (pAnimationDatabase == nullptr)
-	{
-		CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_ERROR, "Failed to load animation database for MannequinSample.");
-		return;
-	}
-
-	// Setting Scope contexts can happen at any time, and what entity or character instance we have bound to a particular scope context
-	// can change during the lifetime of an action controller.
-	m_pActionController->SetScopeContext(scopeContextId, *pEntity, pCharacterInstance, pAnimationDatabase);
-
-	// Start the idle fragment.
-	//const FragmentID fragmentId = m_pAnimationContext->controllerDef.m_fragmentIDs.Find("Idle");
-	////const FragmentID fragmentId = m_pAnimationContext->controllerDef.m_fragmentIDs.Find("Move");
-	////const FragmentID fragmentId = m_pAnimationContext->controllerDef.m_fragmentIDs.Find ("MotionMovement");
-	//IActionPtr pAction = new TAction<SAnimationContext>(0, fragmentId);
-	//m_pActionController->Queue(*pAction);
-
-	// Invalidates this instance's transformation matrix in order to force an update of the area manager and other location sensitive systems.
-	pEntity->InvalidateTM(ENTITY_XFORM_POS);
-
-	// The assumption is I need to physicalise on each change - though this might not be true.
-	// #TODO: check if this has to happen every reset.
-	Physicalize();
-
-	// Reset the HSM for character movement.
-	MovementHSMReset();
-
-	// Select which HSM to use for our character's movement. This relies on it's AI status being
-	// correctly set first.
-	SelectMovementHierarchy();
-
-	//SetLastTimeInLedge (0.0f);
-	//SetupAimIKProperties ();
-	//DisableStumbling ();
-	//m_playerStateSwim_WaterTestProxy.Reset (true);
-	//GetSpectacularKill ().Reset ();
 }
 
 
@@ -808,6 +859,48 @@ void CActor::Revive(EReasonForRevive reasonForRevive)
 	// Select which HSM to use for our character's movement. This relies on it's AI status being
 	// correctly set first.
 	SelectMovementHierarchy();
+
+	// Mannequin should be reset.
+	ResetMannequin();
+}
+
+
+// TODO: Is this really needed? Perhaps there's a better way to handle it. Revive isn't getting called at present
+// so there must be a better place for this.
+
+void CActor::ResetMannequin()
+{
+	if (m_pActionController)
+	{
+		//if (IsPlayer() && !IsAIControlled())
+		//{
+		//	m_pActionController->Resume();
+
+		//	SAnimationContext &animContext = m_pActionController->GetContext();
+		//	animContext.state.Set(ActorMannequin.tagIDs.localClient, IsClient());
+		//	animContext.state.SetGroup(ActorMannequin.tagGroupIDs.playMode, gEnv->bMultiplayer ? ActorMannequin.tagIDs.MP : ActorMannequin.tagIDs.SP);
+		//	animContext.state.Set(ActorMannequin.tagIDs.FP, !IsThirdPerson());
+
+		//	SetStanceTag(GetStance(), animContext.state);
+
+		//	// Install persistent AimPose action
+		//	m_pActionController->Queue(*new CPlayerBackgroundAction(EActorActionPriority::eAAP_Movement, ActorMannequin.fragmentIDs.AimPose));
+
+		//	// Install persistent WeaponPose action
+		//	m_pActionController->Queue(*new CPlayerBackgroundAction(EActorActionPriority::eAAP_Lowest, ActorMannequin.fragmentIDs.WeaponPose));
+
+		//	CActionItemIdle *itemIdle = new CActionItemIdle(EActorActionPriority::eAAP_Lowest, ActorMannequin.fragmentIDs.Idle, ActorMannequin.fragmentIDs.IdleBreak, TAG_STATE_EMPTY, *this);
+		//	m_pActionController->Queue(*itemIdle);
+
+		//    CPlayerMovementAction *movementAction = new CPlayerMovementAction(EActorActionPriority::eAAP_Movement);
+		//    m_pActionController->Queue(*movementAction);
+
+		auto locomotionAction = new CActorAnimationActionLocomotion();
+		m_pActionController->Queue(*locomotionAction);
+
+		//	m_weaponFPAiming.ResetMannequin();
+		//}
+	}
 }
 
 
@@ -830,13 +923,43 @@ void CActor::OnActionItemPickup(EntityId playerId)
 
 void CActor::OnActionItemDrop(EntityId playerId)
 {
-	CryLogAlways("Player dropped an item");
+	if (m_interactionEntityId != INVALID_ENTITYID)
+	{
+		CryLogAlways("Player dropped an item");
+
+		auto pTargetEntity = gEnv->pEntitySystem->GetEntity(m_interactionEntityId);
+
+		if (auto pInteractor = pTargetEntity->GetComponent<CEntityInteractionComponent>())
+		{
+			if (auto pInteraction = pInteractor->GetInteraction("interaction_drop")._Get())
+			{
+				pInteraction->OnInteractionStart();
+			}
+		}
+	}
+	// We no longer have an entity to drop.
+	m_interactionEntityId = INVALID_ENTITYID;
 }
 
 
-void CActor::OnActionItemThrow(EntityId playerId)
+void CActor::OnActionItemToss(EntityId playerId)
 {
-	CryLogAlways("Player threw an item");
+	if (m_interactionEntityId != INVALID_ENTITYID)
+	{
+		CryLogAlways("Player tossed an item");
+		auto pTargetEntity = gEnv->pEntitySystem->GetEntity(m_interactionEntityId);
+
+		if (auto pInteractor = pTargetEntity->GetComponent<CEntityInteractionComponent>())
+		{
+			if (auto pInteraction = pInteractor->GetInteraction("interaction_toss")._Get())
+			{
+				pInteraction->OnInteractionStart();
+			}
+		}
+	}
+
+	// We no longer have an entity to drop.
+	m_interactionEntityId = INVALID_ENTITYID;
 }
 
 
@@ -855,21 +978,9 @@ void CActor::OnActionBarUse(EntityId playerId, int actionBarId)
 				auto verbs = pInteractor->GetVerbs();
 				if (verbs.size() >= actionBarId)
 				{
-					auto pDrsProxy = crycomponent_cast<IEntityDynamicResponseComponent*> (pTargetEntity->CreateProxy(ENTITY_PROXY_DYNAMICRESPONSE));
-
-					// Create a context variable collection and populate it based on information from the target entity.
-					DRS::IVariableCollectionSharedPtr pContextVariableCollection = gEnv->pDynamicResponseSystem->CreateContextCollection();
 					auto verb = verbs [actionBarId - 1];
 					auto pInteraction = pInteractor->GetInteraction(verb)._Get();
 
-					// It might be useful to know which verb triggered the interaction.
-					pContextVariableCollection->CreateVariable("Verb", CHashedString(verb));
-					pContextVariableCollection->CreateVariable("CharacterId", static_cast<int>(GetEntityId()));
-
-					// Queue it and let the DRS handle it now.
-					pDrsProxy->GetResponseActor()->QueueSignal(verb, pContextVariableCollection);
-
-					// #HACK: Another test - just calling the interaction directly instead.
 					pInteraction->OnInteractionStart();
 				}
 				else
@@ -895,19 +1006,22 @@ void CActor::OnActionInspect(EntityId playerId)
 		auto results = m_pAwareness->GetNearDotFiltered();
 		if (results.size() > 0)
 		{
-			auto pTargetEntity = gEnv->pEntitySystem->GetEntity(results [0]);
+			m_interactionEntityId = results [0];
+			auto pInteractionEntity = gEnv->pEntitySystem->GetEntity(m_interactionEntityId);
 
-			if (auto pInteractor = pTargetEntity->GetComponent<CEntityInteractionComponent>())
+			if (auto pInteractor = pInteractionEntity->GetComponent<CEntityInteractionComponent>())
 			{
 				// There's an interactor component, so this is an interactive entity.
 				auto verbs = pInteractor->GetVerbs();
 				if (verbs.size() > 0)
 				{
-					auto pDrsProxy = crycomponent_cast<IEntityDynamicResponseComponent*> (pTargetEntity->CreateProxy(ENTITY_PROXY_DYNAMICRESPONSE));
-					pDrsProxy->GetResponseActor()->QueueSignal(verbs [0]);
+					auto verb = verbs [0];
+
+					auto pDrsProxy = crycomponent_cast<IEntityDynamicResponseComponent*> (pInteractionEntity->CreateProxy(ENTITY_PROXY_DYNAMICRESPONSE));
+					pDrsProxy->GetResponseActor()->QueueSignal(verb);
 
 					// #HACK: Another test - just calling the interaction directly instead.
-					auto pInteraction = pInteractor->GetInteraction(verbs[0])._Get();
+					auto pInteraction = pInteractor->GetInteraction(verb)._Get();
 					pInteraction->OnInteractionStart();
 				}
 			}
@@ -933,35 +1047,20 @@ void CActor::OnActionInteractionStart(EntityId playerId)
 		auto results = m_pAwareness->GetNearDotFiltered();
 		if (results.size() > 0)
 		{
-			auto pTargetEntity = gEnv->pEntitySystem->GetEntity(results [0]);
+			m_interactionEntityId = results [0];
+			auto pInteractionEntity = gEnv->pEntitySystem->GetEntity(m_interactionEntityId);
 
-			if (auto pInteractor = pTargetEntity->GetComponent<CEntityInteractionComponent>())
+			if (auto pInteractor = pInteractionEntity->GetComponent<CEntityInteractionComponent>())
 			{
 				// There's an interactor component, so this is an interactive entity.
 				// #TODO: We should really only process an 'interact' verb - not simply the first entry.
 				auto verbs = pInteractor->GetVerbs();
 				if (verbs.size() > 0)
 				{
-					//auto pDrsProxy = crycomponent_cast<IEntityDynamicResponseComponent*> (pTargetEntity->CreateProxy(ENTITY_PROXY_DYNAMICRESPONSE));
-
-					//// Create a context variable collection and populate it based on information from the target entity.
-					//DRS::IVariableCollectionSharedPtr pContextVariableCollection = gEnv->pDynamicResponseSystem->CreateContextCollection();
 					auto verb = verbs [0];
-					auto pInteraction = pInteractor->GetInteraction(verb)._Get();
-
-					//// It might be useful to know which verb triggered the interaction.
-					//pContextVariableCollection->CreateVariable("Verb", CHashedString(verb));
-					//pContextVariableCollection->CreateVariable("CharacterId", static_cast<int>(GetEntityId()));
-
-					//// Queue it and let the DRS handle it now.
-					//pDrsProxy->GetResponseActor()->QueueSignal(verb, pContextVariableCollection);
-
-					// #HACK: For testing!
-					// #TODO: We need a solidly thought out way to populate the variable collections using our entities.
-					//pContextVariableCollection->CreateVariable("PlayAnimationFile", CHashedString("dooropen"));
-					//pDrsProxy->GetResponseActor()->QueueSignal("PlayAnimation", pContextVariableCollection);
 
 					// #HACK: Another test - just calling the interaction directly instead.
+					auto pInteraction = pInteractor->GetInteraction(verb)._Get();
 					pInteraction->OnInteractionStart();
 				}
 			}
@@ -980,4 +1079,87 @@ void CActor::OnActionInteractionEnd(EntityId playerId)
 	CryLogAlways("Player stopped interacting with things.");
 
 	// #TODO: re-enable direct control of character via input
+}
+
+
+void CActor::OnActionJogToggle(EntityId playerId)
+{
+	m_isJogging = !m_isJogging;
+	CryLogAlways("Player toggled walking / jogging");
+}
+
+
+void CActor::OnActionSprintStart(EntityId playerId)
+{
+	m_isSprinting = true;
+	CryLogAlways("Player started sprinting");
+}
+
+
+void CActor::OnActionSprintStop(EntityId playerId)
+{
+	m_isSprinting = false;
+	CryLogAlways("Player stopped sprinting");
+}
+
+
+float CActor::GetMovementBaseSpeed(uint32 movementStateFlags) const
+{
+	float baseSpeed { 0.0f };
+	float dirScale { 1.0f };
+
+	// Work out a base for walking, jogging or sprinting.
+	if (IsSprinting())
+	{
+		baseSpeed = 6.3f;
+	}
+	else
+	{
+		if (IsJogging())
+			baseSpeed = 4.2f;
+		else
+			baseSpeed = 2.1f;
+	}
+
+	// Scale it based on their movement direction.
+	switch (movementStateFlags)
+	{
+	case EMovementStateFlags::Forward:
+		dirScale = 1.0f;
+		break;
+
+	case (EMovementStateFlags::Forward | EMovementStateFlags::Right):
+		dirScale = 0.9f;
+		break;
+
+	case (EMovementStateFlags::Forward | EMovementStateFlags::Left):
+		dirScale = 0.9f;
+		break;
+
+	case EMovementStateFlags::Right:
+		dirScale = 0.85f;
+		break;
+
+	case EMovementStateFlags::Left:
+		dirScale = 0.85f;
+		break;
+
+	case EMovementStateFlags::Backward:
+		dirScale = 0.71f;
+		break;
+
+	case (EMovementStateFlags::Backward | EMovementStateFlags::Right):
+		dirScale = 0.71f;
+		break;
+
+	case (EMovementStateFlags::Backward | EMovementStateFlags::Left):
+		dirScale = 0.71f;
+		break;
+
+	default:
+		dirScale = 1.0f;
+		break;
+	}
+
+	return baseSpeed * dirScale;
 }

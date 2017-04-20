@@ -14,7 +14,7 @@ class CCameraManagerRegistrator : public IEntityRegistrator, public CCameraManag
 {
 	virtual void Register() override
 	{
-//		RegisterEntityWithDefaultComponent<CCameraManagerComponent>("CameraManager", "Camera", "Light.bmp");
+//		RegisterEntityWithDefaultComponent<CCameraManagerComponent>("CameraManager", "Camera", "Camera.bmp");
 		CChrysalisCorePlugin::RegisterEntityWithDefaultComponent<CCameraManagerComponent>("CameraManager");
 
 		// This should make the entity class invisible in the editor.
@@ -51,19 +51,16 @@ void CCameraManagerComponent::PostInit(IGameObject * pGameObject)
 	// Query for the player that owns this extension.
 	m_pPlayer = pEntity->GetComponent<CPlayer>();
 
-	// Start with a clean slate and a known state.
-	memset(m_cameraModes, 0, sizeof(m_cameraModes));
-
 	// First person camera.
 	m_cameraModes [ECameraMode::eCameraMode_FirstPerson] = static_cast<CFirstPersonCameraComponent*> (GetGameObject()->AcquireExtension("FirstPersonCamera"));
-	//m_cameraModes [ECameraMode::eCameraMode_FirstPerson] = pEntity->GetOrCreateComponent<CFirstPersonCameraComponent>();
+	//m_cameraModes [ECameraMode::eCameraMode_FirstPerson] = pEntity->CreateComponent<CFirstPersonCameraComponent>();
 
 	// Action RPG Camera.
 	m_cameraModes [ECameraMode::eCameraMode_ActionRpg] = static_cast<CActionRPGCameraComponent*> (GetGameObject()->AcquireExtension("ActionRPGCamera"));
-	//m_cameraModes [ECameraMode::eCameraMode_ActionRpg] = pEntity->GetOrCreateComponent<CActionRPGCameraComponent>();
+	//m_cameraModes [ECameraMode::eCameraMode_ActionRpg] = pEntity->CreateComponent<CActionRPGCameraComponent>();
 
 	// #TODO: make a special one for HMD	
-	//m_cameraModes [ECameraMode::eCameraMode_FirstPersonHmd] = pEntity->GetOrCreateComponent<CActionRPGCameraComponent>();
+	//m_cameraModes [ECameraMode::eCameraMode_FirstPersonHmd] = pEntity->CreateComponent<CActionRPGCameraComponent>();
 
 	// Select the initial camera based on their cvar setting for third person.
 	if (GetCVars().m_isThirdPerson)
@@ -193,6 +190,9 @@ CCameraManagerComponent::CCameraManagerComponent()
 {
 	// We'll take an initial value for the debug view offset from cvars.
 	m_interactiveViewOffset = Vec3FromString(GetCVars().m_debugViewOffset->GetString());
+
+	// Start with a known clean state.
+	memset(m_cameraModes, 0, sizeof(m_cameraModes));
 }
 
 
@@ -221,7 +221,7 @@ Vec3 CCameraManagerComponent::GetViewOffset()
 
 bool CCameraManagerComponent::OnActionCameraShiftUp(EntityId entityId, const ActionId& actionId, int activationMode, float value)
 {
-	if (activationMode && (eAAM_OnPress || eAAM_OnHold))
+	if (activationMode & (eAAM_OnPress | eAAM_OnHold))
 		m_interactiveViewOffset += Vec3(0.0f, 0.0f, adjustmentAmount);
 
 	return false;
@@ -230,7 +230,7 @@ bool CCameraManagerComponent::OnActionCameraShiftUp(EntityId entityId, const Act
 
 bool CCameraManagerComponent::OnActionCameraShiftDown(EntityId entityId, const ActionId& actionId, int activationMode, float value)
 {
-	if (activationMode && (eAAM_OnPress || eAAM_OnHold))
+	if (activationMode & (eAAM_OnPress | eAAM_OnHold))
 		m_interactiveViewOffset += Vec3(0.0f, 0.0f, -adjustmentAmount);
 
 	return false;
@@ -239,7 +239,7 @@ bool CCameraManagerComponent::OnActionCameraShiftDown(EntityId entityId, const A
 
 bool CCameraManagerComponent::OnActionCameraShiftLeft(EntityId entityId, const ActionId& actionId, int activationMode, float value)
 {
-	if (activationMode && (eAAM_OnPress || eAAM_OnHold))
+	if (activationMode & (eAAM_OnPress | eAAM_OnHold))
 		m_interactiveViewOffset += Vec3(-adjustmentAmount, 0.0f, 0.0f);
 
 	return false;
@@ -248,7 +248,7 @@ bool CCameraManagerComponent::OnActionCameraShiftLeft(EntityId entityId, const A
 
 bool CCameraManagerComponent::OnActionCameraShiftRight(EntityId entityId, const ActionId& actionId, int activationMode, float value)
 {
-	if (activationMode && (eAAM_OnPress || eAAM_OnHold))
+	if (activationMode & (eAAM_OnPress | eAAM_OnHold))
 		m_interactiveViewOffset += Vec3(adjustmentAmount, 0.0f, 0.0f);
 
 	return false;
@@ -257,7 +257,7 @@ bool CCameraManagerComponent::OnActionCameraShiftRight(EntityId entityId, const 
 
 bool CCameraManagerComponent::OnActionCameraShiftForward(EntityId entityId, const ActionId& actionId, int activationMode, float value)
 {
-	if (activationMode && (eAAM_OnPress || eAAM_OnHold))
+	if (activationMode & (eAAM_OnPress | eAAM_OnHold))
 		m_interactiveViewOffset += Vec3(0.0f, adjustmentAmount, 0.0f);
 
 	return false;
@@ -266,7 +266,7 @@ bool CCameraManagerComponent::OnActionCameraShiftForward(EntityId entityId, cons
 
 bool CCameraManagerComponent::OnActionCameraShiftBackward(EntityId entityId, const ActionId& actionId, int activationMode, float value)
 {
-	if (activationMode && (eAAM_OnPress || eAAM_OnHold))
+	if (activationMode & (eAAM_OnPress | eAAM_OnHold))
 		m_interactiveViewOffset += Vec3(0.0f, -adjustmentAmount, 0.0f);
 
 	return false;

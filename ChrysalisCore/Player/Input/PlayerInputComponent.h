@@ -49,7 +49,10 @@ public:
 	float GetXiYawDelta() override { return m_lastXiYawDelta; };
 
 	float GetZoomDelta() override { return m_lastZoomDelta; };
-	uint32 GetMovementStateFlags() { return m_movementStateFlags; };
+	
+	/** Provides access to the raw input movement directions as a set of flags for forward, backward, left and right.
+	See EMovementStateFlags for the relevant flags. */
+	uint32 GetMovementStateFlags() const { return m_movementStateFlags; };
 
 	Vec3 GetHeadMovement(const Quat& baseRotation) override { return Vec3(0.0f, 0.0f, 0.0f); }
 	Ang3 GetHeadRotationDelta() override { return Ang3(0.0f, 0.0f, 0.0f); }
@@ -102,7 +105,7 @@ protected:
 	bool OnActionKneel(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 	bool OnActionSit(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 	bool OnActionSprint(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionWalkRun(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionWalkJog(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 	bool OnActionItemUse(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 	bool OnActionItemPickup(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 	bool OnActionItemDrop(EntityId entityId, const ActionId& actionId, int activationMode, float value);
@@ -110,8 +113,7 @@ protected:
 
 
 	/**
-	Action handler for throwing an item. General expectation is this will be used for "Pick and Throw" weapons but it
-	might need to also handle regular weapons and even ordinary items.
+	Action handler for tossing an item. In this case toss means a light dismissive throw in the forward direction.
 
 	\param	entityId	  	The entityId for the player who invoked this action.
 	\param	actionId	  	Identifier for the action that was triggered by the player.
@@ -120,7 +122,7 @@ protected:
 
 	\return	true if it succeeds, false if it fails.
 	*/
-	bool OnActionItemThrow(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionItemToss(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 
 
 	/**
@@ -185,12 +187,6 @@ private:
 
 	/** Drop incoming actions if this is false. Prevents actions arriving after we start to shut down from being serviced. */
 	bool m_allowActions { false };
-
-	/** true when the player wishes to sprint. */
-	bool m_shouldSprint { false };
-
-	/** true when the player wishes to run instead of walking. */
-	bool m_shouldRun { false };
 
 	/**
 	Should we invert the Y axis for mouse camera movements? This is preferred by some players, particularly those

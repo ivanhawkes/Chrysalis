@@ -102,7 +102,7 @@ struct IEntityRegistrator
 	virtual void Unregister() {};
 
 public:
-	IEntityRegistrator *m_pNext;
+	IEntityRegistrator *m_pNext { nullptr };
 
 	static IEntityRegistrator *g_pFirst;
 	static IEntityRegistrator *g_pLast;

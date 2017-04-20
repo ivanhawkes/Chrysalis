@@ -12,7 +12,7 @@ class CKeyringExtensionRegistrator : public IEntityRegistrator, public CKeyringC
 	virtual void Register() override
 	{
 		// Register the entity class.
-		RegisterEntityWithDefaultComponent<CKeyringComponent>("Keyring", "Locks", "Light.bmp");
+		RegisterEntityWithDefaultComponent<CKeyringComponent>("Keyring", "Locks", "door.bmp");
 
 		RegisterCVars();
 	}
@@ -32,29 +32,6 @@ const CKeyringComponent::SExternalCVars& CKeyringComponent::GetCVars() const
 }
 
 
-void CKeyringComponent::ProcessEvent(SEntityEvent& event)
-{
-	switch (event.event)
-	{
-		// Physicalize on level start for Launcher
-		case ENTITY_EVENT_START_LEVEL:
-
-			// Editor specific, physicalize on reset, property change or transform change
-		case ENTITY_EVENT_RESET:
-		case ENTITY_EVENT_EDITOR_PROPERTY_CHANGED:
-		case ENTITY_EVENT_XFORM_FINISHED_EDITOR:
-			OnResetState();
-			break;
-	}
-}
-
-
-void CKeyringComponent::OnResetState()
-{
-	int a = 1;
-}
-
-
 void CKeyringComponent::SerializeProperties(Serialization::IArchive& archive)
 {
 	archive(m_bActive, "Active", "Active");
@@ -64,4 +41,9 @@ void CKeyringComponent::SerializeProperties(Serialization::IArchive& archive)
 	{
 		OnResetState();
 	}
+}
+
+
+void CKeyringComponent::OnResetState()
+{
 }

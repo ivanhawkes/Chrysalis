@@ -81,7 +81,7 @@ public:
 	void UpdateActorMovementRequest(SActorMovementRequest& movementRequest, float frameTime);
 
 
-	/** Each frame we need to compute the acccptable values based on user input and store these
+	/** Each frame we need to compute the acceptable values based on user input and store these
 	for later retrieval. */
 	void Compute();
 
@@ -102,7 +102,7 @@ private:
 	void ComputeMovementState();
 
 	/** The actor. */
-	CActor* m_pActor;
+	CActor* m_pActor { nullptr };
 
 	/** The movement request. */
 	CMovementRequest m_movementRequest;
@@ -111,58 +111,39 @@ private:
 	SMovementState m_movementState;
 
 	/** The desired speed. */
-	float m_desiredSpeed;
+	float m_desiredSpeed { 0.0f };
 
 	/** The look target. */
-	Vec3 m_lookTarget;
+	Vec3 m_lookTarget { ZERO };
 
 	/** The aim target. */
-	Vec3 m_aimTarget;
+	Vec3 m_aimTarget { ZERO };
 
 	/** The fire target. */
-	Vec3 m_fireTarget;
+	Vec3 m_fireTarget { ZERO };
 
 	/** true to use the look at target. */
-	bool m_bAtTarget;
+	bool m_bAtTarget { false };
 
 	/** true to look using IK. */
-	bool m_bUsingLookIK;
+	bool m_bUsingLookIK { true };
 
 	/** true to using aim IK. */
-	bool m_bUsingAimIK;
+	bool m_bUsingAimIK { true };
 
 	/** true if aiming is clamped. */
-	bool m_bAimClamped;
+	bool m_bAimClamped { false };
 
 	/** The stance we would like to move into. */
-	EStance m_targetStance;
+	EStance m_targetStance { STANCE_NULL };
 
 	/** The animation target speed. */
 	float m_animTargetSpeed { -1.0f };
 
-	/** The animation target speed counter. */
-	int m_animTargetSpeedCounter;
-
-	/** true if the actor was turning. */
-	bool m_bWasTurning;
-
-	/** The time turning in same dir x coordinate. */
-	float m_timeTurningInSameDirX { 0.0f };
-
-	/** The time turning in same dir z coordinate. */
-	float m_timeTurningInSameDirZ { 0.0f };
-
-	/** The last request turn speed. */
-	float m_lastReqTurnSpeed;
-
-	/** The rotation rate around the Z coordinate axis. */
-	float m_rotationRateZAxis;
-
-
 	/**
 	Determines a suitable rotation for the lower body based on the movement direction being requested. This should
 	typically be combined with look / aim poses or perhaps an inverse of this to turn the upper body suitably.
-	
+
 	a
 	\return The body rotation in degrees relative to the movement direction in the state flags.
 	**/

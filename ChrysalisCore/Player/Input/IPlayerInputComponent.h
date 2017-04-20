@@ -8,7 +8,6 @@ Declares the IPlayerInputComponent interface.
 #include <Entities/Helpers/ISimpleExtension.h>
 
 
-
 enum EMovementStateFlags
 {
 	None =		0,
@@ -145,7 +144,7 @@ struct IPlayerInputComponent : public ISimpleExtension
 
 	\return The movement state flags.
 	**/
-	virtual uint32 GetMovementStateFlags() = 0;
+	virtual uint32 GetMovementStateFlags() const = 0;
 
 
 	// ***

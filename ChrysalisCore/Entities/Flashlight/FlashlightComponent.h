@@ -13,6 +13,8 @@
 
 
 class CEntityInteractionComponent;
+class CItemInteractionComponent;
+
 
 /**
 A flashlight component.
@@ -22,12 +24,11 @@ A flashlight component.
 \sa IInteractionSwitch
 \sa IInteractionPickupAndDrop
 \sa IInteractionInteract
+\sa CGeometryComponent::IGeometryListener
+\sa CDynamicLightComponent::IDynamicLightListener
 **/
-//class CFlashlightComponent : public CItem, public IEntityPropertyGroup, public IInteractionSwitch, public IInteractionPickupAndDrop, public IInteractionInteract
-//class CFlashlightComponent : public CGameObjectExtensionHelper <CFlashlightComponent, CItem>, public IEntityPropertyGroup,
-//	public IInteractionSwitch, public IInteractionPickupAndDrop, public IInteractionInteract
 class CFlashlightComponent : public CDesignerEntityComponent<>, public IEntityPropertyGroup,
-	public IInteractionSwitch, public IInteractionPickupAndDrop, public IInteractionInteract,
+	public IInteractionSwitch, public IInteractionInteract,
 	public CGeometryComponent::IGeometryListener, public CDynamicLightComponent::IDynamicLightListener
 {
 	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CFlashlightComponent, "FlashlightComponent", 0x7BFC30B2D9F541D4, 0x9A79F422E3B49400)
@@ -36,8 +37,6 @@ public:
 
 	// IEntityComponent
 	void Initialize() override;
-	void ProcessEvent(SEntityEvent& event) override;
-	uint64 GetEventMask() const override { return BIT64(ENTITY_EVENT_START_LEVEL) | BIT64(ENTITY_EVENT_RESET) | BIT64(ENTITY_EVENT_EDITOR_PROPERTY_CHANGED) | BIT64(ENTITY_EVENT_XFORM_FINISHED_EDITOR); }
 	struct IEntityPropertyGroup* GetPropertyGroup() override { return this; }
 	// ~IEntityComponent
 
@@ -46,60 +45,35 @@ public:
 	void SerializeProperties(Serialization::IArchive& archive) override;
 	// ~IEntityPropertyGroup
 
-	// CDynamicLightComponent::IDynamicLightListener
-	void OnGeometryResetState() override;
-	// ~CDynamicLightComponent::IDynamicLightListener
-
 	// CGeometryComponent::IGeometryListener
-	void OnDynamicLightResetState() override;
+	void OnGeometryResetState() override;
 	// ~CGeometryComponent::IGeometryListener
 
+	// CDynamicLightComponent::IDynamicLightListener
+	void OnDynamicLightResetState() override;
+	// ~CDynamicLightComponent::IDynamicLightListener
 
 	// ISimpleItem
 	//bool Init(IGameObject * pGameObject) override;
 	//void PostInit(IGameObject * pGameObject) override;
 	// ~ISimpleItem
 
+	// IInteractionInteract
+	void OnInteractionInteract() override { gEnv->pLog->LogAlways("OnInteractionInteract fired."); };
+	// ~IInteractionInteract
 
-	// ***
-	// *** IInteractionInteract
-	// ***
-
-	void Interact() override { gEnv->pLog->LogAlways("Interation Interact fired."); };
-
-	// ***
-	// *** IInteractionSwitch
-	// ***
-
-	void SwitchToggle() override { gEnv->pLog->LogAlways("Interation Toggle fired."); ToggleSwitch(); };
-	void SwitchOn() override { gEnv->pLog->LogAlways("Interation SwitchOn fired."); ToggleSwitch(); };
-	void SwitchOff() override { gEnv->pLog->LogAlways("Interation SwitchOff fired."); ToggleSwitch(); };
-
-
-	// ***
-	// *** IInteractionPickupAndDrop
-	// ***
-
-	void Pickup() override { gEnv->pLog->LogAlways("Interation Pickup fired."); };
-	void Drop() override { gEnv->pLog->LogAlways("Interation Drop fired."); };
-	void Inspect() override { gEnv->pLog->LogAlways("Interation Inspect fired."); };
-
+	// IInteractionSwitch
+	void OnInteractionSwitchToggle() override { gEnv->pLog->LogAlways("OnInteractionSwitchToggle fired."); ToggleSwitch(); };
+	void OnInteractionSwitchOn() override { gEnv->pLog->LogAlways("OnInteractionSwitchOn fired."); Switch(true); };
+	void OnInteractionSwitchOff() override { gEnv->pLog->LogAlways("OnInteractionSwitchOff fired."); Switch(false); };
+	// ~IInteractionSwitch
 
 	// ***
 	// *** CFlashlightComponent
 	// ***
 
-	/**
-	This instance's default constructor.
-	*/
-	CFlashlightComponent();
-
-
-	/**
-	This instance's default destructor.
-	*/
-	~CFlashlightComponent();
-
+	CFlashlightComponent() {};
+	virtual ~CFlashlightComponent() {};
 
 	//void GetSharedParameters(XmlNodeRef rootParams);
 	//void LoadFromXML();
@@ -123,7 +97,7 @@ public:
 private:
 	const Quat kRightToForward = Quat::CreateRotationXYZ(Ang3(0.0f, 0.0f, DEG2RAD(90.0f)));
 
-	void OnResetState();
+	void OnResetState() override;
 
 	/** Dynamic light. */
 	CDynamicLightComponent* m_pDynamicLightComponent { nullptr };
@@ -134,13 +108,17 @@ private:
 	/** Instanced flashlight parameters. */
 	CItemFlashlightParameter m_itemFlashlightParameter;
 
+	/**  Provide ability to offer interactions. */
+	CEntityInteractionComponent* m_interactor { nullptr };
+
+	/** Standard interactions for an item. */
+	CItemInteractionComponent* m_pItemInteractionComponent { nullptr };
+
 	/** true if this object is switched on. */
 	bool m_isSwitchedOn { true };
 
 	/** The battery level - range 0.0f - 1.0f. */
 	float m_batteryLevel { 1.0f };
-
-	CEntityInteractionComponent* m_interactor { nullptr };
 
 	/** A local postion offset within the slot for the light. **/
 	Vec3 m_lightLocalPosition { ZERO };

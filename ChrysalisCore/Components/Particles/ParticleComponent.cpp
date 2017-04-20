@@ -3,6 +3,7 @@
 #include "ParticleComponent.h"
 #include <Cry3DEngine/I3DEngine.h>
 #include <CryParticleSystem/IParticlesPfx2.h>
+#include <CrySerialization/Decorators/Resources.h>
 
 
 class CParticleRegistrator : public IEntityRegistrator

@@ -5,7 +5,6 @@
 #include <Actor/Character/Character.h>
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
 #include "Utility/CryWatch.h"
-#include <Player/Animations/PlayerAnimations.h>
 /*#include "CharacterInput.h"
 #include "ScreenEffects.h"
 #include "StatsRecordingMgr.h"
@@ -300,7 +299,7 @@ void CCharacterStateJump::SetJumpState(CCharacter& Character, EJumpState jumpSta
 
 	if (fragID != FRAGMENT_ID_INVALID)
 	{
-	m_jumpAction = new CCharacterJump (fragID, PP_CharacterAction);
+	m_jumpAction = new CCharacterJump (fragID, EActorActionPriority::PP_CharacterAction);
 	m_jumpAction->AddRef ();
 	actionController->Queue (m_jumpAction);
 	}

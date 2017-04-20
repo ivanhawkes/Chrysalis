@@ -136,18 +136,7 @@ public:
 	{
 	public:
 		// default backpack init constructor
-		ActorBackpackInfo()
-			: m_capacity(0)
-			, m_currentItemCount(0)
-			, m_expansionCounter(0)
-			, m_expansion0Size(0)
-			, m_expansion1Size(0)
-			, m_expansion2Size(0)
-			, m_expansion3Size(0)
-			, m_expansion4Size(0)
-			, m_maxAllowedExpansions(5)
-			, m_bCanBeExpanded(true)
-		{}
+		ActorBackpackInfo() {}
 
 		// Passing in existing data about the actors backpack used for loading from save.
 		ActorBackpackInfo(int capacity,
@@ -186,16 +175,16 @@ public:
 		ILINE bool CheckIfBackpackExpandable() const { return m_bCanBeExpanded; }
 
 	private:
-		int m_capacity;
-		int m_currentItemCount;
-		int m_expansionCounter;
-		int m_maxAllowedExpansions;
-		int m_expansion0Size;
-		int m_expansion1Size;
-		int m_expansion2Size;
-		int m_expansion3Size;
-		int m_expansion4Size;
-		bool m_bCanBeExpanded;
+		int m_capacity { 0 };
+		int m_currentItemCount { 0 };
+		int m_expansionCounter { 0 };
+		int m_maxAllowedExpansions { 5 };
+		int m_expansion0Size { 0 };
+		int m_expansion1Size { 0 };
+		int m_expansion2Size { 0 };
+		int m_expansion3Size { 0 };
+		int m_expansion4Size { 0 };
+		bool m_bCanBeExpanded { true };
 	};
 
 	/**

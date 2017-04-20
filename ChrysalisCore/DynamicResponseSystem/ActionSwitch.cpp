@@ -3,29 +3,31 @@
 #include "ActionSwitch.h"
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
 #include "Utility/DRS.h"
-#include <Entities/Interaction/EntityInteractionComponent.h>
+#include <Components/Interaction/EntityInteractionComponent.h>
 
 
 DRS::IResponseActionInstanceUniquePtr CActionSwitch::Execute(DRS::IResponseInstance* pResponseInstance)
 {
-	IEntity* pEntity = pResponseInstance->GetCurrentActor()->GetLinkedEntity();
-	if (pEntity)
+	auto pResponseActor = pResponseInstance->GetCurrentActor();
+	auto pContextVariables = pResponseInstance->GetContextVariables();
+
+	if (pResponseActor && pContextVariables)
 	{
-		auto pResponseActor = pResponseInstance->GetCurrentActor();
-		auto pContextVariables = pResponseInstance->GetContextVariables();
+		IEntity* const pEntity = pResponseActor->GetLinkedEntity();
 
-		if (pResponseActor && pContextVariables)
+		if (pEntity)
 		{
-			IEntity* const pEntity = pResponseActor->GetLinkedEntity();
-
-			// The animation to play.
+			// They may have sent us a different verb to the standard one.
 			CHashedString verb = DRSUtility::GetValueOrDefault(pContextVariables, "Verb", CHashedString(""));
 
-			// Playback parameters.
+			// This allows us to select between being switched on and off.
+			// #TODO: Put this into use and look into what else we can add.
 			bool isSwitchOn = DRSUtility::GetValueOrDefault(pContextVariables, "IsSwitchedOn", false);
 
 			if (auto pInteractor = pEntity->GetComponent<CEntityInteractionComponent>())
 			{
+				// Simple option is to play the verb.
+				// #TODO: This should be a little more nuanced.
 				auto pInteraction = pInteractor->GetInteraction(verb.GetText())._Get();
 				if (pInteraction)
 				{

@@ -1,28 +1,24 @@
 #pragma once
 
 #include "Helpers/DesignerEntityComponent.h"
-#include <Entities/Interaction/IEntityInteraction.h>
-
+#include "Entities/Interaction/IEntityInteraction.h"
 
 class CGeometryComponent;
+class CSimpleAnimationComponent;
 class CLockableComponent;
 class CEntityInteractionComponent;
-class CControlledAnimationComponent;
-class CSimpleAnimationComponent;
-
 
 /**
-An animated door.
+A container extension.
 
 \sa IEntityComponent
 \sa IEntityPropertyGroup
 \sa IInteractionContainer
-\sa IInteractionOpenable
 \sa IInteractionLockable
 **/
-class CAnimatedDoorComponent : public CDesignerEntityComponent<>, public IEntityPropertyGroup, public IInteractionInteract, public IInteractionOpenable, public IInteractionLockable
+class CContainerComponent : public CDesignerEntityComponent<>, public IEntityPropertyGroup, public IInteractionOpenable, public IInteractionLockable
 {
-	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CAnimatedDoorComponent, "AnimatedDoor", 0xD246E11FE7E248F0, 0xB512402908F84496)
+	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CContainerComponent, "Container", 0x6FE7D7D95B364222, 0xB235D9C3207C8956)
 
 public:
 	// IEntityComponent
@@ -30,12 +26,8 @@ public:
 	struct IEntityPropertyGroup* GetPropertyGroup() override { return this; }
 	// ~IEntityComponent
 
-	// IInteractionInteract
-	void OnInteractionInteract() override;
-	// ~IInteractionInteract
-
 	// IEntityPropertyGroup
-	const char* GetLabel() const override { return "AnimatedDoor Properties"; };
+	const char* GetLabel() const override { return "Container Properties"; };
 	void SerializeProperties(Serialization::IArchive& archive) override;
 	// ~IEntityPropertyGroup
 
@@ -49,30 +41,29 @@ public:
 	void OnInteractionLockableUnlock() override { gEnv->pLog->LogAlways("OnInteractionLockableUnlock fired."); };
 	// ~IInteractionLockable
 
-	// IInteractionLockable
-	CAnimatedDoorComponent() {};
-	virtual ~CAnimatedDoorComponent() {}
+	// CContainerComponent
+	CContainerComponent() {};
+	virtual ~CContainerComponent() {};
 
-private:
-	const string kDoorAnimationOpen { "default" };
-	const string kDoorAnimationClose { "down" };
+	struct SExternalCVars
+	{
+		int m_debug;
+	};
+	const SExternalCVars &GetCVars() const;
 
 	// Called on entity spawn, or when the state of the entity changes in Editor
 	void OnResetState() override;
 
+private:
 	/** Model for the geometry. */
 	CGeometryComponent* m_pGeometryComponent { nullptr };
 
 	/** Animation for the geometry. */
-	//CControlledAnimationComponent* m_pAnimationComponent { nullptr };
-	CSimpleAnimationComponent* m_pAnimationComponent { nullptr };
-	
+	CSimpleAnimationComponent* m_pSimpleAnimationComponent { nullptr };
+
 	/** Doors should be lockable. */
-	CLockableComponent* m_pLockableComponent { nullptr };
+	CLockableComponent* m_lockableComponent { nullptr };
 
 	/** This entity should be interactive. */
 	CEntityInteractionComponent* m_interactor { nullptr };
-
-	/** Is the door open? */
-	bool m_IsOpen { false };
 };

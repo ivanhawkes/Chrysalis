@@ -16,7 +16,7 @@ class CPlayerRegistrator : public IEntityRegistrator
 	virtual void Register() override
 	{
 		CChrysalisCorePlugin::RegisterEntityWithDefaultComponent<CPlayer>("Player");
-		//RegisterEntityWithDefaultComponent<CPlayer>("Player", "Player", "Light.bmp");
+		//RegisterEntityWithDefaultComponent<CPlayer>("Player", "Player", "character.bmp");
 
 		// This should make the entity class invisible in the editor.
 		auto cls = gEnv->pEntitySystem->GetClassRegistry()->FindClass("Player");
@@ -57,14 +57,14 @@ void CPlayer::PostInit(IGameObject* pGameObject)
 	// Create a camera manager for this player. We do this early, since character attachment code needs to make calls
 	// to a functioning camera.
 	m_pCameraManager = static_cast<CCameraManagerComponent*> (GetGameObject()->AcquireExtension("CameraManager"));
-	//m_pCameraManager = pEntity->GetOrCreateComponent<CCameraManagerComponent>();
+	//m_pCameraManager = pEntity->CreateComponent<CCameraManagerComponent>();
 
 	// Acquire a player input component. At a later time it will be useful to check if a network version is needed, or
 	// perhaps AI / NULL versions.
 	// NOTE: This component requires a pointer to a camera manager - so it must always load after that component.
 	//auto gameObject = GetGameObject();
 	m_pPlayerInput = static_cast<IPlayerInputComponent*> (GetGameObject()->AcquireExtension("PlayerInput"));
-	//m_pPlayerInput = pEntity->GetOrCreateComponent<CPlayerInputComponent>();
+	//m_pPlayerInput = pEntity->CreateComponent<CPlayerInputComponent>();
 
 	// #HACK: #TODO: Is this right? We only want to register action maps on the local client.
 	if (GetEntityId() == gEnv->pGameFramework->GetClientActorId())

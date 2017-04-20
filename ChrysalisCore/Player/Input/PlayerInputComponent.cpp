@@ -16,7 +16,7 @@ class CPlayerInputRegistrator : public IEntityRegistrator
 	virtual void Register() override
 	{
 		CChrysalisCorePlugin::RegisterEntityWithDefaultComponent<CPlayerInputComponent>("PlayerInput");
-		//RegisterEntityWithDefaultComponent<CPlayerInputComponent>("PlayerInput", "Input", "Light.bmp");
+		//RegisterEntityWithDefaultComponent<CPlayerInputComponent>("PlayerInput", "Input", "character.bmp");
 	}
 };
 
@@ -116,8 +116,6 @@ void CPlayerInputComponent::PostUpdate(float frameTime)
 void CPlayerInputComponent::ResetMovementState()
 {
 	m_movementStateFlags = EMovementStateFlags::None;
-	m_shouldSprint = false;
-	m_shouldRun = false;
 }
 
 
@@ -262,8 +260,8 @@ void CPlayerInputComponent::InitializeActionHandler()
 	// Jump.
 	m_actionHandler.AddHandler(ActionId("move_jump"), &CPlayerInputComponent::OnActionJump);
 
-	// Walk, run / jog, sprint.
-	m_actionHandler.AddHandler(ActionId("move_walkrun"), &CPlayerInputComponent::OnActionWalkRun);
+	// Walk, jog, sprint.
+	m_actionHandler.AddHandler(ActionId("move_walkjog"), &CPlayerInputComponent::OnActionWalkJog);
 	m_actionHandler.AddHandler(ActionId("move_sprint"), &CPlayerInputComponent::OnActionSprint);
 
 	// Stances under player control.
@@ -275,7 +273,7 @@ void CPlayerInputComponent::InitializeActionHandler()
 	m_actionHandler.AddHandler(ActionId("item_use"), &CPlayerInputComponent::OnActionItemUse);
 	m_actionHandler.AddHandler(ActionId("item_pickup"), &CPlayerInputComponent::OnActionItemPickup);
 	m_actionHandler.AddHandler(ActionId("item_drop"), &CPlayerInputComponent::OnActionItemDrop);
-	m_actionHandler.AddHandler(ActionId("item_throw"), &CPlayerInputComponent::OnActionItemThrow);
+	m_actionHandler.AddHandler(ActionId("item_toss"), &CPlayerInputComponent::OnActionItemToss);
 
 	// Action bars.
 	m_actionHandler.AddHandler(ActionId("actionbar_01"), &CPlayerInputComponent::OnActionBar01);
@@ -316,7 +314,7 @@ bool CPlayerInputComponent::OnActionMoveLeft(EntityId entityId, const ActionId& 
 	{
 		m_movementStateFlags &= ~EMovementStateFlags::Left;
 	}
-	else if (activationMode && (eAAM_OnPress || eAAM_OnHold))
+	else if (activationMode & (eAAM_OnPress | eAAM_OnHold))
 	{
 		m_movementStateFlags |= EMovementStateFlags::Left;
 	}
@@ -331,7 +329,7 @@ bool CPlayerInputComponent::OnActionMoveRight(EntityId entityId, const ActionId&
 	{
 		m_movementStateFlags &= ~EMovementStateFlags::Right;
 	}
-	else if (activationMode && (eAAM_OnPress || eAAM_OnHold))
+	else if (activationMode & (eAAM_OnPress | eAAM_OnHold))
 	{
 		m_movementStateFlags |= EMovementStateFlags::Right;
 	}
@@ -346,7 +344,7 @@ bool CPlayerInputComponent::OnActionMoveForward(EntityId entityId, const ActionI
 	{
 		m_movementStateFlags &= ~EMovementStateFlags::Forward;
 	}
-	else if (activationMode && (eAAM_OnPress || eAAM_OnHold))
+	else if (activationMode & (eAAM_OnPress | eAAM_OnHold))
 	{
 		m_movementStateFlags |= EMovementStateFlags::Forward;
 	}
@@ -361,7 +359,7 @@ bool CPlayerInputComponent::OnActionMoveBackward(EntityId entityId, const Action
 	{
 		m_movementStateFlags &= ~EMovementStateFlags::Backward;
 	}
-	else if (activationMode && (eAAM_OnPress || eAAM_OnHold))
+	else if (activationMode & (eAAM_OnPress | eAAM_OnHold))
 	{
 		m_movementStateFlags |= EMovementStateFlags::Backward;
 	}
@@ -493,12 +491,14 @@ bool CPlayerInputComponent::OnActionSit(EntityId entityId, const ActionId& actio
 }
 
 
-bool CPlayerInputComponent::OnActionWalkRun(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+bool CPlayerInputComponent::OnActionWalkJog(EntityId entityId, const ActionId& actionId, int activationMode, float value)
 {
 	if (activationMode == eAAM_OnPress)
 	{
-		m_shouldRun = !m_shouldRun;
-		CryLogAlways("Player toggled walking / running");
+		if (auto pCharacter = CPlayer::GetLocalCharacter())
+		{
+			pCharacter->OnActionJogToggle(entityId);
+		}
 	}
 
 	return false;
@@ -509,13 +509,17 @@ bool CPlayerInputComponent::OnActionSprint(EntityId entityId, const ActionId& ac
 {
 	if (activationMode == eAAM_OnRelease)
 	{
-		m_shouldSprint = false;
-		CryLogAlways("Player stopped sprinting");
+		if (auto pCharacter = CPlayer::GetLocalCharacter())
+		{
+			pCharacter->OnActionSprintStop(entityId);
+		}
 	}
-	else if (activationMode && (eAAM_OnPress || eAAM_OnHold))
+	else if (activationMode & (eAAM_OnPress | eAAM_OnHold))
 	{
-		m_shouldSprint = true;
-		CryLogAlways("Player sprinting");
+		if (auto pCharacter = CPlayer::GetLocalCharacter())
+		{
+			pCharacter->OnActionSprintStart(entityId);
+		}
 	}
 
 	return false;
@@ -565,13 +569,13 @@ bool CPlayerInputComponent::OnActionItemDrop(EntityId entityId, const ActionId& 
 }
 
 
-bool CPlayerInputComponent::OnActionItemThrow(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+bool CPlayerInputComponent::OnActionItemToss(EntityId entityId, const ActionId& actionId, int activationMode, float value)
 {
 	if (activationMode == eAAM_OnPress)
 	{
 		if (auto pCharacter = CPlayer::GetLocalCharacter())
 		{
-			pCharacter->OnActionItemThrow(entityId);
+			pCharacter->OnActionItemToss(entityId);
 		}
 	}
 

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Helpers/DesignerEntityComponent.h"
-#include <CrySerialization/Decorators/Resources.h>
 
 
 class CParticleComponent final : public CDesignerEntityComponent<IParticleEntityComponent>, public IEntityPropertyGroup

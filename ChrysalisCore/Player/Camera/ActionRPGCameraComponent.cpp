@@ -30,7 +30,7 @@ class CActionRPGCameraRegistrator : public IEntityRegistrator, public CActionRPG
 	virtual void Register() override
 	{
 		CChrysalisCorePlugin::RegisterEntityWithDefaultComponent<CActionRPGCameraComponent>("ActionRPGCamera");
-		//RegisterEntityWithDefaultComponent<CActionRPGCameraComponent>("ActionRPGCamera", "Camera", "Light.bmp");
+		//RegisterEntityWithDefaultComponent<CActionRPGCameraComponent>("ActionRPGCamera", "Camera", "Camera.bmp");
 
 		// This should make the entity class invisible in the editor.
 		auto cls = gEnv->pEntitySystem->GetClassRegistry()->FindClass("ActionRPGCamera");
@@ -117,7 +117,8 @@ void CActionRPGCameraComponent::Update(SEntityUpdateContext& ctx, int updateSlot
 	CCameraPose newCameraPose { CCameraPose() };
 
 	auto pEntity = gEnv->pEntitySystem->GetEntity(m_targetEntityID);
-	auto pPlayerInput = CPlayer::GetLocalPlayer()->GetPlayerInput();
+	auto pPlayer = CPlayer::GetLocalPlayer();
+	auto pPlayerInput = pPlayer->GetPlayerInput();
 
 	if (pPlayerInput)
 	{
@@ -134,9 +135,12 @@ void CActionRPGCameraComponent::Update(SEntityUpdateContext& ctx, int updateSlot
 		m_lastZoomGoal = m_zoomGoal;
 
 		// Apply the player input rotation for this frame, and limit the pitch / yaw movement according to the set max and min values.
-		m_viewPitch += pPlayerInput->GetMousePitchDelta() + pPlayerInput->GetXiPitchDelta();
-		m_viewPitch = clamp_tpl(m_viewPitch, DEG2RAD(GetCVars().m_pitchMin), DEG2RAD(GetCVars().m_pitchMax));
-		m_viewYaw += pPlayerInput->GetMouseYawDelta() - pPlayerInput->GetXiYawDelta();
+		if (pPlayer->GetAllowCameraMovement())
+		{
+			m_viewPitch += pPlayerInput->GetMousePitchDelta() + pPlayerInput->GetXiPitchDelta();
+			m_viewPitch = clamp_tpl(m_viewPitch, DEG2RAD(GetCVars().m_pitchMin), DEG2RAD(GetCVars().m_pitchMax));
+			m_viewYaw += pPlayerInput->GetMouseYawDelta() - pPlayerInput->GetXiYawDelta();
+		}
 
 		// Yaw should wrap around if it exceeds it's values. This is a bit simplistic, but will work most of the time.
 		if (m_viewYaw > gf_PI)
@@ -166,7 +170,7 @@ void CActionRPGCameraComponent::Update(SEntityUpdateContext& ctx, int updateSlot
 				float shapedZoom = (m_zoom * m_zoom) / (GetCVars().m_zoomMax * GetCVars().m_zoomMax);
 				float zoomDistance = GetCVars().m_targetDistance * shapedZoom;
 
-				// Calculate the target rotation and slerp it if we can.
+				// Calculate the target rotation and SLERP it if we can.
 				Quat quatTargetRotationGoal = m_quatTargetRotation * quatPreTransYP;
 				Quat quatTargetRotation;
 				if (m_skipInterpolation)
@@ -182,8 +186,7 @@ void CActionRPGCameraComponent::Update(SEntityUpdateContext& ctx, int updateSlot
 				// Work out where to place the new initial position. We will be using a unit vector facing forward Y
 				// as the starting place and applying rotations from the target bone and player camera movements.
 				Vec3 viewPositionOffset = Vec3FromString(GetCVars().m_viewPositionOffset->GetString());
-				Vec3 vecViewPosition = vecTargetAimPosition + (quatTargetRotation * (Vec3(0.0f, 1.0f, 0.0f) * zoomDistance))
-					+ quatTargetRotation * viewPositionOffset;
+				Vec3 vecViewPosition = vecTargetAimPosition + (quatTargetRotation * (FORWARD_DIRECTION * zoomDistance)) + quatTargetRotation * viewPositionOffset;
 
 				// By default, we try and aim the camera at the target, taking into account the current mouse yaw and pitch values.
 				// Since the target and aim can actually be the same we need to use a safe version of the normalised quaternion to

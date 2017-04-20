@@ -2,6 +2,7 @@
 
 #include "Helpers/DesignerEntityComponent.h"
 
+
 class CGeometryComponent final : public CDesignerEntityComponent<IGeometryEntityComponent>, public IEntityPropertyGroup
 {
 	CRY_ENTITY_COMPONENT_CLASS(CGeometryComponent, IGeometryEntityComponent, "GeometryComponent", 0xB430544945AC4302, 0x99FA7A0C2203DE09);
@@ -69,7 +70,7 @@ public:
 	}
 
 	/** Gets the slot the geometry is loaded into or -1 if there is no loaded geometry. **/
-	int GetSlotId() { return m_slot; }
+	int GetSlotId() { return m_slotId; }
 
 private:
 	typedef std::list<IGeometryListener*> TListenersList;
@@ -79,22 +80,13 @@ private:
 	string m_model;
 
 	/** The entity slot to load the model into.	**/
-	int m_slot { -1 };
+	int m_slotId { -1 };
 
 	/**	The mass. **/
 	float m_mass { 1.0f };
 
 	/**	Physicalisation type. **/
 	EPhysicalizationType m_physicalizationType { ePhysicalizationType_Static };
-
-	/**	Animation file to play (if needed). **/
-	string m_animation;
-
-	/**	Speed of the animation. **/
-	float m_animationSpeed { 1.0f };
-
-	/**	True to loop the animation. **/
-	bool m_bLoopAnimation { true };
 
 	/**	True to receive collision events. **/
 	bool m_bReceiveCollisionEvents { false };

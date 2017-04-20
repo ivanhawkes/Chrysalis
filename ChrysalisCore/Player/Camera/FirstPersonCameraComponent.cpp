@@ -14,8 +14,8 @@ class CFirstPersonCameraRegistrator : public IEntityRegistrator, public CFirstPe
 	virtual void Register() override
 	{
 		CChrysalisCorePlugin::RegisterEntityWithDefaultComponent<CFirstPersonCameraComponent>("FirstPersonCamera");
-		//RegisterEntityWithDefaultComponent<CFirstPersonCameraComponent>("FirstPersonCamera", "Camera", "Light.bmp");
-		
+		//RegisterEntityWithDefaultComponent<CFirstPersonCameraComponent>("FirstPersonCamera", "Camera", "Camera.bmp");
+
 		// This should make the entity class invisible in the editor.
 		auto cls = gEnv->pEntitySystem->GetClassRegistry()->FindClass("FirstPersonCamera");
 		cls->SetFlags(cls->GetFlags() | ECLF_INVISIBLE);
@@ -86,47 +86,54 @@ void CFirstPersonCameraComponent::OnShutDown()
 void CFirstPersonCameraComponent::Update(SEntityUpdateContext& ctx, int updateSlot)
 //void CFirstPersonCameraComponent::Update2()
 {
-	auto pPlayerInput = CPlayer::GetLocalPlayer()->GetPlayerInput();
+	auto pPlayer = CPlayer::GetLocalPlayer();
+	auto pPlayerInput = pPlayer->GetPlayerInput();
 
 	// Default on failure is to return a cleanly constructed blank camera pose.
 	CCameraPose newCameraPose { CCameraPose() };
 
-	// If the player changes the camera zoom, we will toggle to the third person view.
-	if (m_pCameraManager)
+	if (pPlayerInput)
 	{
-		if ((pPlayerInput->GetZoomDelta() > FLT_EPSILON) && (!m_pCameraManager->IsThirdPerson()))
-			m_pCameraManager->ToggleThirdPerson();
-	}
+		// If the player changes the camera zoom, we will toggle to the third person view.
+		if (m_pCameraManager)
+		{
+			if ((pPlayerInput->GetZoomDelta() > FLT_EPSILON) && (!m_pCameraManager->IsThirdPerson()))
+				m_pCameraManager->ToggleThirdPerson();
+		}
 
-	// Resolve the entity.
-	auto pEntity = gEnv->pEntitySystem->GetEntity(m_targetEntityID);
-	if (pEntity)
-	{
-		// It's possible there is no actor to query for eye position, in that case, return a safe default
-		// value for an average height person.
-		Vec3 localEyePosition { AverageEyePosition };
+		// Resolve the entity.
+		auto pEntity = gEnv->pEntitySystem->GetEntity(m_targetEntityID);
+		if (pEntity)
+		{
+			// It's possible there is no actor to query for eye position, in that case, return a safe default
+			// value for an average height person.
+			Vec3 localEyePosition { AverageEyePosition };
 
-		// If we are attached to an entity that is an actor we can use their eye position.
-		auto pActor = gEnv->pGameFramework->GetIActorSystem()->GetActor(m_targetEntityID);
-		if (pActor)
-			localEyePosition = pActor->GetLocalEyePos();
+			// If we are attached to an entity that is an actor we can use their eye position.
+			auto pActor = gEnv->pGameFramework->GetIActorSystem()->GetActor(m_targetEntityID);
+			if (pActor)
+				localEyePosition = pActor->GetLocalEyePos();
 
-		// Apply the player input rotation for this frame, and limit the pitch / yaw movement according to the set max and min values.
-		m_viewPitch -= pPlayerInput->GetMousePitchDelta() - pPlayerInput->GetXiPitchDelta();
-		m_viewPitch = clamp_tpl(m_viewPitch, DEG2RAD(GetCVars().m_pitchMin), DEG2RAD(GetCVars().m_pitchMax));
+			// Apply the player input rotation for this frame, and limit the pitch / yaw movement according to the set max and min values.
+			if (pPlayer->GetAllowCameraMovement())
+			{
+				m_viewPitch -= pPlayerInput->GetMousePitchDelta() - pPlayerInput->GetXiPitchDelta();
+				m_viewPitch = clamp_tpl(m_viewPitch, DEG2RAD(GetCVars().m_pitchMin), DEG2RAD(GetCVars().m_pitchMax));
+			}
 
-		// Pose is based on entity position and the eye position.
-		// We will use the rotation of the entity as a base, and apply pitch based on our own reckoning.
-		const Vec3 position = pEntity->GetPos() + localEyePosition;
-		const Quat rotation = pEntity->GetRotation() * Quat(Ang3(m_viewPitch, 0.0f, 0.0f));
-		newCameraPose = CCameraPose(position, rotation);
+			// Pose is based on entity position and the eye position.
+			// We will use the rotation of the entity as a base, and apply pitch based on our own reckoning.
+			const Vec3 position = pEntity->GetPos() + localEyePosition;
+			const Quat rotation = pEntity->GetRotation() * Quat(Ang3(m_viewPitch, 0.0f, 0.0f));
+			newCameraPose = CCameraPose(position, rotation);
 
 #if defined(_DEBUG)
-		if (GetCVars().m_debug)
-		{
-			gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(position, 0.04f, ColorB(0, 0, 255, 255));
-		}
+			if (GetCVars().m_debug)
+			{
+				gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(position, 0.04f, ColorB(0, 0, 255, 255));
+			}
 #endif
+		}
 	}
 
 	// We set the pose, regardless of the result.

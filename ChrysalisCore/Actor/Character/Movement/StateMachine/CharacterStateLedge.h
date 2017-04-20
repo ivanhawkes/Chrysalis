@@ -1,8 +1,8 @@
 #pragma once
 
 #include <CryNetwork/ISerialize.h>
-#include "CharacterStateEvents.h"
-#include "Entities/Environment/Ledge/LedgeManager.h"
+#include <Actor/Character/Movement/StateMachine/CharacterStateEvents.h>
+#include <Entities/Environment/Ledge/LedgeManager.h>
 
 
 class CCharacter;

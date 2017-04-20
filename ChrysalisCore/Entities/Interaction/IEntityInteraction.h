@@ -9,15 +9,16 @@ struct IInteraction
 	virtual void OnInteractionComplete() {};
 	virtual void OnInteractionCancel() {};
 
-	bool IsUseable() { return true; };
-	virtual const string GetVerb() { return "interaction_interact"; };
+	bool IsUseable() const { return true; };
+	virtual const string GetVerb() const { return "interaction_interact"; };
+	virtual const string GetVerbUI() const { return "@" + GetVerb(); };
 
-	bool IsEnabled() { return m_isEnabled; };
+	bool IsEnabled() const { return m_isEnabled; };
 	void SetEnabled(bool isEnabled) { m_isEnabled = isEnabled; };
-	bool IsHidden() { return m_isHidden; };
+	bool IsHidden() const { return m_isHidden; };
 	void SetHidden(bool isHidden) { m_isHidden = isHidden; };
 
-private:
+protected:
 	bool m_isEnabled { true };
 	bool m_isHidden { false };
 };
@@ -31,21 +32,56 @@ DECLARE_SHARED_POINTERS(IInteraction);
 
 struct IInteractionInteract
 {
-	virtual void Interact() = 0;
+	virtual void OnInteractionInteract() = 0;
 };
 
 
 class CInteractionInteract : public IInteraction
 {
 public:
-	CInteractionInteract(IInteractionInteract* subject) { m_subject = subject; };
+	CInteractionInteract(IInteractionInteract* subject, bool isEnabled = true, bool isHidden = false)
+	{
+		m_host = subject;
+		m_isEnabled = isEnabled;
+		m_isHidden = isHidden;
+	};
 
-	void OnInteractionStart() override { m_subject->Interact(); };
+	const string GetVerb() const override { return "interaction_interact"; };
+	void OnInteractionStart() override { m_host->OnInteractionInteract(); };
 
 private:
-	IInteractionInteract* m_subject { nullptr };
+	IInteractionInteract* m_host { nullptr };
 };
 DECLARE_SHARED_POINTERS(CInteractionInteract);
+
+
+// ***
+// *** Trigger a DRS operation with variable passed in from the component.
+// ***
+
+struct IInteractionDRS
+{
+	virtual void OnInteractionDRS() = 0;
+};
+
+
+class CInteractionDRS : public IInteraction
+{
+public:
+	CInteractionDRS(IInteractionDRS* subject, bool isEnabled = true, bool isHidden = false)
+	{
+		m_host = subject;
+		m_isEnabled = isEnabled;
+		m_isHidden = isHidden;
+	};
+
+	const string GetVerb() const override { return "interaction_drs"; };
+	void OnInteractionStart() override { m_host->OnInteractionDRS(); };
+
+private:
+	IInteractionDRS* m_host { nullptr };
+};
+DECLARE_SHARED_POINTERS(CInteractionDRS);
 
 
 // ***
@@ -54,22 +90,27 @@ DECLARE_SHARED_POINTERS(CInteractionInteract);
 
 struct IInteractionSwitch
 {
-	virtual void SwitchToggle() = 0;
-	virtual void SwitchOff() = 0;
-	virtual void SwitchOn() = 0;
+	virtual void OnInteractionSwitchToggle() = 0;
+	virtual void OnInteractionSwitchOff() = 0;
+	virtual void OnInteractionSwitchOn() = 0;
 };
 
 
 class CInteractionSwitchToggle : public IInteraction
 {
 public:
-	CInteractionSwitchToggle(IInteractionSwitch* subject) { m_subject = subject; };
+	CInteractionSwitchToggle(IInteractionSwitch* subject, bool isEnabled = true, bool isHidden = false)
+	{
+		m_host = subject;
+		m_isEnabled = isEnabled;
+		m_isHidden = isHidden;
+	};
 
-	const string GetVerb() override { return "interaction_switch_toggle"; };
-	void OnInteractionStart() override { m_subject->SwitchToggle(); };
+	const string GetVerb() const override { return "interaction_switch_toggle"; };
+	void OnInteractionStart() override { m_host->OnInteractionSwitchToggle(); };
 
 private:
-	IInteractionSwitch* m_subject { nullptr };
+	IInteractionSwitch* m_host { nullptr };
 };
 DECLARE_SHARED_POINTERS(CInteractionSwitchToggle);
 
@@ -77,13 +118,18 @@ DECLARE_SHARED_POINTERS(CInteractionSwitchToggle);
 class CInteractionSwitchOn : public IInteraction
 {
 public:
-	CInteractionSwitchOn(IInteractionSwitch* subject) { m_subject = subject; };
+	CInteractionSwitchOn(IInteractionSwitch* subject, bool isEnabled = true, bool isHidden = false)
+	{
+		m_host = subject;
+		m_isEnabled = isEnabled;
+		m_isHidden = isHidden;
+	};
 
-	const string GetVerb() override { return "interaction_switch_on"; };
-	void OnInteractionStart() override { m_subject->SwitchOn(); };
+	const string GetVerb() const override { return "interaction_switch_on"; };
+	void OnInteractionStart() override { m_host->OnInteractionSwitchOn(); };
 
 private:
-	IInteractionSwitch* m_subject { nullptr };
+	IInteractionSwitch* m_host { nullptr };
 };
 DECLARE_SHARED_POINTERS(CInteractionSwitchOn);
 
@@ -91,13 +137,18 @@ DECLARE_SHARED_POINTERS(CInteractionSwitchOn);
 class CInteractionSwitchOff : public IInteraction
 {
 public:
-	CInteractionSwitchOff(IInteractionSwitch* subject) { m_subject = subject; };
+	CInteractionSwitchOff(IInteractionSwitch* subject, bool isEnabled = true, bool isHidden = false)
+	{
+		m_host = subject;
+		m_isEnabled = isEnabled;
+		m_isHidden = isHidden;
+	};
 
-	const string GetVerb() override { return "interaction_switch_off"; };
-	void OnInteractionStart() override { m_subject->SwitchOff(); };
+	const string GetVerb() const override { return "interaction_switch_off"; };
+	void OnInteractionStart() override { m_host->OnInteractionSwitchOff(); };
 
 private:
-	IInteractionSwitch* m_subject { nullptr };
+	IInteractionSwitch* m_host { nullptr };
 };
 DECLARE_SHARED_POINTERS(CInteractionSwitchOff);
 
@@ -107,123 +158,296 @@ DECLARE_SHARED_POINTERS(CInteractionSwitchOff);
 // ***
 
 
-struct IInteractionPickupAndDrop
+struct IInteractionItem
 {
-	virtual void Pickup() = 0;
-	virtual void Drop() = 0;
-	virtual void Inspect() = 0;
+	virtual void OnInteractionItemInspect() = 0;
+	virtual void OnInteractionItemPickup() = 0;
+	virtual void OnInteractionItemDrop() = 0;
+	virtual void OnInteractionItemToss() = 0;
 };
 
 
-class CInteractionPickup : public IInteraction
-{
-public:
-	CInteractionPickup(IInteractionPickupAndDrop* subject) { m_subject = subject; };
-
-	const string GetVerb() override { return "interaction_pickup"; };
-	void OnInteractionStart() override { m_subject->Pickup(); };
-
-private:
-	IInteractionPickupAndDrop* m_subject { nullptr };
-};
-DECLARE_SHARED_POINTERS(CInteractionPickup);
-
-
-class CInteractionDrop : public IInteraction
+class CInteractionItemInspect : public IInteraction
 {
 public:
-	CInteractionDrop(IInteractionPickupAndDrop* subject) { m_subject = subject; };
+	CInteractionItemInspect(IInteractionItem* subject, bool isEnabled = true, bool isHidden = false)
+	{
+		m_host = subject;
+		m_isEnabled = isEnabled;
+		m_isHidden = isHidden;
+	};
 
-	const string GetVerb() override { return "interaction_drop"; };
-	void OnInteractionStart() override { m_subject->Drop(); };
+	const string GetVerb() const override { return "interaction_inspect"; };
+	void OnInteractionStart() override { m_host->OnInteractionItemInspect(); };
 
 private:
-	IInteractionPickupAndDrop* m_subject { nullptr };
+	IInteractionItem* m_host { nullptr };
 };
-DECLARE_SHARED_POINTERS(CInteractionDrop);
+DECLARE_SHARED_POINTERS(CInteractionItemInspect);
 
 
-class CInteractionInspect : public IInteraction
+class CInteractionItemPickup : public IInteraction
 {
 public:
-	CInteractionInspect(IInteractionPickupAndDrop* subject) { m_subject = subject; };
+	CInteractionItemPickup(IInteractionItem* subject, bool isEnabled = true, bool isHidden = false)
+	{
+		m_host = subject;
+		m_isEnabled = isEnabled;
+		m_isHidden = isHidden;
+	};
 
-	const string GetVerb() override { return "interaction_inspect"; };
+	const string GetVerb() const override { return "interaction_pickup"; };
+	void OnInteractionStart() override { m_host->OnInteractionItemPickup(); };
 
-	void OnInteractionStart() override { m_subject->Inspect(); };
-
-	//gEnv->pLog->LogAlways("Interation Interact fired.");
 private:
-	IInteractionPickupAndDrop* m_subject { nullptr };
+	IInteractionItem* m_host { nullptr };
 };
-DECLARE_SHARED_POINTERS(CInteractionInspect);
+DECLARE_SHARED_POINTERS(CInteractionItemPickup);
+
+
+class CInteractionItemDrop : public IInteraction
+{
+public:
+	CInteractionItemDrop(IInteractionItem* subject, bool isEnabled = true, bool isHidden = false)
+	{
+		m_host = subject;
+		m_isEnabled = isEnabled;
+		m_isHidden = isHidden;
+	};
+
+	const string GetVerb() const override { return "interaction_drop"; };
+	void OnInteractionStart() override { m_host->OnInteractionItemDrop(); };
+
+private:
+	IInteractionItem* m_host { nullptr };
+};
+DECLARE_SHARED_POINTERS(CInteractionItemDrop);
+
+
+class CInteractionItemToss : public IInteraction
+{
+public:
+	CInteractionItemToss(IInteractionItem* subject, bool isEnabled = true, bool isHidden = false)
+	{
+		m_host = subject;
+		m_isEnabled = isEnabled;
+		m_isHidden = isHidden;
+	};
+
+	const string GetVerb() const override { return "interaction_toss"; };
+	void OnInteractionStart() override { m_host->OnInteractionItemToss(); };
+
+private:
+	IInteractionItem* m_host { nullptr };
+};
+DECLARE_SHARED_POINTERS(CInteractionItemToss);
 
 
 // ***
-// *** Containers.
+// *** Generic open.
 // ***
 
 
-struct IInteractionContainer
+struct IInteractionOpenable
 {
-	virtual void ContainerOpen() = 0;
-	virtual void ContainerClose() = 0;
-	virtual void ContainerLock() = 0;
-	virtual void ContainerUnlock() = 0;
+	virtual void OnInteractionOpenableOpen() = 0;
+	virtual void OnInteractionOpenableClose() = 0;
 };
 
 
-class CInteractionOpen : public IInteraction
+class CInteractionOpenableOpen : public IInteraction
 {
 public:
-	CInteractionOpen(IInteractionContainer* subject) { m_subject = subject; };
+	CInteractionOpenableOpen(IInteractionOpenable* subject, bool isEnabled = true, bool isHidden = false)
+	{
+		m_host = subject;
+		m_isEnabled = isEnabled;
+		m_isHidden = isHidden;
+	};
 
-	const string GetVerb() override { return "interaction_open"; };
-	void OnInteractionStart() override { m_subject->ContainerOpen(); };
+	const string GetVerb() const override { return "interaction_openable_open"; };
+	void OnInteractionStart() override { m_host->OnInteractionOpenableOpen(); };
 
 private:
-	IInteractionContainer* m_subject { nullptr };
+	IInteractionOpenable* m_host { nullptr };
 };
-DECLARE_SHARED_POINTERS(CInteractionOpen);
+DECLARE_SHARED_POINTERS(CInteractionOpenableOpen);
 
 
-class CInteractionClose : public IInteraction
+class CInteractionOpenableClose : public IInteraction
 {
 public:
-	CInteractionClose(IInteractionContainer* subject) { m_subject = subject; };
+	CInteractionOpenableClose(IInteractionOpenable* subject, bool isEnabled = true, bool isHidden = false)
+	{
+		m_host = subject;
+		m_isEnabled = isEnabled;
+		m_isHidden = isHidden;
+	};
 
-	const string GetVerb() override { return "interaction_close"; };
-	void OnInteractionStart() override { m_subject->ContainerClose(); };
+	const string GetVerb() const override { return "interaction_openable_close"; };
+	void OnInteractionStart() override { m_host->OnInteractionOpenableClose(); };
 
 private:
-	IInteractionContainer* m_subject { nullptr };
+	IInteractionOpenable* m_host { nullptr };
 };
-DECLARE_SHARED_POINTERS(CInteractionClose);
+DECLARE_SHARED_POINTERS(CInteractionOpenableClose);
 
 
-class CInteractionLock : public IInteraction
+// ***
+// *** Lockable.
+// ***
+
+
+struct IInteractionLockable
+{
+	virtual void OnInteractionLockableLock() = 0;
+	virtual void OnInteractionLockableUnlock() = 0;
+};
+
+
+class CInteractionLockableLock : public IInteraction
 {
 public:
-	CInteractionLock(IInteractionContainer* subject) { m_subject = subject; };
+	CInteractionLockableLock(IInteractionLockable* subject, bool isEnabled = true, bool isHidden = false)
+	{
+		m_host = subject;
+		m_isEnabled = isEnabled;
+		m_isHidden = isHidden;
+	};
 
-	const string GetVerb() override { return "interaction_lock"; };
-	void OnInteractionStart() override { m_subject->ContainerLock(); };
+	const string GetVerb() const override { return "interaction_lockable_lock"; };
+	void OnInteractionStart() override { m_host->OnInteractionLockableLock(); };
 
 private:
-	IInteractionContainer* m_subject { nullptr };
+	IInteractionLockable* m_host { nullptr };
 };
-DECLARE_SHARED_POINTERS(CInteractionLock);
+DECLARE_SHARED_POINTERS(CInteractionLockableLock);
 
 
-class CInteractionUnlock : public IInteraction
+class CInteractionLockableUnlock : public IInteraction
 {
 public:
-	CInteractionUnlock(IInteractionContainer* subject) { m_subject = subject; };
+	CInteractionLockableUnlock(IInteractionLockable* subject, bool isEnabled = true, bool isHidden = false)
+	{
+		m_host = subject;
+		m_isEnabled = isEnabled;
+		m_isHidden = isHidden;
+	};
 
-	const string GetVerb() override { return "interaction_unlock"; };
-	void OnInteractionStart() override { m_subject->ContainerUnlock(); };
+	const string GetVerb() const override { return "interaction_lockable_unlock"; };
+	void OnInteractionStart() override { m_host->OnInteractionLockableUnlock(); };
 
 private:
-	IInteractionContainer* m_subject { nullptr };
+	IInteractionLockable* m_host { nullptr };
 };
-DECLARE_SHARED_POINTERS(CInteractionUnlock);
+DECLARE_SHARED_POINTERS(CInteractionLockableUnlock);
+
+
+//// ***
+//// *** Doors.
+//// ***
+//
+//
+//struct IInteractionDoor
+//{
+//	virtual void OnInteractionDoorOpen() = 0;
+//	virtual void OnInteractionDoorClose() = 0;
+//};
+//
+//
+//class CInteractionDoorOpen : public IInteraction
+//{
+//public:
+//	CInteractionDoorOpen(IInteractionDoor* subject) { m_host = subject; };
+//
+//	const string GetVerb() const override { return "interaction_door_open"; };
+//	void OnInteractionStart() override { m_host->OnInteractionDoorOpen(); };
+//
+//private:
+//	IInteractionDoor* m_host { nullptr };
+//};
+//DECLARE_SHARED_POINTERS(CInteractionDoorOpen);
+//
+//
+//class CInteractionDoorClose : public IInteraction
+//{
+//public:
+//	CInteractionDoorClose(IInteractionDoor* subject) { m_host = subject; };
+//
+//	const string GetVerb() const override { return "interaction_door_close"; };
+//	void OnInteractionStart() override { m_host->OnInteractionDoorClose(); };
+//
+//private:
+//	IInteractionDoor* m_host { nullptr };
+//};
+//DECLARE_SHARED_POINTERS(CInteractionDoorClose);
+//
+//
+//// ***
+//// *** Containers.
+//// ***
+//
+//
+//struct IInteractionContainer
+//{
+//	virtual void OnInteractionContainerOpen() = 0;
+//	virtual void OnInteractionContainerClose() = 0;
+//	virtual void OnInteractionContainerLock() = 0;
+//	virtual void OnInteractionContainerUnlock() = 0;
+//};
+//
+//
+//class CInteractionContainerOpen : public IInteraction
+//{
+//public:
+//	CInteractionContainerOpen(IInteractionContainer* subject) { m_host = subject; };
+//
+//	const string GetVerb() const override { return "interaction_container_open"; };
+//	void OnInteractionStart() override { m_host->OnInteractionContainerOpen(); };
+//
+//private:
+//	IInteractionContainer* m_host { nullptr };
+//};
+//DECLARE_SHARED_POINTERS(CInteractionContainerOpen);
+//
+//
+//class CInteractionContainerClose : public IInteraction
+//{
+//public:
+//	CInteractionContainerClose(IInteractionContainer* subject) { m_host = subject; };
+//
+//	const string GetVerb() const override { return "interaction_container_close"; };
+//	void OnInteractionStart() override { m_host->OnInteractionContainerClose(); };
+//
+//private:
+//	IInteractionContainer* m_host { nullptr };
+//};
+//DECLARE_SHARED_POINTERS(CInteractionContainerClose);
+//
+//
+//class CInteractionContainerLock : public IInteraction
+//{
+//public:
+//	CInteractionContainerLock(IInteractionContainer* subject) { m_host = subject; };
+//
+//	const string GetVerb() const override { return "interaction_container_lock"; };
+//	void OnInteractionStart() override { m_host->OnInteractionContainerLock(); };
+//
+//private:
+//	IInteractionContainer* m_host { nullptr };
+//};
+//DECLARE_SHARED_POINTERS(CInteractionContainerLock);
+//
+//
+//class CInteractionContainerUnlock : public IInteraction
+//{
+//public:
+//	CInteractionContainerUnlock(IInteractionContainer* subject) { m_host = subject; };
+//
+//	const string GetVerb() const override { return "interaction_container_unlock"; };
+//	void OnInteractionStart() override { m_host->OnInteractionContainerUnlock(); };
+//
+//private:
+//	IInteractionContainer* m_host { nullptr };
+//};
+//DECLARE_SHARED_POINTERS(CInteractionContainerUnlock);

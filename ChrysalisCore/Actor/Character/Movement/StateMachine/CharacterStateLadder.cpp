@@ -1,8 +1,8 @@
 #include <StdAfx.h>
 
 #include "CharacterStateLadder.h"
+#include <Actor/Animation/ActorAnimation.h>
 #include <Actor/Character/Character.h>
-#include <Player/Animations/PlayerAnimations.h>
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
 #include <Entities/EntityScriptCalls.h>
 #include "Utility/CryWatch.h"
@@ -23,13 +23,13 @@ static AUTOENUM_BUILDNAMEARRAY(s_onOffAnimTypeNames, ladderAnimTypeList);
 static uint32 s_ladderFractionCRC = 0;
 
 
-class CLadderAction : public TPlayerAction
+class CLadderAction : public CAnimationAction
 {
 public:
 	CLadderAction(CCharacterStateLadder * ladderState, CCharacter & Character, FragmentID fragmentID,
 		CCharacterStateLadder::ELadderAnimType animType, const char* cameraAnimFactorAtStart,
 		const char* cameraAnimFactorAtEnd) :
-		TPlayerAction(PP_PlayerActionUrgent, fragmentID),
+		CAnimationAction(EActorActionPriority::eAAP_ActionUrgent, fragmentID),
 		m_ladderState(ladderState),
 		m_Character(Character),
 		m_animType(animType),
@@ -93,7 +93,7 @@ public:
 		/*LadderLog ("Entering %s instance for %s", GetName (), m_Character.GetEntity ()->GetEntityTextDescription ());
 		LadderLogIndent ();
 
-		TPlayerAction::Enter ();
+		CAnimationAction::Enter ();
 
 		IAnimatedCharacter* pAnimChar = m_Character.GetAnimatedCharacter ();
 
@@ -115,7 +115,7 @@ public:
 		/*LadderLog ("Exiting %s instance for %s", GetName (), m_Character.GetEntity ()->GetEntityTextDescription ());
 		LadderLogIndent ();
 
-		TPlayerAction::Exit ();
+		CAnimationAction::Exit ();
 
 		m_ladderState->InformLadderAnimIsDone (m_Character, this);*/
 	}
@@ -163,7 +163,7 @@ public:
 	DEFINE_ACTION("LadderGetOn");
 
 	CActionLadderGetOn(CCharacterStateLadder * ladderState, CCharacter &Character, CCharacterStateLadder::ELadderAnimType animType) :
-		CLadderAction(ladderState, Character, PlayerMannequin.fragmentIDs.LadderGetOn, animType, "cameraAnimFraction_getOn", "cameraAnimFraction_onLadder")
+		CLadderAction(ladderState, Character, ActorMannequin.fragmentIDs.LadderGetOn, animType, "cameraAnimFraction_getOn", "cameraAnimFraction_onLadder")
 	{}
 
 
@@ -208,7 +208,7 @@ public:
 	DEFINE_ACTION("LadderGetOff");
 
 	CActionLadderGetOff(CCharacterStateLadder * ladderState, CCharacter &Character, CCharacterStateLadder::ELadderAnimType animType) :
-		CLadderAction(ladderState, Character, PlayerMannequin.fragmentIDs.LadderGetOff, animType, "cameraAnimFraction_onLadder", "cameraAnimFraction_getOff")
+		CLadderAction(ladderState, Character, ActorMannequin.fragmentIDs.LadderGetOff, animType, "cameraAnimFraction_onLadder", "cameraAnimFraction_getOff")
 	{}
 
 
@@ -259,7 +259,7 @@ public:
 	DEFINE_ACTION("LadderClimbUpDown");
 
 	CActionLadderClimbUpDown(CCharacterStateLadder * ladderState, CCharacter &Character) :
-		CLadderAction(ladderState, Character, PlayerMannequin.fragmentIDs.LadderClimb, CCharacterStateLadder::kLadderAnimType_upLoop, "cameraAnimFraction_onLadder", "cameraAnimFraction_onLadder")
+		CLadderAction(ladderState, Character, ActorMannequin.fragmentIDs.LadderClimb, CCharacterStateLadder::kLadderAnimType_upLoop, "cameraAnimFraction_onLadder", "cameraAnimFraction_onLadder")
 	{
 		m_interruptable = true;
 	}

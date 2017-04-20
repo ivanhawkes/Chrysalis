@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Helpers/DesignerEntityComponent.h"
-#include <Entities/Interaction/EntityInteractionComponent.h>
+#include <Components/Interaction/EntityInteractionComponent.h>
 #include <Components/Geometry/GeometryComponent.h>
 
 
@@ -12,6 +12,10 @@ class CSwitchComponent final : public CDesignerEntityComponent<>, public IEntity
 	virtual ~CSwitchComponent() {}
 
 public:
+	const string kQueueSignal { "interaction_switch" };
+	const string kSwitchOnVerb { "interaction_switch_on" };
+	const string kSwitchOffVerb { "interaction_switch_off" };
+
 	struct ISwitchListener
 	{
 		virtual ~ISwitchListener() {};
@@ -44,9 +48,9 @@ public:
 	// ~IEntityPropertyGroup
 
 	// IInteractionSwitch
-	virtual void SwitchToggle() override;;
-	virtual void SwitchOn() override;;
-	virtual void SwitchOff() override;;
+	virtual void OnInteractionSwitchToggle() override;;
+	virtual void OnInteractionSwitchOn() override;;
+	virtual void OnInteractionSwitchOff() override;;
 	// ~IInteractionSwitch
 
 	// ISwitchEntityComponent
@@ -78,4 +82,13 @@ private:
 
 	/** This entity should be interactive. */
 	CEntityInteractionComponent* m_interactor { nullptr };
+
+	/** Send an alternative queue signal to DRS if the string is not empty. */
+	string m_queueSignal;
+
+	/** Send this verb when switching on, if the string in not empty. */
+	string m_switchOnVerb;
+
+	/** Send this verb when switching off, if the string in not empty. */
+	string m_switchOffVerb;
 };

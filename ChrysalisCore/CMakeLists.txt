@@ -1,7 +1,11 @@
 cmake_minimum_required (VERSION 3.6.0)
 project (Chrysalis VERSION 1.0 LANGUAGES CXX)
 
-configure_file ("${PROJECT_NAME}.vcxproj.user.in" "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.vcxproj.user")
+if (${CMAKE_GENERATOR} MATCHES "^Visual Studio")
+	ADD_DEFINITIONS("/ZI")
+	configure_file ("${PROJECT_NAME}.vcxproj.user.in" "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.vcxproj.user")
+	set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
+endif()
 
 find_package (CryCommon REQUIRED)
 find_package (CryAction REQUIRED)
@@ -62,12 +66,6 @@ set (SourceGroup_Player
 )
 source_group("Player" FILES ${SourceGroup_Player})
 
-set (SourceGroup_PlayerAnimations
-	"Player/Animations/PlayerAnimations.cpp"
-	"Player/Animations/PlayerAnimations.h"
-)
-source_group("Player\\Animations" FILES ${SourceGroup_PlayerAnimations})
-
 
 #
 # Chrysalis specific code.
@@ -76,8 +74,6 @@ source_group("Player\\Animations" FILES ${SourceGroup_PlayerAnimations})
 set (SourceGroup_Actor
 	"Actor/Actor.cpp"
 	"Actor/Actor.h"
-	"Actor/ActorAnimationEvents.cpp"
-	"Actor/ActorAnimationEvents.h"
 	"Actor/ActorPhysics.h"
 	"Actor/ActorStance.h"
 	"Actor/ActorState.h"
@@ -86,6 +82,20 @@ set (SourceGroup_Actor
 	"Actor/ISimpleActor.h"
 )
 source_group("Actor" FILES ${SourceGroup_Actor})
+
+set (SourceGroup_Actor_Animation
+	"Actor/Animation/ActorAnimation.cpp"
+	"Actor/Animation/ActorAnimation.h"
+	"Actor/Animation/ActorAnimationEvents.cpp"
+	"Actor/Animation/ActorAnimationEvents.h"
+)
+source_group("Actor\\Animation" FILES ${SourceGroup_Actor_Animation})
+
+set (SourceGroup_Actor_Animation_Actions
+	"Actor/Animation/Actions/ActorAnimationActionLocomotion.cpp"
+	"Actor/Animation/Actions/ActorAnimationActionLocomotion.h"
+)
+source_group("Actor\\Animation\\Actions" FILES ${SourceGroup_Actor_Animation_Actions})
 
 set (SourceGroup_Actor_Character
 	"Actor/Character/Character.cpp"
@@ -160,6 +170,12 @@ source_group("Actor\\Movement\\StateMachine" FILES ${SourceGroup_Actor_Movement_
 #)
 #source_group("Actor\\Pet" FILES ${SourceGroup_Actor_Pet})
 
+set (SourceGroup_Animation
+	"Animation/Animation.cpp"
+	"Animation/Animation.h"
+)
+source_group("Animation" FILES ${SourceGroup_Animation})
+
 #set (SourceGroup_Animation_ProceduralContext
 #	"Animation/ProceduralContext/ProceduralContextAim.cpp"
 #	"Animation/ProceduralContext/ProceduralContextAim.h"
@@ -221,6 +237,10 @@ source_group("Actor\\Movement\\StateMachine" FILES ${SourceGroup_Actor_Movement_
 #source_group("Boids\\Terran" FILES ${SourceGroup_Boids_Terran})
 
 set (SourceGroup_Components
+	"Components/Animation/ControlledAnimationComponent.cpp"
+	"Components/Animation/ControlledAnimationComponent.h"
+	"Components/Animation/SimpleAnimationComponent.cpp"
+	"Components/Animation/SimpleAnimationComponent.h"
 	"Components/Geometry/GeometryComponent.cpp"
 	"Components/Geometry/GeometryComponent.h"
 	"Components/Lights/DynamicLightComponent.cpp"
@@ -229,6 +249,41 @@ set (SourceGroup_Components
 	"Components/Particles/ParticleComponent.h"
 )
 source_group("Components" FILES ${SourceGroup_Components})
+
+set (SourceGroup_Components_Interaction
+
+	"Components/Interaction/DRSInteractionComponent.cpp"
+	"Components/Interaction/DRSInteractionComponent.h"
+	"Components/Interaction/EntityAwarenessComponent.cpp"
+	"Components/Interaction/EntityAwarenessComponent.h"
+	"Components/Interaction/EntityInteractionComponent.cpp"
+	"Components/Interaction/EntityInteractionComponent.h"
+	"Components/Interaction/ItemInteractionComponent.cpp"
+	"Components/Interaction/ItemInteractionComponent.h"
+)
+source_group("Components\\Interaction" FILES ${SourceGroup_Components_Interaction})
+
+set (SourceGroup_Components_Lockable
+	"Components/Lockable/KeyringComponent.cpp"
+	"Components/Lockable/KeyringComponent.h"
+	"Components/Lockable/LockableComponent.cpp"
+	"Components/Lockable/LockableComponent.h"
+)
+source_group("Components\\Lockable" FILES ${SourceGroup_Components_Lockable})
+
+set (SourceGroup_Components_Openable
+	"Components/Openable/ContainerComponent.cpp"
+	"Components/Openable/ContainerComponent.h"
+)
+source_group("Components\\Openable" FILES ${SourceGroup_Components_Openable})
+
+set (SourceGroup_Components_Switchable
+#	"Components/Switchable/SwitchableComponent.cpp"
+#	"Components/Switchable/SwitchableComponent.h"
+	"Components/Switchable/SwitchComponent.cpp"
+	"Components/Switchable/SwitchComponent.h"
+)
+source_group("Components\\Switchable" FILES ${SourceGroup_Components_Switchable})
 
 set (SourceGroup_ConsoleCommands
 	"ConsoleCommands/ConsoleCommands.h"
@@ -254,18 +309,29 @@ set (SourceGroup_DynamicResponseSystem
 )
 source_group("DynamicResponseSystem" FILES ${SourceGroup_DynamicResponseSystem})
 
-
 set (SourceGroup_Entities
 	"Entities/EntityEffects.h"
 	"Entities/EntityEffects.cpp"
 )
 source_group("Entities" FILES ${SourceGroup_Entities})
 
+set (SourceGroup_Entities_Compass
+	"Entities/Compass/CompassComponent.cpp"
+	"Entities/Compass/CompassComponent.h"
+)
+source_group("Entities\\Compass" FILES ${SourceGroup_Entities_Compass})
+
 set (SourceGroup_Entities_Doors
 	"Entities/Doors/AnimatedDoorComponent.cpp"
 	"Entities/Doors/AnimatedDoorComponent.h"
 )
 source_group("Entities\\Doors" FILES ${SourceGroup_Entities_Doors})
+
+set (SourceGroup_Entities_Flashlight
+	"Entities/Flashlight/FlashlightComponent.cpp"
+	"Entities/Flashlight/FlashlightComponent.h"
+)
+source_group("Entities\\Flashlight" FILES ${SourceGroup_Entities_Flashlight})
 
 #set (SourceGroup_Entities_Environment_Ledge
 #	"Entities/Environment/Ledge/Ledge.h"
@@ -284,43 +350,17 @@ source_group("Entities\\Doors" FILES ${SourceGroup_Entities_Doors})
 #source_group("Entities\\Environment\\Water" FILES ${SourceGroup_Entities_Environment_Water})
 
 set (SourceGroup_Entities_Interaction
-	"Entities/Interaction/EntityAwarenessComponent.cpp"
-	"Entities/Interaction/EntityAwarenessComponent.h"
-	"Entities/Interaction/EntityInteractionComponent.cpp"
-	"Entities/Interaction/EntityInteractionComponent.h"
+	"Entities/Interaction/DRSInteractionEntity.cpp"
+	"Entities/Interaction/DRSInteractionEntity.h"
 	"Entities/Interaction/IEntityInteraction.h"
 )
 source_group("Entities\\Interaction" FILES ${SourceGroup_Entities_Interaction})
-
-set (SourceGroup_Entities_Lockable
-	"Entities/Lockable/Keyring/KeyringComponent.cpp"
-	"Entities/Lockable/Keyring/KeyringComponent.h"
-	"Entities/Lockable/LockableComponent.cpp"
-	"Entities/Lockable/LockableComponent.h"
-)
-source_group("Entities\\Lockable" FILES ${SourceGroup_Entities_Lockable})
-
-set (SourceGroup_Entities_Openable
-	"Entities/Openable/Containers/ContainerComponent.cpp"
-	"Entities/Openable/Containers/ContainerComponent.h"
-)
-source_group("Entities\\Openable" FILES ${SourceGroup_Entities_Openable})
 
 #set (SourceGroup_Entities_Ownership
 #	"Entities/Ownership/IEntityOwnership.h"
 #	"Entities/Ownership/IEntityOwnership.cpp"
 #)
 #source_group("Entities\\Ownership" FILES ${SourceGroup_Entities_Ownership})
-
-set (SourceGroup_Components_Switchable
-#	"Components/Switchable/ISwitchableComponent.h"
-#	"Components/Switchable/ISwitchComponent.h"
-#	"Components/Switchable/SwitchableComponent.cpp"
-#	"Components/Switchable/SwitchableComponent.h"
-	"Components/Switchable/SwitchComponent.cpp"
-	"Components/Switchable/SwitchComponent.h"
-)
-source_group("Components\\Switchable" FILES ${SourceGroup_Components_Switchable})
 
 #set (SourceGroup_Game_Cache
 #	"Game/Cache/GameCache.cpp"
@@ -362,8 +402,6 @@ set (SourceGroup_Item_Accessory
 source_group("Item\\Accessory" FILES ${SourceGroup_Item_Accessory})
 
 set (SourceGroup_Item_Flashlight
-	"Item/Flashlight/FlashlightComponent.cpp"
-	"Item/Flashlight/FlashlightComponent.h"
 	"Item/Flashlight/ItemFlashlightParameter.cpp"
 	"Item/Flashlight/ItemFlashlightParameter.h"
 	"Item/Flashlight/ItemFlashlightParameterShared.cpp"
@@ -452,11 +490,11 @@ set (SOURCE
 #	${SourceGroup_GameplayEntities}
 	${SourceGroup_EntityHelpers}
 	${SourceGroup_Player}
-	${SourceGroup_PlayerAnimations}
 	${SourceGroup_PlayerInput}
 
 	${SourceGroup_Actor}
-	${SourceGroup_Actor_Animation_Player_Animation}
+	${SourceGroup_Actor_Animation}
+	${SourceGroup_Actor_Animation_Actions}
 	${SourceGroup_Actor_Character}
 	${SourceGroup_Actor_Character_Movement}
 	${SourceGroup_Actor_Character_Movement_StateMachine}
@@ -465,6 +503,8 @@ set (SOURCE
 	${SourceGroup_Actor_Movement}
 	${SourceGroup_Actor_Movement_StateMachine}
 #	${SourceGroup_Actor_Pet}
+
+	${SourceGroup_Animation}
 #	${SourceGroup_Animation_ProceduralContext}
 #	${SourceGroup_Boids}
 #	${SourceGroup_Boids_Amphibian}
@@ -472,21 +512,28 @@ set (SOURCE
 #	${SourceGroup_Boids_Avian}
 #	${SourceGroup_Boids_Terran}
 	${SourceGroup_Player_Camera}
+	
 	${SourceGroup_Components}
+	${SourceGroup_Components_Interaction}
+	${SourceGroup_Components_Lockable}
+	${SourceGroup_Components_Openable}
+	${SourceGroup_Components_Switchable}
+
 	${SourceGroup_ConsoleCommands}
 	${SourceGroup_DynamicResponseSystem}
-	${SourceGroup_Entities_Doors}
+
 	${SourceGroup_Entities}
+	${SourceGroup_Entities_Compass}
+	${SourceGroup_Entities_Doors}
+	${SourceGroup_Entities_Flashlight}
 	${SourceGroup_Entities_Interaction}
-#	${SourceGroup_Entity_Ownership}
+#	${SourceGroup_Entities_Ownership}
 #	${SourceGroup_Entities_Environment_Ledge}
 #	${SourceGroup_Entities_Environment_Water}
+
 #	${SourceGroup_Game_Cache}
 #	${SourceGroup_Game_Physics}
 #	${SourceGroup_Game_Registration}
-	${SourceGroup_Entities_Lockable}
-	${SourceGroup_Entities_Openable}
-	${SourceGroup_Components_Switchable}
 	${SourceGroup_Helpers}
 	${SourceGroup_Item}
 	${SourceGroup_Item_Accessory}

@@ -1,5 +1,6 @@
 #include <StdAfx.h>
 
+#include <Actor/Animation/ActorAnimation.h>
 #include <Actor/Character/Character.h>
 #include <IItemSystem.h>
 #include "CharacterStateLedge.h"
@@ -7,7 +8,6 @@
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
 #include "Entities/Environment/Ledge/LedgeManager.h"
 #include "Utility/CryWatch.h"
-#include <Player/Animations/PlayerAnimations.h>
 /*#include "Weapon.h"
 #include "StatsRecordingMgr.h"
 #include "PersistantStats.h"
@@ -23,7 +23,7 @@
 static const float s_CharacterMax2DPhysicsVelocity = 9.f;
 
 
-class CActionLedgeGrab : public TPlayerAction
+class CActionLedgeGrab : public CAnimationAction
 {
 public:
 
@@ -31,7 +31,7 @@ public:
 
 	CActionLedgeGrab(CCharacter &Character, const QuatT &ledgeLoc, SLedgeTransitionData::EOnLedgeTransition transition, bool endCrouched,
 		bool comingFromOnGround, bool comingFromSprint)
-		: TPlayerAction(EPlayerActionPriority::PP_PlayerActionUrgent, PlayerMannequin.fragmentIDs.ledgeGrab),
+		: CAnimationAction(EActorActionPriority::eAAP_ActionUrgent, ActorMannequin.fragmentIDs.LedgeGrab),
 		m_Character(Character),
 		m_targetViewDirTime(0.2f),
 		m_transitionType(transition),
@@ -54,7 +54,7 @@ public:
 		const CTagDefinition *fragTagDef = m_context->controllerDef.GetFragmentTagDef(m_fragmentID);
 		if (fragTagDef)
 		{
-			const SMannequinPlayerParams::Fragments::SledgeGrab& ledgeGrabFragment = PlayerMannequin.fragments.ledgeGrab;
+			const SActorMannequinParams::Fragments::SledgeGrab& ledgeGrabFragment = ActorMannequin.fragments.ledgeGrab;
 
 			// TODO - remove transition type and change over to just using the ledge's m_ledgeFlagBitfield this 
 			// would simplify everything and remove a lot of the dependency on CHARACTER_Params.xml
@@ -63,7 +63,7 @@ public:
 				case SLedgeTransitionData::eOLT_VaultOnto:
 				case SLedgeTransitionData::eOLT_HighVaultOnto:
 				{
-					const TagID vaultID = ledgeGrabFragment.fragmentTagIDs.up;
+					const TagID vaultID = ledgeGrabFragment.fragmentTagIDs.Up;
 					fragTagDef->Set(m_fragTags, vaultID, true);
 					break;
 				}
@@ -73,14 +73,14 @@ public:
 				case SLedgeTransitionData::eOLT_HighVaultOver:
 				case SLedgeTransitionData::eOLT_HighVaultOverIntoFall: // this flag probably shouldn't be needed either in that case
 				{
-					const TagID vaultID = ledgeGrabFragment.fragmentTagIDs.over;
+					const TagID vaultID = ledgeGrabFragment.fragmentTagIDs.Over;
 					fragTagDef->Set(m_fragTags, vaultID, true);
 					break;
 				}
 
 				case SLedgeTransitionData::eOLT_QuickLedgeGrab:
 				{
-					const TagID vaultID = ledgeGrabFragment.fragmentTagIDs.quick;
+					const TagID vaultID = ledgeGrabFragment.fragmentTagIDs.Quick;
 					fragTagDef->Set(m_fragTags, vaultID, true);
 					break;
 				}
@@ -93,7 +93,7 @@ public:
 				case SLedgeTransitionData::eOLT_HighVaultOnto:
 				case SLedgeTransitionData::eOLT_HighVaultOver:
 				{
-					const TagID highID = ledgeGrabFragment.fragmentTagIDs.high;
+					const TagID highID = ledgeGrabFragment.fragmentTagIDs.High;
 					fragTagDef->Set(m_fragTags, highID, true);
 					// INTENTIONALLY NO BREAK TO FALL THROUGH
 				}
@@ -114,7 +114,7 @@ public:
 
 			if (m_endCrouched)
 			{
-				const TagID vaultID = ledgeGrabFragment.fragmentTagIDs.endCrouched;
+				const TagID vaultID = ledgeGrabFragment.fragmentTagIDs.EndCrouched;
 				fragTagDef->Set(m_fragTags, vaultID, true);
 			}
 
@@ -122,7 +122,7 @@ public:
 			//--- Once this is resolved we'll re-enable.
 			//if (m_comingFromOnGround)
 			//{
-			const TagID vaultID = ledgeGrabFragment.fragmentTagIDs.floor;
+			const TagID vaultID = ledgeGrabFragment.fragmentTagIDs.Floor;
 			fragTagDef->Set(m_fragTags, vaultID, true);
 			//}
 			//else
@@ -134,7 +134,7 @@ public:
 			//was sprinting
 			if (m_comingFromSprint)
 			{
-				const TagID floorSprintID = ledgeGrabFragment.fragmentTagIDs.floorSprint;
+				const TagID floorSprintID = ledgeGrabFragment.fragmentTagIDs.FloorSprint;
 				fragTagDef->Set(m_fragTags, floorSprintID, true);
 			}
 		}
@@ -144,7 +144,7 @@ public:
 
 	virtual void Enter()
 	{
-		TPlayerAction::Enter();
+		CAnimationAction::Enter();
 
 		IAnimatedCharacter* pAnimChar = m_Character.GetAnimatedCharacter();
 
@@ -176,7 +176,7 @@ public:
 
 	virtual void Exit()
 	{
-		TPlayerAction::Exit();
+		CAnimationAction::Exit();
 
 		/*IAnimatedCharacter* pAnimChar = m_Character.GetAnimatedCharacter ();
 
@@ -205,7 +205,7 @@ public:
 
 	virtual EStatus Update(float timePassed)
 	{
-		TPlayerAction::Update(timePassed);
+		CAnimationAction::Update(timePassed);
 
 		// Update view direction.
 		float t = m_activeTime / m_targetViewDirTime;
