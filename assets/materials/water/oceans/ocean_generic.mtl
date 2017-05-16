@@ -1,0 +1,4 @@
+<Material MtlFlags="526336" Shader="Water" GenMask="C20" StringGenMask="" SurfaceType="mat_water" MatTemplate="" Diffuse="1,1,1" Specular="0.058187179,0.058187179,0.058187179" Emissive="0,0,0" Shininess="255" Opacity="1" CloakAmount="0" LayerAct="1">
+ <Textures />
+ <PublicParams NormalsScale="0.40000001" SoftIntersectionFactor="0.1" Tilling="5" FoamCrestAmount="1" SubSurfaceScatteringScale="10" RipplesNormalsScale="0.33700001" FoamAmount="0.1" DetailNormalsScale="4" DetailTilling="5.0799999" GradientScale="0.15000001" FresnelBias="0.1" ReflectionScale="1" RefractionBumpScale="0.2" FoamSoftIntersectionFactor="0.34999999" FoamTilling="0" HeightScale="0.0040000002" ReflectionBumpScale="0.050000001" RainTilling="0.1"/>
+</Material>

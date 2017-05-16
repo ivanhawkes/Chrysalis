@@ -1,0 +1,325 @@
+<RCJobs>
+
+	<!--
+	 DefaultProperties - these can be overriden from command line.
+	 client_root - defines the output folder for PAK files (required for NAnt build system)
+	 -->
+	<DefaultProperties
+		cry_root="D:\CRYENGINE5\CRYTEK\CRYENGINE_5.3"
+		game_root="D:\CHRYSALIS"
+		assets="assets"
+		engine="engine"
+		loc="localization"
+		target="temprc\${p}"
+		client_root="client\${p}" 
+		enable_cuda="true"
+		assetSrc=""
+	/>
+
+	<Properties
+		xml_types="*.animevents;*.cdf;*.chrparams;*.dlg;*.ent;*.fsq;*.fxl;*.ik;*.lmg;*.mtl;*.setup;*.xml;*.node;*.veg"
+		non_xml_types="*.ag;*.gfx;*.png;*.usm;*.fev;*.fsb;*.fdp;*.sfk;*.ogg;*.txt;*.anm;*.cal;*.grd;*.grp;*.cfg;*.csv;*.lua;*.dat;*.ini;*.xls;*.as;*.lut;*.mp2;*.mp3;*.xma"
+
+		src_game =				"${game_root}"
+		src_assets =			"${game_root}\${assets}"
+		src_cry_root =			"${cry_root}"
+		src_engine =			"${src_cry_root}\${engine}"
+		src_localisation =		"${src_assets}\${localisation}"
+
+		target_root =			"${target}"
+		target_assets =			"${target_root}\${assets}"
+		target_engine =			"${target_root}\${engine}"
+		target_localisation =	"${target_assets}\${localisation}"
+
+		pak_root = 				"${client_root}"
+		pak_assets = 			"${client_root}\${assets}"
+		pak_localisation = 		"${pak_assets}\${localisation}"
+		pak_engine =			"${client_root}\${engine}"
+	/>
+
+	<if p="X360">
+		<Properties plat="Xbox360" />
+	</if>
+	<ifnot p="X360">
+		<Properties plat="${p}" />
+	</ifnot>
+
+    <!-- Binary conversion of XML based files -->
+<!--
+	<ConvertJob>
+	    <Job sourceroot="${src_assets}" input="${xml_types}" targetroot="${target_assets}" overwriteextension="xml" xmlfilter="xmlfilter.txt" />
+	</ConvertJob>
+-->
+
+	<ConvertJob>
+		<!-- Convert TIFF files -->
+		<Job sourceroot="${src_assets}"
+			 targetroot="${target_assets}"
+			 input="animations\*.tif;objects\*.tif;materials\*.tif;textures\*.tif"
+			 imagecompressor="${imagecompressor}" />
+	</ConvertJob>
+
+	<CopyJob>
+		<!-- System configuration files -->
+		<Job sourceroot="${src_game}"
+			 targetroot="${target_root}"
+			 input="system.cfg"
+			 copyonly="1" />
+		<Job sourceroot="${src_assets}"
+			 targetroot="${target_assets}"
+			 input="game.cfg"
+			 copyonly="1" />
+			 
+		<!-- CRYENGINE Engine -->
+		<Job sourceroot="${src_engine}"
+			 input="*.pak"
+			 targetroot="${target_engine}"
+			 copyonly="1" />
+
+		<!-- CRYENGINE Binaries -->
+		<Job sourceroot="${src_cry_root}\bin"
+			 input="*.exe;*.dll"
+			 targetroot="${target_root}\bin"
+			 copyonly="1"
+			 exclude="sandbox.exe;linux_*.*;win_x86*.*" />
+			 
+		<!-- Game Specific Binaries -->
+		<Job sourceroot="${src_game}\bin"
+			 input="*.exe;*.dll"
+			 targetroot="${target_root}\bin"
+			 copyonly="1" />
+			 
+		<!-- *** LOCALISATION START *** -->
+
+		<!-- English -->
+		<Job sourceroot="${src_localisation}\English\!${plat}\"
+			 input="*.*"
+			 targetroot="${target_localisation}\English"
+			 copyonly="1"/>
+		<Job sourceroot="${src_localisation}\English\dialog\"
+			 input="*.*"
+			 targetroot="${target_localisation}\English\dialog"
+			 copyonly="1"/>
+		<Job sourceroot="${src_localisation}\English\"
+			 input="${non_xml_types}"
+			 targetroot="${target_localisation}\EnglishXML"
+			 recursive="0"
+			 copyonly="1"/>
+		<Job sourceroot="${src_localisation}\English\"
+			  input="${xml_types}"
+			  targetroot="${target_localisation}\EnglishXML"
+			  recursive="0"
+			  copyonly="1"/>
+
+		<!-- German -->
+		<Job sourceroot="${src_localisation}\German\!${plat}\"
+			 input="*.*"
+			 targetroot="${target_localisation}\German"
+			 copyonly="1"/>
+		<Job sourceroot="${src_localisation}\German\dialog\"
+			 input="*.*"
+			 targetroot="${target_localisation}\German\dialog"
+			 copyonly="1"/>
+		<Job sourceroot="${src_localisation}\German\"
+			 input="${non_xml_types}"
+			 targetroot="${target_localisation}\GermanXML"
+			 recursive="0"
+			 copyonly="1"/>
+		<Job sourceroot="${src_localisation}\German\"
+			  input="${xml_types}"
+			  targetroot="${target_localisation}\GermanXML"
+			  recursive="0"
+			  copyonly="1"/>
+
+		<!-- *** LOCALISATION END *** -->
+
+		<!-- Animations -->
+		<Job sourceroot="${src_assets}\animations"
+			 input="*.*"
+			 targetroot="${target_assets}\animations"
+			 copyonly="1"/>
+
+		<!-- Entities and Scripts -->
+		<Job sourceroot="${src_assets}"
+			 input="entities.xml"
+			 targetroot="${target_assets}"
+			 copyonly="1" />
+		<Job sourceroot="${src_assets}\scripts"
+			 input="*.lua;*.xml;*.txt"
+			 targetroot="${target_assets}\scripts"
+			 copyonly="1" />
+
+		<!-- Levels -->
+		<Job sourceroot="${src_assets}\levels"
+			 input="*.pak"
+			 targetroot="${target_assets}\levels"
+			 copyonly="1" 
+			 exclude="terraintexture.pak" />
+
+		<!-- Libs -->
+		<Job sourceroot="${src_assets}\libs"
+			 input="*.*"
+			 targetroot="${target_assets}\libs"
+			 copyonly="1" />
+
+		<!-- Materials -->
+		<Job sourceroot="${src_assets}\materials"
+			  input="*.mtl;*.dds"
+			  targetroot="${target_assets}\materials"
+			  copyonly="1" />
+
+		<!-- Objects -->
+		<Job sourceroot="${src_assets}\objects"
+			 input="*.cgf;*.mtl;*.dds"
+			 targetroot="${target_assets}\objects"
+			 copyonly="1" />
+		 
+		<!-- Sounds -->
+		<Job sourceroot="${src_assets}\sounds"
+			  input="*.bnk;"
+			  targetroot="${target_assets}\sounds"
+			  copyonly="1"/>
+
+		<!-- Textures -->
+		<Job sourceroot="${src_assets}\textures"
+			 input="*.dds"
+			 targetroot="${target_assets}\textures"
+			 copyonly="1"/>
+
+		<!-- Video -->
+		<Job sourceroot="${src_assets}\videos"
+			 input="*.usm"
+			 targetroot="${target_assets}\videos"
+			 copyonly="1" />
+	</CopyJob>
+
+	<PakJob>
+		<!-- System configuration files -->
+		<Job sourceroot="${target_root}"
+			 targetroot="${pak_root}"
+			 input="system.cfg"
+			 copyonly="1" />
+		<Job sourceroot="${target_assets}"
+			 targetroot="${pak_assets}"
+			 input="game.cfg"
+			 copyonly="1" />
+			 
+		<!-- Binaries -->
+		<Job sourceroot="${target_root}"
+			  input="bin\*.*;"
+			  targetroot="${pak_root}"
+			  copyonly="1" />
+
+		<!-- Built in engine PAK files -->
+		<Job sourceroot="${target_engine}"
+			  input="*.pak"
+			  targetroot="${pak_engine}"
+			  copyonly="1" />
+
+		<!-- Localisation -->
+		<Job sourceroot="${target_localisation}\english"
+			 input="*.*"
+			 zip="${pak_localisation}\english.pak" />
+		<Job sourceroot="${target_localisation}\englishxml"
+			 input="*.*"
+			 zip="${pak_localisation}\english_xml.pak" />
+		<Job sourceroot="${target_localisation}\german"
+			 input="*.*"
+			 zip="${pak_localisation}\german.pak" />
+		<Job sourceroot="${target_localisation}\germanxml"
+			 input="*.*"
+			 zip="${pak_localisation}\german_xml.pak" />
+
+		<!-- Libs -->
+		<Job sourceroot="${target_assets}\libs"
+			  input="*.*"
+			  zip="${pak_assets}\gamedata.pak" />
+
+		<!-- Prefabs -->
+		<Job sourceroot="${target_assets}\prefabs"
+			  input="*.*"
+			  zip="${pak_assets}\gamedata.pak" 
+			  zip_compression="9" />
+
+		<!-- Animations -->
+		<Job sourceroot="${target_assets}\animations\"
+			  input="*.*"
+			  zip="${pak_assets}\animations.pak" 
+			  zip_compression="9" />
+
+		<!-- Entities and Scripts -->
+		<Job sourceroot="${target_assets}"
+			  input="entities.xml"
+			  zip="${pak_assets}\scripts.pak" 
+			  zip_compression="9" />
+		<Job sourceroot="${target_assets}\scripts"
+			  input="*.*"
+			  zip="${pak_assets}\scripts.pak" 
+			  zip_compression="9" />
+
+		<!-- Materials-->
+		<Job sourceroot="${target_assets}\materials"
+			 input="*.*"
+			 zip="${pak_assets}\materials.pak" 
+			 zip_compression="9" />
+
+		<!-- Objects -->
+		<Job sourceroot="${target_assets}\objects"
+			  input="*.*"
+			  zip="${pak_assets}\objects.pak"
+			  zip_compression="9" />
+
+		<!-- Sounds -->
+		<Job sourceroot="${target_assets}\sounds"
+			  input="*.*"
+			  zip="${pak_assets}\sounds.pak"
+			  zip_compression="0" />
+
+		<!-- Textures -->
+		<Job sourceroot="${target_assets}\textures"
+			  input="*.*"
+			  zip="${pak_assets}\textures.pak" 
+			  zip_compression="0" />
+
+		<!-- Video -->
+		<Job sourceroot="${target_assets}\videos"
+			  input="*.*"
+			  zip="${pak_assets}\videos.pak"
+			  zip_compression="0" />
+
+		<!-- Levels -->
+		<Job sourceroot="${target_assets}\levels"
+			 input="*.*"
+			 targetroot="${pak_assets}\levels"
+			 copyonly="1" />
+	</PakJob>
+
+	<CleanJob>
+		<Job input=""
+			 targetroot="${target_root}"
+			 clean_targetroot="1" />
+	</CleanJob>
+
+	<ValidateJob>
+		<Run Job="ConvertJob"/>
+		<Job input=""
+			 targetroot="${target_root}"
+			 clean_targetroot="1"
+			 refs_scan="1" />
+	</ValidateJob>
+
+	<CompileAssetsJob>
+		<Run Job="ConvertJob"/>
+		<Run Job="CopyJob"/>
+		<Run Job="CleanJob"/>
+	</CompileAssetsJob>
+
+	<!-- Enable this to clean up first each run -->
+	<Run Job="CleanJob"/>
+
+	<!-- Run these jobs when they don't specify a particular job. -->
+	<Run Job="ConvertJob"/>
+	<Run Job="CopyJob"/>
+	<Run Job="PakJob"/>
+
+</RCJobs>

@@ -1,0 +1,13 @@
+{
+	"BaseSegment": {
+		"name": "(AUTO) DO PlayAnimation: '', [no conditions]",
+		"SegmentConditions": { "Conditions": [ ], "Negated": false },
+		"Actions": [
+			{
+				"Action": { "CActionPlayAnimation": { "TargetName": "" } },
+				"Delay": 0.0
+			}
+		],
+		"ChildSegments": [ ]
+	}
+}

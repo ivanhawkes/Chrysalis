@@ -1,0 +1,1 @@
+D:\CRYENGINE5\Crytek\CRYENGINE_5.3\Tools\rc\rc.exe /job=chrysalis_pak.xml /p=PC /threads=8 > chrysalis-pak.log

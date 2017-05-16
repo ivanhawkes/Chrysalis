@@ -1,0 +1,27 @@
+<SurfaceTypes>
+
+	<SurfaceType name="mat_default">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_concrete">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_metal">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_water">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_flesh">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_bullet">
+		<Physics friction="0.1" />
+	</SurfaceType>
+
+</SurfaceTypes>

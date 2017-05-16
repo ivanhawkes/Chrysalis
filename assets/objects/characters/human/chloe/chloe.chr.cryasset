@@ -1,0 +1,13 @@
+<cryasset>
+ <AssetMetadata version="0" type="Skeleton" guid="{54C02BC9-D39C-09B1-EED7-456A879ADFA1}" source="Chloe Import Test.fbx">
+  <Files>
+   <File path="Chloe.chr"/>
+  </Files>
+  <Details>
+   <Detail name="materialCount">7</Detail>
+   <Detail name="triangleCount">0</Detail>
+   <Detail name="vertexCount">0</Detail>
+   <Detail name="bonesCount">67</Detail>
+  </Details>
+ </AssetMetadata>
+</cryasset>

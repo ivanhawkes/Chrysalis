@@ -1,0 +1,10 @@
+{
+	"BaseSegment": {
+		"name": "(AUTO) DO interaction_switch: '', [no conditions]",
+		"SegmentConditions": { "Conditions": [ ], "Negated": false },
+		"Actions": [
+			{ "Action": { "CActionSwitch": { "TargetName": "" } }, "Delay": 0.0 }
+		],
+		"ChildSegments": [ ]
+	}
+}

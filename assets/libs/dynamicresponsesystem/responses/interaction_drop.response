@@ -1,0 +1,13 @@
+{
+	"BaseSegment": {
+		"name": "(AUTO) DO Speak Line: 'li_interaction_drop', [no conditions]",
+		"SegmentConditions": { "Conditions": [ ], "Negated": false },
+		"Actions": [
+			{
+				"Action": { "SpeakLine": { "lineToSpeak": "li_interaction_drop", "speakerOverride": "" } },
+				"Delay": 0.0
+			}
+		],
+		"ChildSegments": [ ]
+	}
+}

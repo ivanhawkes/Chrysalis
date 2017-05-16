@@ -1,0 +1,8 @@
+<cryasset>
+ <AssetMetadata version="0" type="Script" guid="{59094618-53A2-DDE9-0750-B3FB125C2812}">
+  <Files>
+   <File path="Item.lua"/>
+  </Files>
+  <Details />
+ </AssetMetadata>
+</cryasset>

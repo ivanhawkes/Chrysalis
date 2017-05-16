@@ -1,0 +1,14 @@
+<ControllerDef>
+ <Tags filename="Animations/Mannequin/ADB/chloe_tags.xml"/>
+ <Fragments filename="Animations/Mannequin/ADB/chloe_fragment_ids.xml"/>
+ <FragmentDefs>
+  <Idle scopes="FullBody"/>
+  <Move scopes="FullBody"/>
+ </FragmentDefs>
+ <ScopeContextDefs>
+  <MainCharacter />
+ </ScopeContextDefs>
+ <ScopeDefs>
+  <FullBody layer="0" numLayers="3" context="MainCharacter"/>
+ </ScopeDefs>
+</ControllerDef>

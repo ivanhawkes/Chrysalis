@@ -1,0 +1,8 @@
+<cryasset>
+ <AssetMetadata version="0" type="Texture" guid="{E76DCF52-0527-EB45-E030-FCB7A834E89C}" source="ground_grass_002_height.tif">
+  <Files>
+   <File path="ground_grass_002_height.dds"/>
+  </Files>
+  <Details />
+ </AssetMetadata>
+</cryasset>

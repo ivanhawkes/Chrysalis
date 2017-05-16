@@ -1,0 +1,374 @@
+<ObjectLayer>
+ <Layer Name="Main" FullName="Main" GUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Hidden="0" Frozen="0" Expanded="0" Exportable="1" ExportLayerPak="1" DefaultLoaded="0" HavePhysics="1" IsDefaultColor="1">
+  <LayerObjects>
+   <Object Type="Entity" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{0199DD55-4164-5F3D-F952-CAEAE275739A}" Name="FlashlightComponent4" Pos="56.272835,62.367619,32.081245" FloorNumber="-1" Rotate="0.99999923,0,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="FlashlightComponent" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component typeId="{67994647-83DD-41B8-A098-E26B4B2C95FD}"/>
+     <Component typeId="{7BFC30B2-D9F5-41D4-9A79-F422E3B49400}">
+      <BatteryLevel value="1"/>
+      <IsSwitchedOn value="true"/>
+     </Component>
+     <Component typeId="{54B2C130-8E27-4E07-8BF0-F1FE89228D14}">
+      <Geometry value="objects/items/books/book.cgf"/>
+      <Physicalize value="ePhysicalizationType_Rigid"/>
+      <ReceiveCollisionEvents value="true"/>
+      <Mass value="1.2"/>
+     </Component>
+     <Component typeId="{BFAD8CB3-8456-4A3B-8AE6-F05F5D21BBFA}">
+      <Active value="true"/>
+      <Radius value="6"/>
+      <AttenuationBulbSize value="0.1"/>
+      <DiffuseColor>
+       <Element value="1"/>
+       <Element value="1"/>
+       <Element value="1"/>
+       <Element value="1"/>
+      </DiffuseColor>
+      <DiffuseMultiplier value="1"/>
+      <IgnoreVisAreas value="false"/>
+      <AffectsThisAreaOnly value="true"/>
+      <Ambient value="false"/>
+      <FakeLight value="false"/>
+      <AffectVolumetricFog value="true"/>
+      <AffectVolumetricFogOnly value="false"/>
+      <FogRadialLobe value="0"/>
+      <CastShadows value="eCastShadowsSpec_Medium"/>
+      <Style value="1"/>
+      <Speed value="1"/>
+      <ProjectionTexture value="textures/lights/flashlight_projector.dds"/>
+      <ProjectionFieldOfView value="45"/>
+      <ProjectionNearPlane value="0"/>
+      <FlareTextures value=""/>
+      <FlareFieldOfView value="360"/>
+     </Component>
+     <Component typeId="{D7C88ABD-16D4-4F0F-BF9C-328AE7623A89}"/>
+     <Component typeId="{E2F360C6-F7FF-41DE-A1A2-D7C7C64AD730}"/>
+    </Components>
+   </Object>
+   <Object Type="Entity" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{1CDF2CD8-1F53-841F-A2F4-52D9B3A5188A}" Name="FlashlightComponent2" Pos="57.911011,64.500534,32.083" FloorNumber="-1" Rotate="0.99999744,0,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="FlashlightComponent" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component typeId="{67994647-83DD-41B8-A098-E26B4B2C95FD}"/>
+     <Component typeId="{7BFC30B2-D9F5-41D4-9A79-F422E3B49400}">
+      <BatteryLevel value="1"/>
+      <IsSwitchedOn value="true"/>
+     </Component>
+     <Component typeId="{54B2C130-8E27-4E07-8BF0-F1FE89228D14}">
+      <Geometry value="objects/items/books/book.cgf"/>
+      <Physicalize value="ePhysicalizationType_Rigid"/>
+      <ReceiveCollisionEvents value="true"/>
+      <Mass value="1.2"/>
+     </Component>
+     <Component typeId="{BFAD8CB3-8456-4A3B-8AE6-F05F5D21BBFA}">
+      <Active value="true"/>
+      <Radius value="6"/>
+      <AttenuationBulbSize value="0.1"/>
+      <DiffuseColor>
+       <Element value="1"/>
+       <Element value="1"/>
+       <Element value="1"/>
+       <Element value="1"/>
+      </DiffuseColor>
+      <DiffuseMultiplier value="1"/>
+      <IgnoreVisAreas value="false"/>
+      <AffectsThisAreaOnly value="true"/>
+      <Ambient value="false"/>
+      <FakeLight value="false"/>
+      <AffectVolumetricFog value="true"/>
+      <AffectVolumetricFogOnly value="false"/>
+      <FogRadialLobe value="0"/>
+      <CastShadows value="eCastShadowsSpec_Medium"/>
+      <Style value="1"/>
+      <Speed value="1"/>
+      <ProjectionTexture value="textures/lights/flashlight_projector.dds"/>
+      <ProjectionFieldOfView value="45"/>
+      <ProjectionNearPlane value="0"/>
+      <FlareTextures value=""/>
+      <FlareFieldOfView value="360"/>
+     </Component>
+     <Component typeId="{D7C88ABD-16D4-4F0F-BF9C-328AE7623A89}"/>
+     <Component typeId="{E2F360C6-F7FF-41DE-A1A2-D7C7C64AD730}"/>
+    </Components>
+   </Object>
+   <Object Type="Entity" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{345A45D0-1EE8-AF75-1F1A-2F7F499D686B}" Name="SwitchComponent1" Pos="64.878578,61.017857,33.411617" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" Material="objects/switches/frankenstein/frankenstein" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="SwitchComponent" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component typeId="{67994647-83DD-41B8-A098-E26B4B2C95FD}"/>
+     <Component typeId="{814B5D98-6686-4051-948F-23D33989D88D}">
+      <IsEnabled value="true"/>
+      <SwitchedOn value="true"/>
+      <IsSingleUseOnly value="false"/>
+      <SwitchVerb value=""/>
+      <SwitchOnVerb value=""/>
+      <SwitchOffVerb value=""/>
+     </Component>
+     <Component typeId="{54B2C130-8E27-4E07-8BF0-F1FE89228D14}">
+      <Geometry value="objects/switches/frankenstein/frankenstein.cga"/>
+      <Physicalize value="ePhysicalizationType_Static"/>
+      <ReceiveCollisionEvents value="false"/>
+      <Mass value="1.2"/>
+     </Component>
+     <Component typeId="{E2F360C6-F7FF-41DE-A1A2-D7C7C64AD730}"/>
+    </Components>
+    <EntityLinks>
+     <Link TargetId="{BCB36244-A8F4-5BFF-BDD6-D69BD98A0AD2}" Name="FlashlightComponent1" Version="1"/>
+     <Link TargetId="{0199DD55-4164-5F3D-F952-CAEAE275739A}" Name="FlashlightComponent4" Version="1"/>
+     <Link TargetId="{1CDF2CD8-1F53-841F-A2F4-52D9B3A5188A}" Name="FlashlightComponent2" Version="1"/>
+     <Link TargetId="{BBFA58F5-5F92-8160-F7F3-A122289BDAF4}" Name="FlashlightComponent3" Version="1"/>
+    </EntityLinks>
+   </Object>
+   <Object Type="EnvironmentProbe" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{550531BA-6150-DFC9-67BD-B349660A8599}" Name="EnvironmentProbe1" Pos="64.875,62.740154,41.317501" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" cubemap_resolution="256" preview_cubemap="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="EnvironmentLight" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component typeId="{0D3D1840-D239-411E-8738-14C56CCCEE2C}">
+      <Active value="true"/>
+      <BoxSize>
+       <Element value="100"/>
+       <Element value="100"/>
+       <Element value="30"/>
+      </BoxSize>
+      <IgnoreVisAreas value="false"/>
+      <SortPriority value="0"/>
+      <AttentuationFalloffMax value="1"/>
+      <Cubemap value=""/>
+     </Component>
+    </Components>
+   </Object>
+   <Object Type="Entity" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{552CC300-3239-FF73-EDCF-753C3CA7AA57}" Name="Hero" Pos="69.23716,54.659107,32" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" Material="objects/characters/human/male/human_male" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Character" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component typeId="{67994647-83DD-41B8-A098-E26B4B2C95FD}"/>
+     <Component typeId="{EC4E2FDC-DCFF-4AB3-A691-B9CC4ECE5788}"/>
+     <Component typeId="{10000000-1000-1000-1000-100000000000}">
+      <Geometry value="objects/characters/human/male/human_male.cdf"/>
+      <Mass value="82"/>
+      <ControllerDefinition value="human_male_controller_defs.xml"/>
+      <ScopeContext value="Char3P"/>
+      <AnimationDatabase value="human_male.adb"/>
+     </Component>
+     <Component typeId="{10000000-1000-1000-1000-100000000000}"/>
+     <Component typeId="{3F9D1B59-EBAB-4F73-ABB9-B04C675A32B9}"/>
+     <Component typeId="{0CC3EE7E-1ACE-4BCD-9AEA-E391B81B8E78}"/>
+     <Component typeId="{AA2D677D-23A0-48D5-AA47-116B97DD6216}"/>
+     <Component typeId="{10000000-1000-1000-1000-100000000000}"/>
+     <Component typeId="{B077AB15-47AF-4BEB-9BF9-D68EE49399E1}"/>
+    </Components>
+   </Object>
+   <Object Type="Designer" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{65ED18F3-25ED-6B14-A560-755E76095A68}" Name="Designer1" Pos="60.390171,65.167625,32" FloorNumber="-1" Rotate="1,0,0,0" Scale="7,7,7" ColorRGB="16777215" Material="EngineAssets/TextureMsg/DefaultSolids" RndFlags="1073741832" StaticObjFlags="0" ViewDistRatio="100">
+    <Brush DesignerModeFlags="0" SubdivisionLevel="0" SubdivisionSmoothingGroup="0" MirrorPlaneNormal="0,0,0" MirrorPlaneDistance="0">
+     <Polygon GUID="{B5171FB9-0FD4-6C23-A4B8-829BE9188B35}" BinaryData="BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwPwAAAAAAAAAAAAAAAAAA8D8AAAAAAADwPwAAAAAAAAAAAAAAAAAA8D8AAAAAAAAAAAQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAgL8AAIC/AACAvwAAgL8AAAAA"/>
+     <Polygon GUID="{6E597CF6-29AE-B0B6-5495-AF0A8F789C90}" BinaryData="BAAAAAAAAAAAAAAAAAAAAAAA8D8AAAAAAAAAAAAAAAAAAAAAAAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/AAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/AAAAAAAA8D8AAAAAAAAAAAQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAAAAAAAAAAAAAPA/AAAAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAAAAgL8AAIC/AACAvwAAgL8AAAAA"/>
+     <Polygon GUID="{94EC2136-7EC3-451B-7D2F-250B6A2CF018}" BinaryData="BAAAAAAAAAAAAPA/AAAAAAAA8D8AAAAAAAAAAAAAAAAAAPA/AAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/AAAAAAAAAAAAAAAAAADwPwAAAAAAAPA/AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAADwPwAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAgD8AAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAA"/>
+     <Polygon GUID="{35A8239F-3EBF-603F-0B82-07A40E423583}" BinaryData="BAAAAAAAAAAAAPA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAPA/AAAAAAAAAAAAAAAAAADwPwAAAAAAAAAAAAAAAAAAAAAAAAAAAADwPwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAAAAAAAAAAAAAAAgAAAgD8AAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAA"/>
+     <Polygon GUID="{0EEA274F-F98A-B52A-D279-94B43286D3DD}" BinaryData="BAAAAAAAAAAAAPA/AAAAAAAA8D8AAAAAAADwPwAAAAAAAAAAAAAAAAAA8D8AAAAAAADwPwAAAAAAAAAAAAAAAAAAAAAAAAAAAADwPwAAAAAAAPA/AAAAAAAAAAAAAAAAAADwPwQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8D8AAAAAAADwvwAAgD8AAIC/AAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAA"/>
+     <Polygon GUID="{8B94A927-0555-A333-2408-E193E0C61F23}" BinaryData="BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8D8AAAAAAAAAAAAAAAAAAPA/AAAAAAAA8D8AAAAAAAAAAAAAAAAAAPA/AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAAAAgAAAAAAAAAAAAAAAAAAAgD8AAIC/AACAPwAAgL8AAAAA"/>
+     <SmoothingGroups />
+     <SemiSharpCrease />
+     <UVIslands />
+    </Brush>
+    <Mesh Version="2" BinaryData="AAAAAAAAAAAYAAAAGAAAACQAAAAYAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAPwAAAAAAAIA/AACAPwAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AAAAAAAAgD8AAIA/AAAAAAAAgD8AAIA/AACAPwAAgD8AAAAAAACAPwAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAgD8AAIA/AACAPwAAAAAAAIA/AACAPwAAAAAAAAAAAACAPwAAgD8AAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAgD8AAIA/AAAAAAAAgD8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAAAAAAAAgL8AAIC/AACAvwAAgL8AAAAAAAAAAAAAAAAAAAAAAACAvwAAgL8AAIC/AACAvwAAAAAAAIA/AAAAAAAAgD8AAIC/AAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AACAvwAAgD8AAIC/AAAAAAAAAQACAAAAAgADAAQABQAGAAQABgAHAAgACQAKAAgACgALAAwADQAOAAwADgAPABAAEQASABAAEgATABQAFQAWABQAFgAXAAAAAYAAAAGAAAAAAAGAAYAAAAGAAAABgAAAAAABgAGAAAABgAAAAYAAAAAAAYABgAAAAYAAAAGAAAAAAAGAAYABgAAAAAABgAAAAAABgAGAAYAAAAAAAYAAAAAAAYABgAGAAAAAAAGAAAAAAAGAAYABgAAAAAABgAAAAAABgAGAAAD/fwAAAYAAAAAAAYABgAAA/38AAAGAAAAAAAGAAYAAAP9/AAABgAAAAAABgAGAAAD/fwAAAYAAAAAAAYABgP9/AAAAAAGAAAAAAAGAAYD/fwAAAAABgAAAAAABgAGA/38AAAAAAYAAAAAAAYABgP9/AAAAAAGAAAAAAAGAAYD/fwAAAAABgAAAAYAAAAGA/38AAAAAAYAAAAGAAAABgP9/AAAAAAGAAAABgAAAAYD/fwAAAAABgAAAAYAAAAGAAYAAAAAA/38AAP9/AAD/fwGAAAAAAP9/AAD/fwAA/38BgAAAAAD/fwAA/38AAP9/AYAAAAAA/38AAP9/AAD/fwAAAD8AAAA/AAAAP9ezXT8AAAAAAAAAACQAAAAAAAAAGAAAAAAAAAAAAAAAABAAAA=="/>
+   </Object>
+   <Object Type="Entity" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{6BB09B0E-1F08-ADFB-B630-591424D5C319}" Name="Hero2" Pos="67.4291,56.458015,32" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" Material="objects/characters/human/male/human_male" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Character" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component typeId="{67994647-83DD-41B8-A098-E26B4B2C95FD}"/>
+     <Component typeId="{EC4E2FDC-DCFF-4AB3-A691-B9CC4ECE5788}"/>
+     <Component typeId="{10000000-1000-1000-1000-100000000000}">
+      <Geometry value="objects/characters/human/male/human_male.cdf"/>
+      <Mass value="82"/>
+      <ControllerDefinition value="human_male_controller_defs.xml"/>
+      <ScopeContext value="Char3P"/>
+      <AnimationDatabase value="human_male.adb"/>
+     </Component>
+     <Component typeId="{10000000-1000-1000-1000-100000000000}"/>
+     <Component typeId="{3F9D1B59-EBAB-4F73-ABB9-B04C675A32B9}"/>
+     <Component typeId="{0CC3EE7E-1ACE-4BCD-9AEA-E391B81B8E78}"/>
+     <Component typeId="{AA2D677D-23A0-48D5-AA47-116B97DD6216}"/>
+     <Component typeId="{10000000-1000-1000-1000-100000000000}"/>
+     <Component typeId="{B077AB15-47AF-4BEB-9BF9-D68EE49399E1}"/>
+    </Components>
+   </Object>
+   <Object Type="Entity" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{7D524BD8-84A9-C54B-B983-553698A0CE82}" Name="Flashlight" Pos="69.177841,55.584652,33.028526" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="GeomEntity" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component typeId="{54B2C130-8E27-4E07-8BF0-F1FE89228D14}">
+      <Geometry value="objects/flashlightDrop/FlashlightGeo.cdf"/>
+      <Physicalize value="ePhysicalizationType_Rigid"/>
+      <ReceiveCollisionEvents value="false"/>
+      <Mass value="1"/>
+      <Animation value=""/>
+      <Speed value="1"/>
+      <Loop value="true"/>
+     </Component>
+    </Components>
+   </Object>
+   <Object Type="Entity" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{982D846F-A59E-A1B5-6001-0B016BD2517F}" Name="DRS Test" Pos="68.34848,60.665398,32" FloorNumber="-1" Rotate="0.99999648,0,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="DRSInteractionEntity" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component typeId="{9824845C-FE37-7889-B172-4A63F331D8A2}"/>
+     <Component typeId="{67994647-83DD-41B8-A098-E26B4B2C95FD}"/>
+     <Component typeId="{A723315D-3E53-45E3-9076-6D3684FB132F}"/>
+     <Component typeId="{5D1C5884-B9AD-48C3-89F0-A9138C04454E}">
+      <DRSResponse value="audio_play_clip"/>
+      <DRSProperties>
+       <Element>
+        <DRSKey value="LineToSpeak"/>
+        <DRSValue value="audio_radio_01"/>
+       </Element>
+      </DRSProperties>
+     </Component>
+     <Component typeId="{E2F360C6-F7FF-41DE-A1A2-D7C7C64AD730}"/>
+     <Component typeId="{54B2C130-8E27-4E07-8BF0-F1FE89228D14}">
+      <Geometry value="objects/items/books/book.cgf"/>
+      <Physicalize value="ePhysicalizationType_Static"/>
+      <ReceiveCollisionEvents value="false"/>
+      <Mass value="1"/>
+     </Component>
+    </Components>
+   </Object>
+   <Object Type="Entity" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{A3A02949-985E-794B-62B6-D374A23249CA}" Name="AnimatedDoor1" Pos="69.190903,64.850136,32.000099" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="AnimatedDoor" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component typeId="{D246E11F-E7E2-48F0-B512-402908F84496}">
+      <IsOpen value="false"/>
+     </Component>
+     <Component typeId="{54B2C130-8E27-4E07-8BF0-F1FE89228D14}">
+      <Geometry value="objects/doors/slide_vertical/slidevertical.cga"/>
+      <Physicalize value="ePhysicalizationType_Static"/>
+      <ReceiveCollisionEvents value="false"/>
+      <Mass value="200"/>
+     </Component>
+     <Component typeId="{B947F6CE-BBE2-4DC5-8E15-F1E4F82161FB}">
+      <Animation value="default"/>
+      <Speed value="0.30000001"/>
+      <Loop value="false"/>
+      <PlayOnLevelStart value="false"/>
+     </Component>
+     <Component typeId="{819A4630-CA18-40F9-B4C7-F93B3F13A69A}">
+      <IsLocked value="false"/>
+     </Component>
+     <Component typeId="{E2F360C6-F7FF-41DE-A1A2-D7C7C64AD730}"/>
+    </Components>
+   </Object>
+   <Object Type="Entity" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{BBFA58F5-5F92-8160-F7F3-A122289BDAF4}" Name="FlashlightComponent3" Pos="59.168488,60.148258,32.086285" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="FlashlightComponent" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component typeId="{67994647-83DD-41B8-A098-E26B4B2C95FD}"/>
+     <Component typeId="{7BFC30B2-D9F5-41D4-9A79-F422E3B49400}">
+      <BatteryLevel value="1"/>
+      <IsSwitchedOn value="false"/>
+     </Component>
+     <Component typeId="{54B2C130-8E27-4E07-8BF0-F1FE89228D14}">
+      <Geometry value="objects/items/books/book.cgf"/>
+      <Physicalize value="ePhysicalizationType_Rigid"/>
+      <ReceiveCollisionEvents value="true"/>
+      <Mass value="1.2"/>
+     </Component>
+     <Component typeId="{BFAD8CB3-8456-4A3B-8AE6-F05F5D21BBFA}">
+      <Active value="false"/>
+      <Radius value="6"/>
+      <AttenuationBulbSize value="0.1"/>
+      <DiffuseColor>
+       <Element value="1"/>
+       <Element value="1"/>
+       <Element value="1"/>
+       <Element value="1"/>
+      </DiffuseColor>
+      <DiffuseMultiplier value="1"/>
+      <IgnoreVisAreas value="false"/>
+      <AffectsThisAreaOnly value="true"/>
+      <Ambient value="false"/>
+      <FakeLight value="false"/>
+      <AffectVolumetricFog value="true"/>
+      <AffectVolumetricFogOnly value="false"/>
+      <FogRadialLobe value="0"/>
+      <CastShadows value="eCastShadowsSpec_Medium"/>
+      <Style value="1"/>
+      <Speed value="1"/>
+      <ProjectionTexture value="textures/lights/flashlight_projector.dds"/>
+      <ProjectionFieldOfView value="45"/>
+      <ProjectionNearPlane value="0"/>
+      <FlareTextures value=""/>
+      <FlareFieldOfView value="360"/>
+     </Component>
+     <Component typeId="{D7C88ABD-16D4-4F0F-BF9C-328AE7623A89}"/>
+     <Component typeId="{E2F360C6-F7FF-41DE-A1A2-D7C7C64AD730}"/>
+    </Components>
+   </Object>
+   <Object Type="Entity" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{BCB36244-A8F4-5BFF-BDD6-D69BD98A0AD2}" Name="FlashlightComponent1" Pos="63.511887,62.34148,33.050522" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="FlashlightComponent" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component typeId="{67994647-83DD-41B8-A098-E26B4B2C95FD}"/>
+     <Component typeId="{7BFC30B2-D9F5-41D4-9A79-F422E3B49400}">
+      <BatteryLevel value="1"/>
+      <IsSwitchedOn value="true"/>
+     </Component>
+     <Component typeId="{54B2C130-8E27-4E07-8BF0-F1FE89228D14}">
+      <Geometry value="objects/items/books/book.cgf"/>
+      <Physicalize value="ePhysicalizationType_Rigid"/>
+      <ReceiveCollisionEvents value="true"/>
+      <Mass value="1.2"/>
+     </Component>
+     <Component typeId="{BFAD8CB3-8456-4A3B-8AE6-F05F5D21BBFA}">
+      <Active value="true"/>
+      <Radius value="6"/>
+      <AttenuationBulbSize value="0.1"/>
+      <DiffuseColor>
+       <Element value="1"/>
+       <Element value="1"/>
+       <Element value="1"/>
+       <Element value="1"/>
+      </DiffuseColor>
+      <DiffuseMultiplier value="1"/>
+      <IgnoreVisAreas value="false"/>
+      <AffectsThisAreaOnly value="true"/>
+      <Ambient value="false"/>
+      <FakeLight value="false"/>
+      <AffectVolumetricFog value="true"/>
+      <AffectVolumetricFogOnly value="false"/>
+      <FogRadialLobe value="0"/>
+      <CastShadows value="eCastShadowsSpec_Medium"/>
+      <Style value="1"/>
+      <Speed value="1"/>
+      <ProjectionTexture value="textures/lights/flashlight_projector.dds"/>
+      <ProjectionFieldOfView value="45"/>
+      <ProjectionNearPlane value="0"/>
+      <FlareTextures value=""/>
+      <FlareFieldOfView value="360"/>
+     </Component>
+     <Component typeId="{D7C88ABD-16D4-4F0F-BF9C-328AE7623A89}"/>
+     <Component typeId="{E2F360C6-F7FF-41DE-A1A2-D7C7C64AD730}"/>
+    </Components>
+   </Object>
+   <Object Type="Designer" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{C915A086-F64B-F102-C8E1-791035CA3A4D}" Name="Designer3" Pos="69.223289,56.033497,32" FloorNumber="-1" Rotate="0.99998486,0,0,0" ColorRGB="16777215" Material="EngineAssets/TextureMsg/DefaultSolids" RndFlags="1073741832" StaticObjFlags="0" ViewDistRatio="100">
+    <Brush DesignerModeFlags="0" SubdivisionLevel="0" SubdivisionSmoothingGroup="0" MirrorPlaneNormal="0,0,0" MirrorPlaneDistance="0">
+     <Polygon GUID="{B5171FB9-0FD4-6C23-A4B8-829BE9188B35}" BinaryData="BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwPwAAAAAAAAAAAAAAAAAA8D8AAAAAAADwPwAAAAAAAAAAAAAAAAAA8D8AAAAAAAAAAAQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAgL8AAIC/AACAvwAAgL8AAAAA"/>
+     <Polygon GUID="{6E597CF6-29AE-B0B6-5495-AF0A8F789C90}" BinaryData="BAAAAAAAAAAAAAAAAAAAAAAA8D8AAAAAAAAAAAAAAAAAAAAAAAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/AAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/AAAAAAAA8D8AAAAAAAAAAAQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAAAAAAAAAAAAAPA/AAAAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAAAAgL8AAIC/AACAvwAAgL8AAAAA"/>
+     <Polygon GUID="{94EC2136-7EC3-451B-7D2F-250B6A2CF018}" BinaryData="BAAAAAAAAAAAAPA/AAAAAAAA8D8AAAAAAAAAAAAAAAAAAPA/AAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/AAAAAAAAAAAAAAAAAADwPwAAAAAAAPA/AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAADwPwAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAgD8AAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAA"/>
+     <Polygon GUID="{35A8239F-3EBF-603F-0B82-07A40E423583}" BinaryData="BAAAAAAAAAAAAPA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAPA/AAAAAAAAAAAAAAAAAADwPwAAAAAAAAAAAAAAAAAAAAAAAAAAAADwPwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAAAAAAAAAAAAAAAgAAAgD8AAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAA"/>
+     <Polygon GUID="{0EEA274F-F98A-B52A-D279-94B43286D3DD}" BinaryData="BAAAAAAAAAAAAPA/AAAAAAAA8D8AAAAAAADwPwAAAAAAAAAAAAAAAAAA8D8AAAAAAADwPwAAAAAAAAAAAAAAAAAAAAAAAAAAAADwPwAAAAAAAPA/AAAAAAAAAAAAAAAAAADwPwQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8D8AAAAAAADwvwAAgD8AAIC/AAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAA"/>
+     <Polygon GUID="{8B94A927-0555-A333-2408-E193E0C61F23}" BinaryData="BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8D8AAAAAAAAAAAAAAAAAAPA/AAAAAAAA8D8AAAAAAAAAAAAAAAAAAPA/AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAAAAgAAAAAAAAAAAAAAAAAAAgD8AAIC/AACAPwAAgL8AAAAA"/>
+     <SmoothingGroups />
+     <SemiSharpCrease />
+     <UVIslands />
+    </Brush>
+    <Mesh Version="2" BinaryData="AAAAAAAAAAAYAAAAGAAAACQAAAAYAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAPwAAAAAAAIA/AACAPwAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AAAAAAAAgD8AAIA/AAAAAAAAgD8AAIA/AACAPwAAgD8AAAAAAACAPwAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAgD8AAIA/AACAPwAAAAAAAIA/AACAPwAAAAAAAAAAAACAPwAAgD8AAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAgD8AAIA/AAAAAAAAgD8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAAAAAAAAgL8AAIC/AACAvwAAgL8AAAAAAAAAAAAAAAAAAAAAAACAvwAAgL8AAIC/AACAvwAAAAAAAIA/AAAAAAAAgD8AAIC/AAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AACAvwAAgD8AAIC/AAAAAAAAAQACAAAAAgADAAQABQAGAAQABgAHAAgACQAKAAgACgALAAwADQAOAAwADgAPABAAEQASABAAEgATABQAFQAWABQAFgAXAAAAAYAAAAGAAAAAAAGAAYAAAAGAAAABgAAAAAABgAGAAAABgAAAAYAAAAAAAYABgAAAAYAAAAGAAAAAAAGAAYABgAAAAAABgAAAAAABgAGAAYAAAAAAAYAAAAAAAYABgAGAAAAAAAGAAAAAAAGAAYABgAAAAAABgAAAAAABgAGAAAD/fwAAAYAAAAAAAYABgAAA/38AAAGAAAAAAAGAAYAAAP9/AAABgAAAAAABgAGAAAD/fwAAAYAAAAAAAYABgP9/AAAAAAGAAAAAAAGAAYD/fwAAAAABgAAAAAABgAGA/38AAAAAAYAAAAAAAYABgP9/AAAAAAGAAAAAAAGAAYD/fwAAAAABgAAAAYAAAAGA/38AAAAAAYAAAAGAAAABgP9/AAAAAAGAAAABgAAAAYD/fwAAAAABgAAAAYAAAAGAAYAAAAAA/38AAP9/AAD/fwGAAAAAAP9/AAD/fwAA/38BgAAAAAD/fwAA/38AAP9/AYAAAAAA/38AAP9/AAD/fwAAAD8AAAA/AAAAP9ezXT8AAAAAAAAAACQAAAAAAAAAGAAAAAAAAAAAAAAAABAAAA=="/>
+   </Object>
+   <Object Type="Designer" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{E6BA42D6-9AF9-BE9B-E714-4F4419DBC152}" Name="Designer2" Pos="63,62,32" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="16777215" Material="EngineAssets/TextureMsg/DefaultSolids" RndFlags="1073741832" StaticObjFlags="0" ViewDistRatio="100">
+    <Brush DesignerModeFlags="0" SubdivisionLevel="0" SubdivisionSmoothingGroup="0" MirrorPlaneNormal="0,0,0" MirrorPlaneDistance="0">
+     <Polygon GUID="{B5171FB9-0FD4-6C23-A4B8-829BE9188B35}" BinaryData="BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwPwAAAAAAAAAAAAAAAAAA8D8AAAAAAADwPwAAAAAAAAAAAAAAAAAA8D8AAAAAAAAAAAQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAgL8AAIC/AACAvwAAgL8AAAAA"/>
+     <Polygon GUID="{6E597CF6-29AE-B0B6-5495-AF0A8F789C90}" BinaryData="BAAAAAAAAAAAAAAAAAAAAAAA8D8AAAAAAAAAAAAAAAAAAAAAAAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/AAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/AAAAAAAA8D8AAAAAAAAAAAQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAAAAAAAAAAAAAPA/AAAAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAAAAgL8AAIC/AACAvwAAgL8AAAAA"/>
+     <Polygon GUID="{94EC2136-7EC3-451B-7D2F-250B6A2CF018}" BinaryData="BAAAAAAAAAAAAPA/AAAAAAAA8D8AAAAAAAAAAAAAAAAAAPA/AAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/AAAAAAAAAAAAAAAAAADwPwAAAAAAAPA/AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAADwPwAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAgD8AAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAA"/>
+     <Polygon GUID="{35A8239F-3EBF-603F-0B82-07A40E423583}" BinaryData="BAAAAAAAAAAAAPA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAPA/AAAAAAAAAAAAAAAAAADwPwAAAAAAAAAAAAAAAAAAAAAAAAAAAADwPwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAAAAAAAAAAAAAAAgAAAgD8AAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAA"/>
+     <Polygon GUID="{0EEA274F-F98A-B52A-D279-94B43286D3DD}" BinaryData="BAAAAAAAAAAAAPA/AAAAAAAA8D8AAAAAAADwPwAAAAAAAAAAAAAAAAAA8D8AAAAAAADwPwAAAAAAAAAAAAAAAAAAAAAAAAAAAADwPwAAAAAAAPA/AAAAAAAAAAAAAAAAAADwPwQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8D8AAAAAAADwvwAAgD8AAIC/AAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAA"/>
+     <Polygon GUID="{8B94A927-0555-A333-2408-E193E0C61F23}" BinaryData="BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8D8AAAAAAAAAAAAAAAAAAPA/AAAAAAAA8D8AAAAAAAAAAAAAAAAAAPA/AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAAAAgAAAAAAAAAAAAAAAAAAAgD8AAIC/AACAPwAAgL8AAAAA"/>
+     <SmoothingGroups />
+     <SemiSharpCrease />
+     <UVIslands />
+    </Brush>
+    <Mesh Version="2" BinaryData="AAAAAAAAAAAYAAAAGAAAACQAAAAYAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAPwAAAAAAAIA/AACAPwAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AAAAAAAAgD8AAIA/AAAAAAAAgD8AAIA/AACAPwAAgD8AAAAAAACAPwAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAgD8AAIA/AACAPwAAAAAAAIA/AACAPwAAAAAAAAAAAACAPwAAgD8AAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAgD8AAIA/AAAAAAAAgD8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAAAAAAAAgL8AAIC/AACAvwAAgL8AAAAAAAAAAAAAAAAAAAAAAACAvwAAgL8AAIC/AACAvwAAAAAAAIA/AAAAAAAAgD8AAIC/AAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AACAvwAAgD8AAIC/AAAAAAAAAQACAAAAAgADAAQABQAGAAQABgAHAAgACQAKAAgACgALAAwADQAOAAwADgAPABAAEQASABAAEgATABQAFQAWABQAFgAXAAAAAYAAAAGAAAAAAAGAAYAAAAGAAAABgAAAAAABgAGAAAABgAAAAYAAAAAAAYABgAAAAYAAAAGAAAAAAAGAAYABgAAAAAABgAAAAAABgAGAAYAAAAAAAYAAAAAAAYABgAGAAAAAAAGAAAAAAAGAAYABgAAAAAABgAAAAAABgAGAAAD/fwAAAYAAAAAAAYABgAAA/38AAAGAAAAAAAGAAYAAAP9/AAABgAAAAAABgAGAAAD/fwAAAYAAAAAAAYABgP9/AAAAAAGAAAAAAAGAAYD/fwAAAAABgAAAAAABgAGA/38AAAAAAYAAAAAAAYABgP9/AAAAAAGAAAAAAAGAAYD/fwAAAAABgAAAAYAAAAGA/38AAAAAAYAAAAGAAAABgP9/AAAAAAGAAAABgAAAAYD/fwAAAAABgAAAAYAAAAGAAYAAAAAA/38AAP9/AAD/fwGAAAAAAP9/AAD/fwAA/38BgAAAAAD/fwAA/38AAP9/AYAAAAAA/38AAP9/AAD/fwAAAD8AAAA/AAAAP9ezXT8AAAAAAAAAACQAAAAAAAAAGAAAAAAAAAAAAAAAABAAAA=="/>
+   </Object>
+  </LayerObjects>
+ </Layer>
+</ObjectLayer>

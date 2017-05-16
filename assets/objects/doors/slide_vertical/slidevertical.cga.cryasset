@@ -1,0 +1,12 @@
+<cryasset>
+ <AssetMetadata version="0" type="AnimatedMesh" guid="{8EF7BBD7-9B80-E03F-5C8E-B76BA99E723F}" source="SlideVertical.dae.zip">
+  <Files>
+   <File path="slidevertical.cga"/>
+  </Files>
+  <Details>
+   <Detail name="materialCount">3</Detail>
+   <Detail name="triangleCount">212</Detail>
+   <Detail name="vertexCount">208</Detail>
+  </Details>
+ </AssetMetadata>
+</cryasset>

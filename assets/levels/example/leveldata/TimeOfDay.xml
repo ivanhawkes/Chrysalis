@@ -1,0 +1,7 @@
+<TimeOfDay Time="7.1215" TimeStart="12" TimeEnd="12" TimeAnimSpeed="0">
+ <Presets>
+  <Preset Name="libs/environmentpresets/forest_grove.xml" Default="1"/>
+  <Preset Name="libs/environmentpresets/fps_demo.xml"/>
+  <Preset Name="libs/environmentpresets/woodland.xml"/>
+ </Presets>
+</TimeOfDay>

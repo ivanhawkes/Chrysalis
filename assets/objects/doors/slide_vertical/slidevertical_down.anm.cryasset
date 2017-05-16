@@ -1,0 +1,12 @@
+<cryasset>
+ <AssetMetadata version="0" type="MeshAnimation" guid="{1B43CFFC-C11E-6A13-F3A8-1070819BEAE1}" source="SlideVertical.dae.zip">
+  <Files>
+   <File path="slidevertical_down.anm"/>
+  </Files>
+  <Details>
+   <Detail name="materialCount">0</Detail>
+   <Detail name="triangleCount">0</Detail>
+   <Detail name="vertexCount">0</Detail>
+  </Details>
+ </AssetMetadata>
+</cryasset>

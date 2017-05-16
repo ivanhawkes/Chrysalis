@@ -1,0 +1,8 @@
+<cryasset>
+ <AssetMetadata version="0" type="Texture" guid="{BD18EE7A-4D36-496A-907E-0A817A6A6E06}" source="mcg_spec.tif">
+  <Files>
+   <File path="human_male_spec.dds"/>
+  </Files>
+  <Details />
+ </AssetMetadata>
+</cryasset>

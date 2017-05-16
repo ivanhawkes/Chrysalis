@@ -1,0 +1,95 @@
+<profile version="76">
+	<!-- platforms - Used to define which keys to map for each action based on the platform that is in use -->
+	<platforms>
+		<PC keyboard="1" xboxpad="1" ps4pad="1" oculustouch="1"/>
+		<XboxOne keyboard="1" xboxpad="1" ps4pad="0"/>
+		<PS4 keyboard="1" xboxpad="0" ps4pad="1"/>
+	</platforms>
+
+	<!--DO NOT REMOVE DEFAULT ACTIONMAP! NEEDED BY CRYACTION-->
+	<actionmap name="default" version="1"/>
+	<!---->
+	
+	<!--GENERIC PLAYER ACTIONS-->
+	<actionmap name="player">
+		<action name="move_left" onPress="1" onRelease="1" retriggerable="1" keyboard="a" xboxpad="xi_dpad_left" />
+		<action name="move_right" onPress="1" onRelease="1" retriggerable="1" keyboard="d" xboxpad="xi_dpad_right" />
+		<action name="move_forward" onPress="1" onRelease="1" retriggerable="1" keyboard="w" xboxpad="xi_dpad_up" />
+		<action name="move_backward" onPress="1" onRelease="1" retriggerable="1" keyboard="s" xboxpad="xi_dpad_down" />
+
+		<action name="player_interaction" onPress="1" onRelease="1" retriggerable="1" keyboard="mouse1" xboxpad="xi_a" ps3pad="pad_square" />
+
+		<action name="move_jump" onPress="1" onRelease="1" keyboard="space" xboxpad="xi_y" ps3pad="pad_cross" />
+
+		<action name="move_walkjog" onPress="1" onRelease="1" retriggerable="1" keyboard="n" xboxpad="xi_thumbl" ps3pad="pad_l3" />
+		<action name="move_sprint" onPress="1" onRelease="1" retriggerable="1" keyboard="lshift" xboxpad="xi_thumbl" ps3pad="pad_l3" />
+
+		<action name="stance_crouch" onPress="1" onRelease="1" retriggerable="1" keyboard="c"/>
+		<action name="stance_crawl" onPress="1" onRelease="1" retriggerable="1" keyboard="h"/>
+		<action name="stance_kneel" onPress="1" onRelease="1" retriggerable="1" keyboard="v"/>
+		<action name="stance_sit" onPress="1" onRelease="1" retriggerable="1" keyboard="b"/>
+
+		<action name="item_use" >
+			<keyboard input="f" onPress="1" />
+			<xboxpad input="xi_a" onPress="1" />
+		</action>
+
+		<action name="item_drop" >
+			<keyboard input="b" onPress="1" />
+			<xboxpad input="xi_b" onPress="1" />
+		</action>
+
+		<action name="item_toss" >
+			<keyboard input="x" onPress="1" />
+			<xboxpad input="xi_x" onPress="1" />
+		</action>
+
+		<action name="actionbar_01" onPress="1" onRelease="1" keyboard="1"/>
+		<action name="actionbar_02" onPress="1" onRelease="1" keyboard="2"/>
+		<action name="actionbar_03" onPress="1" onRelease="1" keyboard="3"/>
+		<action name="actionbar_04" onPress="1" onRelease="1" keyboard="4"/>
+		<action name="actionbar_05" onPress="1" onRelease="1" keyboard="5"/>
+		<action name="actionbar_06" onPress="1" onRelease="1" keyboard="6"/>
+		<action name="actionbar_07" onPress="1" onRelease="1" keyboard="7"/>
+		<action name="actionbar_08" onPress="1" onRelease="1" keyboard="8"/>
+		<action name="actionbar_09" onPress="1" onRelease="1" keyboard="9"/>
+		<action name="actionbar_10" onPress="1" onRelease="1" keyboard="0"/>
+		<action name="actionbar_11" onPress="1" onRelease="1" keyboard="minus"/>
+		<action name="actionbar_12" onPress="1" onRelease="1" keyboard="equals"/>
+
+		<action name="mouse_rotateyaw" keyboard="maxis_x" />
+		<action name="mouse_rotatepitch" keyboard="maxis_y" />
+
+		<action name="hmd_rotateyaw" keyboard="HMD_Yaw" />
+		<action name="hmd_rotatepitch" keyboard="HMD_Pitch" />
+		<action name="hmd_rotateroll" keyboard="HMD_Roll" />
+
+		<action name="xi_movex" xboxpad="xi_thumblx" ps3pad="pad_sticklx" onHold="1" retriggerable="1"/>
+		<action name="xi_movey" xboxpad="xi_thumbly" ps3pad="pad_stickly" onHold="1" retriggerable="1"/>
+
+		<action name="xi_rotateyaw" xboxpad="xi_thumbrx" ps3pad="pad_stickrx" onHold="1" retriggerable="1"/>
+		<action name="xi_rotatepitch" xboxpad="xi_thumbry" ps3pad="pad_stickry" onHold="1" retriggerable="1"/>
+	</actionmap>
+
+	<!--CAMERA SPECIFIC ACTIONS - TODO: MOVE OTHER CAMERA STUFF OVER FROM PLAYER TO HERE -->
+	<actionmap name="camera">
+		<action name="tpv_zoom_in" onPress="1" keyboard="mwheel_up" />
+		<action name="tpv_zoom_out" onPress="1" keyboard="mwheel_down" />
+
+		<action name="camera_shift_up" onPress="1" onRelease="1" keyboard="pgup"/>
+		<action name="camera_shift_down" onPress="1" onRelease="1" keyboard="pgdn"/>
+		<action name="camera_shift_left" onPress="1" onRelease="1" keyboard="left"/>
+		<action name="camera_shift_right" onPress="1" onRelease="1" keyboard="right"/>
+		<action name="camera_shift_forward" onPress="1" onRelease="1" keyboard="up"/>
+		<action name="camera_shift_backward" onPress="1" onRelease="1" keyboard="down"/>
+	</actionmap>
+
+	<!--PLAYER INSPECTING ITEMS-->
+	<!-- Inspect places the character in "inspect mode" which is cancelled by any movement key or an escape key. 
+		 Normal character movement should be disabled in this mode, but we will need camera rotations and zooms. -->
+	<actionmap name="inspection">
+		<action name="inspect_start" onPress="1" onRelease="1" keyboard="j"/>
+		<action name="inspect" onPress="1" onRelease="1" keyboard="k"/>
+		<action name="inspect_end" onPress="1" onRelease="1" keyboard="l"/>
+	</actionmap>
+</profile>

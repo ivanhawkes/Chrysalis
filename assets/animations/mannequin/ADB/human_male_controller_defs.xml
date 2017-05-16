@@ -1,0 +1,49 @@
+<ControllerDef>
+ <Tags filename="Animations/Mannequin/ADB/human_male_tags.xml"/>
+ <Fragments filename="Animations/Mannequin/ADB/human_male_fragment_ids.xml"/>
+ <FragmentDefs>
+  <Idle scopes="FullBody1P+FullBody3P+SlaveCharacter+SlaveObject"/>
+  <Move scopes="FullBody1P+FullBody3P"/>
+  <Interaction scopes="FullBody1P+FullBody3P+SlaveCharacter+SlaveObject"/>
+  <Emote scopes="FullBody1P+FullBody3P+Torso1P+Torso3P+Audio1+Audio2"/>
+  <Aiming scopes="AimPose"/>
+  <AimPose scopes="AimPose"/>
+  <Looking scopes="LookPose"/>
+  <LookPose scopes="LookPose"/>
+  <Weapon scopes="Weapon"/>
+  <AttachmentTop scopes="AttachmentTop"/>
+  <AttachmentBottom scopes="AttachmentBottom"/>
+  <LadderGetOn scopes="FullBody1P+FullBody3P+GroundAlignment1P+GroundAlignment3P+Torso1P+Torso3P+Audio1+Audio2+AimPose+LookPose+SlaveCharacter+SlaveObject+Weapon+WeaponForceFeedback+AttachmentTop+AttachmentBottom"/>
+  <LadderGetOff scopes="FullBody1P+FullBody3P+GroundAlignment1P+GroundAlignment3P+Torso1P+Torso3P+Audio1+Audio2+AimPose+LookPose+SlaveCharacter+SlaveObject+Weapon+WeaponForceFeedback+AttachmentTop+AttachmentBottom"/>
+  <LadderClimb scopes="FullBody1P+FullBody3P+GroundAlignment1P+GroundAlignment3P+Torso1P+Torso3P+Audio1+Audio2+AimPose+LookPose+SlaveCharacter+SlaveObject+Weapon+WeaponForceFeedback+AttachmentTop+AttachmentBottom"/>
+  <LedgeGrab scopes="FullBody1P+FullBody3P+GroundAlignment1P+GroundAlignment3P+Torso1P+Torso3P+Audio1+Audio2+AimPose+LookPose+SlaveCharacter+SlaveObject+Weapon+WeaponForceFeedback+AttachmentTop+AttachmentBottom"/>
+ </FragmentDefs>
+ <ScopeContextDefs>
+  <Char1P />
+  <Char3P />
+  <Weapon />
+  <Audio />
+  <AttachmentTop />
+  <AttachmentBottom />
+  <SlaveCharacter />
+  <SlaveObject />
+ </ScopeContextDefs>
+ <ScopeDefs>
+  <FullBody1P layer="0" numLayers="3" context="Char1P"/>
+  <FullBody3P layer="0" numLayers="3" context="Char3P"/>
+  <GroundAlignment1P layer="13" numLayers="1" context="Char1P"/>
+  <GroundAlignment3P layer="13" numLayers="1" context="Char3P"/>
+  <Torso1P layer="10" numLayers="3" context="Char1P"/>
+  <Torso3P layer="9" numLayers="3" context="Char3P"/>
+  <Audio1 layer="0" numLayers="0" context="Audio"/>
+  <Audio2 layer="0" numLayers="0" context="Audio"/>
+  <AimPose layer="4" numLayers="2" context="Char3P"/>
+  <LookPose layer="11" numLayers="2" context="Char3P"/>
+  <SlaveCharacter layer="0" numLayers="3" context="SlaveCharacter" Tags="ScopeSlave"/>
+  <SlaveObject layer="0" numLayers="3" context="SlaveObject" Tags="ScopeSlave"/>
+  <Weapon layer="0" numLayers="3" context="Weapon"/>
+  <WeaponForceFeedback layer="0" numLayers="0" context="Weapon"/>
+  <AttachmentTop layer="0" numLayers="3" context="AttachmentTop"/>
+  <AttachmentBottom layer="0" numLayers="3" context="AttachmentBottom"/>
+ </ScopeDefs>
+</ControllerDef>

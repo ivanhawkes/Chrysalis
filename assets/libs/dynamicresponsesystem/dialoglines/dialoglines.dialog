@@ -1,0 +1,22 @@
+{
+	"lineSets": [
+		{
+			"lineID": "audio_radio_01",
+			"priority": 50,
+			"lastPicked": 0,
+			"flags": 1,
+			"lineVariations": [
+				{
+					"text": "",
+					"audioStartTrigger": "Play_l_audio_tutorial_dia_01",
+					"audioStopTrigger": "",
+					"lipsyncAnim": "",
+					"standaloneFile": "",
+					"pauseLength": -1.0,
+					"customData": ""
+				}
+			],
+			"maxQueuingDuration": -1.0
+		}
+	]
+}

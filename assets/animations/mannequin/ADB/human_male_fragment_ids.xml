@@ -1,0 +1,19 @@
+<TagDefinition version="2">
+ <Tags>
+  <Tag name="Idle"/>
+  <Tag name="Move"/>
+  <Tag name="Interaction"/>
+  <Tag name="Emote"/>
+  <Tag name="Aiming"/>
+  <Tag name="AimPose"/>
+  <Tag name="Looking"/>
+  <Tag name="LookPose"/>
+  <Tag name="Weapon"/>
+  <Tag name="AttachmentTop"/>
+  <Tag name="AttachmentBottom"/>
+  <Tag name="LadderGetOn"/>
+  <Tag name="LadderGetOff"/>
+  <Tag name="LadderClimb"/>
+  <Tag name="LedgeGrab"/>
+ </Tags>
+</TagDefinition>

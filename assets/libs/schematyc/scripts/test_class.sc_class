@@ -1,0 +1,275 @@
+<schematyc>
+ <version value="105"/>
+ <guid value="1785bc42-76ff-4bef-82bd-c57d173d9701"/>
+ <scope value=""/>
+ <root>
+  <elementType value="Class"/>
+  <guid value="4e1d764b-89d6-46c0-954d-dfbfc58afbc6"/>
+  <name value="TestClass"/>
+  <userDocumentation>
+   <author value="ivan"/>
+   <description value=""/>
+  </userDocumentation>
+  <extensions />
+  <children>
+   <Element>
+    <elementType value="Constructor"/>
+    <guid value="f179885c-e621-40b7-9f23-beaf4b905b4b"/>
+    <name value="ConstructionGraph"/>
+    <userDocumentation>
+     <author value="ivan"/>
+     <description value=""/>
+    </userDocumentation>
+    <extensions>
+     <Graph>
+      <pos>
+       <Element value="0"/>
+       <Element value="0"/>
+      </pos>
+      <nodes>
+       <Element>
+        <key value="6e49bee0-a2d9-4997-a9e2-7cb788c3d527"/>
+        <typeGUID value="12bdfa06-ba95-4e48-bb2d-bb48a7080abc"/>
+        <value>
+         <guid value="6e49bee0-a2d9-4997-a9e2-7cb788c3d527"/>
+         <pos>
+          <Element value="-375"/>
+          <Element value="-36"/>
+         </pos>
+        </value>
+       </Element>
+      </nodes>
+      <links />
+     </Graph>
+    </extensions>
+    <children />
+   </Element>
+   <Element>
+    <elementType value="SignalReceiver"/>
+    <guid value="6435e755-3138-44b6-8106-347670e2f6bf"/>
+    <name value="SignalGraph"/>
+    <type value="Universal"/>
+    <signalGUID value=""/>
+    <userDocumentation>
+     <author value="ivan"/>
+     <description value=""/>
+    </userDocumentation>
+    <extensions>
+     <Graph>
+      <pos>
+       <Element value="375"/>
+       <Element value="171"/>
+      </pos>
+      <nodes>
+       <Element>
+        <key value="a7285b54-8e77-419c-9e4b-a9a498670197"/>
+        <typeGUID value="ad2aee64-0a60-4469-8ec7-38b4b720d30c"/>
+        <value>
+         <guid value="a7285b54-8e77-419c-9e4b-a9a498670197"/>
+         <pos>
+          <Element value="0"/>
+          <Element value="100"/>
+         </pos>
+         <signalId>
+          <domain value="Env"/>
+          <guid value="52ad5add-7781-429b-b4a9-0cb6c905e353"/>
+         </signalId>
+        </value>
+       </Element>
+       <Element>
+        <key value="9dd3c097-5339-4234-8324-75d326b4eb43"/>
+        <typeGUID value="1bcfd811-b8b7-4032-a90c-311dfa4454c6"/>
+        <value>
+         <guid value="9dd3c097-5339-4234-8324-75d326b4eb43"/>
+         <pos>
+          <Element value="594"/>
+          <Element value="136"/>
+         </pos>
+         <functionId>
+          <domain value="Env"/>
+          <guid value="abc4938d-a631-4a36-9f10-22cf6dc9dabd"/>
+         </functionId>
+         <objectGUID value="0c748c97-98dd-468c-8842-e938f218427a"/>
+         <inputs>
+          <Element>
+           <key>
+                        <type value="UniqueId"/>
+                        <value value="7760243"/>
+           </key>
+           <value value="true"/>
+          </Element>
+         </inputs>
+        </value>
+       </Element>
+       <Element>
+        <key value="0f88bbcc-ccd2-444e-a9b9-f9d9798833b0"/>
+        <typeGUID value="ad2aee64-0a60-4469-8ec7-38b4b720d30c"/>
+        <value>
+         <guid value="0f88bbcc-ccd2-444e-a9b9-f9d9798833b0"/>
+         <pos>
+          <Element value="0"/>
+          <Element value="200"/>
+         </pos>
+         <signalId>
+          <domain value="Env"/>
+          <guid value="b2561caa-0753-458b-a91f-e8e38b0f0cdf"/>
+         </signalId>
+        </value>
+       </Element>
+       <Element>
+        <key value="2f676f3d-9794-499d-b322-416063140c5c"/>
+        <typeGUID value="1bcfd811-b8b7-4032-a90c-311dfa4454c6"/>
+        <value>
+         <guid value="2f676f3d-9794-499d-b322-416063140c5c"/>
+         <pos>
+          <Element value="299"/>
+          <Element value="93"/>
+         </pos>
+         <functionId>
+          <domain value="Env"/>
+          <guid value="112b2aec-7c52-44b8-a16d-84c98c70d910"/>
+         </functionId>
+         <objectGUID value="0c748c97-98dd-468c-8842-e938f218427a"/>
+         <inputs>
+          <Element>
+           <key>
+                        <type value="UniqueId"/>
+                        <value value="1718185061"/>
+           </key>
+           <value value="objects/Weapons/attachments/flash_light/flash_light.cgf"/>
+          </Element>
+         </inputs>
+        </value>
+       </Element>
+       <Element>
+        <key value="4dc9fb6e-0836-4e1e-8b60-d09db2a0b72f"/>
+        <typeGUID value="ad2aee64-0a60-4469-8ec7-38b4b720d30c"/>
+        <value>
+         <guid value="4dc9fb6e-0836-4e1e-8b60-d09db2a0b72f"/>
+         <pos>
+          <Element value="-19"/>
+          <Element value="0"/>
+         </pos>
+         <signalId>
+          <domain value="Env"/>
+          <guid value="a9279137-7c66-491d-b9a0-8752c24c8979"/>
+         </signalId>
+        </value>
+       </Element>
+      </nodes>
+      <links>
+       <Element>
+        <srcNodeGUID value="4dc9fb6e-0836-4e1e-8b60-d09db2a0b72f"/>
+        <srcOutputId>
+         <type value="Idx"/>
+         <value value="0"/>
+        </srcOutputId>
+        <dstNodeGUID value="2f676f3d-9794-499d-b322-416063140c5c"/>
+        <dstInputId>
+         <type value="Idx"/>
+         <value value="0"/>
+        </dstInputId>
+       </Element>
+       <Element>
+        <srcNodeGUID value="2f676f3d-9794-499d-b322-416063140c5c"/>
+        <srcOutputId>
+         <type value="Idx"/>
+         <value value="0"/>
+        </srcOutputId>
+        <dstNodeGUID value="9dd3c097-5339-4234-8324-75d326b4eb43"/>
+        <dstInputId>
+         <type value="Idx"/>
+         <value value="0"/>
+        </dstInputId>
+       </Element>
+      </links>
+     </Graph>
+    </extensions>
+    <children />
+   </Element>
+   <Element>
+    <elementType value="Base"/>
+    <guid value="396ecc45-8300-40e4-88ec-6838c8dca68c"/>
+    <name value="Base [Entity]"/>
+    <classId>
+     <domain value="Env"/>
+     <guid value="be845278-0dd2-409f-b8be-97895607c256"/>
+    </classId>
+    <envClassProperties>
+     <icon value="editor/objecticons/schematyc.bmp"/>
+     <bHideInEditor value="false"/>
+     <bTriggerAreas value="true"/>
+    </envClassProperties>
+    <extensions />
+    <children>
+     <Element>
+      <elementType value="ComponentInstance"/>
+      <guid value="6b41bf70-af69-4cd7-8b60-57db410f09bd"/>
+      <name value="Debug"/>
+      <accessor value="Private"/>
+      <typeGUID value="082bb332-101f-48a7-8c78-b9f19f9e6ef2"/>
+      <transform>
+       <translation>
+        <Element value="0"/>
+        <Element value="0"/>
+        <Element value="0"/>
+       </translation>
+       <rotation>
+        <deg.x value="0"/>
+        <deg.y value="0"/>
+        <deg.z value="0"/>
+       </rotation>
+      </transform>
+      <extensions />
+      <children />
+     </Element>
+     <Element>
+      <elementType value="ComponentInstance"/>
+      <guid value="41b23bfa-778b-4093-b85c-24eb646a48f3"/>
+      <name value="Utils"/>
+      <accessor value="Private"/>
+      <typeGUID value="e88093df-904f-4c52-af38-911e26777cdc"/>
+      <transform>
+       <translation>
+        <Element value="0"/>
+        <Element value="0"/>
+        <Element value="0"/>
+       </translation>
+       <rotation>
+        <deg.x value="0"/>
+        <deg.y value="0"/>
+        <deg.z value="0"/>
+       </rotation>
+      </transform>
+      <extensions />
+      <children />
+     </Element>
+    </children>
+   </Element>
+   <Element>
+    <elementType value="ComponentInstance"/>
+    <guid value="0c748c97-98dd-468c-8842-e938f218427a"/>
+    <name value="Geom"/>
+    <accessor value="Private"/>
+    <typeGUID value="d2474675-c67c-42b2-af33-5c5ace2d1d8c"/>
+    <transform>
+     <translation>
+      <Element value="0"/>
+      <Element value="0"/>
+      <Element value="0"/>
+     </translation>
+     <rotation>
+      <deg.x value="0"/>
+      <deg.y value="0"/>
+      <deg.z value="0"/>
+     </rotation>
+    </transform>
+    <properties>
+     <fileName value="objects/Weapons/ammo/ammo_box/ammo_box.cgf"/>
+    </properties>
+    <extensions />
+    <children />
+   </Element>
+  </children>
+ </root>
+</schematyc>

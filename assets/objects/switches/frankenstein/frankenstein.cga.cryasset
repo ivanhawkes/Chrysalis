@@ -1,0 +1,12 @@
+<cryasset>
+ <AssetMetadata version="0" type="AnimatedMesh" guid="{929E964C-56FE-CE34-D151-601A5E18A708}">
+  <Files>
+   <File path="frankenstein.cga"/>
+  </Files>
+  <Details>
+   <Detail name="materialCount">3</Detail>
+   <Detail name="triangleCount">306</Detail>
+   <Detail name="vertexCount">375</Detail>
+  </Details>
+ </AssetMetadata>
+</cryasset>

@@ -1,1 +1,77 @@
+# Ignores for our code.
 code/ChrysalisCore/.vs/
+
+# Asset files.
+*.pak
+*.caf
+
+# Assets that are just too large to place in the repo for the moment.
+*.spp
+*.tif
+*.tiff
+
+# Config files
+/user.cfg
+/system.cfg
+/editor.cfg
+/.bootstrap*.*
+
+# Temporary files.
+*.log
+*.dmp
+*.pyo
+*.pyc
+*.bak
+*.bak2
+*.out
+_WAF_/user_settings.options
+/TestResults/
+/Solutions/
+/.depproj/*
+/project.sln
+/[Ll]og[Bb]ackups
+/[Uu]ser*/
+__pycache__/*
+/Backup/
+_tmp/
+
+# Build files we can do without.
+*.ilk
+*.pdb
+
+# User folders
+/user/
+/user1/
+/user2/
+/user3/
+/user4/
+
+# Assets we don't want to include for various reasons e.g. copyright
+assets/audio/
+assets/animations/FireDoor/
+assets/objects/FireDoor/
+assets/objects/items/compass/
+assets/animations/human/male/crouch/
+
+# Keep out the generated files and folders.
+/assets/textures/cubemaps/
+/assets/engineassets/
+/assets/_tmp/
+/Backup/
+/engineassets
+_newpreview_.mtl
+/chrysalis/engineassets/
+/Editor/ResourceCache/
+error*.*
+log.txt
+*.tmp
+assets/textures/reference/.mayaSwatches/
+
+# All other things.
+last_fbx_scene.txt
+bin/CMakeCache.txt
+bin/Chrysalis.vcxproj.user
+Editor/Tmp/
+build_scripts/temprc/
+build_scripts/client/
+.vs/

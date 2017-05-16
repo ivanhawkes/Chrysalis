@@ -1,0 +1,10 @@
+{
+	"BaseSegment": {
+		"name": "(AUTO) DO Close: '', [no conditions]",
+		"SegmentConditions": { "Conditions": [ ], "Negated": false },
+		"Actions": [
+			{ "Action": { "CActionClose": { "TargetName": "" } }, "Delay": 0.0 }
+		],
+		"ChildSegments": [ ]
+	}
+}

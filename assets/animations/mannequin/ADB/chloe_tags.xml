@@ -1,0 +1,30 @@
+<TagDefinition version="2">
+ <Tags>
+  <Group name="Health">
+   <Tag name="Alive" priority="5"/>
+   <Tag name="Dead" priority="5"/>
+  </Group>
+  <Group name="Stance">
+   <Tag name="Relaxed" priority="3"/>
+   <Tag name="Alerted" priority="3"/>
+   <Tag name="Stand" priority="3"/>
+   <Tag name="Kneel" priority="3"/>
+   <Tag name="Swim" priority="3"/>
+   <Tag name="Crouch" priority="3"/>
+   <Tag name="Crawl" priority="3"/>
+  </Group>
+  <Group name="LocalMoveDirection">
+   <Tag name="NotMoving"/>
+   <Tag name="MoveBackward"/>
+   <Tag name="MoveForward"/>
+   <Tag name="MoveLeft"/>
+   <Tag name="MoveRight"/>
+  </Group>
+  <Group name="Gait">
+   <Tag name="NoGait"/>
+   <Tag name="Walk"/>
+   <Tag name="Run"/>
+   <Tag name="Sprint"/>
+  </Group>
+ </Tags>
+</TagDefinition>

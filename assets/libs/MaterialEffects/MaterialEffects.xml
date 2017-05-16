@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:c="urn:schemas-microsoft-com:office:component:spreadsheet" xmlns:html="http://www.w3.org/TR/REC-html40" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" xmlns:x2="http://schemas.microsoft.com/office/excel/2003/xml" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office">
+		<Colors>
+			<Color>
+				<Index>3</Index>
+				<RGB>#000000</RGB>
+			</Color>
+			<Color>
+				<Index>4</Index>
+				<RGB>#c0c0c0</RGB>
+			</Color>
+			<Color>
+				<Index>5</Index>
+				<RGB>#ff0000</RGB>
+			</Color>
+		</Colors>
+	</OfficeDocumentSettings>
+	<ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
+		<WindowHeight>9000</WindowHeight>
+		<WindowWidth>13860</WindowWidth>
+		<WindowTopX>240</WindowTopX>
+		<WindowTopY>75</WindowTopY>
+		<ProtectStructure>False</ProtectStructure>
+		<ProtectWindows>False</ProtectWindows>
+	</ExcelWorkbook>
+	<Styles>
+		<Style ss:ID="Default" ss:Name="Default"/>
+		<Style ss:ID="Result" ss:Name="Result">
+			<Font ss:Bold="1" ss:Italic="1" ss:Size="10" ss:Underline="Single"/>
+		</Style>
+		<Style ss:ID="Result2" ss:Name="Result2">
+			<Font ss:Bold="1" ss:Italic="1" ss:Size="10" ss:Underline="Single"/>
+			<NumberFormat ss:Format="Currency"/>
+		</Style>
+		<Style ss:ID="Heading" ss:Name="Heading">
+			<Font ss:Bold="1" ss:Italic="1" ss:Size="16"/>
+		</Style>
+		<Style ss:ID="Heading1" ss:Name="Heading1">
+			<Font ss:Bold="1" ss:Italic="1" ss:Size="16"/>
+		</Style>
+		<Style ss:ID="Normal" ss:Name="Normal">
+			<Font ss:Color="#000000" ss:FontName="Calibri" ss:Size="11"/>
+		</Style>
+		<Style ss:ID="co1"/>
+		<Style ss:ID="co2"/>
+		<Style ss:ID="co3"/>
+		<Style ss:ID="co4"/>
+		<Style ss:ID="ta1"/>
+	</Styles>
+	<ss:Worksheet ss:Name="Sheet1">
+		<Table ss:StyleID="ta1">
+			<Column ss:Width="124.611"/>
+			<Column ss:Width="112.7905"/>
+			<Column ss:Width="15.6472"/>
+			<Column ss:Span="1" ss:Width="112.7905"/>
+			<Column ss:Index="6" ss:Width="15.6472"/>
+			<Column ss:Width="112.7905"/>
+			<Column ss:Width="15.6472"/>
+			<Column ss:Span="1" ss:Width="112.7905"/>
+			<Row ss:AutoFitHeight="0" ss:Height="14.9953">
+				<Cell ss:StyleID="Normal"/>
+				<Cell ss:StyleID="Normal">
+					<Data ss:Type="String">mat_default</Data>
+				</Cell>
+				<Cell ss:StyleID="Normal"/>
+				<Cell>
+					<Data ss:Type="String">mat_concrete</Data>
+				</Cell>
+				<Cell>
+					<Data ss:Type="String">mat_metal</Data>
+				</Cell>
+				<Cell ss:Index="7">
+					<Data ss:Type="String">mat_flesh</Data>
+				</Cell>
+				<Cell ss:Index="9">
+					<Data ss:Type="String">mat_water</Data>
+				</Cell>
+				<Cell ss:Index="10"/>
+			</Row>
+			<Row ss:AutoFitHeight="0" ss:Height="14.9953">
+				<Cell ss:StyleID="Normal">
+					<Data ss:Type="String">mat_default</Data>
+				</Cell>
+				<Cell>
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell ss:Index="4">
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell>
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell ss:Index="7">
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell ss:Index="9">
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell ss:Index="10"/>
+			</Row>
+			<Row ss:AutoFitHeight="0" ss:Height="14.9953">
+				<Cell ss:Index="10"/>
+			</Row>
+			<Row ss:AutoFitHeight="0" ss:Height="12.8126">
+				<Cell>
+					<Data ss:Type="String">mat_concrete</Data>
+				</Cell>
+				<Cell>
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell ss:Index="4">
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell>
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell ss:Index="7">
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell ss:Index="9">
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell ss:Index="10"/>
+			</Row>
+			<Row ss:AutoFitHeight="0" ss:Height="12.8126">
+				<Cell>
+					<Data ss:Type="String">mat_metal</Data>
+				</Cell>
+				<Cell>
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell ss:Index="4">
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell>
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell ss:Index="7">
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell ss:Index="9">
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell ss:Index="10"/>
+			</Row>
+			<Row ss:AutoFitHeight="0" ss:Height="12.8126">
+				<Cell>
+					<Data ss:Type="String">mat_water</Data>
+				</Cell>
+				<Cell>
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell ss:Index="4">
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell>
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell ss:Index="7">
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell ss:Index="9">
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell ss:Index="10"/>
+			</Row>
+			<Row ss:AutoFitHeight="0" ss:Height="12.8126">
+				<Cell ss:Index="10"/>
+			</Row>
+			<Row ss:AutoFitHeight="0" ss:Height="12.8126">
+				<Cell>
+					<Data ss:Type="String">mat_flesh</Data>
+				</Cell>
+				<Cell>
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell ss:Index="4">
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell>
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell ss:Index="7">
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell ss:Index="9">
+					<Data ss:Type="String">collision:default</Data>
+				</Cell>
+				<Cell ss:Index="10"/>
+			</Row>
+			<Row ss:AutoFitHeight="0" ss:Height="12.8126">
+				<Cell ss:Index="10"/>
+			</Row>
+			<Row ss:AutoFitHeight="0" ss:Height="14.9953">
+				<Cell ss:StyleID="Normal">
+					<Data ss:Type="String">mat_projectile_bullet</Data>
+				</Cell>
+				<Cell ss:StyleID="Normal">
+					<Data ss:Type="String">projectile:bullet_hit</Data>
+				</Cell>
+				<Cell ss:StyleID="Normal"/>
+				<Cell ss:StyleID="Normal">
+					<Data ss:Type="String">projectile:bullet_hit</Data>
+				</Cell>
+				<Cell ss:StyleID="Normal">
+					<Data ss:Type="String">projectile:bullet_hit</Data>
+				</Cell>
+				<Cell ss:StyleID="Normal"/>
+				<Cell ss:StyleID="Normal">
+					<Data ss:Type="String">projectile:bullet_hit</Data>
+				</Cell>
+				<Cell ss:Index="9" ss:StyleID="Normal">
+					<Data ss:Type="String">projectile:bullet_hit</Data>
+				</Cell>
+				<Cell ss:Index="10"/>
+			</Row>
+		</Table>
+		<x:WorksheetOptions/>
+	</ss:Worksheet>
+</Workbook>

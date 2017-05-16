@@ -1,0 +1,16 @@
+{
+	"BaseSegment": {
+		"name": "(AUTO) DO Speak Line: 'audio_radio_01' [+1 action], [no conditions]",
+		"SegmentConditions": { "Conditions": [ ], "Negated": false },
+		"Actions": [
+			{
+				"Action": { "SpeakLine": {
+					"lineToSpeak": "Context",
+					"speakerOverride": "",
+					"flags": "CancelResponseOnSkip|CancelResponseOnCanceled|ReEvaluteConditionsAfterQueue"} },
+				"Delay": 0.0
+			}
+		],
+		"ChildSegments": [ ]
+	}
+}

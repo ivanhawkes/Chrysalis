@@ -1,0 +1,7 @@
+<MannequinPreview>
+ <controllerDef filename="Animations/Mannequin/ADB/chloe_controller_defs.xml"/>
+ <contexts>
+  <contextData name="MainCharacter" enabled="1" database="Animations/Mannequin/ADB/chloe.adb" context="MainCharacter" model="objects/characters/human/chloe/chloe.cdf"/>
+ </contexts>
+ <History StartTime="-4.3160208e+008" EndTime="-4.3160208e+008"/>
+</MannequinPreview>
