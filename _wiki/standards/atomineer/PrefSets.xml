@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+<Prefs>
+  <Doxygen>
+    <CommandPrefix value="\" />
+    <SuppressBriefTags value="true" />
+    <SuppressPrototypes value="true" />
+    <FullClassDecl value="false" />
+  </Doxygen>
+  <DocComment>
+    <CommentStyle value="Doxygen" />
+    <Separator value="/**" />
+    <LineHeader />
+    <LineHeader2 value="(None)" />
+    <SeparatorB value="**/" />
+    <SeparatorClipCol value="-1" />
+    <BlanksAbove value="2" />
+    <BlanksAfterRegion value="1" />
+    <BlanksAfterScope value="0" />
+    <BlanksBelow value="0" />
+    <BlanksBetweenEntries value="true" />
+    <WordWrapRelative value="true" />
+    <SimpleFormatForOneLiners value="true" />
+    <SingleLinePrefix value="///&lt; " />
+    <SingleLineSuffix value="(None)" />
+    <SingleLineMinColumn value="0" />
+    <LineCommentOnSameLine value="false" />
+    <ImmediateDelete value="false" />
+    <DateCulture value="en-AU" />
+    <WordWrapColumn value="100" />
+    <AutoDocReplacements value="true" />
+    <SuppressAuthor value="true" />
+    <SuppressDate value="true" />
+    <ThisObjectName value="instance" />
+    <DuplicateBaseDocs value="true" />
+    <AddSeeForBases value="true" />
+    <SummaryOnlyForBases value="true" />
+    <AddSeeForOverrides value="true" />
+    <SummaryOnlyForOverrides value="true" />
+    <DocAllAddFileHeader value="true" />
+    <DateFormat value="d" />
+    <LiveCommentUpdate value="true" />
+    <LiveCommentCreation value="true" />
+    <LiveTabNav value="false" />
+    <ConvertEntities value="true" />
+    <TidyOnPaste value="true" />
+    <ConvertDoubleSlashComments value="true" />
+    <AddDocTableForEnums value="false" />
+    <LiveSLCommentUpdate value="true" />
+  </DocComment>
+  <DocXml>
+    <BlockFormatNew />
+    <BlockFormatOld />
+    <BlockFormatForGroup />
+  </DocXml>
+  <Format>
+    <EntrySuppressNewlines value="true" />
+    <GroupSuppressNewlines value="true" />
+    <AlignBlockStartColumns value="true" />
+    <AccessLevelsToComment value="all" />
+    <AccessLevelsApplyToAllCmds value="false" />
+    <DeleteIllegalBlock value="true" />
+    <EntryTag value="Indent" />
+    <EntryNewline value="Align" />
+    <EntryBody value="Nothing" />
+    <GroupTag value="Indent" />
+    <GroupNewline value="Align" />
+    <GroupBody value="Nothing" />
+    <SingleTag value="Space" />
+    <SingleBody value="Space" />
+  </Format>
+  <Variables>
+    <StyleCop value="false" />
+    <initialise value="initialize" />
+  </Variables>
+  <OutlineDocComment>
+    <OnOpenDoc value="false" />
+    <SkipFirstLine value="true" />
+    <EatTrailingBlank value="true" />
+  </OutlineDocComment>
+  <OutlineAttr>
+    <OnOpenDoc value="false" />
+    <EatBlanks value="true" />
+  </OutlineAttr>
+  <CopyAsText>
+    <StripIndent value="true" />
+    <TabSize value="4" />
+  </CopyAsText>
+  <AddAccessMethods>
+    <VarTemplate value="m_VarName" />
+    <MemberPrefix />
+    <MultilineAutoProp value="false" />
+    <MethodTemplate value="GetVarName,SetVarName" />
+    <ParamTemplate value="varName" />
+  </AddAccessMethods>
+  <ImplementMethod>
+    <AddDocComment value="true" />
+    <ReturnToOrigDoc value="false" />
+  </ImplementMethod>
+  <Columnise>
+    <MinimiseWhitespace value="true" />
+  </Columnise>
+  <Misc>
+    <RulesPath value="D:\CRYENGINE\Chrysalis\wiki\standards\atomineer" />
+    <UserName value="(Use login name)" />
+    <MMAddDocComment value="true" />
+    <MMDocThisScope value="true" />
+    <MMDocThisFile value="true" />
+    <MMDocThisProject value="true" />
+    <MMDocThisSolution value="true" />
+    <MMDocAll value="true" />
+    <MMDeleteDocsFromFile value="true" />
+    <MMShowDocWindow value="true" />
+    <MMColumnise value="true" />
+    <MMOutlineDocComments value="true" />
+    <MMOutlineAttributes value="true" />
+    <MMOpenSourceOrHeader value="true" />
+    <MMImplementMethod value="true" />
+    <MMAddAccessMethods value="true" />
+    <MMAddProperty value="true" />
+    <MMCopyAsText value="true" />
+    <MMCheckForUpdates value="true" />
+    <CMAddDocComment value="true" />
+    <CMDocThisScope value="false" />
+    <CMDocThisFile value="false" />
+    <CMDocAll value="false" />
+    <CMShowDocWindow value="false" />
+    <CMColumnise value="false" />
+    <CMCopyAsText value="false" />
+    <CMAddProperty value="false" />
+    <CMAddAccessMethods value="false" />
+    <CMImplementMethod value="false" />
+    <CMOpenSourceOrHeader value="false" />
+    <Language value="English (US)" />
+  </Misc>
+</Prefs>
