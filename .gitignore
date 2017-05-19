@@ -26,9 +26,7 @@ code/ChrysalisCore/.vs/
 *.out
 _WAF_/user_settings.options
 /TestResults/
-/Solutions/
 /.depproj/*
-/project.sln
 /[Ll]og[Bb]ackups
 /[Uu]ser*/
 __pycache__/*

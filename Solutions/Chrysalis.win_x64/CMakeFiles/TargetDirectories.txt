@@ -1,0 +1,3 @@
+D:/Chrysalis/Solutions/Chrysalis.win_x64/CMakeFiles/Chrysalis.dir
+D:/Chrysalis/Solutions/Chrysalis.win_x64/CMakeFiles/ALL_BUILD.dir
+D:/Chrysalis/Solutions/Chrysalis.win_x64/CMakeFiles/ZERO_CHECK.dir
