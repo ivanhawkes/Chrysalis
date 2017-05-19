@@ -1,4 +1,4 @@
-<AnimDB FragDef="Animations/Mannequin/ADB/human_male_fragment_ids.xml" TagDef="Animations/Mannequin/ADB/human_male_tags.xml">
+<AnimDB FragDef="objects/characters/human/male/human_male_fragment_ids.xml" TagDef="objects/characters/human/male/human_male_tags.xml">
  <FragmentList>
   <Idle>
    <Fragment BlendOutDuration="0.2" Tags="Unaware">
@@ -50,13 +50,13 @@
    <Fragment BlendOutDuration="0.2" Tags="ScopeSlave">
     <AnimLayer>
      <Blend ExitTime="0" StartTime="0" Duration="0.2"/>
-     <Animation name="stepRotate_rgt_90_3p"/>
+     <Animation name="crouchwalk_l"/>
     </AnimLayer>
    </Fragment>
    <Fragment BlendOutDuration="0.2" Tags="">
     <AnimLayer>
      <Blend ExitTime="0" StartTime="0" Duration="0.2"/>
-     <Animation name="stepRotate_rgt_45_3p"/>
+     <Animation name="steprotate_rgt_45_3p"/>
     </AnimLayer>
    </Fragment>
   </Interaction>

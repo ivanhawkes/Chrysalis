@@ -143,9 +143,8 @@
      <Component typeId="{10000000-1000-1000-1000-100000000000}">
       <Geometry value="objects/characters/human/male/human_male.cdf"/>
       <Mass value="82"/>
-      <ControllerDefinition value="human_male_controller_defs.xml"/>
-      <ScopeContext value="Char3P"/>
-      <AnimationDatabase value="human_male.adb"/>
+      <ControllerDefinition value="objects/characters/human/male/human_male_controller_defs.xml"/>
+      <AnimationDatabase value="objects/characters/human/male/human_male.adb"/>
      </Component>
      <Component typeId="{10000000-1000-1000-1000-100000000000}"/>
      <Component typeId="{3F9D1B59-EBAB-4F73-ABB9-B04C675A32B9}"/>
@@ -177,9 +176,8 @@
      <Component typeId="{10000000-1000-1000-1000-100000000000}">
       <Geometry value="objects/characters/human/male/human_male.cdf"/>
       <Mass value="82"/>
-      <ControllerDefinition value="human_male_controller_defs.xml"/>
-      <ScopeContext value="Char3P"/>
-      <AnimationDatabase value="human_male.adb"/>
+      <ControllerDefinition value="objects/characters/human/male/human_male_controller_defs.xml"/>
+      <AnimationDatabase value="objects/characters/human/male/human_male.adb"/>
      </Component>
      <Component typeId="{10000000-1000-1000-1000-100000000000}"/>
      <Component typeId="{3F9D1B59-EBAB-4F73-ABB9-B04C675A32B9}"/>

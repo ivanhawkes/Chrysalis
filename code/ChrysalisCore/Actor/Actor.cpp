@@ -27,9 +27,6 @@
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
 
 
-const string MANNEQUIN_FOLDER = "Animations/Mannequin/ADB/";
-
-
 CActor::CActor()
 {
 	//m_characterRotation = new CCharacterRotation(*this);
@@ -785,7 +782,7 @@ void CActor::OnResetState()
 
 		// Loading the controller definition that we previously created.
 		// This is owned by the animation database manager
-		const SControllerDef* const pControllerDef = animationDatabaseManager.LoadControllerDef(MANNEQUIN_FOLDER + m_controllerDefinition);
+		const SControllerDef* const pControllerDef = animationDatabaseManager.LoadControllerDef(m_controllerDefinition);
 		if (pControllerDef == nullptr)
 		{
 			CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_ERROR, "Failed to load controller definition for actor.");
@@ -797,11 +794,6 @@ void CActor::OnResetState()
 		SAFE_DELETE(m_pAnimationContext);
 		m_pAnimationContext = new SAnimationContext(*pControllerDef);
 		m_pActionController = mannequin.CreateActionController(pEntity, *m_pAnimationContext);
-
-		// Scope Context Setup. In our controller definition we have a scope context that we called MainCharacter. The Scope
-		// Context Setup will associate this entity, the character instance we loaded at the beginning, and the animation
-		// database where we saved our fragments to this scope context.
-		//const TagID scopeContextId = m_pAnimationContext->controllerDef.m_scopeContexts.Find(m_scopeContext);
 
 		// HACK: Switching first / third person view modes should also switch animation contexts (I think). Hard coding the
 		// contexts is really bad form, but it useful for testing. Look into having a more flexible way of determining the name
@@ -815,7 +807,7 @@ void CActor::OnResetState()
 		// Let them know we don't support that scope context.
 		if (scopeContextId == TAG_ID_INVALID)
 		{
-			CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_ERROR, "Failed to find %s scope context id for MannequinSample in controller definition.", m_scopeContext);
+			CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_ERROR, "Failed to find the scope context ID in the controller definition.");
 			return;
 		}
 
@@ -823,10 +815,10 @@ void CActor::OnResetState()
 		CRY_ASSERT(pCharacterInstance != nullptr);
 
 		// Loading a database
-		const IAnimationDatabase* const pAnimationDatabase = animationDatabaseManager.Load(MANNEQUIN_FOLDER + m_animationDatabase);
+		const IAnimationDatabase* const pAnimationDatabase = animationDatabaseManager.Load(m_animationDatabase);
 		if (pAnimationDatabase == nullptr)
 		{
-			CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_ERROR, "Failed to load animation database for MannequinSample.");
+			CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_ERROR, "Failed to load the actor animation database.");
 			return;
 		}
 
@@ -1106,14 +1098,14 @@ void CActor::OnActionInteractionStart(EntityId playerId)
 			auto pInteractionEntity = gEnv->pEntitySystem->GetEntity(m_interactionEntityId);
 
 			// HACK: Another test, this time of the slaved animation code.
-			//TagState tagState { TAG_STATE_EMPTY };
-			//auto pPlayerAction = new CActorAnimationActionCooperative(*this, m_interactionEntityId, g_actorMannequinParams.fragmentIDs.Interaction,
-			//	tagState, g_actorMannequinParams.tagIDs.ScopeSlave);
-			//m_pActionController->Queue(*pPlayerAction);
+			TagState tagState { TAG_STATE_EMPTY };
+			auto pPlayerAction = new CActorAnimationActionCooperative(*this, m_interactionEntityId, g_actorMannequinParams.fragmentIDs.Interaction,
+				tagState, g_actorMannequinParams.tagIDs.ScopeSlave);
+			m_pActionController->Queue(*pPlayerAction);
 
 			// HACK: Another test - this time of setting an emote.
-			auto emoteAction = new CActorAnimationActionEmote(g_emoteMannequinParams.tagIDs.Awe);
-			m_pActionController->Queue(*emoteAction);
+			//auto emoteAction = new CActorAnimationActionEmote(g_emoteMannequinParams.tagIDs.Awe);
+			//m_pActionController->Queue(*emoteAction);
 
 			if (auto pInteractor = pInteractionEntity->GetComponent<CEntityInteractionComponent>())
 			{

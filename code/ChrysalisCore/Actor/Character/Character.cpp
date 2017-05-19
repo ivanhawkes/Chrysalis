@@ -72,9 +72,8 @@ void CCharacter::SerializeProperties(Serialization::IArchive& archive)
 {
 	archive(Serialization::ModelFilename(m_geometry), "Geometry", "Geometry");
 	archive(m_mass, "Mass", "Mass");
-	archive(Serialization::CharacterAnimationPicker(m_controllerDefinition), "ControllerDefinition", "Controller Definition");
-	archive(Serialization::CharacterAnimationPicker(m_scopeContext), "ScopeContext", "Scope Context");
-	archive(Serialization::CharacterAnimationPicker(m_animationDatabase), "AnimationDatabase", "Animation Database");
+	archive(Serialization::GeneralFilename(m_controllerDefinition), "ControllerDefinition", "Controller Definition");
+	archive(Serialization::GeneralFilename(m_animationDatabase), "AnimationDatabase", "Animation Database");
 
 	if (archive.isInput())
 	{

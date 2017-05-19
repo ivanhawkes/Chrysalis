@@ -1,10 +1,10 @@
 <MannequinPreview>
- <controllerDef filename="Animations/Mannequin/ADB/human_male_controller_defs.xml"/>
+ <controllerDef filename="objects/characters/human/male/human_male_controller_defs.xml"/>
  <contexts>
-  <contextData name="Char1P" enabled="1" database="Animations/Mannequin/ADB/human_male.adb" context="Char1P" tags="Standing" model="objects/characters/human/male/human_male.cdf"/>
-  <contextData name="SlaveCharacter" database="Animations/Mannequin/ADB/human_male.adb" context="SlaveCharacter" tags="Standing+Slave" fragtags="ScopeSlave" model="objects/characters/human/male/human_male.cdf"/>
-  <contextData name="SlaveObject" database="Animations/Mannequin/ADB/human_male.adb" context="SlaveObject" tags="Standing+Slave" fragtags="ScopeSlave" model="objects/characters/human/male/human_male.cdf"/>
-  <contextData name="Char3P" database="Animations/Mannequin/ADB/human_male.adb" context="Char3P" tags="Standing" model="objects/characters/human/male/human_male.cdf"/>
+  <contextData name="Char1P" enabled="1" database="objects/characters/human/male/human_male.adb" context="Char1P" tags="Standing" model="objects/characters/human/male/human_male.cdf"/>
+  <contextData name="SlaveCharacter" database="objects/characters/human/male/human_male.adb" context="SlaveCharacter" tags="Standing+ScopeSlave" fragtags="ScopeSlave" model="objects/characters/human/male/human_male.cdf" startPosition="2,0,0"/>
+  <contextData name="SlaveObject" database="objects/characters/human/male/human_male.adb" context="SlaveObject" tags="Standing+ScopeSlave" fragtags="ScopeSlave" model="objects/characters/human/male/human_male.cdf" startPosition="0,2,0"/>
+  <contextData name="Char3P" database="objects/characters/human/male/human_male.adb" context="Char3P" tags="Standing" model="objects/characters/human/male/human_male.cdf"/>
  </contexts>
  <History StartTime="-4.3160208e+008" EndTime="-4.3160208e+008"/>
 </MannequinPreview>

@@ -390,7 +390,6 @@ protected:
 	string m_geometry;
 	float m_mass { 82.0f };
 	string m_controllerDefinition { "human_male_controller_defs.xml" };
-	string m_scopeContext { "Char3P" };
 	string m_animationDatabase { "human_male.adb" };
 
 	/** Called to indicate the entity must reset itself. This is often done during PostInit() and

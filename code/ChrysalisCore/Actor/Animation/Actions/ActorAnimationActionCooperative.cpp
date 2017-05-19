@@ -139,9 +139,12 @@ void CActorAnimationActionCooperative::AddTargetToSlaveContext()
 		// Check which way we will enslave the target actor.
 		if ((m_pTargetActor) && (pTargetActionController = m_pTargetActor->GetActionController()))
 		{
-			// There is an action controller on the targetActor, so we directly slave that to our action controller.
+			// There is an action controller on the target actor, so we directly slave that to our action controller.
 			pSourceActionController->SetSlaveController(*pTargetActionController,
 				m_scopeContextId, true, m_pTargetOptionalDatabase);
+
+			// Set the target tag.
+			pTargetActionController->GetContext().state.Set(m_targetTagID, true);
 		}
 		else
 		{
@@ -153,9 +156,6 @@ void CActorAnimationActionCooperative::AddTargetToSlaveContext()
 			}
 		}
 	}
-
-	// Set the tags.
-	m_rootScope->GetActionController().GetContext().state.Set(m_targetTagID, true);
 }
 
 
@@ -169,6 +169,9 @@ void CActorAnimationActionCooperative::RemoveTargetFromSlaveContext()
 		if (const auto pSourceActionController = m_sourceActor.GetActionController())
 		{
 			pSourceActionController->SetSlaveController(*pTargetActionController, m_scopeContextId, false, m_pTargetOptionalDatabase);
+
+			// Remove the target tag.
+			pTargetActionController->GetContext().state.Set(m_targetTagID, true);
 		}
 	}
 	else
@@ -176,9 +179,6 @@ void CActorAnimationActionCooperative::RemoveTargetFromSlaveContext()
 		// Remove the slave scope context.
 		m_rootScope->GetActionController().ClearScopeContext(m_scopeContextId);
 	}
-
-	// Set the tag.
-	m_rootScope->GetActionController().GetContext().state.Set(m_targetTagID, false);
 }
 
 

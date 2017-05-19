@@ -1,6 +1,6 @@
 <ControllerDef>
- <Tags filename="Animations/Mannequin/ADB/human_male_tags.xml"/>
- <Fragments filename="Animations/Mannequin/ADB/human_male_fragment_ids.xml"/>
+ <Tags filename="objects/characters/human/male/human_male_tags.xml"/>
+ <Fragments filename="objects/characters/human/male/human_male_fragment_ids.xml"/>
  <FragmentDefs>
   <Idle scopes="FullBody1P+FullBody3P+SlaveCharacter+SlaveObject"/>
   <Move scopes="FullBody1P+FullBody3P"/>
