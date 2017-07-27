@@ -1,4 +1,4 @@
-<Material MtlFlags="524288" Shader="Terrain.Layer" GenMask="200400000" StringGenMask="%NORMAL_MAP%TEMP_TERRAIN" SurfaceType="mat_grass" MatTemplate="" Diffuse="1,1,1" Specular="0.0030352699,0.0030352699,0.0030352699" Opacity="1" Shininess="10" CloakAmount="0" vertModifType="0" LayerAct="1">
+<Material MtlFlags="524288" Shader="Terrain.Layer" GenMask="200400000" StringGenMask="%NORMAL_MAP%TEMP_TERRAIN" SurfaceType="mat_water" MatTemplate="" Diffuse="1,1,1" Specular="0.0030352699,0.0030352699,0.0030352699" Opacity="1" Shininess="10" CloakAmount="0" vertModifType="0" LayerAct="1">
  <Textures>
   <Texture Map="Diffuse" File="textures/terrain/grass/ground_grass_001_diff.tif"/>
   <Texture Map="Bumpmap" File="textures/terrain/grass/ground_grass_002_ddna.tif"/>

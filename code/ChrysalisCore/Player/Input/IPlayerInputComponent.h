@@ -18,6 +18,30 @@ enum EMovementStateFlags
 };
 
 
+// HACK: This should be generically useful and so should get moved to a utility file.
+template<typename T>
+struct TListener
+{
+	void AddEventListener(T* pListener)
+	{
+		assert(pListener);
+		if (pListener)
+			stl::push_back_unique(m_ListenersList, pListener);
+	}
+
+	void RemoveEventListener(T* pListener)
+	{
+		assert(pListener);
+		m_ListenersList.remove(pListener);
+	}
+
+	std::list<T*> GetListeners() { return m_ListenersList; }
+
+private:
+	std::list<T*> m_ListenersList;
+};
+
+
 struct IPlayerInputComponent : public ISimpleExtension
 //struct IPlayerInputComponent : public IEntityComponent
 {
@@ -31,9 +55,19 @@ struct IPlayerInputComponent : public ISimpleExtension
 		_LAST,
 	};
 
-
 	virtual ~IPlayerInputComponent() {};
 
+
+	/** Listen for 'special' keys and be notified when they are input e.g. ESC, Examine. */
+	struct IInputSpecialListener
+	{
+		virtual ~IInputSpecialListener() {};
+
+		virtual void OnInputSpecialEsc() = 0;
+		virtual void OnInputSpecialExamine() = 0;
+	};
+
+	virtual TListener<IInputSpecialListener> GetSpecialListener() = 0;
 
 	/**
 	Reset the movements to zero state.

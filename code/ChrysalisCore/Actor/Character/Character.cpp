@@ -5,6 +5,7 @@
 #include <Actor/Character/Movement/StateMachine/CharacterStateEvents.h>
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
 #include <CrySerialization/Decorators/Resources.h>
+#include <Actor/Character/CharacterAttributesComponent.h>
 
 
 //CRYREGISTER_CLASS(CCharacter)
@@ -70,7 +71,8 @@ void CCharacter::ProcessEvent(SEntityEvent& event)
 
 void CCharacter::SerializeProperties(Serialization::IArchive& archive)
 {
-	archive(Serialization::ModelFilename(m_geometry), "Geometry", "Geometry");
+	archive(Serialization::ModelFilename(m_geometryFirstPerson), "GeometryFirstPerson", "First Person Geometry");
+	archive(Serialization::ModelFilename(m_geometryThirdPerson), "GeometryThirdPerson", "Third Person Geometry");
 	archive(m_mass, "Mass", "Mass");
 	archive(Serialization::GeneralFilename(m_controllerDefinition), "ControllerDefinition", "Controller Definition");
 	archive(Serialization::GeneralFilename(m_animationDatabase), "AnimationDatabase", "Animation Database");
@@ -89,10 +91,15 @@ void CCharacter::SerializeProperties(Serialization::IArchive& archive)
 
 void CCharacter::PostInit(IGameObject * pGameObject)
 {
+	auto pEntity = GetEntity();
+
 	CActor::PostInit(pGameObject);
 
 	// Register for game object events.
 	RegisterEvents();
+
+	// Manage attributes.
+	m_pCharacterAttributesComponent = pEntity->GetOrCreateComponent<CCharacterAttributesComponent>();
 
 	// Get it into a known state.
 	OnResetState();
@@ -111,6 +118,7 @@ void CCharacter::HandleEvent(const SGameObjectEvent& event)
 }
 
 
+// FIX: 5.4
 IEntityComponent::ComponentEventPriority CCharacter::GetEventPriority(const int eventID) const
 {
 	switch (eventID)

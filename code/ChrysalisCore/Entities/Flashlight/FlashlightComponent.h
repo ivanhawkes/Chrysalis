@@ -14,18 +14,19 @@
 
 class CEntityInteractionComponent;
 class CItemInteractionComponent;
+class CSnaplockComponent;
 
 
 /**
 A flashlight component.
 
 \sa CGameObjectExtensionHelper&lt;CFlashlightComponent, IGameObjectExtension&gt;
-\sa IGameObjectView
-\sa IInteractionSwitch
-\sa IInteractionPickupAndDrop
-\sa IInteractionInteract
-\sa CGeometryComponent::IGeometryListener
-\sa CDynamicLightComponent::IDynamicLightListener
+\sa IGameObjectView.
+\sa IInteractionSwitch.
+\sa IInteractionPickupAndDrop.
+\sa IInteractionInteract.
+\sa CGeometryComponent::IGeometryListener.
+\sa CDynamicLightComponent::IDynamicLightListener.
 **/
 class CFlashlightComponent : public CDesignerEntityComponent<>, public IEntityPropertyGroup,
 	public IInteractionSwitch, public IInteractionInteract,
@@ -125,6 +126,11 @@ private:
 
 	/** A local rotation offset within the slot for the light. **/
 	Quat m_lightLocalRotation { kRightToForward };
+
+	// HACK: This shouldn't be needed once we move to being derived from CItem.
+
+	/** A component that allows for management of snaplocks. */
+	CSnaplockComponent* m_pSnaplockComponent { nullptr };
 
 	/** Shared flashlight parameters. */
 	//SItemFlashlightParameterSharedConstPtr m_itemFlashlightParameterShared;

@@ -1,0 +1,12 @@
+<ParaGroup>
+ <Dimensions>
+  <Param Name="MoveSpeed" Min="0.1" Max="3.0999999" Cells="3"/>
+ </Dimensions>
+ <ExampleList>
+  <Example AName="walk_bck_3p"/>
+  <Example AName="jog_bck_3p"/>
+ </ExampleList>
+ <Blendable>
+  <Face p0="0" p1="1"/>
+ </Blendable>
+</ParaGroup>

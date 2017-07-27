@@ -44,6 +44,24 @@
      </Component>
      <Component typeId="{D7C88ABD-16D4-4F0F-BF9C-328AE7623A89}"/>
      <Component typeId="{E2F360C6-F7FF-41DE-A1A2-D7C7C64AD730}"/>
+     <Component typeId="{70010D30-B370-4ACA-B664-623BDB7FA70C}">
+      <Snaplocks>
+       <snaplockType>
+        <typeId>
+         <guid>
+          <Element value="3126770270"/>
+          <Element value="3126770270"/>
+          <Element value="3126770270"/>
+          <Element value="3126770270"/>
+         </guid>
+        </typeId>
+       </snaplockType>
+       <isMale value="false"/>
+       <isInUse value="false"/>
+       <children />
+      </Snaplocks>
+      <definitionFile value=""/>
+     </Component>
     </Components>
    </Object>
    <Object Type="Entity" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{1CDF2CD8-1F53-841F-A2F4-52D9B3A5188A}" Name="FlashlightComponent2" Pos="57.911011,64.500534,32.083" FloorNumber="-1" Rotate="0.99999744,0,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="FlashlightComponent" HasEntity="1">
@@ -88,6 +106,37 @@
       <FlareFieldOfView value="360"/>
      </Component>
      <Component typeId="{D7C88ABD-16D4-4F0F-BF9C-328AE7623A89}"/>
+     <Component typeId="{E2F360C6-F7FF-41DE-A1A2-D7C7C64AD730}"/>
+     <Component typeId="{70010D30-B370-4ACA-B664-623BDB7FA70C}">
+      <Snaplocks>
+       <snaplockType>
+        <typeId>
+         <guid>
+          <Element value="3126770270"/>
+          <Element value="3126770270"/>
+          <Element value="3126770270"/>
+          <Element value="3126770270"/>
+         </guid>
+        </typeId>
+       </snaplockType>
+       <isMale value="false"/>
+       <isInUse value="false"/>
+       <children />
+      </Snaplocks>
+      <definitionFile value=""/>
+     </Component>
+    </Components>
+   </Object>
+   <Object Type="Entity" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{285585B6-5758-3334-3D37-E6A1C35AF0E5}" Name="SecurityPadComponent1" Pos="69.239677,55.33112,33.631832" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="SecurityPadComponent" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component typeId="{0792FCE0-BF7E-44FC-A06A-A6F9B78EADC4}"/>
+     <Component typeId="{54B2C130-8E27-4E07-8BF0-F1FE89228D14}">
+      <Geometry value="objects/security/security_pad/security_pad.cgf"/>
+      <Physicalize value="ePhysicalizationType_Static"/>
+      <ReceiveCollisionEvents value="false"/>
+      <Mass value="2"/>
+     </Component>
      <Component typeId="{E2F360C6-F7FF-41DE-A1A2-D7C7C64AD730}"/>
     </Components>
    </Object>
@@ -141,7 +190,8 @@
      <Component typeId="{67994647-83DD-41B8-A098-E26B4B2C95FD}"/>
      <Component typeId="{EC4E2FDC-DCFF-4AB3-A691-B9CC4ECE5788}"/>
      <Component typeId="{10000000-1000-1000-1000-100000000000}">
-      <Geometry value="objects/characters/human/male/human_male.cdf"/>
+      <GeometryFirstPerson value="objects/characters/human/male/human_male.cdf"/>
+      <GeometryThirdPerson value="objects/characters/human/male/human_male.cdf"/>
       <Mass value="82"/>
       <ControllerDefinition value="objects/characters/human/male/human_male_controller_defs.xml"/>
       <AnimationDatabase value="objects/characters/human/male/human_male.adb"/>
@@ -152,6 +202,223 @@
      <Component typeId="{AA2D677D-23A0-48D5-AA47-116B97DD6216}"/>
      <Component typeId="{10000000-1000-1000-1000-100000000000}"/>
      <Component typeId="{B077AB15-47AF-4BEB-9BF9-D68EE49399E1}"/>
+     <Component typeId="{70010D30-B370-4ACA-B664-623BDB7FA70C}">
+      <Snaplocks>
+       <snaplockType>
+        <typeId>
+         <guid>
+          <Element value="3126770270"/>
+          <Element value="3126770270"/>
+          <Element value="3126770270"/>
+          <Element value="3126770270"/>
+         </guid>
+        </typeId>
+       </snaplockType>
+       <isMale value="false"/>
+       <isInUse value="false"/>
+       <children>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="3485861233"/>
+                        <Element value="3023886290"/>
+                        <Element value="1042959965"/>
+                        <Element value="1635353939"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="1792238461"/>
+                        <Element value="2890358072"/>
+                        <Element value="2800832328"/>
+                        <Element value="280635902"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="2465112981"/>
+                        <Element value="2774927731"/>
+                        <Element value="1370702766"/>
+                        <Element value="2563725070"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="2655735857"/>
+                        <Element value="2510422049"/>
+                        <Element value="2948614896"/>
+                        <Element value="2116231488"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="3362459261"/>
+                        <Element value="3088670666"/>
+                        <Element value="552879562"/>
+                        <Element value="3065471444"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="190079553"/>
+                        <Element value="2840568720"/>
+                        <Element value="1675511964"/>
+                        <Element value="1429631128"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="3955369732"/>
+                        <Element value="2883260498"/>
+                        <Element value="1568689771"/>
+                        <Element value="2716549641"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="2125783821"/>
+                        <Element value="3123393844"/>
+                        <Element value="3521331752"/>
+                        <Element value="3374473166"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="2335105758"/>
+                        <Element value="2604471350"/>
+                        <Element value="230771495"/>
+                        <Element value="1982984631"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="3041633348"/>
+                        <Element value="2549706684"/>
+                        <Element value="1766870309"/>
+                        <Element value="1812950898"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="3479783705"/>
+                        <Element value="2968789303"/>
+                        <Element value="2566736665"/>
+                        <Element value="3007911299"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="661819915"/>
+                        <Element value="2978953632"/>
+                        <Element value="2371766824"/>
+                        <Element value="2290123931"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="2563715613"/>
+                        <Element value="3029944309"/>
+                        <Element value="110052232"/>
+                        <Element value="3009518831"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+       </children>
+      </Snaplocks>
+      <definitionFile value=""/>
+     </Component>
+     <Component typeId="{0E58AE4C-F0B8-4AE8-8BB0-C7CC5F585495}"/>
+     <Component typeId="{9CDB533F-1108-41B2-83A9-A7C757F74AB4}"/>
+     <Component typeId="{208A5A90-F5EC-4C86-A61E-5695005E2E73}"/>
     </Components>
    </Object>
    <Object Type="Designer" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{65ED18F3-25ED-6B14-A560-755E76095A68}" Name="Designer1" Pos="60.390171,65.167625,32" FloorNumber="-1" Rotate="1,0,0,0" Scale="7,7,7" ColorRGB="16777215" Material="EngineAssets/TextureMsg/DefaultSolids" RndFlags="1073741832" StaticObjFlags="0" ViewDistRatio="100">
@@ -167,25 +434,6 @@
      <UVIslands />
     </Brush>
     <Mesh Version="2" BinaryData="AAAAAAAAAAAYAAAAGAAAACQAAAAYAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAPwAAAAAAAIA/AACAPwAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AAAAAAAAgD8AAIA/AAAAAAAAgD8AAIA/AACAPwAAgD8AAAAAAACAPwAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAgD8AAIA/AACAPwAAAAAAAIA/AACAPwAAAAAAAAAAAACAPwAAgD8AAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAgD8AAIA/AAAAAAAAgD8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAAAAAAAAgL8AAIC/AACAvwAAgL8AAAAAAAAAAAAAAAAAAAAAAACAvwAAgL8AAIC/AACAvwAAAAAAAIA/AAAAAAAAgD8AAIC/AAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AACAvwAAgD8AAIC/AAAAAAAAAQACAAAAAgADAAQABQAGAAQABgAHAAgACQAKAAgACgALAAwADQAOAAwADgAPABAAEQASABAAEgATABQAFQAWABQAFgAXAAAAAYAAAAGAAAAAAAGAAYAAAAGAAAABgAAAAAABgAGAAAABgAAAAYAAAAAAAYABgAAAAYAAAAGAAAAAAAGAAYABgAAAAAABgAAAAAABgAGAAYAAAAAAAYAAAAAAAYABgAGAAAAAAAGAAAAAAAGAAYABgAAAAAABgAAAAAABgAGAAAD/fwAAAYAAAAAAAYABgAAA/38AAAGAAAAAAAGAAYAAAP9/AAABgAAAAAABgAGAAAD/fwAAAYAAAAAAAYABgP9/AAAAAAGAAAAAAAGAAYD/fwAAAAABgAAAAAABgAGA/38AAAAAAYAAAAAAAYABgP9/AAAAAAGAAAAAAAGAAYD/fwAAAAABgAAAAYAAAAGA/38AAAAAAYAAAAGAAAABgP9/AAAAAAGAAAABgAAAAYD/fwAAAAABgAAAAYAAAAGAAYAAAAAA/38AAP9/AAD/fwGAAAAAAP9/AAD/fwAA/38BgAAAAAD/fwAA/38AAP9/AYAAAAAA/38AAP9/AAD/fwAAAD8AAAA/AAAAP9ezXT8AAAAAAAAAACQAAAAAAAAAGAAAAAAAAAAAAAAAABAAAA=="/>
-   </Object>
-   <Object Type="Entity" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{6BB09B0E-1F08-ADFB-B630-591424D5C319}" Name="Hero2" Pos="67.4291,56.458015,32" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" Material="objects/characters/human/male/human_male" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Character" HasEntity="1">
-    <Properties />
-    <Components>
-     <Component typeId="{67994647-83DD-41B8-A098-E26B4B2C95FD}"/>
-     <Component typeId="{EC4E2FDC-DCFF-4AB3-A691-B9CC4ECE5788}"/>
-     <Component typeId="{10000000-1000-1000-1000-100000000000}">
-      <Geometry value="objects/characters/human/male/human_male.cdf"/>
-      <Mass value="82"/>
-      <ControllerDefinition value="objects/characters/human/male/human_male_controller_defs.xml"/>
-      <AnimationDatabase value="objects/characters/human/male/human_male.adb"/>
-     </Component>
-     <Component typeId="{10000000-1000-1000-1000-100000000000}"/>
-     <Component typeId="{3F9D1B59-EBAB-4F73-ABB9-B04C675A32B9}"/>
-     <Component typeId="{0CC3EE7E-1ACE-4BCD-9AEA-E391B81B8E78}"/>
-     <Component typeId="{AA2D677D-23A0-48D5-AA47-116B97DD6216}"/>
-     <Component typeId="{10000000-1000-1000-1000-100000000000}"/>
-     <Component typeId="{B077AB15-47AF-4BEB-9BF9-D68EE49399E1}"/>
-    </Components>
    </Object>
    <Object Type="Entity" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{7D524BD8-84A9-C54B-B983-553698A0CE82}" Name="Flashlight" Pos="69.177841,55.584652,33.028526" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="GeomEntity" HasEntity="1">
     <Properties />
@@ -225,7 +473,7 @@
      </Component>
     </Components>
    </Object>
-   <Object Type="Entity" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{A3A02949-985E-794B-62B6-D374A23249CA}" Name="AnimatedDoor1" Pos="69.190903,64.850136,32.000099" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="AnimatedDoor" HasEntity="1">
+   <Object Type="Entity" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{A3A02949-985E-794B-62B6-D374A23249CA}" Name="AnimatedDoor1" Pos="74.869331,64.850136,32.000099" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="AnimatedDoor" HasEntity="1">
     <Properties />
     <Components>
      <Component typeId="{D246E11F-E7E2-48F0-B512-402908F84496}">
@@ -292,6 +540,24 @@
      </Component>
      <Component typeId="{D7C88ABD-16D4-4F0F-BF9C-328AE7623A89}"/>
      <Component typeId="{E2F360C6-F7FF-41DE-A1A2-D7C7C64AD730}"/>
+     <Component typeId="{70010D30-B370-4ACA-B664-623BDB7FA70C}">
+      <Snaplocks>
+       <snaplockType>
+        <typeId>
+         <guid>
+          <Element value="3126770270"/>
+          <Element value="3126770270"/>
+          <Element value="3126770270"/>
+          <Element value="3126770270"/>
+         </guid>
+        </typeId>
+       </snaplockType>
+       <isMale value="false"/>
+       <isInUse value="false"/>
+       <children />
+      </Snaplocks>
+      <definitionFile value=""/>
+     </Component>
     </Components>
    </Object>
    <Object Type="Entity" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{BCB36244-A8F4-5BFF-BDD6-D69BD98A0AD2}" Name="FlashlightComponent1" Pos="63.511887,62.34148,33.050522" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="FlashlightComponent" HasEntity="1">
@@ -337,21 +603,25 @@
      </Component>
      <Component typeId="{D7C88ABD-16D4-4F0F-BF9C-328AE7623A89}"/>
      <Component typeId="{E2F360C6-F7FF-41DE-A1A2-D7C7C64AD730}"/>
+     <Component typeId="{70010D30-B370-4ACA-B664-623BDB7FA70C}">
+      <Snaplocks>
+       <snaplockType>
+        <typeId>
+         <guid>
+          <Element value="3126770270"/>
+          <Element value="3126770270"/>
+          <Element value="3126770270"/>
+          <Element value="3126770270"/>
+         </guid>
+        </typeId>
+       </snaplockType>
+       <isMale value="false"/>
+       <isInUse value="false"/>
+       <children />
+      </Snaplocks>
+      <definitionFile value=""/>
+     </Component>
     </Components>
-   </Object>
-   <Object Type="Designer" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{C915A086-F64B-F102-C8E1-791035CA3A4D}" Name="Designer3" Pos="69.223289,56.033497,32" FloorNumber="-1" Rotate="0.99998486,0,0,0" ColorRGB="16777215" Material="EngineAssets/TextureMsg/DefaultSolids" RndFlags="1073741832" StaticObjFlags="0" ViewDistRatio="100">
-    <Brush DesignerModeFlags="0" SubdivisionLevel="0" SubdivisionSmoothingGroup="0" MirrorPlaneNormal="0,0,0" MirrorPlaneDistance="0">
-     <Polygon GUID="{B5171FB9-0FD4-6C23-A4B8-829BE9188B35}" BinaryData="BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwPwAAAAAAAAAAAAAAAAAA8D8AAAAAAADwPwAAAAAAAAAAAAAAAAAA8D8AAAAAAAAAAAQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAgL8AAIC/AACAvwAAgL8AAAAA"/>
-     <Polygon GUID="{6E597CF6-29AE-B0B6-5495-AF0A8F789C90}" BinaryData="BAAAAAAAAAAAAAAAAAAAAAAA8D8AAAAAAAAAAAAAAAAAAAAAAAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/AAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/AAAAAAAA8D8AAAAAAAAAAAQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAAAAAAAAAAAAAPA/AAAAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAAAAgL8AAIC/AACAvwAAgL8AAAAA"/>
-     <Polygon GUID="{94EC2136-7EC3-451B-7D2F-250B6A2CF018}" BinaryData="BAAAAAAAAAAAAPA/AAAAAAAA8D8AAAAAAAAAAAAAAAAAAPA/AAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/AAAAAAAAAAAAAAAAAADwPwAAAAAAAPA/AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAADwPwAAAAAAAAAAAAAAAAAAAAAAAAAAAADwvwAAgD8AAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAA"/>
-     <Polygon GUID="{35A8239F-3EBF-603F-0B82-07A40E423583}" BinaryData="BAAAAAAAAAAAAPA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAPA/AAAAAAAAAAAAAAAAAADwPwAAAAAAAAAAAAAAAAAAAAAAAAAAAADwPwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAAAAAAAAAAAAAAAgAAAgD8AAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAA"/>
-     <Polygon GUID="{0EEA274F-F98A-B52A-D279-94B43286D3DD}" BinaryData="BAAAAAAAAAAAAPA/AAAAAAAA8D8AAAAAAADwPwAAAAAAAAAAAAAAAAAA8D8AAAAAAADwPwAAAAAAAAAAAAAAAAAAAAAAAAAAAADwPwAAAAAAAPA/AAAAAAAAAAAAAAAAAADwPwQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8D8AAAAAAADwvwAAgD8AAIC/AAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAA"/>
-     <Polygon GUID="{8B94A927-0555-A333-2408-E193E0C61F23}" BinaryData="BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8D8AAAAAAAAAAAAAAAAAAPA/AAAAAAAA8D8AAAAAAAAAAAAAAAAAAPA/AAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAQAAAAEAAAACAAAAAgAAAAMAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8AAAAAAAAAgAAAAAAAAAAAAAAAAAAAgD8AAIC/AACAPwAAgL8AAAAA"/>
-     <SmoothingGroups />
-     <SemiSharpCrease />
-     <UVIslands />
-    </Brush>
-    <Mesh Version="2" BinaryData="AAAAAAAAAAAYAAAAGAAAACQAAAAYAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAPwAAAAAAAIA/AACAPwAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AAAAAAAAgD8AAIA/AAAAAAAAgD8AAIA/AACAPwAAgD8AAAAAAACAPwAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAgD8AAIA/AACAPwAAAAAAAIA/AACAPwAAAAAAAAAAAACAPwAAgD8AAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAgD8AAIA/AAAAAAAAgD8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAAAAAAAAgL8AAIC/AACAvwAAgL8AAAAAAAAAAAAAAAAAAAAAAACAvwAAgL8AAIC/AACAvwAAAAAAAIA/AAAAAAAAgD8AAIC/AAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AACAvwAAgD8AAIC/AAAAAAAAAQACAAAAAgADAAQABQAGAAQABgAHAAgACQAKAAgACgALAAwADQAOAAwADgAPABAAEQASABAAEgATABQAFQAWABQAFgAXAAAAAYAAAAGAAAAAAAGAAYAAAAGAAAABgAAAAAABgAGAAAABgAAAAYAAAAAAAYABgAAAAYAAAAGAAAAAAAGAAYABgAAAAAABgAAAAAABgAGAAYAAAAAAAYAAAAAAAYABgAGAAAAAAAGAAAAAAAGAAYABgAAAAAABgAAAAAABgAGAAAD/fwAAAYAAAAAAAYABgAAA/38AAAGAAAAAAAGAAYAAAP9/AAABgAAAAAABgAGAAAD/fwAAAYAAAAAAAYABgP9/AAAAAAGAAAAAAAGAAYD/fwAAAAABgAAAAAABgAGA/38AAAAAAYAAAAAAAYABgP9/AAAAAAGAAAAAAAGAAYD/fwAAAAABgAAAAYAAAAGA/38AAAAAAYAAAAGAAAABgP9/AAAAAAGAAAABgAAAAYD/fwAAAAABgAAAAYAAAAGAAYAAAAAA/38AAP9/AAD/fwGAAAAAAP9/AAD/fwAA/38BgAAAAAD/fwAA/38AAP9/AYAAAAAA/38AAP9/AAD/fwAAAD8AAAA/AAAAP9ezXT8AAAAAAAAAACQAAAAAAAAAGAAAAAAAAAAAAAAAABAAAA=="/>
    </Object>
    <Object Type="Designer" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{E6BA42D6-9AF9-BE9B-E714-4F4419DBC152}" Name="Designer2" Pos="63,62,32" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="16777215" Material="EngineAssets/TextureMsg/DefaultSolids" RndFlags="1073741832" StaticObjFlags="0" ViewDistRatio="100">
     <Brush DesignerModeFlags="0" SubdivisionLevel="0" SubdivisionSmoothingGroup="0" MirrorPlaneNormal="0,0,0" MirrorPlaneDistance="0">
@@ -366,6 +636,243 @@
      <UVIslands />
     </Brush>
     <Mesh Version="2" BinaryData="AAAAAAAAAAAYAAAAGAAAACQAAAAYAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAPwAAAAAAAIA/AACAPwAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AAAAAAAAgD8AAIA/AAAAAAAAgD8AAIA/AACAPwAAgD8AAAAAAACAPwAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAgD8AAIA/AACAPwAAAAAAAIA/AACAPwAAAAAAAAAAAACAPwAAgD8AAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAgD8AAIA/AAAAAAAAgD8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAAAAAAAAgL8AAIC/AACAvwAAgL8AAAAAAAAAAAAAAAAAAAAAAACAvwAAgL8AAIC/AACAvwAAAAAAAIA/AAAAAAAAgD8AAIC/AAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AACAvwAAgD8AAIC/AAAAAAAAAQACAAAAAgADAAQABQAGAAQABgAHAAgACQAKAAgACgALAAwADQAOAAwADgAPABAAEQASABAAEgATABQAFQAWABQAFgAXAAAAAYAAAAGAAAAAAAGAAYAAAAGAAAABgAAAAAABgAGAAAABgAAAAYAAAAAAAYABgAAAAYAAAAGAAAAAAAGAAYABgAAAAAABgAAAAAABgAGAAYAAAAAAAYAAAAAAAYABgAGAAAAAAAGAAAAAAAGAAYABgAAAAAABgAAAAAABgAGAAAD/fwAAAYAAAAAAAYABgAAA/38AAAGAAAAAAAGAAYAAAP9/AAABgAAAAAABgAGAAAD/fwAAAYAAAAAAAYABgP9/AAAAAAGAAAAAAAGAAYD/fwAAAAABgAAAAAABgAGA/38AAAAAAYAAAAAAAYABgP9/AAAAAAGAAAAAAAGAAYD/fwAAAAABgAAAAYAAAAGA/38AAAAAAYAAAAGAAAABgP9/AAAAAAGAAAABgAAAAYD/fwAAAAABgAAAAYAAAAGAAYAAAAAA/38AAP9/AAD/fwGAAAAAAP9/AAD/fwAA/38BgAAAAAD/fwAA/38AAP9/AYAAAAAA/38AAP9/AAD/fwAAAD8AAAA/AAAAP9ezXT8AAAAAAAAAACQAAAAAAAAAGAAAAAAAAAAAAAAAABAAAA=="/>
+   </Object>
+   <Object Type="Entity" Layer="Main" LayerGUID="{374A523A-E30D-4FFF-B284-10FCBF81D9A7}" Id="{FFA44F6C-8354-E839-664E-35757614ED74}" Name="Hero2" Pos="65.973549,55.445377,32" FloorNumber="-1" Rotate="0.99144483,0,0,-0.13052621" ColorRGB="65535" Material="objects/characters/human/male/human_male" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Character" HasEntity="1">
+    <Properties />
+    <Components>
+     <Component typeId="{67994647-83DD-41B8-A098-E26B4B2C95FD}"/>
+     <Component typeId="{EC4E2FDC-DCFF-4AB3-A691-B9CC4ECE5788}"/>
+     <Component typeId="{10000000-1000-1000-1000-100000000000}">
+      <GeometryFirstPerson value="objects/characters/human/male/human_male.cdf"/>
+      <GeometryThirdPerson value="objects/characters/human/male/human_male.cdf"/>
+      <Mass value="82"/>
+      <ControllerDefinition value="objects/characters/human/male/human_male_controller_defs.xml"/>
+      <AnimationDatabase value="objects/characters/human/male/human_male.adb"/>
+     </Component>
+     <Component typeId="{10000000-1000-1000-1000-100000000000}"/>
+     <Component typeId="{3F9D1B59-EBAB-4F73-ABB9-B04C675A32B9}"/>
+     <Component typeId="{0CC3EE7E-1ACE-4BCD-9AEA-E391B81B8E78}"/>
+     <Component typeId="{AA2D677D-23A0-48D5-AA47-116B97DD6216}"/>
+     <Component typeId="{10000000-1000-1000-1000-100000000000}"/>
+     <Component typeId="{B077AB15-47AF-4BEB-9BF9-D68EE49399E1}"/>
+     <Component typeId="{70010D30-B370-4ACA-B664-623BDB7FA70C}">
+      <Snaplocks>
+       <snaplockType>
+        <typeId>
+         <guid>
+          <Element value="3126770270"/>
+          <Element value="3126770270"/>
+          <Element value="3126770270"/>
+          <Element value="3126770270"/>
+         </guid>
+        </typeId>
+       </snaplockType>
+       <isMale value="false"/>
+       <isInUse value="false"/>
+       <children>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="3485861233"/>
+                        <Element value="3023886290"/>
+                        <Element value="1042959965"/>
+                        <Element value="1635353939"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="1792238461"/>
+                        <Element value="2890358072"/>
+                        <Element value="2800832328"/>
+                        <Element value="280635902"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="2465112981"/>
+                        <Element value="2774927731"/>
+                        <Element value="1370702766"/>
+                        <Element value="2563725070"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="2655735857"/>
+                        <Element value="2510422049"/>
+                        <Element value="2948614896"/>
+                        <Element value="2116231488"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="3362459261"/>
+                        <Element value="3088670666"/>
+                        <Element value="552879562"/>
+                        <Element value="3065471444"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="190079553"/>
+                        <Element value="2840568720"/>
+                        <Element value="1675511964"/>
+                        <Element value="1429631128"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="3955369732"/>
+                        <Element value="2883260498"/>
+                        <Element value="1568689771"/>
+                        <Element value="2716549641"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="2125783821"/>
+                        <Element value="3123393844"/>
+                        <Element value="3521331752"/>
+                        <Element value="3374473166"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="2335105758"/>
+                        <Element value="2604471350"/>
+                        <Element value="230771495"/>
+                        <Element value="1982984631"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="3041633348"/>
+                        <Element value="2549706684"/>
+                        <Element value="1766870309"/>
+                        <Element value="1812950898"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="3479783705"/>
+                        <Element value="2968789303"/>
+                        <Element value="2566736665"/>
+                        <Element value="3007911299"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="661819915"/>
+                        <Element value="2978953632"/>
+                        <Element value="2371766824"/>
+                        <Element value="2290123931"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+        <Element>
+         <snaplockType>
+          <typeId>
+           <guid>
+                        <Element value="2563715613"/>
+                        <Element value="3029944309"/>
+                        <Element value="110052232"/>
+                        <Element value="3009518831"/>
+           </guid>
+          </typeId>
+         </snaplockType>
+         <isMale value="false"/>
+         <isInUse value="false"/>
+         <children />
+        </Element>
+       </children>
+      </Snaplocks>
+      <definitionFile value=""/>
+     </Component>
+     <Component typeId="{0E58AE4C-F0B8-4AE8-8BB0-C7CC5F585495}"/>
+     <Component typeId="{9CDB533F-1108-41B2-83A9-A7C757F74AB4}"/>
+     <Component typeId="{208A5A90-F5EC-4C86-A61E-5695005E2E73}"/>
+    </Components>
    </Object>
   </LayerObjects>
  </Layer>

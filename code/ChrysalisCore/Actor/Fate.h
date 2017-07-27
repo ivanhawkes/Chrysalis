@@ -12,6 +12,8 @@ development. */
 
 #pragma once
 
+#include <CryMath/Random.h>
+
 
 class CFate
 {

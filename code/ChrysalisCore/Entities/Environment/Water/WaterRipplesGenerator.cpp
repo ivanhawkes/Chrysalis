@@ -3,6 +3,7 @@
 #include "WaterRipplesGenerator.h"
 #include <CryRenderer/IRenderAuxGeom.h>
 #include <Game/Game.h>
+#include <CryMath/Random.h>
 
 
 #define WATER_RIPPLES_GENERATOR_UPDATE_SLOT 0

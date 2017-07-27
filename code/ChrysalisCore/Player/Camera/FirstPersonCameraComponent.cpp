@@ -45,7 +45,7 @@ void CFirstPersonCameraComponent::Initialize()
 
 void CFirstPersonCameraComponent::PostInit(IGameObject * pGameObject)
 {
-	pGameObject->EnableUpdateSlot(this, 0);
+	pGameObject->EnableUpdateSlot(this, CPlayer::EPlayerUpdateSlot::ePlayerUpdateSlot_CameraFirstPerson);
 
 	// Required for 5.3 to call update.
 	GetEntity()->Activate(true);

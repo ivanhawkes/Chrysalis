@@ -58,6 +58,15 @@ public:
 
 
 	/**
+	Sets the present camera mode to whatever the last camera mode was. This should work for simple situations where
+	the camera is switched to a new view and needs to be switched back again after use.
+	
+	\param	reason The reason.
+	**/
+	void SetLastCameraMode();
+
+
+	/**
 	Gets the currently active camera.
 
 	\return	null if it fails, else the camera.

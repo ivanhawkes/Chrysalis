@@ -35,6 +35,22 @@ In time I will ensure the base code has all the features needed to support a ric
 
 The best way is to use Git to clone this entire project to your local hard drive.
 
+**IMPORTANT: Your Git client must already have Git LFS installed, or the binary files will fail to clone properly and you will find all sorts of strange errors occur.**
+
+You can find out more about Git LFS at [https://git-lfs.github.com/]
+
+Most new work is performed on the 'ivan' branch - a feature branch where I work, typically for a month or so at a time, before I perform a 'squash merge' back into the 'development' branch.
+
+The 'development' branch is there to merge multiple feature branches prior to a squash merge into the 'master' branch.
+
+The 'master' branch is usually a month or so behind any work, but is generally expected to both build and have a test level to get you started quickly.
+
+After you have cloned the repository to your local hard drive you will need to right click on the **'Chrysalis.cryproject'** and tell it to **'Generate Solution'**.
+
+This will invoke the cmake process, which will process the cryproject file and create an MSVC solution that is suitable for your machine.
+
+The 'Solutions' folder that is present in some branches of the repository is from an earlier attempt to have the Microsoft Team Services system perform a build for continuous integration purposes. It failed, and will need to be purged at some point in the future.
+
 The project contains both the code to build, and the project files needed by CRYENGINE to run the example levels.
 
 Don't expect any flash looking level design or grahpics, I'm a programmer, so any models and textures are done as quickly and easily as I can to test out the features.

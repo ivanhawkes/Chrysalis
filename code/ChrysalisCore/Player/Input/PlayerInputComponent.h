@@ -60,6 +60,14 @@ public:
 	float GetHeadYawDelta() override { return 0.0f; }
 
 
+	/**
+	Returns an instance of the special keystroke listener so other code sections can subscribe to special keystrokes.
+	
+	\return The special listener.
+	**/
+	TListener<IInputSpecialListener> GetSpecialListener() override { return m_listenersSpecial; }
+
+
 	// ***
 	// *** IActionListener
 	// ***
@@ -90,16 +98,22 @@ public:
 
 
 protected:
+	bool OnActionEscape(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionExamine(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+
 	bool OnActionMoveLeft(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 	bool OnActionMoveRight(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 	bool OnActionMoveForward(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 	bool OnActionMoveBackward(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+
 	bool OnActionRotateYaw(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 	bool OnActionRotatePitch(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 	bool OnActionXIRotateYaw(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 	bool OnActionXIRotatePitch(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+
 	bool OnActionZoomIn(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 	bool OnActionZoomOut(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+
 	bool OnActionJump(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 	bool OnActionCrouchToggle(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 	bool OnActionCrawlToggle(EntityId entityId, const ActionId& actionId, int activationMode, float value);
@@ -107,6 +121,7 @@ protected:
 	bool OnActionSitToggle(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 	bool OnActionSprintToggle(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 	bool OnActionWalkJog(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+
 	bool OnActionItemUse(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 	bool OnActionItemPickup(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 	bool OnActionItemDrop(EntityId entityId, const ActionId& actionId, int activationMode, float value);
@@ -150,6 +165,29 @@ protected:
 	bool OnActionBar10(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 	bool OnActionBar11(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 	bool OnActionBar12(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+
+	/**
+	Generic numberpad action.
+
+	\param	entityId	   Identifier for the entity.
+	\param	actionId	   Identifier for the action.
+	\param	activationMode The activation mode.
+	\param	value		   Provides the Id number of the action bar clicked
+
+	\return true if it succeeds, false if it fails.
+	**/
+	bool OnNumpad(EntityId entityId, const ActionId& actionId, int activationMode, int buttonId);
+
+	bool OnActionNumpad0(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionNumpad1(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionNumpad2(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionNumpad3(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionNumpad4(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionNumpad5(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionNumpad6(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionNumpad7(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionNumpad8(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionNumpad9(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 
 	/**	Camera debug actions. **/
 	bool OnActionCameraShiftUp(EntityId entityId, const ActionId& actionId, int activationMode, float value);
@@ -250,4 +288,7 @@ private:
 
 	/**	Last zoom delta. **/
 	float m_lastZoomDelta { 0.0f };
+
+	/** Listeners for special keystrokes. */
+	TListener<IInputSpecialListener> m_listenersSpecial;
 };

@@ -237,6 +237,9 @@ void CPlayerInputComponent::RegisterActionMaps()
 
 void CPlayerInputComponent::InitializeActionHandler()
 {
+	m_actionHandler.AddHandler(ActionId("special_esc"), &CPlayerInputComponent::OnActionEscape);
+	m_actionHandler.AddHandler(ActionId("special_examine"), &CPlayerInputComponent::OnActionExamine);
+
 	// Basic movement.
 	m_actionHandler.AddHandler(ActionId("move_left"), &CPlayerInputComponent::OnActionMoveLeft);
 	m_actionHandler.AddHandler(ActionId("move_right"), &CPlayerInputComponent::OnActionMoveRight);
@@ -291,6 +294,18 @@ void CPlayerInputComponent::InitializeActionHandler()
 	m_actionHandler.AddHandler(ActionId("actionbar_11"), &CPlayerInputComponent::OnActionBar11);
 	m_actionHandler.AddHandler(ActionId("actionbar_12"), &CPlayerInputComponent::OnActionBar12);
 
+	// Numpad.
+	m_actionHandler.AddHandler(ActionId("np_0"), &CPlayerInputComponent::OnActionNumpad0);
+	m_actionHandler.AddHandler(ActionId("np_1"), &CPlayerInputComponent::OnActionNumpad1);
+	m_actionHandler.AddHandler(ActionId("np_2"), &CPlayerInputComponent::OnActionNumpad2);
+	m_actionHandler.AddHandler(ActionId("np_3"), &CPlayerInputComponent::OnActionNumpad3);
+	m_actionHandler.AddHandler(ActionId("np_4"), &CPlayerInputComponent::OnActionNumpad4);
+	m_actionHandler.AddHandler(ActionId("np_5"), &CPlayerInputComponent::OnActionNumpad5);
+	m_actionHandler.AddHandler(ActionId("np_6"), &CPlayerInputComponent::OnActionNumpad6);
+	m_actionHandler.AddHandler(ActionId("np_7"), &CPlayerInputComponent::OnActionNumpad7);
+	m_actionHandler.AddHandler(ActionId("np_8"), &CPlayerInputComponent::OnActionNumpad8);
+	m_actionHandler.AddHandler(ActionId("np_9"), &CPlayerInputComponent::OnActionNumpad9);
+
 	// Camera movements.
 	m_actionHandler.AddHandler(ActionId("camera_shift_up"), &CPlayerInputComponent::OnActionCameraShiftUp);
 	m_actionHandler.AddHandler(ActionId("camera_shift_down"), &CPlayerInputComponent::OnActionCameraShiftDown);
@@ -309,6 +324,36 @@ void CPlayerInputComponent::InitializeActionHandler()
 // ***
 // *** Action handlers.
 // ***
+
+bool CPlayerInputComponent::OnActionEscape(EntityId entityId, const ActionId & actionId, int activationMode, float value)
+{
+	if (activationMode == eAAM_OnPress)
+	{
+		CryLogAlways("Escape");
+
+		// Notify listeners.
+		for (auto& it : m_listenersSpecial.GetListeners())
+			it->OnInputSpecialEsc();
+	}
+
+	return false;
+}
+
+
+bool CPlayerInputComponent::OnActionExamine(EntityId entityId, const ActionId & actionId, int activationMode, float value)
+{
+	if (activationMode == eAAM_OnPress)
+	{
+		CryLogAlways("Examine");
+
+		// Notify listeners.
+		for (auto& it : m_listenersSpecial.GetListeners())
+			it->OnInputSpecialExamine();
+	}
+
+	return false;
+}
+
 
 bool CPlayerInputComponent::OnActionMoveLeft(EntityId entityId, const ActionId& actionId, int activationMode, float value)
 {
@@ -695,6 +740,77 @@ bool CPlayerInputComponent::OnActionBar12(EntityId entityId, const ActionId& act
 }
 
 
+bool CPlayerInputComponent::OnNumpad(EntityId entityId, const ActionId& actionId, int activationMode, int buttonId)
+{
+	if (activationMode == eAAM_OnPress || activationMode == eAAM_OnHold)
+	{
+		CryLogAlways("OnNumpad");
+	}
+
+	return false;
+}
+
+
+bool CPlayerInputComponent::OnActionNumpad0(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	return OnNumpad(entityId, actionId, activationMode, 0);
+}
+
+
+bool CPlayerInputComponent::OnActionNumpad1(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	return OnNumpad(entityId, actionId, activationMode, 1);
+}
+
+
+bool CPlayerInputComponent::OnActionNumpad2(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	return OnNumpad(entityId, actionId, activationMode, 2);
+}
+
+
+bool CPlayerInputComponent::OnActionNumpad3(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	return OnNumpad(entityId, actionId, activationMode, 3);
+}
+
+
+bool CPlayerInputComponent::OnActionNumpad4(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	return OnNumpad(entityId, actionId, activationMode, 4);
+}
+
+
+bool CPlayerInputComponent::OnActionNumpad5(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	return OnNumpad(entityId, actionId, activationMode, 5);
+}
+
+
+bool CPlayerInputComponent::OnActionNumpad6(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	return OnNumpad(entityId, actionId, activationMode, 6);
+}
+
+
+bool CPlayerInputComponent::OnActionNumpad7(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	return OnNumpad(entityId, actionId, activationMode, 7);
+}
+
+
+bool CPlayerInputComponent::OnActionNumpad8(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	return OnNumpad(entityId, actionId, activationMode, 8);
+}
+
+
+bool CPlayerInputComponent::OnActionNumpad9(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+{
+	return OnNumpad(entityId, actionId, activationMode, 9);
+}
+
+
 bool CPlayerInputComponent::OnActionCameraShiftUp(EntityId entityId, const ActionId& actionId, int activationMode, float value)
 {
 	return m_pCameraManager->OnActionCameraShiftUp(entityId, actionId, activationMode, value);
@@ -784,7 +900,7 @@ bool CPlayerInputComponent::OnActionInteraction(EntityId entityId, const ActionI
 				pCharacter->OnActionInteractionStart(entityId);
 			}
 		}
-			break;
+		break;
 
 		case eAAM_OnHold:
 		{
@@ -793,7 +909,7 @@ bool CPlayerInputComponent::OnActionInteraction(EntityId entityId, const ActionI
 				pCharacter->OnActionInteraction(entityId);
 			}
 		}
-			break;
+		break;
 
 		case eAAM_OnRelease:
 		{
@@ -802,7 +918,7 @@ bool CPlayerInputComponent::OnActionInteraction(EntityId entityId, const ActionI
 				pCharacter->OnActionInteractionEnd(entityId);
 			}
 		}
-			break;
+		break;
 	}
 
 	return false;

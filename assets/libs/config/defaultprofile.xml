@@ -69,6 +69,46 @@
 
 		<action name="xi_rotateyaw" xboxpad="xi_thumbrx" ps3pad="pad_stickrx" onHold="1" retriggerable="1"/>
 		<action name="xi_rotatepitch" xboxpad="xi_thumbry" ps3pad="pad_stickry" onHold="1" retriggerable="1"/>
+
+		<!-- Special keys - not all belong here, but they are needed here for testing currently. -->
+		<action name="special_esc" >
+			<keyboard input="escape" onPress="1" />
+		</action>
+		<action name="special_examine" >
+			<keyboard input="z" onPress="1" />
+		</action>
+
+		<!-- Numpad. -->
+		<action name="numpad_0" >
+			<keyboard input="np_0" onPress="1" />
+		</action>
+		<action name="numpad_1" >
+			<keyboard input="np_1" onPress="1" />
+		</action>
+		<action name="numpad_2" >
+			<keyboard input="np_2" onPress="1" />
+		</action>
+		<action name="numpad_3" >
+			<keyboard input="np_3" onPress="1" />
+		</action>
+		<action name="numpad_4" >
+			<keyboard input="np_4" onPress="1" />
+		</action>
+		<action name="numpad_5" >
+			<keyboard input="np_5" onPress="1" />
+		</action>
+		<action name="numpad_6" >
+			<keyboard input="np_6" onPress="1" />
+		</action>
+		<action name="numpad_7" >
+			<keyboard input="np_7" onPress="1" />
+		</action>
+		<action name="numpad_8" >
+			<keyboard input="np_8" onPress="1" />
+		</action>
+		<action name="numpad_9" >
+			<keyboard input="np_9" onPress="1" />
+		</action>
 	</actionmap>
 
 	<!--CAMERA SPECIFIC ACTIONS - TODO: MOVE OTHER CAMERA STUFF OVER FROM PLAYER TO HERE -->

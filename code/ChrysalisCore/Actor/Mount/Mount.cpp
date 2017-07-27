@@ -44,7 +44,7 @@ void CMount::PostInit(IGameObject * pGameObject)
 	RegisterEvents();
 
 	// Get it into a known state.
-	Reset();
+	OnResetState();
 }
 
 
@@ -123,7 +123,7 @@ void CMount::ProcessEvent(SEntityEvent& event)
 			break;
 
 		case ENTITY_EVENT_RESET:
-			OnReset();
+			OnResetState();
 			break;
 
 		default:
@@ -132,6 +132,7 @@ void CMount::ProcessEvent(SEntityEvent& event)
 }
 
 
+// FIX: 5.4
 IComponent::ComponentEventPriority CMount::GetEventPriority(const int eventID) const
 {
 	switch (eventID)
@@ -208,9 +209,9 @@ void CMount::OnEditorPropertyChanged()
 // ***
 
 
-void CMount::Reset()
+void CMount::OnResetState()
 {
-	CActor::Reset();
+	CActor::OnResetState();
 }
 
 

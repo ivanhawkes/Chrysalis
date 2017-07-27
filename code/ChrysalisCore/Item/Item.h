@@ -6,6 +6,9 @@
 #include <Entities/EntityEffects.h>
 
 
+class CSnaplockComponent;
+
+
 DECLARE_SHARED_POINTERS(IActor);
 
 
@@ -276,4 +279,7 @@ private:
 	static IItemSystem *m_pItemSystem;
 
 	SItemBaseParameterConstPtr m_itemBaseParameter;
+
+	/** A component that allows for management of snaplocks. */
+	CSnaplockComponent* m_pSnaplockComponent { nullptr };
 };

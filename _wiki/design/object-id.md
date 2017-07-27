@@ -4,9 +4,9 @@ We require a system for creating globally unique IDs which may be used as keys f
 
 By partitioning the bits available within a 64 bit value we can create a key generation scheme that is not reliant on database queries or locking semantics.
 
-* 32 bits for the number of seconds since the unix epoch. This provides us with both a convenient timestamp for sorting and a smaller window for possible collisions of generated keys.
-* 18 bits for instanceId (262,144). The instance Id will be a unique number for every running instance of the software within a given federation. If several instances are running on the same machine they will each require their own Id.
-* 14 bits for a random component. Each second a new starting value will be produced randomly. ID requests will increment this value. Note: this restricts the number of IDs that can be produced in any given second for any given instance to 16,384. For this reason, you should avoid trying to generate large numbers of keys all at once.
+-   32 bits for the number of seconds since the unix epoch. This provides us with both a convenient timestamp for sorting and a smaller window for possible collisions of generated keys.
+-   18 bits for instanceId (262,144). The instance Id will be a unique number for every running instance of the software within a given federation. If several instances are running on the same machine they will each require their own Id.
+-   14 bits for a random component. Each second a new starting value will be produced randomly. ID requests will increment this value. Note: this restricts the number of IDs that can be produced in any given second for any given instance to 16,384. For this reason, you should avoid trying to generate large numbers of keys all at once.
 
 One issue with using a system like this is the hard limit on the number of identifiers it can produce in a single second. Pushing past this limit either means duplicate IDs are produced, which is catastrophically bad, or the requesting code must be able to handle the possibility of being denied a request for an ID. Neither situation is ideal but there are ways to mitigate the issue.
 

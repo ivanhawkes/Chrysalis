@@ -4,6 +4,7 @@
 #include <atomic>
 #include <CryCore/Assert/CryAssert.h>
 #include <time.h>
+#include <CryMath/Random.h>
 
 
 CObjectIdFactory::CObjectIdFactory(uint32 instanceId)

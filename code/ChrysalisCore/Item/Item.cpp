@@ -2,6 +2,7 @@
 
 #include "Item.h"
 #include <Game/GameRules.h>
+#include <Components/Snaplocks/SnaplockComponent.h>
 
 
 IEntitySystem* CItem::m_pEntitySystem = nullptr;
@@ -59,6 +60,10 @@ bool CItem::Init(IGameObject * pGameObject)
 
 void CItem::PostInit(IGameObject * pGameObject)
 {
+	auto pEntity = GetEntity();
+
+	// Manage our snaplocks.
+	m_pSnaplockComponent = pEntity->GetOrCreateComponent<CSnaplockComponent>();
 }
 
 

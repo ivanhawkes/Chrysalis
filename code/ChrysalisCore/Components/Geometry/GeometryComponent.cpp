@@ -123,7 +123,5 @@ void CGeometryComponent::OnResetState()
 
 	// Notify listeners.
 	for (auto& pListener : m_ListenersList)
-	{
 		pListener->OnGeometryResetState();
-	}
 }

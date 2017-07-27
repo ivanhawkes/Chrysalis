@@ -22,6 +22,7 @@ struct ISimpleItem : public IItem
 	virtual ISerializableInfoPtr GetSpawnInfo() override { return nullptr; }
 	virtual void Update(SEntityUpdateContext& ctx, int updateSlot) override {}
 	virtual void SetChannelId(uint16 id) override {}
+	// FIX: 5.4
 	virtual void SetAuthority(bool auth) override {}
 	virtual void PostUpdate(float frameTime) override {}
 	virtual void PostRemoteSpawn() override {}

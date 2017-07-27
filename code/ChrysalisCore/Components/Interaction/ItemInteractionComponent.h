@@ -55,8 +55,8 @@ private:
 	/** Factor the speed at which inspected items are rotated, in comparison to player character rotation. */
 	const float kInspectionRotationFactor = 5.0f;
 
-	/** Factor the velocity at which items are tossed from inventory. */
-	const float kTossFactor = 0.01f;
+	/** The number of newtons of force applied when items are tossed from inventory. */
+	const float kTossNewtons = 10.0f;
 
 	enum class InspectionState
 	{

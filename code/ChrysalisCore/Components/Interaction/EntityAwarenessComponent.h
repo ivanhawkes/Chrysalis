@@ -225,10 +225,12 @@ private:
 		{
 			if (rayId != 0)
 			{			
-				// #HACK: Massive issue, removed due to problems linking to CryAction in 5.3.
-				//static_cast<CCryAction*>(gEnv->pGameFramework)->GetPhysicQueues().GetRayCaster().Reset();
-				rayId = 0;
+				// #HACK: Massive issue, removed due to problems linking to CryAction in 5.3. It's hard to tell why this is even
+				// here now. Reseting the whole queue seems like a terrible idea in a function like this.
+				// static_cast<CCryAction*>(gEnv->pGameFramework)->GetPhysicQueues().GetRayCaster().Reset(); 
 			}
+
+			rayId = 0;
 			counter = 0;
 		}
 
@@ -386,8 +388,29 @@ private:
 		return m_entitiesInFrontOf;
 	}
 
+	/**
+	Internally process the result of the ray-cast. This is shared between synchronous and asynchronous results.
 
-	int GetRaySlot();
+	\param	rayHit The ray hit.
+	**/
+	void OnRayCast(const ray_hit& rayHit);
 
-	int GetSlotForRay(const QueuedRayID& rayId) const;
+
+	/**
+	Runs through the raycast queue and finds a free slot, if available. If none is available it will kill the oldest
+	slot.
+	
+	\return The ray slot Id.
+	**/
+	int RequestRaySlotId();
+
+
+	/**
+	Queries the queue to find the slot Id for a queued raycast.
+	
+	\param	rayId Identifier for the ray.
+	
+	\return The ray slot identifier.
+	**/
+	int QueryRaySlotId(const QueuedRayID& rayId) const;
 };

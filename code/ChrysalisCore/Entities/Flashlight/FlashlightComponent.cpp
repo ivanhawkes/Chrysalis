@@ -4,6 +4,7 @@
 #include <GameXmlParamReader.h>
 #include <Components/Interaction/EntityInteractionComponent.h>
 #include <Components/Interaction/ItemInteractionComponent.h>
+#include <Components/Snaplocks/SnaplockComponent.h>
 #include <CryAnimation/ICryAnimation.h>
 
 
@@ -36,16 +37,18 @@ CFlashlightRegistrator g_flashlightRegistrator;
 
 void CFlashlightComponent::Initialize()
 {
-	m_pGeometryComponent = GetEntity()->CreateComponent<CGeometryComponent>();
+	auto pEntity = GetEntity();
+
+	m_pGeometryComponent = pEntity->CreateComponent<CGeometryComponent>();
 	m_pGeometryComponent->AddEventListener(this);
-	m_pDynamicLightComponent = GetEntity()->CreateComponent<CDynamicLightComponent>();
+	m_pDynamicLightComponent = pEntity->CreateComponent<CDynamicLightComponent>();
 	m_pDynamicLightComponent->AddEventListener(this);
 
 	// Standard item interactions.
-	m_pItemInteractionComponent = GetEntity()->CreateComponent<CItemInteractionComponent>();
+	m_pItemInteractionComponent = pEntity->CreateComponent<CItemInteractionComponent>();
 
 	// We want to supply interaction verbs.
-	m_interactor = GetEntity()->GetOrCreateComponent<CEntityInteractionComponent>();
+	m_interactor = pEntity->GetOrCreateComponent<CEntityInteractionComponent>();
 	if (m_interactor)
 	{
 		m_interactor->AddInteraction(std::make_shared<CInteractionSwitchToggle>(this));
@@ -53,6 +56,11 @@ void CFlashlightComponent::Initialize()
 		m_interactor->AddInteraction(std::make_shared<CInteractionSwitchOff>(this));
 		m_interactor->AddInteraction(std::make_shared<CInteractionInteract>(this));
 	}
+
+	// Manage our snaplocks.
+	m_pSnaplockComponent = pEntity->GetOrCreateComponent<CSnaplockComponent>();
+	m_pSnaplockComponent->AddSnaplock(ISnaplock(SLT_ACTOR_LEFTHAND, true));
+	m_pSnaplockComponent->AddSnaplock(ISnaplock(SLT_ACTOR_RIGHTHAND, true));
 
 	// Reset the entity.
 	OnResetState();

@@ -73,3 +73,10 @@ Editor/Tmp/
 build_scripts/temprc/
 build_scripts/client/
 .vs/
+Solutions/Chrysalis.win_x64/Chrysalis.dir/Debug/
+Solutions/Chrysalis.win_x64/x64/Debug/
+Solutions/Chrysalis.win_x64/CMakeFiles/generate.stamp
+Solutions/Chrysalis.win_x64/Debug/Chrysalis.exp
+assets/objects/characters/human/male/animations/crouch/
+Solutions/
+*.ods#

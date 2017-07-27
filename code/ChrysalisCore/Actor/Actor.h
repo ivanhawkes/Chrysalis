@@ -8,6 +8,7 @@
 #include <Actor/ActorStance.h>
 #include <Actor/IActorEventListener.h>
 #include <CryAISystem/IAgent.h>
+#include "Snaplocks/Snaplock.h"
 //#include <Actor/Character/Movement/CharacterRotation.h>
 
 class CPlayer;
@@ -16,7 +17,27 @@ class IActionController;
 struct SAnimationContext;
 struct SActorMovementRequest;
 class CEntityAwarenessComponent;
+class CSnaplockComponent;
+class CInventoryComponent;
+class CEquipmentComponent;
 
+
+/** Define a set of snaplock types that will be used by character entities e.g. equipment slots **/
+DECLARE_SNAPLOCK_TYPE(SLT_ACTOR_HEAD, "Actor Head", 0x617985533E2A4E5D, 0xB43CD7D2CFC60571)
+DECLARE_SNAPLOCK_TYPE(SLT_ACTOR_FACE, "Actor Face", 0x10BA29FEA6F14F48, 0xAC475D386AD3637D)
+DECLARE_SNAPLOCK_TYPE(SLT_ACTOR_NECK, "Actor Neck", 0x98CF570E51B343AE, 0xA566097392EEA395)
+DECLARE_SNAPLOCK_TYPE(SLT_ACTOR_SHOULDERS, "Actor Shoulders", 0x0435E8CD9FA84215, 0x9FEEBDED107A3482)
+DECLARE_SNAPLOCK_TYPE(SLT_ACTOR_CHEST, "Actor Chest", 0x7E232140AFC04AF0, 0x95A200219E4B5031)
+DECLARE_SNAPLOCK_TYPE(SLT_ACTOR_BACK, "Actor Back", 0xDF40E37A38CB4530, 0xB421E09F4972A025)
+DECLARE_SNAPLOCK_TYPE(SLT_ACTOR_LEFTARM, "Actor Left Arm", 0xB6B761D420F445CA, 0xB8195FCAC86B0E7D)
+DECLARE_SNAPLOCK_TYPE(SLT_ACTOR_RIGHTARM, "Actor Right Arm", 0x5536709863DE489C, 0xA94FA3900B546241)
+DECLARE_SNAPLOCK_TYPE(SLT_ACTOR_LEFTHAND, "Actor Left Hand", 0xA1EB42095D804E6B, 0xABDB1052EBC22704)
+DECLARE_SNAPLOCK_TYPE(SLT_ACTOR_RIGHTHAND, "Actor Right Hand", 0xC9225FCED1E34228, 0xBA2B35347EB4E30D)
+DECLARE_SNAPLOCK_TYPE(SLT_ACTOR_WAIST, "Actor Waist", 0x7631F1B70DC14B27, 0x9B3D14368B2EE2DE)
+DECLARE_SNAPLOCK_TYPE(SLT_ACTOR_LEFTLEG, "Actor Left Leg", 0x6C0F6F7269504D25, 0x97F96FBCB54BA444)
+DECLARE_SNAPLOCK_TYPE(SLT_ACTOR_RIGHTLEG, "Actor Right Leg", 0xB349158398FD4B19, 0xB0F42137CF694919)
+DECLARE_SNAPLOCK_TYPE(SLT_ACTOR_LEFTFOOT, "Actor Left Foot", 0x8880849B8D5E4A28, 0xB18F39A02772920B)
+DECLARE_SNAPLOCK_TYPE(SLT_ACTOR_RIGHTFOOT, "Actor Right Foot", 0xB3619CEF068F4388, 0xB49947F598CF321D)
 
 /** Represents all of the available actor class types. */
 enum EActorClassType
@@ -88,6 +109,7 @@ public:
 	bool IsThirdPerson() const override { return m_isThirdPerson; }
 
 	// It is critical we override the event priority to ensure we handle the event before CAnimatedCharacter.
+	// FIX: 5.4
 	virtual IEntityComponent::ComponentEventPriority GetEventPriority(const int eventID) const override;
 
 	int GetTeamId() const override { return m_teamId; };
@@ -387,7 +409,8 @@ public:
 	static CActor* GetActor(EntityId entityId) { return static_cast<CActor*>(gEnv->pGameFramework->GetIActorSystem()->GetActor(entityId)); };
 
 protected:
-	string m_geometry;
+	string m_geometryFirstPerson;
+	string m_geometryThirdPerson;
 	float m_mass { 82.0f };
 	string m_controllerDefinition { "human_male_controller_defs.xml" };
 	string m_animationDatabase { "human_male.adb" };
@@ -436,6 +459,15 @@ private:
 
 	/** An component which is used to discover entities near the actor. */
 	CEntityAwarenessComponent* m_pAwareness { nullptr };
+
+	/** A component that allows for management of snaplocks. */
+	CSnaplockComponent* m_pSnaplockComponent { nullptr };
+
+	/** Manage their inventory. */
+	CInventoryComponent* m_pInventoryComponent { nullptr };
+
+	/** Manage their equipment. */
+	CEquipmentComponent* m_pEquipmentComponent { nullptr };
 
 	/**	A dynamic response proxy. **/
 	IEntityDynamicResponseComponent* m_pDrsComponent;

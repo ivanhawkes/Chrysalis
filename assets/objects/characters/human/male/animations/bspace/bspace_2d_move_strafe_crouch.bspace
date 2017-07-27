@@ -1,0 +1,33 @@
+<ParaGroup>
+ <Dimensions>
+  <Param Name="MoveSpeed" Min="0.2" Max="2.1000001" Cells="6"/>
+  <Param Name="TravelAngle" Min="-3.1400001" Max="3.1400001" Cells="12"/>
+ </Dimensions>
+ <ExampleList>
+  <Example AName="crouchwalk_b"/>
+  <Example AName="crouchwalk_r"/>
+  <Example AName="crouchwalk_f"/>
+  <Example AName="crouchwalk_l"/>
+  <Example SetPara1="3.1415901" AName="crouchwalk_b"/>
+  <Example AName="crouchwalk_b" PlaybackScale="0.5"/>
+  <Example AName="crouchwalk_r" PlaybackScale="0.5"/>
+  <Example AName="crouchwalk_f" PlaybackScale="0.5"/>
+  <Example AName="crouchwalk_l" PlaybackScale="0.5"/>
+  <Example SetPara1="3.1415901" AName="crouchwalk_b" PlaybackScale="0.5"/>
+  <Example AName="crouchwalk_b" PlaybackScale="2"/>
+  <Example AName="crouchwalk_r" PlaybackScale="2"/>
+  <Example AName="crouchwalk_f" PlaybackScale="2"/>
+  <Example AName="crouchwalk_l" PlaybackScale="2"/>
+  <Example SetPara1="3.1415901" AName="crouchwalk_b" PlaybackScale="2"/>
+ </ExampleList>
+ <Blendable>
+  <Face p0="5" p1="0" p2="1" p3="6"/>
+  <Face p0="6" p1="1" p2="2" p3="7"/>
+  <Face p0="7" p1="2" p2="3" p3="8"/>
+  <Face p0="8" p1="3" p2="4" p3="9"/>
+  <Face p0="0" p1="10" p2="11" p3="1"/>
+  <Face p0="1" p1="11" p2="12" p3="2"/>
+  <Face p0="2" p1="12" p2="13" p3="3"/>
+  <Face p0="3" p1="13" p2="14" p3="4"/>
+ </Blendable>
+</ParaGroup>

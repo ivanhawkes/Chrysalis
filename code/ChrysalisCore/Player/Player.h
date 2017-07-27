@@ -65,11 +65,21 @@ public:
 
 public:
 
+	// HACK: These can go when we switch to 5.4 since update slots will no longer be relevant.
+	// TODO: Delete when we can.
 	enum EPlayerUpdateSlot
 	{
 		ePlayerUpdateSlot_Main = 0,
 		ePlayerUpdateSlot_CameraFirstPerson,
-		ePlayerUpdateSlot_CameraThirdPerson
+		ePlayerUpdateSlot_CameraThirdPerson,
+		ePlayerUpdateSlot_CameraExamine
+	};
+
+	enum class EPlayerInteractionMode
+	{
+		eNoMode = 0,
+		eHandlingEntity,
+		eExamineZoom
 	};
 
 
@@ -204,17 +214,43 @@ public:
 	bool GetAllowCharacterRotation() const { return m_allowCharacterRotation; }
 	bool GetAllowCameraMovement() const { return m_allowCameraMovement; }
 
-	void SetCharacterInteractionMode(bool val)
+
+	/**
+	When true, the player is interacting with a useable entity.
+
+	\param	val True to value.
+	**/
+	void SetObjectInteractionMode(bool val)
 	{
-		m_allowCharacterMovement = !val;
-		m_allowCharacterRotation = !val;
-		m_allowCameraMovement = !val;
+		m_playerInteractionMode = val ? EPlayerInteractionMode::eHandlingEntity : EPlayerInteractionMode::eNoMode;
+
+		//m_allowCharacterMovement = !val;
+		//m_allowCharacterRotation = !val;
+		//m_allowCameraMovement = !val;
 	}
+
+
+	/**
+	When true, the player is zoomed in and examining an entity. Movement requests should cancel this mode.
+
+	\param	val True to value.
+	**/
+	void SetExamineInteractionMode(bool val)
+	{
+		m_playerInteractionMode = val ? EPlayerInteractionMode::eExamineZoom : EPlayerInteractionMode::eNoMode;
+
+		//m_allowCharacterMovement = !val;
+		//m_allowCharacterRotation = !val;
+		//m_allowCameraMovement = !val;
+	}
+
 
 private:
 	void SetAllowCharacterMovement(bool val) { m_allowCharacterMovement = val; }
 	void SetAllowCharacterRotation(bool val) { m_allowCharacterRotation = val; }
 	void SetAllowCameraMovement(bool val) { m_allowCameraMovement = val; }
+
+	EPlayerInteractionMode m_playerInteractionMode { EPlayerInteractionMode::eNoMode };
 
 	/** Specifies whether this instance is the client actor. */
 	bool m_isClient { false };

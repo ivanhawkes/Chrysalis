@@ -47,6 +47,7 @@ public:
 	void ProcessEvent(SEntityEvent& event) override;
 
 	// It is critical we override the event priority to ensure we handle the event before CAnimatedCharacter.
+	// FIX: 5.4
 	virtual IComponent::ComponentEventPriority GetEventPriority(const int eventID) const override;
 
 
@@ -121,7 +122,7 @@ protected:
 public:
 
 	/** Resets the character to an initial state. */
-	void Reset() override;
+	void OnResetState() override;
 
 
 	/** Kill the character. */

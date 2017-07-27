@@ -98,7 +98,7 @@ void CItemInteractionComponent::OnInteractionItemInspect()
 		// #TODO: Use a helper method instead of setting directly.
 		if (auto pPlayer = CPlayer::GetLocalPlayer())
 		{
-			pPlayer->SetCharacterInteractionMode(true);
+			pPlayer->SetObjectInteractionMode(true);
 		}
 	}
 }
@@ -126,7 +126,7 @@ void CItemInteractionComponent::OnInteractionItemPickup()
 		// #TODO: Use a helper method instead of setting directly.
 		if (auto pPlayer = CPlayer::GetLocalPlayer())
 		{
-			pPlayer->SetCharacterInteractionMode(true);
+			pPlayer->SetObjectInteractionMode(true);
 		}
 	}
 }
@@ -152,7 +152,7 @@ void CItemInteractionComponent::OnInteractionItemDrop()
 
 	if (auto pPlayer = CPlayer::GetLocalPlayer())
 	{
-		pPlayer->SetCharacterInteractionMode(false);
+		pPlayer->SetObjectInteractionMode(false);
 	}
 }
 
@@ -165,7 +165,7 @@ void CItemInteractionComponent::OnInteractionItemToss()
 	if (auto pCharacter = CPlayer::GetLocalCharacter())
 	{
 		auto pEntity = GetEntity();
-		Vec3 impulse = pCharacter->GetEntity()->GetRotation() * FORWARD_DIRECTION * kTossFactor;
+		Vec3 impulse = pCharacter->GetEntity()->GetRotation() * FORWARD_DIRECTION * kTossNewtons;
 
 		// A small impulse to toss it aside.
 		pe_action_impulse action;
@@ -179,7 +179,7 @@ void CItemInteractionComponent::OnInteractionItemToss()
 
 	if (auto pPlayer = CPlayer::GetLocalPlayer())
 	{
-		pPlayer->SetCharacterInteractionMode(false);
+		pPlayer->SetObjectInteractionMode(false);
 	}
 }
 

@@ -1,14 +1,24 @@
 {
     "content": {
-        "assets": ["assets"],
-        "code": ["code/ChrysalisCore"],
+        "assets": [
+            "assets"
+        ],
+        "code": [
+            "code/ChrysalisCore"
+        ],
         "libs": [
             {
                 "name": "Chrysalis",
-                "shared": {"win_x64": "bin/win_x64/Chrysalis.dll"}
+                "shared": {
+                    "win_x64": "bin/win_x64/Chrysalis.dll"
+                }
             }
         ]
     },
-    "info": {"name": "Chrysalis"},
-    "require": {"engine": "engine-5.3"}
+    "info": {
+        "name": "Chrysalis"
+    },
+    "require": {
+        "engine": "{e799e25f-a5e4-40cf-b15a-26a4d85bf6a4}"
+    }
 }

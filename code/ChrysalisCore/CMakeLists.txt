@@ -114,6 +114,10 @@ source_group("Actor\\Animation\\Actions" FILES ${SourceGroup_Actor_Animation_Act
 set (SourceGroup_Actor_Character
 	"Actor/Character/Character.cpp"
 	"Actor/Character/Character.h"
+	"Actor/Character/CharacterAttributes.cpp"
+	"Actor/Character/CharacterAttributes.h"
+	"Actor/Character/CharacterAttributesComponent.cpp"
+	"Actor/Character/CharacterAttributesComponent.h"
 )
 source_group("Actor\\Character" FILES ${SourceGroup_Actor_Character})
 
@@ -250,22 +254,27 @@ source_group("Animation" FILES ${SourceGroup_Animation})
 #)
 #source_group("Boids\\Terran" FILES ${SourceGroup_Boids_Terran})
 
-set (SourceGroup_Components
+set (SourceGroup_Components_Animation
 	"Components/Animation/ControlledAnimationComponent.cpp"
 	"Components/Animation/ControlledAnimationComponent.h"
 	"Components/Animation/SimpleAnimationComponent.cpp"
 	"Components/Animation/SimpleAnimationComponent.h"
+)
+source_group("Components\\Animation" FILES ${SourceGroup_ComponentsAnimation})
+
+set (SourceGroup_Components_Equipment
+	"Components/Equipment/EquipmentComponent.cpp"
+	"Components/Equipment/EquipmentComponent.h"
+)
+source_group("Components\\Equipment" FILES ${SourceGroup_Components_Equipment})
+
+set (SourceGroup_Components_Geometry
 	"Components/Geometry/GeometryComponent.cpp"
 	"Components/Geometry/GeometryComponent.h"
-	"Components/Lights/DynamicLightComponent.cpp"
-	"Components/Lights/DynamicLightComponent.h"
-	"Components/Particles/ParticleComponent.cpp"
-	"Components/Particles/ParticleComponent.h"
 )
-source_group("Components" FILES ${SourceGroup_Components})
+source_group("Components\\Geometry" FILES ${SourceGroup_Components_Geometry})
 
 set (SourceGroup_Components_Interaction
-
 	"Components/Interaction/DRSInteractionComponent.cpp"
 	"Components/Interaction/DRSInteractionComponent.h"
 	"Components/Interaction/EntityAwarenessComponent.cpp"
@@ -276,6 +285,18 @@ set (SourceGroup_Components_Interaction
 	"Components/Interaction/ItemInteractionComponent.h"
 )
 source_group("Components\\Interaction" FILES ${SourceGroup_Components_Interaction})
+
+set (SourceGroup_Components_Inventory
+	"Components/Inventory/InventoryComponent.cpp"
+	"Components/Inventory/InventoryComponent.h"
+)
+source_group("Components\\Inventory" FILES ${SourceGroup_Components_Inventory})
+
+set (SourceGroup_Components_Lights
+	"Components/Lights/DynamicLightComponent.cpp"
+	"Components/Lights/DynamicLightComponent.h"
+)
+source_group("Components\\Lights" FILES ${SourceGroup_Components_Lights})
 
 set (SourceGroup_Components_Lockable
 	"Components/Lockable/KeyringComponent.cpp"
@@ -290,6 +311,18 @@ set (SourceGroup_Components_Openable
 	"Components/Openable/ContainerComponent.h"
 )
 source_group("Components\\Openable" FILES ${SourceGroup_Components_Openable})
+
+set (SourceGroup_Components_Particles
+	"Components/Particles/ParticleComponent.cpp"
+	"Components/Particles/ParticleComponent.h"
+)
+source_group("Components\\Particles" FILES ${SourceGroup_Components_Particles})
+
+set (SourceGroup_Components_Snaplocks
+	"Components/Snaplocks/SnaplockComponent.h"
+	"Components/Snaplocks/SnaplockComponent.cpp"
+)
+source_group("Components\\Snaplocks" FILES ${SourceGroup_Components_Snaplocks})
 
 set (SourceGroup_Components_Switchable
 #	"Components/Switchable/SwitchableComponent.cpp"
@@ -376,6 +409,12 @@ source_group("Entities\\Interaction" FILES ${SourceGroup_Entities_Interaction})
 #)
 #source_group("Entities\\Ownership" FILES ${SourceGroup_Entities_Ownership})
 
+set (SourceGroup_Entities_SecurityPad
+	"Entities/SecurityPad/SecurityPadComponent.cpp"
+	"Entities/SecurityPad/SecurityPadComponent.h"
+)
+source_group("Entities\\SecurityPad" FILES ${SourceGroup_Entities_SecurityPad})
+
 #set (SourceGroup_Game_Cache
 #	"Game/Cache/GameCache.cpp"
 #	"Game/Cache/GameCache.h"
@@ -440,6 +479,8 @@ set (SourceGroup_Player_Camera
 	"Player/Camera/ActionRPGCameraComponent.h"
 	"Player/Camera/CameraManagerComponent.cpp"
 	"Player/Camera/CameraManagerComponent.h"
+	"Player/Camera/ExamineCameraComponent.cpp"
+	"Player/Camera/ExamineCameraComponent.h"
 	"Player/Camera/FirstPersonCameraComponent.cpp"
 	"Player/Camera/FirstPersonCameraComponent.h"
 	"Player/Camera/ICameraComponent.cpp"
@@ -470,6 +511,12 @@ set (SourceGroup_SharedParameters
 	"SharedParameters/SharedParameters.h"
 )
 source_group("SharedParameters" FILES ${SourceGroup_SharedParameters})
+
+set (SourceGroup_Snaplocks
+	"Snaplocks/Snaplock.h"
+	"Snaplocks/Snaplock.cpp"
+)
+source_group("Snaplocks" FILES ${SourceGroup_Snaplocks})
 
 set (SourceGroup_StateMachine
 	"StateMachine/StateMachine.h"
@@ -528,9 +575,16 @@ set (SOURCE
 	${SourceGroup_Player_Camera}
 	
 	${SourceGroup_Components}
+	${SourceGroup_Components_Animation}
+	${SourceGroup_Components_Equipment}
+	${SourceGroup_Components_Geometry}
 	${SourceGroup_Components_Interaction}
+	${SourceGroup_Components_Inventory}
+	${SourceGroup_Components_Lights}
 	${SourceGroup_Components_Lockable}
 	${SourceGroup_Components_Openable}
+	${SourceGroup_Components_Particles}
+	${SourceGroup_Components_Snaplocks}
 	${SourceGroup_Components_Switchable}
 
 	${SourceGroup_ConsoleCommands}
@@ -544,6 +598,7 @@ set (SOURCE
 #	${SourceGroup_Entities_Ownership}
 #	${SourceGroup_Entities_Environment_Ledge}
 #	${SourceGroup_Entities_Environment_Water}
+	${SourceGroup_Entities_SecurityPad}
 
 #	${SourceGroup_Game_Cache}
 #	${SourceGroup_Game_Physics}
@@ -555,6 +610,7 @@ set (SOURCE
 	${SourceGroup_Item_Parameters}
 	${SourceGroup_ObjectID}
 	${SourceGroup_SharedParameters}
+	${SourceGroup_Snaplocks}
 	${SourceGroup_StateMachine}
 	${SourceGroup_Utility}
 )

@@ -8,24 +8,24 @@ Players select abilities from ones they have learnt and place it on their abilit
 
 (all figures subject to sanity checks)
 
-=== Tank state ===
+### Tank state
 
-* 66% less dmg taken, other stats boosted to become more tanky. 33% less dps and 33% less healing abilities.
+-   66% less dmg taken, other stats boosted to become more tanky. 33% less dps and 33% less healing abilities.
 
-=== DPS state – neutral ===
+### DPS state – neutral
 
-* Neutral.
+-   Neutral.
 
-=== Healing state ===
+### Healing state
 
-* 33% more damage taken, 66% more healing ability, 33% less dps
+-   33% more damage taken, 66% more healing ability, 33% less dps
 
-=== Support ===
-* 33% less dps, 33% less heals (should provide enough dps boost to justify having them and more, also provide useful CC and the like)
+### Support
+-   33% less dps, 33% less heals (should provide enough dps boost to justify having them and more, also provide useful CC and the like)
 
-*Mobs will not be tankable in general. They will not follow standard aggro, some might switch on healer hate, others might hate getting a DoT landed on them. The idea is that aggro should switch about forcing everyone to take turns tanking and possibly healing or supporting. Perhaps being damaged from behind pisses some of them off ^^
+Mobs will not be tankable in general. They will not follow standard aggro, some might switch on healer hate, others might hate getting a DoT landed on them. The idea is that aggro should switch about forcing everyone to take turns tanking and possibly healing or supporting. Perhaps being damaged from behind pisses some of them off ^.^
 
-When a mob aggros it will move to attack that player – the player should normally switch to the tank state and state using damage reduction abilities. Kiting might also be possible, but the general case is we want to shake things up a bit.
+When a mob aggros it will move to attack that player – the player should normally switch to the tank state and start using damage reduction abilities. Kiting might also be possible, but the general case is we want to shake things up a bit.
 
 The ability wheel from TSW is a great idea, maybe with some modifications to it and the content. Horizontal progression should be the key word of this product. Abilities will be sorted by weapons and each will have a flag to say if it can be slotted into tank / heal / etc state. Might be nice to grade the abilities by a measure of strength, like they allow only one elite e.g. 3 minor, 3 major, 2 elite (will need proof of concept)
 
@@ -53,30 +53,29 @@ Siege and zone control. Capture of nodes to control an area. Build forts if you 
 
 Groups size is generally six players. This is to accommodate standard play option of
 
-1 x tank, 1 x healer, 1 x support, 3 x dps
-2 x tank, 1 x healer, 1 x control, 1 x support, 2 x dps
-2 x tank, 2 x healer, 2 x dps
-etc
+-    1 x tank, 1 x healer, 1 x support, 3 x dps
+-    2 x tank, 1 x healer, 1 x control, 1 x support, 2 x dps
+-    2 x tank, 2 x healer, 2 x dps
 
 ## Longevity
 
 I've been wondering why I stuck around in WoW classic for so long given it's lack of features compared to new products and how crappy WoW is as a rule. It comes down to a few things:
 
-=== Community ===
+### Community
 
 We had a really great guild and great outside guilds to play with
-role playing helping each other – a lot of time was spent helping others achieve their goals too
+role playing helping each other – a lot of time was spent helping others achieve their goals too.
 
 Sandbox features could really help with this issue. Having guilds own sections of land, needing them to defend it and improve it. Gardens for players, etc.
 
 ## Test Harness
 
-* Build a test game with the most basic features you can that allows you to start testing these ideas.
-* Start with one room with nothing in it but decorations.
-* Provide portals to other places, including armoury, tutorial, etc.
-* Create a single room boss fight to begin getting a feeling for how things can work.
-* Create a small area with packs of mobs and usual trash for single player testing.
-* Provide FATE for the players to get started quickly.
+-   Build a test game with the most basic features you can that allows you to start testing these ideas.
+-   Start with one room with nothing in it but decorations.
+-   Provide portals to other places, including armoury, tutorial, etc.
+-   Create a single room boss fight to begin getting a feeling for how things can work.
+-   Create a small area with packs of mobs and usual trash for single player testing.
+-   Provide FATE for the players to get started quickly.
 
 ## HUD / UI
 
@@ -84,3 +83,5 @@ Try to show all the usual HUD / UI info in the game window instead. Gets their e
 
 Move the usual health bars and the like to circles around the feet of the mob similar to AoC. Inner ring shows health either as a segment or pie fractions of a segment (like a strip of warning tape around the ring).
 Healing received rings shown like in AoC – some way to show shields too
+
+I want healers looking into the game window, not staring at an array of health bars and playing whack-a-mole with them.

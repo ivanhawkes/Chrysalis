@@ -4,94 +4,94 @@ Game items.
 
 ## Item Types
 
-* Book
-* Containers
-** Bag
-** Backpack
-** Box / chest / crate
-* Consumables
-** Bandages
-** Potions
-** Food
-** Drink
-** Enhancement
-** Flasks
-** Scrolls
-** Other
-* Materials / Trade Goods
-** Metal
-** Stone
-** Wood
-** Leather
-** Parts
-** Paper
-** Food
-*** Meat
-*** Vegetable
-*** Fruit
-*** Grain
-*** Legume
-*** Nuts
-*** Seeds
-*** Berry
-*** Root
-*** Salt
-*** Spice
-** Other
-* Weapon
-* Scroll
-* Clothing
-* Armor
-* Recipe
-** Profession
-** Skill stanzas
-** Talent Builds
-* Gem
-* Currency
-* Key
-* Quest
-* Miscellaneous
-* Jewellry
-** Necklace
-** Bracelet
-** Ring
-* Tools
+-   Book
+-   Containers
+-   -    Bag
+-   -    Backpack
+-   -    Box / chest / crate
+-   Consumables
+-   -    Bandages
+-   -    Potions
+-   -    Food
+-   -    Drink
+-   -    Enhancement
+-   -    Flasks
+-   -    Scrolls
+-   -    Other
+-   Materials / Trade Goods
+-   -    Metal
+-   -    Stone
+-   -    Wood
+-   -    Leather
+-   -    Parts
+-   -    Paper
+-   -    Food
+-   -   -    Meat
+-   -   -    Vegetable
+-   -   -    Fruit
+-   -   -    Grain
+-   -   -    Legume
+-   -   -    Nuts
+-   -   -    Seeds
+-   -   -    Berry
+-   -   -    Root
+-   -   -    Salt
+-   -   -    Spice
+-   -    Other
+-   Weapon
+-   Scroll
+-   Clothing
+-   Armor
+-   Recipe
+-   -    Profession
+-   -    Skill stanzas
+-   -    Talent Builds
+-   Gem
+-   Currency
+-   Key
+-   Quest
+-   Miscellaneous
+-   Jewellry
+-   -    Necklace
+-   -    Bracelet
+-   -    Ring
+-   Tools
 
 I am as yet undecided on how to deal with furnaces, forges, anvils and other major machinery / tools.
 
 ## Verbs for Items
 
-* Interact (item dependant)
-* Drop
-* Pick up
-* Throw
-* Break
-* Open
-* Close
-* Read
-* Trade
-* Use (and destroy)
-* Consume (and destroy)
-* Activate
-* Loot
-* Toggle (switches)
-* Plant (seeds)
-* Water (plants)
-* Destroy
-* Harvest
-* Chop Down
+-   Interact (item dependant)
+-   Drop
+-   Pick up
+-   Throw
+-   Break
+-   Open
+-   Close
+-   Read
+-   Trade
+-   Use (and destroy)
+-   Consume (and destroy)
+-   Activate
+-   Loot
+-   Toggle (switches)
+-   Plant (seeds)
+-   Water (plants)
+-   Destroy
+-   Harvest
+-   Chop Down
 
 ## Quality
 
 Some items will have a quality value, and a subset of those items will be able to have their quality improved via crafting or quests.
 
-* Trash (grey)
-* Average(white)
-* Above Average (green)
-* Rare (blue)
-* Epic (purple)
-* Legendary (Orange)
-* Artifact (Yellow)
+-   Trash (grey)
+-   Average(white)
+-   Above Average (green)
+-   Rare (blue)
+-   Epic (purple)
+-   Legendary (Orange)
+-   Artifact (Yellow)
 
 Item drops and rewards will typically be of average quality.
 

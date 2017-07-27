@@ -86,7 +86,7 @@ int CEntityInventory::FindItem(EntityId itemId) const
 void CEntityInventory::ActorBackpackInfo::SetExpansionCounter(int expansionCounter)
 {
 	// We don't want to allow more then 5 bag expansions. We can't have the character carrying anything they want.
-	MAX(5, expansionCounter);
+	max(5, expansionCounter);
 }
 
 

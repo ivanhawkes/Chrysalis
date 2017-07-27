@@ -39,7 +39,8 @@ public:
 	void HandleEvent(const SGameObjectEvent &gameObjectEvent) override;
 	void ProcessEvent(SEntityEvent &) override;
 	void SetChannelId(uint16 id) override {};
-	void SetAuthority(bool auth) override {};
+	// FIX: 5.4
+	//void SetAuthority(bool auth) override {};
 	void PostUpdate(float frameTime) override {};
 	void PostRemoteSpawn() override {};
 

@@ -35,6 +35,7 @@ class CEntityInventory : public CGameObjectExtensionHelper <CEntityInventory, II
 	void HandleEvent(const SGameObjectEvent& event) override {};
 	void ProcessEvent(SEntityEvent& event) override {};
 	void SetChannelId(uint16 id) override {};
+	// FIX: 5.4
 	void SetAuthority(bool auth) override {};
 	void PostRemoteSpawn() override {};
 

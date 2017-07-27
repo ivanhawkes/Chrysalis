@@ -1,9 +1,23 @@
 <SurfaceTypes>
 
+	<!-- Special types -->
 	<SurfaceType name="mat_default">
 		<Physics sound_obstruction="0.5" />
 	</SurfaceType>
 
+	<SurfaceType name="mat_nodraw">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_obstruction">
+		<Physics sound_obstruction="1.0" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_invulnerable">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<!-- Construction and man made materials -->
 	<SurfaceType name="mat_concrete">
 		<Physics sound_obstruction="0.5" />
 	</SurfaceType>
@@ -12,16 +26,205 @@
 		<Physics sound_obstruction="0.5" />
 	</SurfaceType>
 
+	<SurfaceType name="mat_wood">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_plaster">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_cloth">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_plastic">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_rubber">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<!-- Natural -->
 	<SurfaceType name="mat_water">
 		<Physics sound_obstruction="0.5" />
 	</SurfaceType>
 
+	<SurfaceType name="mat_snow">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_ice">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_rock">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_rock_dusty">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_soil">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_grass">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_vegetation">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<!-- Flesh, for body part damage. -->
 	<SurfaceType name="mat_flesh">
 		<Physics sound_obstruction="0.5" />
 	</SurfaceType>
 
-	<SurfaceType name="mat_bullet">
+	<SurfaceType name="mat_flesh_head">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_flesh_torso">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_flesh_left_arm">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_flesh_left_hand">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_flesh_right_arm">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_flesh_right_hand">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_flesh_left_leg">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_flesh_left_foot">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_flesh_right_leg">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_flesh_right_foot">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<!-- Projectiles -->
+	<SurfaceType name="mat_projectile_bullet">
 		<Physics friction="0.1" />
 	</SurfaceType>
 
+	<!-- Melee weapons -->
+	<SurfaceType name="mat_melee">
+		<Physics friction="0.1" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_melee_weapon">
+		<Physics friction="0.1" />
+	</SurfaceType>
+
+	<!-- Characters -->
+	<SurfaceType name="mat_footstep">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_bodyfall">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<!-- Interations -->
+	<SurfaceType name="mat_interaction_01">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_interaction_02">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_interaction_03">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_interaction_04">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_interaction_05">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_interaction_06">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_interaction_07">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_interaction_08">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_interaction_09">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_interaction_10">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_interaction_11">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_interaction_12">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_interaction_13">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_interaction_14">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_interaction_15">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_interaction_16">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_interaction_17">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_interaction_18">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_interaction_19">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_interaction_20">
+		<Physics sound_obstruction="0.5" />
+	</SurfaceType>
 </SurfaceTypes>

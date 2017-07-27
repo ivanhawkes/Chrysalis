@@ -5,6 +5,9 @@
 #include <StateMachine/StateMachine.h>
 
 
+class CCharacterAttributesComponent;
+
+
 /**
 An implementation of the IActor interface. A CCharacter is an actor that represents a character within the game,
 either an NPC or PC which can be controlled by a player.
@@ -25,7 +28,6 @@ class CCharacter : public CGameObjectExtensionHelper<CCharacter, CActor>, public
 	DECLARE_STATE_MACHINE(CCharacter, Movement);
 
 public:
-
 	// IEntityComponent
 	void Initialize() override;
 	void ProcessEvent(SEntityEvent& event) override;
@@ -46,6 +48,7 @@ public:
 	void HandleEvent(const SGameObjectEvent& event) override;
 
 	// It is critical we override the event priority to ensure we handle the event before CAnimatedCharacter.
+	// FIX: 5.4
 	virtual IEntityComponent::ComponentEventPriority GetEventPriority(const int eventID) const override;
 	// ~IGameObjectExtension
 
@@ -142,4 +145,14 @@ public:
 
 	/** Reset the HSM. */
 	void MovementHSMReset() override;
+
+
+	// ***
+	// *** Misc
+	// ***
+
+public:
+
+	/** Manage their equipment. */
+	CCharacterAttributesComponent* m_pCharacterAttributesComponent { nullptr };
 };

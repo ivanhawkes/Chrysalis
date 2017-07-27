@@ -1,0 +1,46 @@
+<ParaGroup>
+ <Dimensions>
+  <Param Name="MoveSpeed" Min="0.2" Max="6.5" Cells="23"/>
+  <Param Name="TravelAngle" Min="-3.1400001" Max="3.1400001" Cells="29"/>
+ </Dimensions>
+ <ExampleList>
+  <Example SetPara1="-3.1470001" AName="walk_bck_3p"/>
+  <Example AName="walkcross_bck_rgt_3p"/>
+  <Example AName="walkstrafe_rgt_3p"/>
+  <Example AName="walkcross_fwd_rgt_3p"/>
+  <Example AName="walk_fwd_3p"/>
+  <Example AName="walkcross_fwd_lft_3p"/>
+  <Example AName="walkstrafe_lft_3p"/>
+  <Example SetPara1="3.1470001" AName="walk_bck_3p"/>
+  
+  <Example SetPara1="-3.1470001" AName="jog_bck_3p"/>
+  <Example AName="jogcross_bck_rgt_3p"/>
+  <Example AName="jogstrafe_rgt_3p"/>
+  <Example AName="jogcross_fwd_rgt_3p"/>
+  <Example AName="jog_fwd_3p" />
+  <Example AName="jogcross_fwd_lft_3p"/>
+  <Example AName="jogstrafe_lft_3p"/>
+  <Example SetPara1="3.1415901" AName="jog_bck_3p"/>
+
+  <Example AName="runstrafe_rgt_3p"/>
+  <Example AName="runcross_fwd_rgt_3p"/>
+  <Example AName="run_fwd_3p" />
+  <Example AName="runcross_fwd_lft_3p"/>
+  <Example AName="runstrafe_lft_3p"/>
+
+ </ExampleList>
+ <Blendable>
+  <Face p0="0" p1="8" p2="9" p3="1"/>
+  <Face p0="1" p1="9" p2="10" p3="2"/>
+  <Face p0="2" p1="10" p2="11" p3="3"/>
+  <Face p0="3" p1="11" p2="12" p3="4"/>
+  <Face p0="4" p1="12" p2="13" p3="5"/>
+  <Face p0="5" p1="13" p2="14" p3="6"/>
+  <Face p0="6" p1="14" p2="15" p3="7"/>
+
+  <Face p0="10" p1="16" p2="17" p3="11"/>
+  <Face p0="11" p1="17" p2="18" p3="12"/>
+  <Face p0="12" p1="18" p2="19" p3="13"/>
+  <Face p0="13" p1="19" p2="20" p3="14"/>
+ </Blendable>
+</ParaGroup>

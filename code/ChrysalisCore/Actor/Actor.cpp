@@ -16,13 +16,15 @@
 #include <Actor/Animation/Actions/ActorAnimationActionLocomotion.h>
 #include <Actor/Animation/Actions/ActorAnimationActionLooking.h>
 #include <Actor/Animation/Actions/ActorAnimationActionLookPose.h>
-#include <Actor/Character/Character.h>
 #include <Actor/Movement/ActorMovementController.h>
 #include <Actor/ActorPhysics.h>
 #include <Player/Input/IPlayerInputComponent.h>
 #include <Player/Player.h>
 #include <Components/Interaction/EntityAwarenessComponent.h>
 #include <Components/Interaction/EntityInteractionComponent.h>
+#include <Components/Inventory/InventoryComponent.h>
+#include <Components/Equipment/EquipmentComponent.h>
+#include <Components/Snaplocks/SnaplockComponent.h>
 #include <Utility/CryWatch.h>
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
 
@@ -59,6 +61,11 @@ CActor::~CActor()
 	// Release the movement state machine.
 	MovementHSMRelease();
 
+	// Clean up physics.
+	SEntityPhysicalizeParams physParams;
+	physParams.type = PE_NONE;
+	GetEntity()->Physicalize(physParams);
+
 	// We're over worrying about rotation.
 	//SAFE_DELETE(m_characterRotation);
 }
@@ -87,13 +94,13 @@ bool CActor::Init(IGameObject * pGameObject)
 
 void CActor::PostInit(IGameObject * pGameObject)
 {
+	auto pEntity = GetEntity();
+
 	// Required for 5.3 to call update.
-	GetEntity()->Activate(true);
+	pEntity->Activate(true);
 
 	// We need until we can remove the old style of update.
 	pGameObject->EnableUpdateSlot(this, 0);
-
-	auto pEntity = GetEntity();
 
 	// Register for pre-physics update.
 	//RegisterEvent(ENTITY_EVENT_PREPHYSICSUPDATE, IComponent::EComponentFlags_Enable);
@@ -141,6 +148,32 @@ void CActor::PostInit(IGameObject * pGameObject)
 	// the player target.
 	m_pAwareness = pEntity->GetOrCreateComponent<CEntityAwarenessComponent>();
 
+	// Manage our snaplocks.
+	m_pSnaplockComponent = pEntity->GetOrCreateComponent<CSnaplockComponent>();
+
+	// HACK: Need a way to add the default snaplocks in place. For now, I'm going to hard code them to test.
+	m_pSnaplockComponent->AddSnaplock(ISnaplock(SLT_ACTOR_HEAD, false));
+	m_pSnaplockComponent->AddSnaplock(ISnaplock(SLT_ACTOR_FACE, false));
+	m_pSnaplockComponent->AddSnaplock(ISnaplock(SLT_ACTOR_NECK, false));
+	m_pSnaplockComponent->AddSnaplock(ISnaplock(SLT_ACTOR_SHOULDERS, false));
+	m_pSnaplockComponent->AddSnaplock(ISnaplock(SLT_ACTOR_CHEST, false));
+	m_pSnaplockComponent->AddSnaplock(ISnaplock(SLT_ACTOR_BACK, false));
+	m_pSnaplockComponent->AddSnaplock(ISnaplock(SLT_ACTOR_LEFTARM, false));
+	m_pSnaplockComponent->AddSnaplock(ISnaplock(SLT_ACTOR_RIGHTARM, false));
+	m_pSnaplockComponent->AddSnaplock(ISnaplock(SLT_ACTOR_LEFTHAND, false));
+	m_pSnaplockComponent->AddSnaplock(ISnaplock(SLT_ACTOR_RIGHTHAND, false));
+	m_pSnaplockComponent->AddSnaplock(ISnaplock(SLT_ACTOR_WAIST, false));
+	m_pSnaplockComponent->AddSnaplock(ISnaplock(SLT_ACTOR_LEFTLEG, false));
+	m_pSnaplockComponent->AddSnaplock(ISnaplock(SLT_ACTOR_RIGHTLEG, false));
+	m_pSnaplockComponent->AddSnaplock(ISnaplock(SLT_ACTOR_LEFTFOOT, false));
+	m_pSnaplockComponent->AddSnaplock(ISnaplock(SLT_ACTOR_RIGHTFOOT, false));
+
+	// Inventory management.
+	m_pInventoryComponent = pEntity->GetOrCreateComponent<CInventoryComponent>();
+
+	// Equipment management.
+	m_pEquipmentComponent = pEntity->GetOrCreateComponent<CEquipmentComponent>();
+
 	// Give the actor a DRS proxy, since it will probably need one.
 	m_pDrsComponent = crycomponent_cast<IEntityDynamicResponseComponent*> (pEntity->CreateProxy(ENTITY_PROXY_DYNAMICRESPONSE));
 
@@ -148,7 +181,6 @@ void CActor::PostInit(IGameObject * pGameObject)
 	if (GetEntityId() == gEnv->pGameFramework->GetClientActorId())
 	{
 		// Tells this instance to trigger areas and that it's the local player.
-		auto pEntity = GetEntity();
 		pEntity->AddFlags(ENTITY_FLAG_TRIGGER_AREAS | ENTITY_FLAG_LOCAL_PLAYER);
 
 		//// Since we are the client always update this instance's character.
@@ -203,6 +235,7 @@ void CActor::ProcessEvent(SEntityEvent& event)
 }
 
 
+// FIX: 5.4
 IEntityComponent::ComponentEventPriority CActor::GetEventPriority(const int eventID) const
 {
 	switch (eventID)
@@ -222,9 +255,9 @@ void CActor::UpdateAnimationState(const SActorMovementRequest& movementRequest)
 		// NOTE: should use actor physics to get the veloctiy, last velocity, movement flags, etc.
 		// 	auto physics = GetActorPhysics();
 
-		// #HACK: get some debug. NOTE: This draws a big sphere over the character's head.
-		if (strcmp(GetEntity()->GetName(), "Hero") == 0)	// HACK: Need to filter it to only one entity to prevent overlays.
-			m_pActionController->SetFlag(AC_DebugDraw, true);
+		//// #HACK: get some debug. NOTE: This draws a big sphere over the character's head.
+		//if (strcmp(GetEntity()->GetName(), "Hero") == 0)	// HACK: Need to filter it to only one entity to prevent overlays.
+		//	m_pActionController->SetFlag(AC_DebugDraw, true);
 
 		// #HACK: Tracking if we moved this frame / last frame. Move this into a more cohesive solution.
 		if (movementRequest.desiredVelocity.len() > FLT_EPSILON)
@@ -485,114 +518,85 @@ bool CActor::IsClient() const
 
 bool CActor::Physicalize()
 {
-	// #TODO: We are not making good use of pe_player_dimensions yet.
-
-	// We are going to be physicalizing this instance (the player), so setup the physics dimensions to use for physics calculations.
-	// See http://docs.cryengine.com/display/SDKDOC4/Physics+System+Programming
-	pe_player_dimensions PDim;
+	pe_player_dimensions playerDimensions;
 
 	// We want a capsule, not a cylinder.
-	PDim.bUseCapsule = 1;
+	playerDimensions.bUseCapsule = 0;
+
+	// Specify the size of our cylinder.
+	playerDimensions.sizeCollider = Vec3(0.4f, 0.4f, 2.0f);
 
 	// Specifies the z-coordinate of a point in the entity frame that is considered to be at the feet level (usually 0).
-	PDim.heightPivot = 0.0f;
+	playerDimensions.heightPivot = 0.0f;
 
-	// Added recently, testing if they work.
-	PDim.heightCollider = 0.0f;
-	PDim.heightEye = 1.75f;
-	PDim.type = PE_RIGID;
-	PDim.sizeCollider = Vec3(0.45f, 0.45f, 2.0f);
+	// Offset collider upwards.
+	playerDimensions.heightCollider = 0.0f;
 
-	//PDim.heightEye = x; // The z-coordinate of the camera attached to the entity.
-
-	// sizeCollider specifies the size of the cylinder (x is radius, z is half - height, y is unused).
-	//PDim.sizeCollider = Vec3(rad, half height, 0.0f);
-
-	// heightColliders is the cylinder's center z-coordinate.
-	//PDim.heightCollider = 
-
-	// The head is an auxiliary sphere that is checked for collisions with objects above the cylinder. Head collisions
-	// don't affect movement but they make the camera position go down. headRadius is the radius of this sphere and
-	// headHeight is the z-coordinate of its center in the topmost state (i.e. when it doesn't touch anything).
-	// NOTE: Docs seem out of date at this point.
-	//PDim.headRadius = xxx;
-
-	// #TODO: grab player dimensions based on the stance they are in. I presume this needs updating when their stance
-	// changes. It might be worth making a function to fill a ref to a dim for the character.
-
-	// Player Dimensions
-	//if (stance != STANCE_NULL)
-	//{
-	//	const SStanceInfo *sInfo = GetStanceInfo (stance);
-	//	PDim.bUseCapsule = sInfo->useCapsule;
-	//	PDim.heightCollider = sInfo->heightCollider;
-	//	PDim.sizeCollider = sInfo->size;
-	//	PDim.heightPivot = sInfo->heightPivot;
-	//	PDim.maxUnproj = max (0.0f, sInfo->heightPivot);
-	//}
+	// Height entity must move up for ground contact to be considered lost.
+	playerDimensions.groundContactEps = 0.004f;
 
 	// We are going to be physicalizing this instance, so setup the physics simulation parameters to use for physics calculations.
-	pe_player_dynamics PDyn;
+	pe_player_dynamics playerDynamics;
 
 	// Setting bActive to false puts the living entity to a special 'inactive' state where it does not check collisions
 	// with the environment and only moves with the requested velocity (other entities can still collide with it,
 	// though; note that this applies only to the entities of the same or higher simulation classes). 
-	PDyn.bActive = true;
+	playerDynamics.bActive = true;
 
-	// #TODO: See why rigid is recommended for this.
-	PDyn.type = PE_RIGID;
+	// The amount of control we have while in the air.
+	playerDynamics.kAirControl = 0.9f;
+
+	// We should weigh x kilograms.
+	playerDynamics.mass = 88.0f;
 
 	// A flag that indicates if the entity is allowed to attempt to move in all directions (gravity might still pull it
 	// down though). If not set, the requested velocity will always be projected on the ground if the entity is not
 	// flying. 
-	PDyn.bSwimming = false;
+	playerDynamics.bSwimming = false;
 
 	// We should collide with all entity types and areas/triggers.
-	PDyn.collTypes = ent_all | ent_areas | ent_triggers;
+	playerDynamics.collTypes = ent_all | ent_areas | ent_triggers;
 
 	// We should use earth's normal gravity on this instance (the player).
-	PDyn.gravity = Vec3(0.0f, 0.0f, -9.81f);
-
-	// We should have almost all control while in the air.
-	PDyn.kAirControl = 0.9f;
+	playerDynamics.gravity = Vec3(0.0f, 0.0f, -9.81f);
 
 	// We should have relatively low air resistance.
-	PDyn.kAirResistance = 0.2f;
+	playerDynamics.kAirResistance = 0.2f;
 
 	// We should have a standard amount of inertia.
-	PDyn.kInertia = 8.0f;
+	playerDynamics.kInertia = 8.0f;
 
 	// We should have a standard amount of acceleration.
-	PDyn.kInertiaAccel = 11.0f;
-
-	// We should weigh x kilograms.
-	PDyn.mass = 88.0f;
+	playerDynamics.kInertiaAccel = 11.0f;
 
 	// We should not be able to climb up hills that are steeper then 50 degrees.
-	PDyn.maxClimbAngle = 50;
+	playerDynamics.maxClimbAngle = 50;
 
 	// We should not be able to jump down-hill while on hills that are steeper then 50 degrees.
-	PDyn.maxJumpAngle = 50;
+	playerDynamics.maxJumpAngle = 50;
 
 	// We should start falling down-hill if we are on hills steeper then 50 degrees.
-	PDyn.minFallAngle = 50;
+	playerDynamics.minFallAngle = 50;
 
 	// We should start sliding down-hill if we are on hills steeper then 45 degrees.
-	PDyn.minSlideAngle = DEG2RAD(45);
+	playerDynamics.minSlideAngle = DEG2RAD(45);
 
 	// Player cannot stand on ground moving faster than this.
-	PDyn.maxVelGround = 16.0f;
+	playerDynamics.maxVelGround = 16.0f;
 
 	// Sets the strength of camera reaction to landings.
-	PDyn.nodSpeed = 60.0f;
+	playerDynamics.nodSpeed = 60.0f;
 
 	// Makes the entity allocate a much longer movement history array which might be required for synchronization (if
 	// not set, this array will be allocated the first time network-related actions are requested, such as performing a
 	// step back).
-	PDyn.bNetwork = true;
+	playerDynamics.bNetwork = true;
 
 	// Setup the physics parameters this instance (the player) should use.
 	SEntityPhysicalizeParams PhysParams;
+
+	// We are going to use "living" physics type, hence the use of pe_player_dimensions and pe_player_dynamics.
+	PhysParams.type = PE_LIVING;
 
 	// Animated character will need the poststep.
 	PhysParams.nFlagsOR = pef_log_poststep;
@@ -601,19 +605,16 @@ bool CActor::Physicalize()
 	PhysParams.density = -1;
 
 	// We should weigh x kilograms. (doesn't matter because this value will come from the pe_player_dynamics).
-	PhysParams.mass = PDyn.mass;
+	PhysParams.mass = playerDynamics.mass;
 
 	// All entity slots in this instance should be physicalized using these settings.
 	PhysParams.nSlot = -1;
 
 	// Sets the player dimensions.
-	PhysParams.pPlayerDimensions = &PDim;
+	PhysParams.pPlayerDimensions = &playerDimensions;
 
 	// Sets the player dynamics.
-	PhysParams.pPlayerDynamics = &PDyn;
-
-	// We are going to use "living" physics type, hence the use of pe_player_dimensions and pe_player_dynamics.
-	PhysParams.type = PE_LIVING;
+	PhysParams.pPlayerDynamics = &playerDynamics;
 
 	// We should use standard human joint springiness.
 	PhysParams.fStiffnessScale = 73.0f;
@@ -731,7 +732,7 @@ void CActor::OnPlayerAttach(CPlayer& player)
 	// Default assumption is we now control the character.
 	m_isAIControlled = false;
 
-	// We sdhould reset the animations.
+	// We should reset the animations.
 	OnResetState();
 }
 
@@ -771,10 +772,17 @@ void CActor::OnResetState()
 		}
 	}
 
-	if (!m_geometry.IsEmpty())
+	// Select a character definition based on first / third person mode.
+	string geometry;
+	if (IsThirdPerson())
+		geometry = m_geometryThirdPerson;
+	else
+		geometry = m_geometryFirstPerson;
+
+	if (!geometry.IsEmpty())
 	{
 		// Load character
-		pEntity->LoadCharacter(0, m_geometry);
+		pEntity->LoadCharacter(0, geometry);
 
 		// Mannequin Initialization
 		IMannequin& mannequin = gEnv->pGameFramework->GetMannequinInterface();
@@ -837,7 +845,7 @@ void CActor::OnResetState()
 			auto& mannequinUserParams = gEnv->pGameFramework->GetMannequinInterface().GetMannequinUserParamsManager();
 			mannequinUserParams.RegisterParams<SActorMannequinParams>(m_pActionController, &g_actorMannequinParams);
 			mannequinUserParams.RegisterParams<SMannequinEmoteParams>(m_pActionController, &g_emoteMannequinParams);
-			
+
 		}
 
 		// Invalidates this instance's transformation matrix in order to force an update of the area manager and other
@@ -1066,6 +1074,7 @@ void CActor::OnActionInspect(EntityId playerId)
 				{
 					auto verb = verbs [0];
 
+					// HACK: TEST making a call to the DRS system
 					auto pDrsProxy = crycomponent_cast<IEntityDynamicResponseComponent*> (pInteractionEntity->CreateProxy(ENTITY_PROXY_DYNAMICRESPONSE));
 					pDrsProxy->GetResponseActor()->QueueSignal(verb);
 
@@ -1098,10 +1107,10 @@ void CActor::OnActionInteractionStart(EntityId playerId)
 			auto pInteractionEntity = gEnv->pEntitySystem->GetEntity(m_interactionEntityId);
 
 			// HACK: Another test, this time of the slaved animation code.
-			TagState tagState { TAG_STATE_EMPTY };
-			auto pPlayerAction = new CActorAnimationActionCooperative(*this, m_interactionEntityId, g_actorMannequinParams.fragmentIDs.Interaction,
-				tagState, g_actorMannequinParams.tagIDs.ScopeSlave);
-			m_pActionController->Queue(*pPlayerAction);
+			//TagState tagState { TAG_STATE_EMPTY };
+			//auto pPlayerAction = new CActorAnimationActionCooperative(*this, m_interactionEntityId, g_actorMannequinParams.fragmentIDs.Interaction,
+			//	tagState, g_actorMannequinParams.tagIDs.ScopeSlave);
+			//m_pActionController->Queue(*pPlayerAction);
 
 			// HACK: Another test - this time of setting an emote.
 			//auto emoteAction = new CActorAnimationActionEmote(g_emoteMannequinParams.tagIDs.Awe);
@@ -1117,8 +1126,8 @@ void CActor::OnActionInteractionStart(EntityId playerId)
 					auto verb = verbs [0];
 
 					// #HACK: Another test - just calling the interaction directly instead.
-					//auto pInteraction = pInteractor->GetInteraction(verb)._Get();
-					//pInteraction->OnInteractionStart();
+					auto pInteraction = pInteractor->GetInteraction(verb)._Get();
+					pInteraction->OnInteractionStart();
 
 					// HACK: Doesn't belong here, test to see if we can queue an interaction action.
 					//auto action = new CActorAnimationActionInteraction();

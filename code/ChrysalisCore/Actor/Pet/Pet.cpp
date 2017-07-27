@@ -44,7 +44,7 @@ void CPet::PostInit(IGameObject * pGameObject)
 	RegisterEvents();
 
 	// Get it into a known state.
-	Reset();
+	OnResetState();
 }
 
 
@@ -123,7 +123,7 @@ void CPet::ProcessEvent(SEntityEvent& event)
 			break;
 
 		case ENTITY_EVENT_RESET:
-			OnReset();
+			OnResetState();
 			break;
 
 		default:
@@ -132,6 +132,7 @@ void CPet::ProcessEvent(SEntityEvent& event)
 }
 
 
+// FIX: 5.4
 IComponent::ComponentEventPriority CPet::GetEventPriority(const int eventID) const
 {
 	switch (eventID)
@@ -208,9 +209,9 @@ void CPet::OnEditorPropertyChanged()
 // ***
 
 
-void CPet::Reset()
+void CPet::OnResetState()
 {
-	CActor::Reset();
+	CActor::OnResetState();
 }
 
 

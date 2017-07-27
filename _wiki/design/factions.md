@@ -6,31 +6,31 @@ We will need to build a generic system for handling character faction. Ideally, 
 
 Characters will be able to join only one faction at any given time. They can earn points towards their primary faction through several mechanisms:
 
-* faction quests
-* killing enemies of their faction (perhaps)
+-   faction quests
+-   killing enemies of their faction (perhaps)
 
 Each character will maintain a list of factions, and their relative ranking with that faction. Rank is determined by XP e.g.
 
-* Mortal Enemies -15,000
-* Despised -5000
-* Loathed -1000
-* Hostile -200
-* Unfriendly -50
-* Neutral 0
-* Friendly 200
-* Decorated 1,000
-* Honoured 5,000
-* Revered 20,000
-* Exalted 120,000
+-   Mortal Enemies -15,000
+-   Despised -5000
+-   Loathed -1000
+-   Hostile -200
+-   Unfriendly -50
+-   Neutral 0
+-   Friendly 200
+-   Decorated 1,000
+-   Honoured 5,000
+-   Revered 20,000
+-   Exalted 120,000
 
 You should start out with 0 points of reputation against nearly all factions, except ones that are meant to be hostile right from the start.
 
 Actions taken against other players will result in a reduction of your standing with their faction e.g.
 
-* /slap (10 points)
-* /spit (20 points)
-* theft (50 points)
-* murder (500 points)
+-   /slap (10 points)
+-   /spit (20 points)
+-   theft (50 points)
+-   murder (500 points)
 
 You may be able to undertake quests that are against another faction which also award points. These should award XP from the quest giver's faction, and remove it from the targetted faction.
 
@@ -42,12 +42,12 @@ Non-lethal combat (e.g. boxing) should be allowed to start off the fighting when
 
 Increasing your faction should open up access to rewards. This is true of characters and factions themselves. Implement an XP driven reward system which can provide the usual incentives.
 
-* faction banners / tabards
-* improved XP gains for characters in the faction
-* building plans
-* ability to own land (serious chance for things to go bad if this is done wrong)
-* access to defenses for land
-* ability to create faction owned characters, such as crafters, guards, and other NPC like characters - though all would be able to be controlled by a player of high enough faction rank (rank up in craft, leadership, military, etc all separately? Split out according to broad interests?)
+-   faction banners / tabards
+-   improved XP gains for characters in the faction
+-   building plans
+-   ability to own land (serious chance for things to go bad if this is done wrong)
+-   access to defenses for land
+-   ability to create faction owned characters, such as crafters, guards, and other NPC like characters - though all would be able to be controlled by a player of high enough faction rank (rank up in craft, leadership, military, etc all separately? Split out according to broad interests?)
 
 It might be interesting if factions can spend points similar to a skill point system. Eventually, they could open up large amounts of the rewards, but never everything at once. A PVP faction could favour PVP rewards, a leveling factions - ones that speed up leveling, and PVE ones that help down bosses in dungeons.
 
@@ -103,8 +103,8 @@ As usual, it's best to start with the simple option and go from there.
 
 ## Damage Calculations
 
-* IsHostile - Hostile status
-* IsAttackable - Attackable status
+-   IsHostile - Hostile status
+-   IsAttackable - Attackable status
 
 Calculations need to account for friendly fire as well as faction and free for all status of location / zone / realm.
 

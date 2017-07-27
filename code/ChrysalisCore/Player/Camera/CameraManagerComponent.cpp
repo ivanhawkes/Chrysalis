@@ -2,6 +2,7 @@
 
 #include "CameraManagerComponent.h"
 #include "ActionRPGCameraComponent.h"
+#include "ExamineCameraComponent.h"
 #include "FirstPersonCameraComponent.h"
 #include <Actor/Character/Character.h>
 #include <Player/Player.h>
@@ -15,7 +16,7 @@ class CCameraManagerRegistrator : public IEntityRegistrator, public CCameraManag
 {
 	virtual void Register() override
 	{
-//		RegisterEntityWithDefaultComponent<CCameraManagerComponent>("CameraManager", "Camera", "Camera.bmp");
+		//		RegisterEntityWithDefaultComponent<CCameraManagerComponent>("CameraManager", "Camera", "Camera.bmp");
 		CChrysalisCorePlugin::RegisterEntityWithDefaultComponent<CCameraManagerComponent>("CameraManager");
 
 		// This should make the entity class invisible in the editor.
@@ -59,6 +60,10 @@ void CCameraManagerComponent::PostInit(IGameObject * pGameObject)
 	// Action RPG Camera.
 	m_cameraModes [ECameraMode::eCameraMode_ActionRpg] = static_cast<CActionRPGCameraComponent*> (GetGameObject()->AcquireExtension("ActionRPGCamera"));
 	//m_cameraModes [ECameraMode::eCameraMode_ActionRpg] = pEntity->CreateComponent<CActionRPGCameraComponent>();
+
+	// Examine entity camera.
+	m_cameraModes [ECameraMode::eCameraMode_Examine] = static_cast<CExamineCameraComponent*> (GetGameObject()->AcquireExtension("ExamineCamera"));
+	//m_cameraModes [ECameraMode::eCameraMode_Examine] = pEntity->CreateComponent<CExamineCameraComponent>();
 
 	// #TODO: make a special one for HMD	
 	//m_cameraModes [ECameraMode::eCameraMode_FirstPersonHmd] = pEntity->CreateComponent<CActionRPGCameraComponent>();
@@ -169,6 +174,15 @@ void CCameraManagerComponent::SetCameraMode(ECameraMode mode, const char* reason
 }
 
 
+void CCameraManagerComponent::SetLastCameraMode()
+{
+	if (m_lastCameraMode != m_cameraMode)
+	{
+		SetCameraMode(m_lastCameraMode, "Set mode to the last camera mode.");
+	}
+}
+
+
 ICameraComponent* CCameraManagerComponent::GetCamera() const
 {
 	return m_cameraModes [m_cameraMode];
@@ -222,7 +236,7 @@ CCameraManagerComponent::SExternalCVars& CCameraManagerComponent::SetCVars()
 
 Vec3 CCameraManagerComponent::GetViewOffset()
 {
-	return Vec3FromString(GetCVars().m_debugViewOffset->GetString()) + m_interactiveViewOffset; 
+	return Vec3FromString(GetCVars().m_debugViewOffset->GetString()) + m_interactiveViewOffset;
 }
 
 

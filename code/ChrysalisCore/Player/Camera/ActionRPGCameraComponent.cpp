@@ -72,7 +72,7 @@ void CActionRPGCameraComponent::Initialize()
 
 void CActionRPGCameraComponent::PostInit(IGameObject * pGameObject)
 {
-	pGameObject->EnableUpdateSlot(this, 0);
+	pGameObject->EnableUpdateSlot(this, CPlayer::EPlayerUpdateSlot::ePlayerUpdateSlot_CameraThirdPerson);
 
 	// Required for 5.3 to call update.
 	GetEntity()->Activate(true);

@@ -22,10 +22,12 @@ struct ISimpleActor : public IActor
 	virtual ISerializableInfoPtr GetSpawnInfo() override {return nullptr;}
 	virtual void Update(SEntityUpdateContext& ctx, int updateSlot) override {}
 	virtual void SetChannelId(uint16 id) override {}
+	// FIX: 5.4
 	virtual void SetAuthority(bool auth) override {}
 	virtual void PostUpdate(float frameTime) override {}
 	virtual void PostRemoteSpawn() override {}
 	virtual void GetMemoryUsage(ICrySizer* pSizer) const override {}
+	// FIX: 5.4
 	virtual ComponentEventPriority GetEventPriority(const int eventID) const override {return EEntityEventPriority_GameObject;}
 	// ~IGameObjectExtension
 
