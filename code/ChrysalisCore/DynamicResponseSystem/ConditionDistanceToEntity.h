@@ -3,6 +3,8 @@
 #include <CryDynamicResponseSystem/IDynamicResponseCondition.h>
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
 
+namespace Chrysalis
+{
 struct DRS::IResponseActor;
 struct DRS::IVariableCollection;
 
@@ -25,3 +27,4 @@ private:
 	float m_squaredDistance { 100.0f };
 	string m_entityName;
 };
+}

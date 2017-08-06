@@ -4,40 +4,16 @@
 #include <GameObjects/GameObject.h>
 #include <IActorSystem.h>
 #include <IMovementController.h>
-#include <Player/Player.h>
+#include <Components/Player/Player.h>
 #include <Actor/Character/Character.h>
-#include <Player/Camera/ICameraComponent.h>
+#include <Components/Player/Camera/ICameraComponent.h>
 #include <Components/Interaction/EntityInteractionComponent.h>
+#include <Console/CVars.h>
 #include "Utility/CryWatch.h"
 
 
-CRYREGISTER_CLASS(CEntityAwarenessComponent)
-
-
-class CEntityAwarenessRegistrator
-	: public IEntityRegistrator
-	, public CEntityAwarenessComponent::SExternalCVars
+namespace Chrysalis
 {
-	virtual void Register() override
-	{
-		RegisterEntityWithDefaultComponent<CEntityAwarenessComponent>("EntityAwareness", "Entities");
-
-		// This should make the entity class invisible in the editor.
-		auto cls = gEnv->pEntitySystem->GetClassRegistry()->FindClass("EntityAwareness");
-		cls->SetFlags(cls->GetFlags() | ECLF_INVISIBLE);
-
-		RegisterCVars();
-	}
-
-	void RegisterCVars()
-	{
-		REGISTER_CVAR2("entity_awareness_Debug", &m_debug, 0, VF_CHEAT, "Allow debug display.");
-	}
-};
-
-CEntityAwarenessRegistrator g_entityAwarenessRegistrator;
-
-
 /** The distance forward of the actor we will ray-cast in search of entities. */
 static const float forwardCastDistance = 300.0f;
 
@@ -50,19 +26,31 @@ static const float maxRaycastStaleness = 0.05f;
 #define PIERCE_GLASS (13)
 
 
-// ***
-// *** IGameObjectExtension
-// ***
+void CEntityAwarenessComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+{
+}
+
+
+void CEntityAwarenessComponent::ReflectType(Schematyc::CTypeDesc<CEntityAwarenessComponent>& desc)
+{
+	desc.SetGUID(CEntityAwarenessComponent::IID());
+	desc.SetEditorCategory("Entities");
+	desc.SetLabel("EntityAwareness");
+	desc.SetDescription("Allow an entity to become aware of other entities around it.");
+	desc.SetIcon("icons:ObjectTypes/light.ico");
+
+	// TODO: Do we need a transform for this? Likely not.
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+}
+
 
 void CEntityAwarenessComponent::Initialize()
 {
-	// Required for 5.3 to call update.
-	GetEntity()->Activate(true);
-
 	// This extension is only valid for actors.
-	m_pActor = CActor::GetActor(GetEntityId());
-	if (!m_pActor)
-		GameWarning("EntityAwareness extension only available for actors");
+	// TODO: CRITICAL: HACK: BROKEN: !!
+	//m_pActor = CActor::GetActor(GetEntityId());
+	//if (!m_pActor)
+	//	GameWarning("EntityAwareness extension only available for actors");
 }
 
 
@@ -77,31 +65,6 @@ void CEntityAwarenessComponent::ProcessEvent(SEntityEvent& event)
 }
 
 
-void CEntityAwarenessComponent::SerializeProperties(Serialization::IArchive& archive)
-{
-	//if (archive.isInput())
-	//{
-	//	OnResetState();
-	//}
-}
-
-
-//void CEntityAwarenessComponent::FullSerialize(TSerialize ser)
-//{
-//	if (ser.GetSerializationTarget() == eST_Network)
-//		return;
-//
-//	ser.Value("proximityRadius", m_proximityRadius);
-//	m_validQueries = 0;
-//
-//	if (GetISystem()->IsSerializingFile() == 1)
-//	{
-//		m_pActor = CActor::GetActor(GetEntityId());
-//		CRY_ASSERT(m_pActor);
-//	}
-//}
-
-
 void CEntityAwarenessComponent::Update()
 {
 	if (!m_pActor)
@@ -112,13 +75,13 @@ void CEntityAwarenessComponent::Update()
 	// Using the local player's camera is fine for now. Arguably, you should get it from the actor skeleton instead
 	// but actor's don't allow you to query the eye direction, only it's position. Heisenberg much?
 	// #TODO: make it work with the actor's eyes instead. That will work fine in FP, but might be tougher to control in TP - so test it.
-	auto localPlayer = CPlayer::GetLocalPlayer();
+	auto localPlayer = CPlayerComponent::GetLocalPlayer();
 
 	// #HACK: It should never come back null, but it does right now so we need this test.
 	if (localPlayer)
 	{
 		// HACK: We should get the actor instead, do this when patching for 5.4.
-		if (auto pCharacter = CPlayer::GetLocalCharacter())
+		if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
 		{
 			// Is this entity under local control?
 			if (pCharacter->GetEntityId() == GetEntityId())
@@ -181,12 +144,6 @@ CEntityAwarenessComponent::~CEntityAwarenessComponent()
 }
 
 
-const CEntityAwarenessComponent::SExternalCVars& CEntityAwarenessComponent::GetCVars() const
-{
-	return g_entityAwarenessRegistrator;
-}
-
-
 void CEntityAwarenessComponent::UpdateRaycastQuery()
 {
 	if (!m_pActor || m_pActor->GetEntity()->IsHidden())
@@ -231,7 +188,7 @@ void CEntityAwarenessComponent::UpdateRaycastQuery()
 //		m_queuedRays [raySlot].counter = ++m_requestCounter;
 
 #if defined(_DEBUG)
-		if (GetCVars().m_debug & eDB_RayCast)
+		if (g_cvars.m_componentAwarenessDebug & eDB_RayCast)
 		{
 			gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(m_eyePosition, ColorB(0, 0, 128),
 				m_eyePosition + (m_eyeDirection * FORWARD_DIRECTION * forwardCastDistance),
@@ -281,7 +238,7 @@ void CEntityAwarenessComponent::OnRayCastDataReceived(const QueuedRayID& rayID, 
 			m_rayHitPierceable.next = nullptr;
 
 #if defined(_DEBUG)
-			if (GetCVars().m_debug & eDB_RayCast)
+			if (g_cvars.m_componentAwarenessDebug & eDB_RayCast)
 			{
 				gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(result.hits [1].pt, 0.01f, ColorB(0, 0, 255));
 			}
@@ -318,7 +275,7 @@ void CEntityAwarenessComponent::OnRayCast(const ray_hit & rayHit)
 	}
 
 #if defined(_DEBUG)
-	if (GetCVars().m_debug & eDB_RayCast)
+	if (g_cvars.m_componentAwarenessDebug & eDB_RayCast)
 	{
 		// Highlight the hit point.
 		gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(m_rayHitSolid.pt, 0.01f, ColorB(255, 0, 0));
@@ -407,7 +364,7 @@ void CEntityAwarenessComponent::UpdateProximityQuery()
 	qry.box.max = m_eyePosition + positionOffset;
 
 #if defined(_DEBUG)
-	if (GetCVars().m_debug & eDB_ProximalEntities)
+	if (g_cvars.m_componentAwarenessDebug & eDB_ProximalEntities)
 	{
 		// DEBUG: Render the grid for debug purposes.
 		gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(qry.box, false, ColorB(255, 0, 0), EBoundingBoxDrawStyle::eBBD_Extremes_Color_Encoded);
@@ -429,7 +386,7 @@ void CEntityAwarenessComponent::UpdateProximityQuery()
 			continue;
 
 #if defined(_DEBUG)
-		if (GetCVars().m_debug & eDB_ProximalEntities)
+		if (g_cvars.m_componentAwarenessDebug & eDB_ProximalEntities)
 		{
 			// DEBUG: Highlight each entity within the range.
 			AABB bbox;
@@ -452,7 +409,7 @@ void CEntityAwarenessComponent::UpdateNearQuery()
 	const float flatDistanceSqr = proximityRadius * proximityRadius;
 
 #if defined(_DEBUG)
-	if (GetCVars().m_debug & eDB_NearEntities)
+	if (g_cvars.m_componentAwarenessDebug & eDB_NearEntities)
 	{
 		// DEBUG: Render the grid for debug purposes.
 		const Vec3 positionOffset(proximityRadius, proximityRadius, proximityRadius);
@@ -487,7 +444,7 @@ void CEntityAwarenessComponent::UpdateNearQuery()
 			continue;
 
 #if defined(_DEBUG)
-		if (GetCVars().m_debug & eDB_NearEntities)
+		if (g_cvars.m_componentAwarenessDebug & eDB_NearEntities)
 		{
 			// DEBUG: Highlight the entity.
 			AABB bbox;
@@ -513,7 +470,7 @@ void CEntityAwarenessComponent::UpdateInFrontOfQuery()
 	Lineseg lineseg(m_eyePosition, m_eyePosition + (m_eyeDirection * FORWARD_DIRECTION * m_proximityRadius));
 
 #if defined(_DEBUG)
-	if (GetCVars().m_debug & eDB_InFront)
+	if (g_cvars.m_componentAwarenessDebug & eDB_InFront)
 	{
 		// DEBUG: get the lineseg to show up.
 		gEnv->pRenderer->GetIRenderAuxGeom()->DrawLine(lineseg.start, ColorB(64, 0, 0), lineseg.end, ColorB(128, 0, 0), 8.0f);
@@ -543,7 +500,7 @@ void CEntityAwarenessComponent::UpdateInFrontOfQuery()
 			if (Overlap::Lineseg_OBB(lineseg, pEntity->GetWorldPos(), obb))
 			{
 #if defined(_DEBUG)
-				if (GetCVars().m_debug & eDB_InFront)
+				if (g_cvars.m_componentAwarenessDebug & eDB_InFront)
 				{
 					// DEBUG: let's see those boxes.
 					gEnv->pRenderer->GetIRenderAuxGeom()->DrawOBB(obb, pEntity->GetWorldTM(), true, ColorB(0, 0, 196), EBoundingBoxDrawStyle::eBBD_Extremes_Color_Encoded);
@@ -597,7 +554,7 @@ const Entities& CEntityAwarenessComponent::GetNearDotFiltered(float minDot, floa
 		if ((dotToItem >= minDot) && (dotToItem <= maxDot))
 		{
 #if defined(_DEBUG)
-			if (GetCVars().m_debug & eDB_DotFiltered)
+			if (g_cvars.m_componentAwarenessDebug & eDB_DotFiltered)
 			{
 				// DEBUG: Highlight the entity.
 				bbox.Expand(Vec3(0.03f, 0.03f, 0.03f));
@@ -625,7 +582,7 @@ const Entities& CEntityAwarenessComponent::GetNearDotFiltered(float minDot, floa
 		std::swap(m_entitiesNearDotFiltered [0], m_entitiesNearDotFiltered [bestResultIndex]);
 
 #if defined(_DEBUG)
-	if (GetCVars().m_debug & eDB_DotFiltered)
+	if (g_cvars.m_componentAwarenessDebug & eDB_DotFiltered)
 	{
 		IEntity *pEntity;
 		if ((m_entitiesNearDotFiltered.size() > 0) && (pEntity = gEnv->pEntitySystem->GetEntity(m_entitiesNearDotFiltered [0])))
@@ -639,4 +596,5 @@ const Entities& CEntityAwarenessComponent::GetNearDotFiltered(float minDot, floa
 #endif
 
 	return m_entitiesNearDotFiltered;
+}
 }

@@ -1,7 +1,9 @@
 #pragma once
 
-#include "Item/Item.h"
+#include "Components/Items/ItemComponent.h"
 
+namespace Chrysalis
+{
 class CItemAccessoryParameter;
 class CItemBaseParameter;
 //class CItemFlashlightParameter;
@@ -18,7 +20,7 @@ struct CItemParameter
 //
 //
 //	/** Resets this object to it's default state. */
-//	void OnResetState();
+//	virtual void OnResetState();
 //
 //
 //	/**
@@ -43,3 +45,4 @@ struct CItemParameter
 //	CItemGeometryParameter* m_pItemGeometryParameter = nullptr;
 //	CItemLaserParameter* m_pItemLaserParameter = nullptr;
 };
+}

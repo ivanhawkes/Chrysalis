@@ -1,6 +1,8 @@
 #pragma once
 
-class CCharacter;
+namespace Chrysalis
+{
+class CCharacterComponent;
 class CCharacterMovementAction;
 struct SActorMovementRequest;
 
@@ -10,14 +12,15 @@ class CCharacterStateGround
 public:
 	CCharacterStateGround();
 
-	void OnEnter(CCharacter& Character);
-	void OnPrePhysicsUpdate(CCharacter& Character, const SActorMovementRequest& movementRequest, float frameTime, const bool isHeavyWeapon, const bool isCharacter);
-	void OnUpdate(CCharacter& Character, float frameTime);
-	void OnExit(CCharacter& Character);
+	void OnEnter(CCharacterComponent& Character);
+	void OnPrePhysicsUpdate(CCharacterComponent& Character, const SActorMovementRequest& movementRequest, float frameTime, const bool isHeavyWeapon, const bool isLocalPlayer);
+	void OnUpdate(CCharacterComponent& Character, float frameTime);
+	void OnExit(CCharacterComponent& Character);
 
 private:
 	bool m_inertiaIsZero;
 
-	//void ProcessAlignToTarget (const CAutoAimManager& autoAimManager, CCharacter& Character, const IActor* pTarget);
-	bool CheckForVaultTrigger(CCharacter & Character, float frameTime);
+	//void ProcessAlignToTarget (const CAutoAimManager& autoAimManager, CCharacterComponent& Character, const IActor* pTarget);
+	bool CheckForVaultTrigger(CCharacterComponent & Character, float frameTime);
 };
+}

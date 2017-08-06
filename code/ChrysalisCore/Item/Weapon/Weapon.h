@@ -2,11 +2,13 @@
 
 #include <IItemSystem.h>
 #include <IWeapon.h>
-#include "Item/Item.h"
+#include "Components/Items/ItemComponent.h"
 
 
+namespace Chrysalis
+{
 class CWeapon :
-	public CItem, public IWeapon
+	public CItemComponent, public IWeapon
 {
 public:
 	CWeapon();
@@ -14,4 +16,4 @@ public:
 
 	virtual IWeapon *GetIWeapon() { return this; };
 };
-
+}

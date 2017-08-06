@@ -1,0 +1,9 @@
+<AssetMetadata version="0" type="Material" guid="{73682B78-F82A-A233-50D9-42EF65284DBD}">
+ <Files>
+  <File path="chloe_hitmaterial.mtl"/>
+ </Files>
+ <Details>
+  <Detail name="subMaterialCount">5</Detail>
+  <Detail name="textureCount">0</Detail>
+ </Details>
+</AssetMetadata>

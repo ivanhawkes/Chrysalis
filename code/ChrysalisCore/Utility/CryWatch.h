@@ -14,9 +14,10 @@ History:
 
 *************************************************************************/
 
-#ifndef __CRYWATCH_H__
-#define __CRYWATCH_H__
+#pragma once
 
+namespace Chrysalis
+{
 #if !defined(_RELEASE)
 #define CRY_WATCH_ENABLED			 (1)
 #else
@@ -43,5 +44,4 @@ void CryWatch3DTick(float dt);
 #define CryWatch3DTick(dt)             ((void)0)
 
 #endif // CRY_WATCH_ENABLED
-
-#endif // __CRYWATCH_H__
+}

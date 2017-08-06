@@ -6,6 +6,8 @@
 #include <Components/Interaction/EntityInteractionComponent.h>
 
 
+namespace Chrysalis
+{
 DRS::IResponseActionInstanceUniquePtr CActionSwitch::Execute(DRS::IResponseInstance* pResponseInstance)
 {
 	auto pResponseActor = pResponseInstance->GetCurrentActor();
@@ -63,4 +65,5 @@ DRS::IResponseActionInstance::eCurrentState CActionSwitchInstance::Update()
 
 void CActionSwitchInstance::Cancel()
 {
+}
 }

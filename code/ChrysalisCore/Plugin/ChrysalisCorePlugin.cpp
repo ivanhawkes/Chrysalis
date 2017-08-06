@@ -1,39 +1,217 @@
 #include "StdAfx.h"
 
+#include "ChrysalisCorePlugin.h"
+#include <CrySystem/ISystem.h>
+#include <CryExtension/ICryPluginManager.h>
+#include "Components/Player/Player.h"
+#include <CrySchematyc/Env/IEnvRegistry.h>
+#include <CrySchematyc/Env/EnvPackage.h>
+#include <CrySchematyc/Utils/SharedString.h>
+#include <IGameObjectSystem.h>
+#include <IGameObject.h>
+#include "Console/CVars.h"
+#include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
+#include "DynamicResponseSystem/ConditionDistanceToEntity.h"
+#include "DynamicResponseSystem/ActionClose.h"
+#include "DynamicResponseSystem/ActionLock.h"
+#include "DynamicResponseSystem/ActionOpen.h"
+#include "DynamicResponseSystem/ActionPlayAnimation.h"
+#include "DynamicResponseSystem/ActionSwitch.h"
+#include "DynamicResponseSystem/ActionUnlock.h"
+#include "ObjectID/ObjectIdMasterFactory.h"
+#include "Actor/Character/CharacterAttributesComponent.h"
+#include "Actor/Actor.h"
+#include "Actor/Character/Character.h"
+#include "Actor/Mount/Mount.h"
+#include "Actor/Pet/Pet.h"
+#include "Components/Items/ItemComponent.h"
+#include "Components/Animation/ControlledAnimationComponent.h"
+#include "Components/Animation/SimpleAnimationComponent.h"
+#include "Components/Equipment/EquipmentComponent.h"
+#include "Components/Interaction/DRSInteractionComponent.h"
+#include "Components/Interaction/EntityAwarenessComponent.h"
+#include "Components/Interaction/EntityInteractionComponent.h"
+#include "Components/Interaction/ItemInteractionComponent.h"
+#include "Components/Inventory/InventoryComponent.h"
+#include "Components/Lights/DynamicLightComponent.h"
+#include "Components/Lockable/KeyringComponent.h"
+#include "Components/Lockable/LockableComponent.h"
+#include "Components/Openable/ContainerComponent.h"
+#include "Components/Player/Camera/CameraManagerComponent.h"
+#include "Components/Player/Camera/ActionRPGCameraComponent.h"
+#include "Components/Player/Camera/ExamineCameraComponent.h"
+#include "Components/Player/Camera/FirstPersonCameraComponent.h"
+#include "Components/Player/Input/PlayerInputComponent.h"
+#include "Components/Snaplocks/SnaplockComponent.h"
+#include "Components/Switchable/SwitchComponent.h"
+#include "Entities/Compass/CompassComponent.h"
+#include "Entities/Doors/AnimatedDoorComponent.h"
+#include "Entities/Flashlight/FlashlightComponent.h"
+#include "Entities/Interaction/DRSInteractionEntity.h"
+#include "Entities/SecurityPad/SecurityPadComponent.h"
+
+
 // Included only once per DLL module.
 #include <CryCore/Platform/platform_impl.inl>
 
-#include <CryExtension/ICryPluginManager.h>
-
-CRYREGISTER_SINGLETON_CLASS(CChrysalisCorePlugin)
-
-
-IEntityRegistrator *IEntityRegistrator::g_pFirst = nullptr;
-IEntityRegistrator *IEntityRegistrator::g_pLast = nullptr;
-
-
+namespace Chrysalis
+{
 CChrysalisCorePlugin::~CChrysalisCorePlugin()
 {
+	// Remove any registered listeners before 'this' becomes invalid
+	gEnv->pGameFramework->RemoveNetworkedClientListener(*this);
 	gEnv->pSystem->GetISystemEventDispatcher()->RemoveListener(this);
 
-	IEntityRegistrator* pTemp = IEntityRegistrator::g_pFirst;
-	while (pTemp != nullptr)
+	if (gEnv->pSchematyc)
 	{
-		pTemp->Unregister();
-		pTemp = pTemp->m_pNext;
+		gEnv->pSchematyc->GetEnvRegistry().DeregisterPackage(GetSchematycPackageGUID());
 	}
 
-	SAFE_DELETE(m_pChrysalisCore);
+	// Unregister all the cvars.
+	g_cvars.UnregisterVariables();
+}
+
+
+void CChrysalisCorePlugin::RegisterComponents(Schematyc::IEnvRegistrar& registrar)
+{
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CCharacterComponent));
+			Chrysalis::CCharacterComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CPetComponent));
+			Chrysalis::CPetComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CMountComponent));
+			Chrysalis::CMountComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CCharacterAttributesComponent));
+			Chrysalis::CCharacterAttributesComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CItemComponent));
+			Chrysalis::CItemComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CControlledAnimationComponent));
+			Chrysalis::CControlledAnimationComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CSimpleAnimationComponent));
+			Chrysalis::CSimpleAnimationComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CEquipmentComponent));
+			Chrysalis::CEquipmentComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CDRSInteractionComponent));
+			Chrysalis::CDRSInteractionComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CEntityAwarenessComponent));
+			Chrysalis::CEntityAwarenessComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CEntityInteractionComponent));
+			Chrysalis::CEntityInteractionComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CItemInteractionComponent));
+			Chrysalis::CItemInteractionComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CInventoryComponent));
+			Chrysalis::CInventoryComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CDynamicLightComponent));
+			Chrysalis::CDynamicLightComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CKeyringComponent));
+			Chrysalis::CKeyringComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CLockableComponent));
+			Chrysalis::CLockableComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CContainerComponent));
+			Chrysalis::CContainerComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CCameraManagerComponent));
+			Chrysalis::CCameraManagerComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CFirstPersonCameraComponent));
+			Chrysalis::CFirstPersonCameraComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CExamineCameraComponent));
+			Chrysalis::CExamineCameraComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CActionRPGCameraComponent));
+			Chrysalis::CActionRPGCameraComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CPlayerInputComponent));
+			Chrysalis::CPlayerInputComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CSnaplockComponent));
+			Chrysalis::CSnaplockComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CSwitchComponent));
+			Chrysalis::CSwitchComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CCompassComponent));
+			Chrysalis::CCompassComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CAnimatedDoorComponent));
+			Chrysalis::CAnimatedDoorComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CFlashlightComponent));
+			Chrysalis::CFlashlightComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CDRSInteractionEntity));
+			Chrysalis::CDRSInteractionEntity::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CSecurityPadComponent));
+			Chrysalis::CSecurityPadComponent::Register(componentScope);
+		}
+	}
 }
 
 
 bool CChrysalisCorePlugin::Initialize(SSystemGlobalEnvironment& env, const SSystemInitParams& initParams)
 {
-	gEnv->pSystem->GetISystemEventDispatcher()->RegisterListener(this);
+	// Register for engine system events, in our case we need ESYSTEM_EVENT_GAME_POST_INIT to load the map
+	gEnv->pSystem->GetISystemEventDispatcher()->RegisterListener(this, "CChrysalisCore");
 
-	m_pChrysalisCore = new CChrysalisCore();
+	// Listen for client connection events, in order to create the local player
+	gEnv->pGameFramework->AddNetworkedClientListener(*this);
 
-	return (m_pChrysalisCore != nullptr);
+	// Register all the cvars.
+	g_cvars.RegisterVariables();
+
+	// Create a valid master factory which can provide instance unique Ids for us.
+	// #TODO: Get the InstanceId from the command line or cvars.
+	m_pObjectIdMasterFactory = new CObjectIdMasterFactory(0);
+
+	return true;
 }
 
 
@@ -41,19 +219,137 @@ void CChrysalisCorePlugin::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UI
 {
 	switch (event)
 	{
-		case ESYSTEM_EVENT_GAME_POST_INIT:
+		case ESYSTEM_EVENT_REGISTER_SCHEMATYC_ENV:
 		{
-			// Register entities
-			IEntityRegistrator* pTemp = IEntityRegistrator::g_pFirst;
-			while (pTemp != nullptr)
+			// Register all components that belong to this plug-in
+			auto staticAutoRegisterLambda = [this](Schematyc::IEnvRegistrar& registrar)
 			{
-				pTemp->Register();
-				pTemp = pTemp->m_pNext;
-			}
+				// Call all static callback registered with the CRY_STATIC_AUTO_REGISTER_WITH_PARAM
+				Detail::CStaticAutoRegistrar<Schematyc::IEnvRegistrar&>::InvokeStaticCallbacks(registrar);
+				
+				// Register our components.
+				RegisterComponents(registrar);
+			};
 
-			gEnv->pConsole->ExecuteString("map example", false, true);
+			if (gEnv->pSchematyc)
+			{
+				gEnv->pSchematyc->GetEnvRegistry().RegisterPackage(
+					stl::make_unique<Schematyc::CEnvPackage>(
+					GetSchematycPackageGUID(),
+					"EntityComponents",
+					"Chrysalis",
+					"Components",
+					staticAutoRegisterLambda
+				)
+				);
+			}
 		}
 		break;
+
+		// Called when the game framework has initialized and we are ready for game logic to start
+		case ESYSTEM_EVENT_GAME_POST_INIT:
+		{
+			// Search the file system to find XML files with definitions for game items.
+			// TODO: CRITICAL: HACK: BROKEN: !!
+			//gEnv->pGameFramework->GetIItemSystem()->Scan("Parameters/Items");
+
+			// Search the file system to find XML files with definitions for game weapons.
+			// TODO: CRITICAL: HACK: BROKEN: !!
+			//gEnv->pGameFramework->GetIActorSystem()->Scan("Parameters/Actors");
+
+			// #TODO: this is also null at this point in init...move as well.
+			if (gEnv->pDynamicResponseSystem)
+			{
+				// Register the custom DRS actions and conditions.
+				REGISTER_DRS_CUSTOM_CONDITION(CConditionDistanceToEntity);
+				REGISTER_DRS_CUSTOM_ACTION(CActionClose);
+				REGISTER_DRS_CUSTOM_ACTION(CActionLock);
+				REGISTER_DRS_CUSTOM_ACTION(CActionOpen);
+				REGISTER_DRS_CUSTOM_ACTION(CActionPlayAnimation);
+				REGISTER_DRS_CUSTOM_ACTION(CActionSwitch);
+				REGISTER_DRS_CUSTOM_ACTION(CActionUnlock);
+			}
+
+			// Don't need to load the map in editor
+			if (!gEnv->IsEditor())
+			{
+				gEnv->pConsole->ExecuteString("map example", false, true);
+			}
+		}
+		break;
+
+		case ESYSTEM_EVENT_LEVEL_LOAD_END:
+		{
+			auto pPlayer = CPlayerComponent::GetLocalPlayer();
+			if (pPlayer)
+				pPlayer->AttachToCharacter();
+		}
+		break;
+	}
+}
+
+
+bool CChrysalisCorePlugin::OnClientConnectionReceived(int channelId, bool bIsReset)
+{
+	// Connection received from a client, create a player entity and component
+	SEntitySpawnParams spawnParams;
+	spawnParams.pClass = gEnv->pEntitySystem->GetClassRegistry()->GetDefaultClass();
+	spawnParams.sName = "Player";
+	spawnParams.nFlags |= ENTITY_FLAG_NEVER_NETWORK_STATIC;
+
+	// Set local player details
+	if (m_players.size() == 0 && !gEnv->IsDedicated())
+	{
+		spawnParams.id = LOCAL_PLAYER_ENTITY_ID;
+		spawnParams.nFlags |= ENTITY_FLAG_LOCAL_PLAYER;
+	}
+
+	// Spawn the player entity
+	if (IEntity* pPlayerEntity = gEnv->pEntitySystem->SpawnEntity(spawnParams))
+	{
+		// Set the local player entity channel id, and bind it to the network so that it can support Multiplayer contexts
+		pPlayerEntity->GetNetEntity()->SetChannelId(channelId);
+		pPlayerEntity->GetNetEntity()->BindToNetwork();
+
+		// Create the player component instance
+		CPlayerComponent* pPlayer = pPlayerEntity->GetOrCreateComponent<CPlayerComponent>();
+
+		// Push the component into our map, with the channel id as the key
+		m_players.emplace(std::make_pair(channelId, pPlayerEntity->GetId()));
+	}
+
+	return true;
+}
+
+
+bool CChrysalisCorePlugin::OnClientReadyForGameplay(int channelId, bool bIsReset)
+{
+	// Revive players when the network reports that the client is connected and ready for gameplay
+	auto it = m_players.find(channelId);
+	if (it != m_players.end())
+	{
+		if (IEntity* pPlayerEntity = gEnv->pEntitySystem->GetEntity(it->second))
+		{
+			if (CPlayerComponent* pPlayer = pPlayerEntity->GetComponent<CPlayerComponent>())
+			{
+				pPlayer->Revive();
+			}
+		}
+	}
+
+	return true;
+}
+
+
+void CChrysalisCorePlugin::OnClientDisconnected(int channelId, EDisconnectionCause cause, const char* description, bool bKeepClient)
+{
+	// Client disconnected, remove the entity and from map
+	auto it = m_players.find(channelId);
+	if (it != m_players.end())
+	{
+		gEnv->pEntitySystem->RemoveEntity(it->second);
+
+		m_players.erase(it);
 	}
 }
 
@@ -69,4 +365,7 @@ CChrysalisCorePlugin* CChrysalisCorePlugin::Get()
 		CRY_ASSERT_MESSAGE(plugIn, "Chrysalis Core plugin was not found.");
 
 	return plugIn;
+}
+
+CRYREGISTER_SINGLETON_CLASS(CChrysalisCorePlugin)
 }

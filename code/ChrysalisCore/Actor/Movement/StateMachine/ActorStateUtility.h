@@ -1,10 +1,14 @@
 #pragma once
 
-class CCharacter;
-class CActor;
 struct SActorMovementRequest;
 struct pe_status_living;
 struct SCharacterMoveRequest;
+
+
+namespace Chrysalis
+{
+class CCharacterComponent;
+class CActor;
 struct SStateEvent;
 struct SActorPhysics;
 struct IItem;
@@ -25,7 +29,7 @@ public:
 	Process the requested rotation for the actor. This will take the two movement request types and finish
 	processing their rotation component. The entity is rotated at this point. The animated character component request is
 	fed the inverse of that rotation, but it isn't applied until the FinalizeMovementRequest function.
-	
+
 	\param [in,out]	actor	  The actor.
 	\param	movementRequest   The actor movement request.
 	\param [in,out]	acRequest The animated character movement request.
@@ -36,7 +40,7 @@ public:
 	/**
 	The movement request data is dispatched to the animated character system before initialising the system to start
 	over for the next frame.
-	
+
 	\param [in,out]	actor	  The actor.
 	\param	movementRequest   The movement request.
 	\param [in,out]	acRequest The AC request.
@@ -44,8 +48,8 @@ public:
 	static void FinalizeMovementRequest(CActor& actor, const SActorMovementRequest& movementRequest, SCharacterMoveRequest& acRequest);
 
 
-	
-	
+
+
 	static void CalculateGroundOrJumpMovement(const CActor& actor, const SActorMovementRequest& movementRequest, const bool bBigWeaponRestrict, Vec3 &move);
 
 	// Try and determine if a jump should be allowed.
@@ -89,10 +93,10 @@ private:
 
 	/**
 	Queries the physics engine for the actor's physics state.
-	
+
 	\param	actor				  The actor.
 	\param [in,out]	physicsStatus If non-null, the physics state for this living entity.
-	
+
 	\return true if it succeeds, false if it fails.
 	**/
 	static bool GetPhysicsLivingStatus(const CActor& actor, pe_status_living* physicsStatus);
@@ -101,7 +105,7 @@ private:
 	/**
 	Player movement is subjected to restrictions, based on the current environmental factors, such as terrain, game
 	modes, heavy weapons, items being carried.
-	
+
 	\param	actor			  The actor.
 	\param [in,out]	movement  The movement.
 	\param	bigWeaponRestrict The big weapon restrict.
@@ -119,3 +123,4 @@ private:
 	// so we need to look at re-writing it.
 	static bool IsMovingForward(const CActor& actor, const SActorMovementRequest& movementRequest);
 };
+}

@@ -3,6 +3,10 @@
   <Files>
    <File path="ground_grass_002_ddna.dds"/>
   </Files>
-  <Details />
+  <Details>
+   <Detail name="width">2048</Detail>
+   <Detail name="height">2048</Detail>
+   <Detail name="mipCount">10</Detail>
+  </Details>
  </AssetMetadata>
 </cryasset>

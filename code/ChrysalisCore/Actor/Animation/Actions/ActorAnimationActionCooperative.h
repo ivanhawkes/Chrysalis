@@ -4,6 +4,8 @@
 #include <Actor/Animation/ActorAnimation.h>
 
 
+namespace Chrysalis
+{
 class CActor;
 
 
@@ -13,8 +15,8 @@ public:
 
 	DEFINE_ACTION("Cooperative")
 
-	explicit CActorAnimationActionCooperative(CActor &sourceActor, EntityId targetEntityId, FragmentID fragmentID, TagState tagState,
-		TagID targetTagID, const IAnimationDatabase* pTargetOptionalDatabase = nullptr);
+		explicit CActorAnimationActionCooperative(CActor &sourceActor, EntityId targetEntityId, FragmentID fragmentID, TagState tagState,
+			TagID targetTagID, const IAnimationDatabase* pTargetOptionalDatabase = nullptr);
 	~CActorAnimationActionCooperative();
 
 protected:
@@ -43,3 +45,4 @@ private:
 	// Prevent implementation.
 	CActorAnimationActionCooperative();
 };
+}

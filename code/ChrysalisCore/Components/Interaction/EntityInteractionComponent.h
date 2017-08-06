@@ -3,36 +3,39 @@
 #include <Entities/Interaction/IEntityInteraction.h>
 
 
+namespace Chrysalis
+{
 /**
 An entity interaction component.
 
 \sa IEntityComponent
 \sa IEntityPropertyGroup
 **/
-class CEntityInteractionComponent : public IEntityComponent, public IEntityPropertyGroup
-{
-	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CEntityInteractionComponent, "EntityInteraction", 0xE2F360C6F7FF41DE, 0xA1A2D7C7C64AD730)
 
-public:
+class CEntityInteractionComponent
+	: public IEntityComponent
+{
+protected:
+	friend CChrysalisCorePlugin;
+	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
+
 	// IEntityComponent
 	void Initialize() override;
 	void ProcessEvent(SEntityEvent& event) override;
 	uint64 GetEventMask() const { return BIT64(ENTITY_EVENT_UPDATE); }
-	struct IEntityPropertyGroup* GetPropertyGroup() override { return this; }
 	// ~IEntityComponent
 
-	// IEntityPropertyGroup
-	const char* GetLabel() const override { return "Entity Interaction Properties"; };
-	void SerializeProperties(Serialization::IArchive& archive) override;
-	// ~IEntityPropertyGroup
+public:
+	CEntityInteractionComponent() {}
+	virtual ~CEntityInteractionComponent() {}
 
+	static void ReflectType(Schematyc::CTypeDesc<CEntityInteractionComponent>& desc);
 
-	// ***
-	// *** CEntityInteractionComponent
-	// ***
-
-	CEntityInteractionComponent() {};
-	virtual ~CEntityInteractionComponent() {};
+	static CryGUID& IID()
+	{
+		static CryGUID id = "{86E63BFB-CA1E-4365-8AD5-CD208F2A7010}"_cry_guid;
+		return id;
+	}
 
 	/** Updates this instance. */
 	void Update();
@@ -59,3 +62,4 @@ private:
 	std::vector<IInteractionPtr> m_Interactions;
 	IInteractionPtr m_selectedInteraction { IInteractionPtr() };
 };
+}

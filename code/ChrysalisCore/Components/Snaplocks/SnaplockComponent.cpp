@@ -3,36 +3,27 @@
 #include "SnaplockComponent.h"
 
 
-CRYREGISTER_CLASS(CSnaplockComponent)
-
-
-class CSnaplockExtensionRegistrator : public IEntityRegistrator
+namespace Chrysalis
 {
-	virtual void Register() override
-	{
-		// Register the entity class.
-		RegisterEntityWithDefaultComponent<CSnaplockComponent>("Snaplock", "Snaplocks", "door.bmp");
-	}
-};
+void CSnaplockComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+{
+}
 
-CSnaplockExtensionRegistrator g_SnaplockExtensionRegistrator;
+
+void CSnaplockComponent::ReflectType(Schematyc::CTypeDesc<CSnaplockComponent>& desc)
+{
+	desc.SetGUID(CSnaplockComponent::IID());
+	desc.SetEditorCategory("Snaplocks");
+	desc.SetLabel("Snaplocks");
+	desc.SetDescription("Deprecate this?");
+	desc.SetIcon("icons:ObjectTypes/light.ico");
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+}
 
 
 void CSnaplockComponent::Initialize()
 {
 	OnResetState();
-}
-
-
-void CSnaplockComponent::SerializeProperties(Serialization::IArchive& archive)
-{
-	archive(m_snaplock, "Snaplocks", "Snaplocks");
-	archive(m_definitionFile, "definitionFile", "Definition File");
-	
-	if (archive.isInput())
-	{
-		OnResetState();
-	}
 }
 
 
@@ -44,4 +35,5 @@ void CSnaplockComponent::OnResetState()
 void CSnaplockComponent::AddSnaplock(ISnaplock snaplock)
 {
 	m_snaplock.AddSnaplock(snaplock);
+}
 }

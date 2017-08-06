@@ -1,10 +1,11 @@
 #include <StdAfx.h>
 
 #include "ActorAnimationActionInteration.h"
-#include "IActorSystem.h"
 #include <Actor/Actor.h>
 
 
+namespace Chrysalis
+{
 #define INTERACTION_FRAGMENTS( x ) \
 	x( Interaction ) \
 
@@ -86,4 +87,5 @@ IAction::EStatus CActorAnimationActionInteraction::Update(float timePassed)
 	}
 
 	return EStatus();
+}
 }

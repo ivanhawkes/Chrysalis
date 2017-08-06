@@ -1,25 +1,34 @@
 #pragma once
 
-#include "Helpers/DesignerEntityComponent.h"
 #include <Components/Interaction/EntityInteractionComponent.h>
-#include <Components/Geometry/GeometryComponent.h>
+#include <DefaultComponents/Geometry/StaticMeshComponent.h>
 
 
-class CSecurityPadComponent final : public CDesignerEntityComponent<>, public IEntityPropertyGroup, public IInteractionExamine
+namespace Chrysalis
 {
-	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CSecurityPadComponent, "SecurityPadComponent", 0x0792FCE0BF7E44FC, 0xA06AA6F9B78EADC4)
-	virtual ~CSecurityPadComponent() {}
+class CSecurityPadComponent
+	: public IEntityComponent
+	, public IInteractionExamine
+{
+protected:
+	friend CChrysalisCorePlugin;
+	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
 
-public:
 	// IEntityComponent
 	virtual void Initialize() final;
-	virtual IEntityPropertyGroup* GetPropertyGroup() final { return this; }
 	// ~IEntityComponent
 
-	// IEntityPropertyGroup
-	virtual const char* GetLabel() const override { return "SecurityPad Properties"; }
-	virtual void SerializeProperties(Serialization::IArchive& archive) override;
-	// ~IEntityPropertyGroup
+public:
+	CSecurityPadComponent() {}
+	virtual ~CSecurityPadComponent() {}
+
+	static void ReflectType(Schematyc::CTypeDesc<CSecurityPadComponent>& desc);
+
+	static CryGUID& IID()
+	{
+		static CryGUID id = "{AE870662-9826-4945-AEC8-3CEA54C2159B}"_cry_guid;
+		return id;
+	}
 
 	// ISecurityPadEntityComponent
 	virtual void OnResetState() final;
@@ -33,8 +42,9 @@ public:
 
 private:
 	/** Model for the geometry. */
-	CGeometryComponent* m_pGeometryComponent { nullptr };
+	Cry::DefaultComponents::CStaticMeshComponent* m_pGeometryComponent { nullptr };
 
 	/** This entity should be interactive. */
 	CEntityInteractionComponent* m_interactor { nullptr };
 };
+}

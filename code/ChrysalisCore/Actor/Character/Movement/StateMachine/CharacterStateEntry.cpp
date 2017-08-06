@@ -4,18 +4,20 @@
 #include <Actor/Character/Character.h>
 
 
-class CCharacterStateEntry : private CStateHierarchy < CCharacter >
+namespace Chrysalis
 {
-	DECLARE_STATE_CLASS_BEGIN(CCharacter, CCharacterStateEntry)
-	DECLARE_STATE_CLASS_END(CCharacter);
+class CCharacterStateEntry : private CStateHierarchy < CCharacterComponent >
+{
+	DECLARE_STATE_CLASS_BEGIN(CCharacterComponent, CCharacterStateEntry)
+	DECLARE_STATE_CLASS_END(CCharacterComponent);
 };
 
 
-DEFINE_STATE_CLASS_BEGIN(CCharacter, CCharacterStateEntry, CHARACTER_STATE_ENTRY, Root)
-DEFINE_STATE_CLASS_END(CCharacter, CCharacterStateEntry);
+DEFINE_STATE_CLASS_BEGIN(CCharacterComponent, CCharacterStateEntry, CHARACTER_STATE_ENTRY, Root)
+DEFINE_STATE_CLASS_END(CCharacterComponent, CCharacterStateEntry);
 
 
-const CCharacterStateEntry::TStateIndex CCharacterStateEntry::Root(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateEntry::TStateIndex CCharacterStateEntry::Root(CCharacterComponent& Character, const SStateEvent& event)
 {
 	const ECharacterStateEvent eventID = static_cast<ECharacterStateEvent> (event.GetEventId());
 	switch (eventID)
@@ -30,4 +32,5 @@ const CCharacterStateEntry::TStateIndex CCharacterStateEntry::Root(CCharacter& C
 	}
 
 	return State_Continue;
+}
 }

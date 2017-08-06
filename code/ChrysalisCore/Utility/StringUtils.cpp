@@ -10,6 +10,9 @@
 #include "CryWatch.h"
 #include "LocalizeUtility.h"
 
+namespace Chrysalis
+{
+
 static bool s_stringUtils_assertEnabled = true;
 
 //--------------------------------------------------------------------------------
@@ -41,7 +44,7 @@ void cry_displayMemInHexAndAscii(const char* startEachLineWith, const void* data
 {
 	if (size > 0 && data)
 	{
-		const unsigned char* charData = (const unsigned char*) data;
+		const unsigned char* charData = (const unsigned char*)data;
 		string               hexLine, asciiLine;
 		int                  bytesOnThisLineSoFar = 0;
 		int                  padTo = 0;
@@ -57,7 +60,7 @@ void cry_displayMemInHexAndAscii(const char* startEachLineWith, const void* data
 				hexLine = "";
 			}
 
-			hexLine = hexLine + string().Format("%02x", (int) *charData);
+			hexLine = hexLine + string().Format("%02x", (int)*charData);
 
 			if ((bytesOnThisLineSoFar & 7) == 0 && (bytesOnThisLineSoFar != bytesPerLine))
 			{
@@ -190,4 +193,5 @@ void ExpandTimeSeconds(int secs, int& days, int& hours, int& minutes, int& secon
 	secs -= hours * 3600;
 	minutes = secs / 60;
 	seconds = secs - minutes * 60;
+}
 }

@@ -1,15 +1,28 @@
 #pragma once
 
-#include "Helpers/DesignerEntityComponent.h"
 
-
-class CDynamicLightComponent final : public CDesignerEntityComponent<>, public IEntityPropertyGroup
+namespace Chrysalis
 {
-	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CDynamicLightComponent, "DynamicLightComponent", 0xBFAD8CB384564A3B, 0x8AE6F05F5D21BBFA);
-
-	virtual ~CDynamicLightComponent() {}
+/** A dynamic light component. */
+class CDynamicLightComponent
+	: public IEntityComponent
+{
+protected:
+	friend CChrysalisCorePlugin;
+	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
 
 public:
+	CDynamicLightComponent() {}
+	virtual ~CDynamicLightComponent() {}
+
+	static void ReflectType(Schematyc::CTypeDesc<CDynamicLightComponent>& desc);
+
+	static CryGUID& IID()
+	{
+		static CryGUID id = "{10EFBBAA-7355-431D-9977-F659164AB607}"_cry_guid;
+		return id;
+	}
+
 	enum ECastShadowsSpec
 	{
 		eCastShadowsSpec_No = 0,
@@ -40,15 +53,7 @@ public:
 	}
 
 public:
-	// CDesignerEntityComponent
-	virtual IEntityPropertyGroup* GetPropertyGroup() final { return this; }
-	virtual void OnResetState() override;
-	// ~CDesignerEntityComponent
-
-	// IEntityPropertyGroup
-	virtual const char* GetLabel() const override { return "Dynamic Light Properties"; }
-	virtual void SerializeProperties(Serialization::IArchive& archive) override;
-	// ~IEntityPropertyGroup
+	virtual void OnResetState();
 
 	void SetActive(bool bActive)
 	{
@@ -85,3 +90,4 @@ private:
 	string m_flareTexturePath;
 	float m_flareFieldOfView { 360.0f };
 };
+}

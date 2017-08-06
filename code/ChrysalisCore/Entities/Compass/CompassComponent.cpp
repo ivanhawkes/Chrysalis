@@ -1,27 +1,30 @@
 #include "StdAfx.h"
 
 #include "CompassComponent.h"
-#include <CrySerialization/Decorators/Resources.h>
-#include <CrySerialization/Enum.h>
 
 
-class CCompassEntityRegistrator : public IEntityRegistrator
+namespace Chrysalis
 {
-	virtual void Register() override
-	{
-		RegisterEntityWithDefaultComponent<CCompassComponent>("CompassComponent", "Compass", "physicsobject.bmp", true);
-	}
-};
+void CCompassComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+{
+}
 
-CCompassEntityRegistrator g_CompassEntityRegistrator;
 
-CRYREGISTER_CLASS(CCompassComponent);
+void CCompassComponent::ReflectType(Schematyc::CTypeDesc<CCompassComponent>& desc)
+{
+	desc.SetGUID(CCompassComponent::IID());
+	desc.SetEditorCategory("Compass");
+	desc.SetLabel("Compass");
+	desc.SetDescription("No description.");
+	desc.SetIcon("icons:ObjectTypes/light.ico");
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+}
 
 
 void CCompassComponent::Initialize()
 {
 	// Get some geometry.
-	m_pGeometryComponent = GetEntity()->CreateComponent<CGeometryComponent>();
+	m_pGeometryComponent = GetEntity()->CreateComponent<Cry::DefaultComponents::CStaticMeshComponent>();
 
 	// Get a controllable animation component.
 	m_pControlledAnimationComponent = GetEntity()->CreateComponent<CControlledAnimationComponent>();
@@ -34,20 +37,10 @@ void CCompassComponent::Initialize()
 		m_interactor->AddInteraction(std::make_shared<CInteractionItemPickup>(this));
 		m_interactor->AddInteraction(std::make_shared<CInteractionItemDrop>(this));
 	}
-
-	CDesignerEntityComponent::Initialize();
-}
-
-
-void CCompassComponent::SerializeProperties(Serialization::IArchive& archive)
-{
-	if (archive.isInput())
-	{
-		OnResetState();
-	}
 }
 
 
 void CCompassComponent::OnResetState()
 {
+}
 }

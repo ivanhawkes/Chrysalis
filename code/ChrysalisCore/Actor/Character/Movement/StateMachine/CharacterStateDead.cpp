@@ -12,6 +12,8 @@
 #include "AI/AICorpse.h"*/
 
 
+namespace Chrysalis
+{
 CCharacterStateDead::CCharacterStateDead()
 	: m_swapToCorpseTimeout(10.0f)
 	, m_corpseUpdateStatus(eCorpseStatus_WaitingForSwap)
@@ -22,7 +24,7 @@ CCharacterStateDead::~CCharacterStateDead()
 {}
 
 
-void CCharacterStateDead::OnEnter(CCharacter& Character)
+void CCharacterStateDead::OnEnter(CCharacterComponent& Character)
 {
 	/*	Character.StopLoopingSounds ();
 		Character.SetDeathTimer ();
@@ -40,11 +42,11 @@ void CCharacterStateDead::OnEnter(CCharacter& Character)
 		CAudioSignalCharacter::JustPlay ("CharacterDeath_MP_Marine", Character.GetEntityId ());
 		}
 
-		CGameRules* pGameRules = g_pGame->GetGameRules ();
+		CGameRules* pGameRules = gEnv->pGameFramework->GetGameRules ();
 
 		if (bIsClient)
 		{
-		Character.SetClientSoundmood (CCharacter::ESoundmood_Dead);
+		Character.SetClientSoundmood (CCharacterComponent::ESoundmood_Dead);
 
 		const bool dropHeavyWeapon = true;
 		Character.SetBackToNormalWeapon (dropHeavyWeapon);
@@ -66,8 +68,8 @@ void CCharacterStateDead::OnEnter(CCharacter& Character)
 		// Report normal death.
 		if (Character.m_CharacterEventListeners.empty () == false)
 		{
-		CCharacter::TCharacterEventListeners::const_iterator iter = Character.m_CharacterEventListeners.begin ();
-		CCharacter::TCharacterEventListeners::const_iterator cur;
+		CCharacterComponent::TCharacterEventListeners::const_iterator iter = Character.m_CharacterEventListeners.begin ();
+		CCharacterComponent::TCharacterEventListeners::const_iterator cur;
 		while (iter != Character.m_CharacterEventListeners.end ())
 		{
 		cur = iter;
@@ -89,25 +91,25 @@ void CCharacterStateDead::OnEnter(CCharacter& Character)
 }
 
 
-void CCharacterStateDead::OnLeave(CCharacter& Character)
+void CCharacterStateDead::OnLeave(CCharacterComponent& Character)
 {
 	//Character.GetEntity ()->KillTimer (RECYCLE_AI_ACTOR_TIMER_ID);
 }
 
 
-void CCharacterStateDead::OnPrePhysicsUpdate(CCharacter& Character, const SActorMovementRequest& movementRequest, float frameTime)
+void CCharacterStateDead::OnPrePhysicsUpdate(CCharacterComponent& Character, const SActorMovementRequest& movementRequest, float frameTime)
 {
-	// No-one has any idea why this is needed but without the Character animation doesn't execute correctly.
-	if (Character.IsClient())
-	{
-		// STAP must be updated here to ensure that the most recent values are there for the animation processing pass.
-		/*const Vec3 cameraPositionForTorso = Character.GetFPCameraPosition (false);
-		Character.UpdateFPIKTorso (frameTime, Character.GetCurrentItem (), cameraPositionForTorso);*/
-	}
+	//// No-one has any idea why this is needed but without the Character animation doesn't execute correctly.
+	//if (Character.IsClient())
+	//{
+	//	// STAP must be updated here to ensure that the most recent values are there for the animation processing pass.
+	//	/*const Vec3 cameraPositionForTorso = Character.GetFPCameraPosition (false);
+	//	Character.UpdateFPIKTorso (frameTime, Character.GetCurrentItem (), cameraPositionForTorso);*/
+	//}
 }
 
 
-void CCharacterStateDead::OnUpdate(CCharacter& Character, const CCharacterStateDead::UpdateCtx& updateCtx)
+void CCharacterStateDead::OnUpdate(CCharacterComponent& Character, const CCharacterStateDead::UpdateCtx& updateCtx)
 {
 	/*if (Character.m_pHitDeathReactions)
 	{
@@ -143,12 +145,12 @@ void CCharacterStateDead::Serialize(TSerialize& serializer)
 
 	if (serializer.IsReading())
 	{
-		m_corpseUpdateStatus = (EAICorpseUpdateStatus) corpseUpdateStatus;
+		m_corpseUpdateStatus = (EAICorpseUpdateStatus)corpseUpdateStatus;
 	}
 }
 
 
-void CCharacterStateDead::UpdateAICorpseStatus(CCharacter& Character, const CCharacterStateDead::UpdateCtx& updateCtx)
+void CCharacterStateDead::UpdateAICorpseStatus(CCharacterComponent& Character, const CCharacterStateDead::UpdateCtx& updateCtx)
 {
 	/*	const EAICorpseUpdateStatus updateStatus = m_corpseUpdateStatus;
 
@@ -186,4 +188,5 @@ void CCharacterStateDead::UpdateAICorpseStatus(CCharacter& Character, const CCha
 		m_corpseUpdateStatus = eCorpseStatus_SwapDone;
 		}
 		}*/
+}
 }

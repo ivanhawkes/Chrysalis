@@ -6,6 +6,8 @@
 #include <Item/Parameters/ItemParameter.h>
 
 
+namespace Chrysalis
+{
 DEFINE_SHARED_PARAMS_TYPE_INFO(SItemBaseParameter)
 
 
@@ -54,7 +56,6 @@ bool SItemBaseParameter::Read(const XmlNodeRef& node)
 	reader.ReadParamValue("selectOverride", selectOverride);
 	reader.ReadParamValue("isUnique", isUnique);
 	reader.ReadParamValue("doesAttachmentGiveAmmo", doesAttachmentGiveAmmo);
-	reader.ReadParamValue("canLedgeGrab", canLedgeGrab);
 	reader.ReadParamValue("isAttachedToBack", isAttachedToBack);
 	reader.ReadParamValue("sprintToFireDelay", sprintToFireDelay);
 	reader.ReadParamValue("sprintToZoomDelay", sprintToZoomDelay);
@@ -64,4 +65,5 @@ bool SItemBaseParameter::Read(const XmlNodeRef& node)
 	tag = reader.ReadParamValue("tag");
 
 	return true;
+}
 }

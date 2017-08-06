@@ -2,9 +2,10 @@
 
 #include <CryEntitySystem/IEntity.h>
 #include <CryExtension/CryGUID.h>
-#include <CrySerialization/Decorators/Resources.h>
 
 
+namespace Chrysalis
+{
 struct ISnaplock;
 
 DECLARE_SHARED_POINTERS(ISnaplock);
@@ -65,7 +66,7 @@ struct ISnaplock
 
 	/** The type of snaplock. */
 	const ISnaplockType& GetType() const { return m_snaplockType; }
-	
+
 	/** Is this a male snaplock. Males plug into females. */
 	bool IsMale() const { return m_isMale; }
 
@@ -80,19 +81,20 @@ struct ISnaplock
 private:
 	/** Type of the snaplock */
 	ISnaplockType m_snaplockType;
-	
+
 	/** Is this the root of the tree? */
 	bool m_isRoot { false };
-	
+
 	/** Males socket into females, this indicates if the snaplock is male or female. */
 	bool m_isMale;
 
 	/** Is this snaplock currently in use? */
 	bool m_isInUse { false };
-	
+
 	/** It's possible to nest snaplocks recursively. These are the children of this snaplock. */
 	std::vector<ISnaplock> m_children;
 };
 
 
 DECLARE_SNAPLOCK_TYPE(SLT_ROOT, "Root", 0xBA5EBA5EBA5EBA5E, 0xBA5EBA5EBA5EBA5E)
+}

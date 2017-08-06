@@ -1,0 +1,12 @@
+<AssetMetadata version="0" type="Material" guid="{ACBC2BF6-CADB-A3CE-2F32-36633B477B72}">
+ <Files>
+  <File path="frankenstein.mtl"/>
+ </Files>
+ <Details>
+  <Detail name="subMaterialCount">2</Detail>
+  <Detail name="textureCount">1</Detail>
+ </Details>
+ <Dependencies>
+  <Path>textures/reference/zone_system.dds</Path>
+ </Dependencies>
+</AssetMetadata>

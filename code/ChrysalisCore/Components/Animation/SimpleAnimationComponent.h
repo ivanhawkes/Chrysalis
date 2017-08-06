@@ -1,32 +1,44 @@
 #pragma once
 
-#include "Helpers/DesignerEntityComponent.h"
-#include <Components/Geometry/GeometryComponent.h>
+#include <DefaultComponents/Geometry/StaticMeshComponent.h>
+#include <CrySchematyc/ResourceTypes.h>
 
 
-class CSimpleAnimationComponent final : public CDesignerEntityComponent<>, public IEntityPropertyGroup, public CGeometryComponent::IGeometryListener
+namespace Chrysalis
 {
-	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CSimpleAnimationComponent, "SimpleAnimationComponent", 0xB947F6CEBBE24DC5, 0x8E15F1E4F82161FB)
-	virtual ~CSimpleAnimationComponent() {}
+/** A simple animation component. */
+class CSimpleAnimationComponent
+	: public IEntityComponent
+	//, public Cry::DefaultComponents::CStaticMeshComponent::IGeometryListener
 
-public:
+{
+protected:
+	friend CChrysalisCorePlugin;
+	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
+
 	// IEntityComponent
 	virtual void Initialize() final;
-	virtual IEntityPropertyGroup* GetPropertyGroup() final { return this; }
 	// ~IEntityComponent
 
-	// IEntityPropertyGroup
-	virtual const char* GetLabel() const override { return "Animation Properties"; }
-	virtual void SerializeProperties(Serialization::IArchive& archive) override;
-	// ~IEntityPropertyGroup
+public:
+	CSimpleAnimationComponent() {}
+	virtual ~CSimpleAnimationComponent() {}
 
-	// CGeometryComponent::IGeometryListener
-	void OnGeometryResetState() override;
-	// ~CGeometryComponent::IGeometryListener
+	static void ReflectType(Schematyc::CTypeDesc<CSimpleAnimationComponent>& desc);
+
+	static CryGUID& IID()
+	{
+		static CryGUID id = "{7DB3FF61-17CC-4FBD-B571-2ECA41EBABC9}"_cry_guid;
+		return id;
+	}
+
+	// Cry::DefaultComponents::CStaticMeshComponent::IGeometryListener
+	void OnGeometryResetState();
+	// ~Cry::DefaultComponents::CStaticMeshComponent::IGeometryListener
 
 	// CSimpleAnimationComponent
-	void OnResetState() override;
-	void OnPlayAnimation(string overrideAnimation = "");
+	virtual void OnResetState();
+	void OnPlayAnimation(Schematyc::LowLevelAnimationName overrideAnimation = "");
 	// CSimpleAnimationComponent
 
 	struct ISimpleAnimationListener
@@ -53,18 +65,18 @@ public:
 	int GetSlotId() { return m_slotId; }
 	void SetSlotId(int slotId) { m_slotId = slotId; }
 
-private:
+protected:
 	typedef std::list<ISimpleAnimationListener*> TListenersList;
 	TListenersList m_ListenersList;
 
 	/** Model for the geometry. */
-	CGeometryComponent* m_pGeometryComponent { nullptr };
+	Cry::DefaultComponents::CStaticMeshComponent* m_pGeometryComponent { nullptr };
 
 	/** The entity slot to load the model into.	**/
 	int m_slotId { 1 };
 
 	/**	Animation file to play. **/
-	string m_animation;
+	Schematyc::LowLevelAnimationName m_animation;
 
 	/**	Speed of the animation. **/
 	float m_animationSpeed { 1.0f };
@@ -75,3 +87,4 @@ private:
 	/** Should the animation play when the level starts? **/
 	bool m_bPlayOnLevelStart { true };
 };
+}

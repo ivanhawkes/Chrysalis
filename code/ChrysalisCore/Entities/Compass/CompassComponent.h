@@ -1,30 +1,35 @@
 #pragma once
 
-#include "Helpers/DesignerEntityComponent.h"
 #include <Components/Interaction/EntityInteractionComponent.h>
-#include <Components/Geometry/GeometryComponent.h>
+#include <DefaultComponents/Geometry/StaticMeshComponent.h>
 #include <Components/Animation/ControlledAnimationComponent.h>
 
 
-class CCompassComponent final : public CDesignerEntityComponent<>, public IEntityPropertyGroup, public IInteractionItem
+namespace Chrysalis
 {
-	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CCompassComponent, "CompassComponent", 0x7C1B29DCC22B4F28, 0x9A38858A4566929E)
-	virtual ~CCompassComponent() {}
+class CCompassComponent
+	: public IEntityComponent
+	, public IInteractionItem
+{
+protected:
+	friend CChrysalisCorePlugin;
+	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
 
-public:
 	// IEntityComponent
 	virtual void Initialize() final;
-	virtual IEntityPropertyGroup* GetPropertyGroup() final { return this; }
 	// ~IEntityComponent
 
-	// IEntityPropertyGroup
-	virtual const char* GetLabel() const override { return "Compass Properties"; }
-	virtual void SerializeProperties(Serialization::IArchive& archive) override;
-	// ~IEntityPropertyGroup
+public:
+	CCompassComponent() {}
+	virtual ~CCompassComponent() {}
 
-	// ICompassEntityComponent
-	virtual void OnResetState() final;
-	// ICompassEntityComponent
+	static void ReflectType(Schematyc::CTypeDesc<CCompassComponent>& desc);
+
+	static CryGUID& IID()
+	{
+		static CryGUID id = "{7B6E6249-4243-4E1F-A24E-8A1218CB6844}"_cry_guid;
+		return id;
+	}
 
 	// IInteractionItem
 	void OnInteractionItemInspect() override { gEnv->pLog->LogAlways("OnInteractionItemInspect fired."); };
@@ -33,9 +38,11 @@ public:
 	void OnInteractionItemToss() override { gEnv->pLog->LogAlways("OnInteractionItemToss fired."); };
 	// IInteractionItem
 
+	virtual void OnResetState() final;
+
 private:
 	/** Model for the geometry. */
-	CGeometryComponent* m_pGeometryComponent { nullptr };
+	Cry::DefaultComponents::CStaticMeshComponent* m_pGeometryComponent { nullptr };
 
 	/** Animation for the geometry. */
 	CControlledAnimationComponent* m_pControlledAnimationComponent { nullptr };
@@ -43,3 +50,4 @@ private:
 	/** This entity should be interactive. */
 	CEntityInteractionComponent* m_interactor { nullptr };
 };
+}

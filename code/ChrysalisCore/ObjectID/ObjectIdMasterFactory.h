@@ -6,6 +6,8 @@ modest number of ObjectIdfactory instances that we are likely to require.
 */
 #pragma once
 
+namespace Chrysalis
+{
 class CObjectIdFactory;
 
 
@@ -16,7 +18,7 @@ class CObjectIdMasterFactory
 public:
 	/**
 	Constructor.
-	
+
 	\param	instanceId	Identifier for the instance.
 	*/
 	CObjectIdMasterFactory(uint32 instanceId);
@@ -31,7 +33,7 @@ public:
 
 private:
 	uint32 m_instanceId;
-	
+
 	// Declare one for every factory instance we require.
 	CObjectIdFactory* m_pCharacterFactory;
 	CObjectIdFactory* m_pAccountFactory;
@@ -41,3 +43,4 @@ private:
 	// DO NOT IMPLEMENT.
 	CObjectIdMasterFactory();
 };
+}

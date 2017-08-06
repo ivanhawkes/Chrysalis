@@ -3,6 +3,10 @@
   <Files>
    <File path="shield_scutum_diff.dds"/>
   </Files>
-  <Details />
+  <Details>
+   <Detail name="width">2048</Detail>
+   <Detail name="height">2048</Detail>
+   <Detail name="mipCount">10</Detail>
+  </Details>
  </AssetMetadata>
 </cryasset>

@@ -3,6 +3,8 @@
 #include "Snaplock.h"
 
 
+namespace Chrysalis
+{
 void ISnaplock::Serialize(Serialization::IArchive & ar)
 {
 	ar(m_snaplockType, "snaplockType", "SnaplockType");
@@ -21,4 +23,5 @@ std::vector<ISnaplock> ISnaplock::GetChildren()
 void ISnaplock::AddSnaplock(ISnaplock snaplock)
 {
 	m_children.push_back(snaplock);
+}
 }

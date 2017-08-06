@@ -17,6 +17,8 @@ to better illustrate it's use and needs.
 #include <Actor/Movement/ActorMovementController.h>
 
 
+namespace Chrysalis
+{
 class CActor;
 struct SActorMovementRequest;
 
@@ -37,3 +39,4 @@ public:
 public:
 
 };
+}

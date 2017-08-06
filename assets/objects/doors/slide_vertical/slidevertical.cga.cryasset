@@ -7,6 +7,10 @@
    <Detail name="materialCount">3</Detail>
    <Detail name="triangleCount">212</Detail>
    <Detail name="vertexCount">208</Detail>
+   <Detail name="16BitPrecision">false</Detail>
   </Details>
+  <Dependencies>
+   <Path>./SlideVertical.mtl</Path>
+  </Dependencies>
  </AssetMetadata>
 </cryasset>

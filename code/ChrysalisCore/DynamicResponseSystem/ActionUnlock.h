@@ -3,6 +3,8 @@
 #include <CryDynamicResponseSystem/IDynamicResponseAction.h>
 
 
+namespace Chrysalis
+{
 class CActionUnlock final : public DRS::IResponseAction
 {
 public:
@@ -33,3 +35,4 @@ public:
 	virtual void Cancel() override;
 	// ~IResponseActionInstance
 };
+}

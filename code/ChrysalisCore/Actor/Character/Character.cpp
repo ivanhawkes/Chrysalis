@@ -4,45 +4,55 @@
 #include <Actor/Movement/ActorMovementController.h>
 #include <Actor/Character/Movement/StateMachine/CharacterStateEvents.h>
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
-#include <CrySerialization/Decorators/Resources.h>
 #include <Actor/Character/CharacterAttributesComponent.h>
 
 
-//CRYREGISTER_CLASS(CCharacter)
-
+namespace Chrysalis
+{
 // Definition of the state machine that controls character movement.
-DEFINE_STATE_MACHINE(CCharacter, Movement);
+DEFINE_STATE_MACHINE(CCharacterComponent, Movement);
 
 
-class CCharacterRegistrator : public IEntityRegistrator
+void CCharacterComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
 {
-	virtual void Register() override
-	{
-		CCharacter::Register();
-	}
-};
-
-CCharacterRegistrator g_CharacterRegistrator;
-
-
-void CCharacter::Register()
-{
-	// Register the entity class so that instances can be created later on either via Launcher or Editor.
-	CChrysalisCorePlugin::RegisterEntityWithDefaultComponent<CCharacter>("Character");
-	//RegisterEntityWithDefaultComponent<CCharacter>("Character", "Actors", "character.bmp");
 }
 
 
-void CCharacter::Initialize()
+void CCharacterComponent::ReflectType(Schematyc::CTypeDesc<CCharacterComponent>& desc)
+{
+	desc.SetGUID(CCharacterComponent::IID());
+	desc.SetEditorCategory("Actors");
+	desc.SetLabel("Character");
+	desc.SetDescription("No description.");
+	desc.SetIcon("icons:ObjectTypes/light.ico");
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+
+	desc.AddMember(&CCharacterComponent::m_geometryFirstPerson, 'geof', "GeometryFirstPerson", "First Person Geometry", "", "");
+	desc.AddMember(&CCharacterComponent::m_geometryThirdPerson, 'geot', "GeometryThirdPerson", "Third Person Geometry", "", "");
+	desc.AddMember(&CCharacterComponent::m_mass, 'mass', "Mass", "Mass", "", 82.0f);
+//	desc.AddMember(&CCharacterComponent::m_controllerDefinition, 'cont', "ControllerDefinition", "Controller Definition", "", "human_male_controller_defs.xml");
+	desc.AddMember(&CCharacterComponent::m_animationDatabase, 'anid', "AnimationDatabase", "Animation Database", "", "human_male.adb");
+}
+
+
+void CCharacterComponent::Initialize()
 {
 	CActor::Initialize();
 
-	//// #TODO: Move the PostInit into here once we are free of GameObjects.
-	//PostInit(gEnv->pGameFramework->GetGameObject(GetEntityId()));
+	const auto pEntity = GetEntity();
+
+	// Register for game object events.
+	RegisterEvents();
+
+	// Manage attributes.
+	m_pCharacterAttributesComponent = pEntity->GetOrCreateComponent<CCharacterAttributesComponent>();
+
+	// Get it into a known state.
+	OnResetState();
 }
 
 
-void CCharacter::ProcessEvent(SEntityEvent& event)
+void CCharacterComponent::ProcessEvent(SEntityEvent& event)
 {
 	switch (event.event)
 	{
@@ -57,9 +67,7 @@ void CCharacter::ProcessEvent(SEntityEvent& event)
 			break;
 
 		case ENTITY_EVENT_UPDATE:
-			// #TODO: HACK: We don't have an update with ctx, updateslot - figure out how to do it the new way then switch
-			// this on.
-			//Update();
+			Update();
 			break;
 
 		case ENTITY_EVENT_PREPHYSICSUPDATE:
@@ -69,85 +77,28 @@ void CCharacter::ProcessEvent(SEntityEvent& event)
 }
 
 
-void CCharacter::SerializeProperties(Serialization::IArchive& archive)
+void CCharacterComponent::Update()
 {
-	archive(Serialization::ModelFilename(m_geometryFirstPerson), "GeometryFirstPerson", "First Person Geometry");
-	archive(Serialization::ModelFilename(m_geometryThirdPerson), "GeometryThirdPerson", "Third Person Geometry");
-	archive(m_mass, "Mass", "Mass");
-	archive(Serialization::GeneralFilename(m_controllerDefinition), "ControllerDefinition", "Controller Definition");
-	archive(Serialization::GeneralFilename(m_animationDatabase), "AnimationDatabase", "Animation Database");
-
-	if (archive.isInput())
-	{
-		OnResetState();
-	}
+	CActor::Update();
 }
 
 
 // ***
-// *** IGameObjectExtension
+// *** CCharacterComponent
 // ***
 
 
-void CCharacter::PostInit(IGameObject * pGameObject)
-{
-	auto pEntity = GetEntity();
-
-	CActor::PostInit(pGameObject);
-
-	// Register for game object events.
-	RegisterEvents();
-
-	// Manage attributes.
-	m_pCharacterAttributesComponent = pEntity->GetOrCreateComponent<CCharacterAttributesComponent>();
-
-	// Get it into a known state.
-	OnResetState();
-}
-
-
-void CCharacter::Update(SEntityUpdateContext& ctx, int updateSlot)
-{
-	CActor::Update(ctx, updateSlot);
-}
-
-
-void CCharacter::HandleEvent(const SGameObjectEvent& event)
-{
-	CActor::HandleEvent(event);
-}
-
-
-// FIX: 5.4
-IEntityComponent::ComponentEventPriority CCharacter::GetEventPriority(const int eventID) const
-{
-	switch (eventID)
-	{
-		case ENTITY_EVENT_PREPHYSICSUPDATE:
-			//			return(ENTITY_PROXY_LAST - ENTITY_PROXY_USER + EEntityEventPriority_Actor + (m_isClient ? EEntityEventPriority_Client : 0));
-			return ENTITY_PROXY_LAST - ENTITY_PROXY_USER + EEntityEventPriority_Actor + EEntityEventPriority_Client; // #HACK: only used for when we are the client, fix later.
-	}
-
-	return IGameObjectExtension::GetEventPriority(eventID);
-}
-
-
-// ***
-// *** CCharacter
-// ***
-
-
-bool CCharacter::Physicalize()
+bool CCharacterComponent::Physicalize()
 {
 	return CActor::Physicalize();
 }
 
 
-void CCharacter::PrePhysicsUpdate()
+void CCharacterComponent::PrePhysicsUpdate()
 {
-	// #TODO: HACK: This section of code needs a mix of both IActor / CActor code and CCharacter code, which makes it a
+	// #TODO: HACK: This section of code needs a mix of both IActor / CActor code and CCharacterComponent code, which makes it a
 	// bit messy to do with simple inheritance. It needs to be properly refactored at some point, preferably before
-	// going on to work on the same function in CMount and CPet.
+	// going on to work on the same function in CCharacterComponent and CPetComponent.
 	// 
 	// At some point it will need to call into CActor::PrePhysicsUpdate() and some other similar granular routines.
 	// 
@@ -220,18 +171,19 @@ void CCharacter::PrePhysicsUpdate()
 }
 
 
-void CCharacter::RegisterEvents()
+void CCharacterComponent::RegisterEvents()
 {
-	// Lists the game object events we want to be notified about.
-	const int EventsToRegister [] =
-	{
-		eGFE_OnCollision,			// Collision events.
-		eGFE_OnPostStep,			// Not sure if it's needed for character animation here...but it is required for us to trap that event in this code.
-	};
+	// TODO: This all needs to be functionally replaced.
+	//// Lists the game object events we want to be notified about.
+	//const int EventsToRegister [] =
+	//{
+	//	eGFE_OnCollision,			// Collision events.
+	//	eGFE_OnPostStep,			// Not sure if it's needed for character animation here...but it is required for us to trap that event in this code.
+	//};
 
-	// Register for the specified game object events.
-	GetGameObject()->UnRegisterExtForEvents(this, nullptr, 0);
-	GetGameObject()->RegisterExtForEvents(this, EventsToRegister, sizeof(EventsToRegister) / sizeof(int));
+	//// Register for the specified game object events.
+	//GetGameObject()->UnRegisterExtForEvents(this, nullptr, 0);
+	//GetGameObject()->RegisterExtForEvents(this, EventsToRegister, sizeof(EventsToRegister) / sizeof(int));
 }
 
 
@@ -240,19 +192,19 @@ void CCharacter::RegisterEvents()
 // ***
 
 
-void CCharacter::OnResetState()
+void CCharacterComponent::OnResetState()
 {
 	CActor::OnResetState();
 }
 
 
-void CCharacter::Kill()
+void CCharacterComponent::Kill()
 {
 	CActor::Kill();
 }
 
 
-void CCharacter::Revive(EReasonForRevive reasonForRevive)
+void CCharacterComponent::Revive(EReasonForRevive reasonForRevive)
 {
 	CActor::Revive(reasonForRevive);
 }
@@ -263,7 +215,7 @@ void CCharacter::Revive(EReasonForRevive reasonForRevive)
 // ***
 
 
-void CCharacter::SelectMovementHierarchy()
+void CCharacterComponent::SelectMovementHierarchy()
 {
 	// Force the state machine in the proper hierarchy
 	//if (IsAIControlled ())
@@ -283,25 +235,25 @@ void CCharacter::SelectMovementHierarchy()
 }
 
 
-void CCharacter::MovementHSMRelease()
+void CCharacterComponent::MovementHSMRelease()
 {
 	StateMachineReleaseMovement();
 }
 
 
-void CCharacter::MovementHSMInit()
+void CCharacterComponent::MovementHSMInit()
 {
 	StateMachineInitMovement();
 }
 
 
-void CCharacter::MovementHSMSerialize(TSerialize ser)
+void CCharacterComponent::MovementHSMSerialize(TSerialize ser)
 {
 	StateMachineSerializeMovement(SStateEventSerialize(ser));
 }
 
 
-void CCharacter::MovementHSMUpdate(SEntityUpdateContext& ctx, int updateSlot)
+void CCharacterComponent::MovementHSMUpdate(SEntityUpdateContext& ctx, int updateSlot)
 {
 	//#ifdef STATE_DEBUG
 	//	const bool shouldDebug = (s_StateMachineDebugEntityID == GetEntityId ());
@@ -319,7 +271,8 @@ void CCharacter::MovementHSMUpdate(SEntityUpdateContext& ctx, int updateSlot)
 }
 
 
-void CCharacter::MovementHSMReset()
+void CCharacterComponent::MovementHSMReset()
 {
 	StateMachineResetMovement();
+}
 }

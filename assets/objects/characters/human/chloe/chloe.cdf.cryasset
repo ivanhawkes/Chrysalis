@@ -1,0 +1,23 @@
+<AssetMetadata version="0" type="Character" guid="{EDD547D3-085F-D51B-2048-FF25E8BA2150}">
+ <Files>
+  <File path="chloe.cdf"/>
+ </Files>
+ <Details />
+ <Dependencies>
+  <Path>objects/characters/human/chloe/chloe.chr</Path>
+  <Path>objects/characters/human/chloe/chloe_body.skin</Path>
+  <Path>objects/characters/human/chloe/chloe.mtl</Path>
+  <Path>objects/characters/human/chloe/chloe_top.skin</Path>
+  <Path>objects/characters/human/chloe/chloe.mtl</Path>
+  <Path>objects/characters/human/chloe/chloe_bottom.skin</Path>
+  <Path>objects/characters/human/chloe/chloe.mtl</Path>
+  <Path>objects/characters/human/chloe/chloe_hair.skin</Path>
+  <Path>objects/characters/human/chloe/chloe.mtl</Path>
+  <Path>objects/characters/human/chloe/chloe_shoes.skin</Path>
+  <Path>objects/characters/human/chloe/chloe.mtl</Path>
+  <Path>objects/characters/human/chloe/chloe_eyes.skin</Path>
+  <Path>objects/characters/human/chloe/chloe.mtl</Path>
+  <Path>objects/characters/human/chloe/chloe_eyelashes.skin</Path>
+  <Path>objects/characters/human/chloe/chloe.mtl</Path>
+ </Dependencies>
+</AssetMetadata>

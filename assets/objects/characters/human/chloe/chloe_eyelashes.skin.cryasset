@@ -1,0 +1,15 @@
+<AssetMetadata version="0" type="SkinnedMesh" guid="{EC4AF882-BC68-0065-1D27-739B6CDFCDFB}">
+ <Files>
+  <File path="chloe_eyelashes.skin"/>
+ </Files>
+ <Details>
+  <Detail name="materialCount">2</Detail>
+  <Detail name="triangleCount">114</Detail>
+  <Detail name="vertexCount">106</Detail>
+  <Detail name="16BitPrecision">false</Detail>
+  <Detail name="bonesCount">8</Detail>
+ </Details>
+ <Dependencies>
+  <Path>7/chloe.mtl</Path>
+ </Dependencies>
+</AssetMetadata>

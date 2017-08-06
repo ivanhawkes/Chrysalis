@@ -3,34 +3,37 @@
 #include "DRS.h"
 
 
+namespace Chrysalis
+{
 namespace DRSUtility
 {
-	// Helper functions to make getting values from context variables easier.
+// Helper functions to make getting values from context variables easier.
 
-	int GetValueOrDefault(const DRS::IVariableCollectionSharedPtr pContextVariables, const CHashedString& name, const int default)
-	{
-		auto variable = pContextVariables->GetVariable(name);
-		return variable ? variable->GetValueAsInt() : default;
-	}
-
-
-	float GetValueOrDefault(const DRS::IVariableCollectionSharedPtr pContextVariables, const CHashedString& name, const float default)
-	{
-		auto variable = pContextVariables->GetVariable(name);
-		return variable ? variable->GetValueAsFloat() : default;
-	}
+int GetValueOrDefault(const DRS::IVariableCollectionSharedPtr pContextVariables, const CHashedString& name, const int default)
+{
+	auto variable = pContextVariables->GetVariable(name);
+	return variable ? variable->GetValueAsInt() : default;
+}
 
 
-	CHashedString GetValueOrDefault(const DRS::IVariableCollectionSharedPtr pContextVariables, const CHashedString& name, const CHashedString default)
-	{
-		auto variable = pContextVariables->GetVariable(name);
-		return variable ? variable->GetValueAsHashedString() : default;
-	}
+float GetValueOrDefault(const DRS::IVariableCollectionSharedPtr pContextVariables, const CHashedString& name, const float default)
+{
+	auto variable = pContextVariables->GetVariable(name);
+	return variable ? variable->GetValueAsFloat() : default;
+}
 
 
-	bool GetValueOrDefault(const DRS::IVariableCollectionSharedPtr pContextVariables, const CHashedString& name, const bool default)
-	{
-		auto variable = pContextVariables->GetVariable(name);
-		return variable ? variable->GetValueAsBool() : default;
-	}
+CHashedString GetValueOrDefault(const DRS::IVariableCollectionSharedPtr pContextVariables, const CHashedString& name, const CHashedString default)
+{
+	auto variable = pContextVariables->GetVariable(name);
+	return variable ? variable->GetValueAsHashedString() : default;
+}
+
+
+bool GetValueOrDefault(const DRS::IVariableCollectionSharedPtr pContextVariables, const CHashedString& name, const bool default)
+{
+	auto variable = pContextVariables->GetVariable(name);
+	return variable ? variable->GetValueAsBool() : default;
+}
+}
 }

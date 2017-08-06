@@ -1,22 +1,36 @@
 #pragma once
 
-#include "Helpers/DesignerEntityComponent.h"
 #include "Entities/Interaction/IEntityInteraction.h"
-#include <CrySerialization/Decorators/Resources.h>
 
 
+namespace Chrysalis
+{
 class CEntityInteractionComponent;
 
-
-class CDRSInteractionComponent final : public CDesignerEntityComponent<>, public IEntityPropertyGroup, public IInteractionDRS
+class CDRSInteractionComponent
+	: public IEntityComponent
+	, public IInteractionDRS
 {
-	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CDRSInteractionComponent, "DRSInteractionComponent", 0x5D1C5884B9AD48C3, 0x89F0A9138C04454E);
-
-	virtual ~CDRSInteractionComponent() {}
+protected:
+	friend CChrysalisCorePlugin;
+	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
 
 public:
+	CDRSInteractionComponent() {}
+	virtual ~CDRSInteractionComponent() {}
+
+	static void ReflectType(Schematyc::CTypeDesc<CDRSInteractionComponent>& desc);
+
+	static CryGUID& IID()
+	{
+		static CryGUID id = "{25963340-C513-405A-9C44-3CC6EDE66B5A}"_cry_guid;
+		return id;
+	}
+
 	struct SDRSProperties
 	{
+		inline bool operator==(const SDRSProperties &rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
+
 		string key;
 		string value;
 
@@ -27,22 +41,24 @@ public:
 		}
 	};
 
+	static void ReflectType(Schematyc::CTypeDesc<CDRSInteractionComponent::SDRSProperties>& desc)
+	{
+		desc.SetGUID("{C07C367C-106F-4FD4-B7D5-E40C1A21F9F3}"_cry_guid);
+		// TODO: CRITICAL: HACK: BROKEN: !!
+//		desc.AddMember(&CDRSInteractionComponent::SDRSProperties::key, 'key', "Key", "Key", nullptr, "");
+//		desc.AddMember(&CDRSInteractionComponent::SDRSProperties::value, 'valu', "Value", "Value", nullptr, "");
+	}
+
 
 	// IEntityComponent
 	void Initialize() override;
 	void ProcessEvent(SEntityEvent& event) override;
-	virtual IEntityPropertyGroup* GetPropertyGroup() final { return this; }
 	// ~IEntityComponent
-
-	// IEntityPropertyGroup
-	virtual const char* GetLabel() const override { return "DRS Component Properties"; }
-	virtual void SerializeProperties(Serialization::IArchive& archive) override;
-	// ~IEntityPropertyGroup
 
 	// IDRSInteractionEntityComponent
 	virtual void OnResetState() final;
 	// IDRSInteractionEntityComponent
-	
+
 	// IInteractionDRS
 	void OnInteractionDRS() override;
 	// ~IInteractionDRS
@@ -55,5 +71,6 @@ private:
 	string m_drsResponse;
 
 	/** Properties. */
-	std::vector<SDRSProperties> m_drsProperties;	
+	std::vector<SDRSProperties> m_drsProperties;
 };
+}

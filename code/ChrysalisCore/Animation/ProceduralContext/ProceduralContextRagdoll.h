@@ -11,14 +11,17 @@
 #include <CryExtension/ICryFactoryRegistryImpl.h>
 #include <CryExtension/RegFactoryNode.h>
 
-#define PROCEDURAL_CONTEXT_RAGDOLL_NAME "ProceduralContextRagdoll"
 
-
+namespace Chrysalis
+{
 class CProceduralContextRagdoll
 	: public IProceduralContext
 {
 public:
-	PROCEDURAL_CONTEXT(CProceduralContextRagdoll, PROCEDURAL_CONTEXT_RAGDOLL_NAME, 0x37856d62bd5f42f0, 0xad8a4314a0de6dd2);
+	PROCEDURAL_CONTEXT(CProceduralContextRagdoll, "ProceduralContextRagdoll", "{A6ABBF16-2345-4E6E-B6DF-1BF41CBE58CE}"_cry_guid);
+
+	CProceduralContextRagdoll();
+	virtual ~CProceduralContextRagdoll() {}
 
 	ILINE EntityId GetEntityTarget() const { return m_targetEntityId; }
 	ILINE void SetEntityTarget(const EntityId entityID) { m_targetEntityId = entityID; }
@@ -36,15 +39,9 @@ public:
 	void ForceRagdollFinish(IActor* piActor, bool bForceDead);
 
 protected:
-	// *** 
-	// *** IProceduralContext
-	// *** 
-	
-	virtual void Update(float timePassedSeconds);
-	
-	// *** 
-	// *** ~IProceduralContext
-	// *** 
+	// IProceduralContext
+	virtual void Update(float timePassedSeconds) override;
+	// ~IProceduralContext
 
 	void Reset();
 
@@ -60,4 +57,5 @@ private:
 	bool m_bForceRagdollFinish;
 	bool m_bFromProcClip;
 };
+}
 */

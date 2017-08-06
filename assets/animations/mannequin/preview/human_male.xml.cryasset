@@ -3,6 +3,8 @@
   <Files>
    <File path="human_male.xml"/>
   </Files>
-  <Details />
+  <Details>
+   <Detail name="rootTag">MannequinPreview</Detail>
+  </Details>
  </AssetMetadata>
 </cryasset>

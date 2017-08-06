@@ -3,3 +3,6 @@
 #include "IEntityOwnership.h"
 
 
+namespace Chrysalis
+{
+}

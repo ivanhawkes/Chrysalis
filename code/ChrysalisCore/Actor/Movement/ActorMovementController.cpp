@@ -5,12 +5,14 @@
 #include <Actor/Actor.h>
 #include <Actor/ActorStance.h>
 #include <Actor/ActorState.h>
-#include <Player/Player.h>
-#include <Player/Camera/ICameraComponent.h>
-#include <Player/Input/IPlayerInputComponent.h>
+#include <Components/Player/Player.h>
+#include <Components/Player/Camera/ICameraComponent.h>
+#include <Components/Player/Input/IPlayerInputComponent.h>
 #include <IMovementController.h>
 
 
+namespace Chrysalis
+{
 // ***
 // *** IMovementController
 // ***
@@ -146,12 +148,12 @@ void CActorMovementController::ComputeMovementRequest()
 	CMovementRequest request;
 
 	// FIXME: This isn't a great place to reset the deltas for the movement and rotation, but it's the best option
-	// for quick testing. Improve this later. CPlayer did it in another function - check where and see if it's
+	// for quick testing. Improve this later. CPlayerComponent did it in another function - check where and see if it's
 	// a better option than here.
 	m_movementRequest.RemoveDeltaRotation();
 	m_movementRequest.RemoveDeltaMovement();
 
-	if (auto pPlayer = CPlayer::GetLocalPlayer())
+	if (auto pPlayer = CPlayerComponent::GetLocalPlayer())
 	{
 		// Check to see if we're allowed to take player input.
 		// HACK: I have a feeling this isn't a great way to handle player input once networked players come into the game.
@@ -284,7 +286,7 @@ void CActorMovementController::ComputeMovementState()
 			m_movementState.stance = EStance::STANCE_NULL;
 
 			// NOTE: try to keep code un-entangled.
-			auto pPlayer = CPlayer::GetLocalPlayer();
+			auto pPlayer = CPlayerComponent::GetLocalPlayer();
 			if (pPlayer)
 			{
 				// #HACK: For testing purposes.
@@ -419,4 +421,5 @@ const float CActorMovementController::GetLowerBodyRotation(uint32 movementStateF
 	}
 
 	return relativeDirection;
+}
 }

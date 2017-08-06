@@ -4,38 +4,39 @@
 
 class XmlNodeRef;
 
-
+namespace Chrysalis
+{
 struct SFogVolume : public ISharedParams
 {
 	SHARED_PARAMS_BODY(SFogVolume);
 
-    SFogVolume () {};
-    virtual ~SFogVolume () {};
+	SFogVolume() {};
+	virtual ~SFogVolume() {};
 
-    /** Resets this object to it's default state. */
-    virtual void Reset();
+	/** Resets this object to it's default state. */
+	virtual void Reset();
 
-    /**
-    Reads the given node.
-	
-    \param	node	The node to read.
-	
-    \return	true if it succeeds, false if it fails.
-    */
-    virtual bool Read(const XmlNodeRef& node);
+	/**
+	Reads the given node.
 
-    /** Simple serialization of all of the members for this feature. Override if you need anything more complex. */
+	\param	node	The node to read.
+
+	\return	true if it succeeds, false if it fails.
+	*/
+	virtual bool Read(const XmlNodeRef& node);
+
+	/** Simple serialization of all of the members for this feature. Override if you need anything more complex. */
 	void SerializeProperties(Serialization::IArchive& archive);
 
-    /** The color (RGB).*/
-    Vec3 color;
+	/** The color (RGB).*/
+	Vec3 color;
 
-    /** Global density.*/
+	/** Global density.*/
 	float globalDensity;
 
-    /** Density offset.*/
+	/** Density offset.*/
 	float densityOffset;
 };
 
 DECLARE_SHARED_POINTERS(SFogVolume);
-
+}

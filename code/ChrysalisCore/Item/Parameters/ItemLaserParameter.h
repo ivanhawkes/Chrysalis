@@ -2,7 +2,8 @@
 
 class XmlNodeRef;
 
-
+namespace Chrysalis
+{
 class CItemLaserParameter
 {
 public:
@@ -11,7 +12,7 @@ public:
 
 
 	/** Resets this object to it's default state. */
-	void OnResetState();
+	virtual void OnResetState();
 
 	/**
 	Reads the given node.
@@ -22,4 +23,4 @@ public:
 	*/
 	bool Read(const XmlNodeRef& node);
 };
-
+}

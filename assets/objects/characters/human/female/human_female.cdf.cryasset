@@ -1,0 +1,11 @@
+<AssetMetadata version="0" type="Character" guid="{4DE3F810-1839-7487-AD41-82E23BBC5650}">
+ <Files>
+  <File path="human_female.cdf"/>
+ </Files>
+ <Details />
+ <Dependencies>
+  <Path>objects/characters/human/female/human_female.chr</Path>
+  <Path>objects/characters/human/female/human_female.skin</Path>
+  <Path>objects/characters/human/female/human_female.mtl</Path>
+ </Dependencies>
+</AssetMetadata>

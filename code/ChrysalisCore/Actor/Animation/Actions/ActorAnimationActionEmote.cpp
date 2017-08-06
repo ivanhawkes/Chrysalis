@@ -2,6 +2,8 @@
 
 #include "ActorAnimationActionEmote.h"
 
+namespace Chrysalis
+{
 SMannequinEmoteParams g_emoteMannequinParams;
 
 
@@ -69,4 +71,5 @@ bool CActorAnimationActionEmote::IsSupported(const SAnimationContext& context)
 	const FragmentID fragmentId = FindFragmentId(context);
 	const bool isSupported = (fragmentId != FRAGMENT_ID_INVALID);
 	return isSupported;
+}
 }

@@ -3,6 +3,10 @@
   <Files>
    <File path="zone_system.dds"/>
   </Files>
-  <Details />
+  <Details>
+   <Detail name="width">512</Detail>
+   <Detail name="height">512</Detail>
+   <Detail name="mipCount">1</Detail>
+  </Details>
  </AssetMetadata>
 </cryasset>

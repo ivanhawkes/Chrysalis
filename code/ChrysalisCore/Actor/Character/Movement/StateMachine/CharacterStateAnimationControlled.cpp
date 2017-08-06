@@ -5,29 +5,31 @@
 //#include "InteractiveActionController.h"
 
 
-class CCharacterStateAnimationControlled : public CStateHierarchy < CCharacter >
+namespace Chrysalis
 {
-	DECLARE_STATE_CLASS_BEGIN(CCharacter, CCharacterStateAnimationControlled)
-		DECLARE_STATE_CLASS_ADD(CCharacter, EntryChoice)
-		DECLARE_STATE_CLASS_ADD(CCharacter, InteractiveAction)
-		DECLARE_STATE_CLASS_ADD(CCharacter, StealthKill)
-		DECLARE_STATE_CLASS_ADD(CCharacter, CutScene)
-	DECLARE_STATE_CLASS_END(CCharacter)
+class CCharacterStateAnimationControlled : public CStateHierarchy < CCharacterComponent >
+{
+	DECLARE_STATE_CLASS_BEGIN(CCharacterComponent, CCharacterStateAnimationControlled)
+	DECLARE_STATE_CLASS_ADD(CCharacterComponent, EntryChoice)
+	DECLARE_STATE_CLASS_ADD(CCharacterComponent, InteractiveAction)
+	DECLARE_STATE_CLASS_ADD(CCharacterComponent, StealthKill)
+	DECLARE_STATE_CLASS_ADD(CCharacterComponent, CutScene)
+	DECLARE_STATE_CLASS_END(CCharacterComponent)
 
 private:
 	//	CInteractiveActionController m_interactiveActionController;
 };
 
 
-DEFINE_STATE_CLASS_BEGIN(CCharacter, CCharacterStateAnimationControlled, CHARACTER_STATE_ANIMATION, EntryChoice)
-	DEFINE_STATE_CLASS_ADD(CCharacter, CCharacterStateAnimationControlled, EntryChoice, Root)
-	DEFINE_STATE_CLASS_ADD(CCharacter, CCharacterStateAnimationControlled, InteractiveAction, Root)
-	DEFINE_STATE_CLASS_ADD(CCharacter, CCharacterStateAnimationControlled, StealthKill, Root)
-	DEFINE_STATE_CLASS_ADD(CCharacter, CCharacterStateAnimationControlled, CutScene, Root)
-DEFINE_STATE_CLASS_END(CCharacter, CCharacterStateAnimationControlled)
+DEFINE_STATE_CLASS_BEGIN(CCharacterComponent, CCharacterStateAnimationControlled, CHARACTER_STATE_ANIMATION, EntryChoice)
+DEFINE_STATE_CLASS_ADD(CCharacterComponent, CCharacterStateAnimationControlled, EntryChoice, Root)
+DEFINE_STATE_CLASS_ADD(CCharacterComponent, CCharacterStateAnimationControlled, InteractiveAction, Root)
+DEFINE_STATE_CLASS_ADD(CCharacterComponent, CCharacterStateAnimationControlled, StealthKill, Root)
+DEFINE_STATE_CLASS_ADD(CCharacterComponent, CCharacterStateAnimationControlled, CutScene, Root)
+DEFINE_STATE_CLASS_END(CCharacterComponent, CCharacterStateAnimationControlled)
 
 
-const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationControlled::EntryChoice(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationControlled::EntryChoice(CCharacterComponent& Character, const SStateEvent& event)
 {
 	switch (event.GetEventId())
 	{
@@ -50,40 +52,40 @@ const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationCo
 }
 
 
-const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationControlled::Root(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationControlled::Root(CCharacterComponent& Character, const SStateEvent& event)
 {
 	return State_Continue;
 }
 
 
-const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationControlled::StealthKill(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationControlled::StealthKill(CCharacterComponent& Character, const SStateEvent& event)
 {
-	switch (event.GetEventId())
-	{
-		case STATE_EVENT_ENTER:
-			// #TODO: this made sense in Crysis 2, but might not for our system.
-			m_flags.AddFlags(eActorStateFlags_Ground);
-			if (Character.IsPlayer())
-			{
-				gEnv->pGameFramework->AllowSave(false);
-			}
-			break;
+	//switch (event.GetEventId())
+	//{
+	//	case STATE_EVENT_ENTER:
+	//		// #TODO: this made sense in Crysis 2, but might not for our system.
+	//		m_flags.AddFlags(eActorStateFlags_Ground);
+	//		if (Character.IsPlayer())
+	//		{
+	//			gEnv->pGameFramework->AllowSave(false);
+	//		}
+	//		break;
 
-		case STATE_EVENT_EXIT:
-			// #TODO: this made sense in Crysis 2, but might not for our system.
-			m_flags.ClearFlags(eActorStateFlags_Ground);
-			if (Character.IsPlayer())
-			{
-				gEnv->pGameFramework->AllowSave(true);
-			}
-			break;
-	}
+	//	case STATE_EVENT_EXIT:
+	//		// #TODO: this made sense in Crysis 2, but might not for our system.
+	//		m_flags.ClearFlags(eActorStateFlags_Ground);
+	//		if (Character.IsPlayer())
+	//		{
+	//			gEnv->pGameFramework->AllowSave(true);
+	//		}
+	//		break;
+	//}
 
 	return State_Continue;
 }
 
 
-const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationControlled::InteractiveAction(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationControlled::InteractiveAction(CCharacterComponent& Character, const SStateEvent& event)
 {
 	switch (event.GetEventId())
 	{
@@ -104,7 +106,7 @@ const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationCo
 			RequestTransitionState (Character, CHARACTER_STATE_MOVEMENT);
 			}*/
 		}
-			break;
+		break;
 
 		case ACTOR_EVENT_INTERACTIVE_ACTION:
 		{
@@ -128,7 +130,7 @@ const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationCo
 			Character.GetActorState ()->animationControlledID = m_interactiveActionController.GetInteractiveObjectId ();
 			Character.AnimationControlled (true, action.GetShouldUpdateVisibility ());*/
 		}
-			break;
+		break;
 
 		case ACTOR_EVENT_DEAD:
 			/*if (m_interactiveActionController.IsInInteractiveAction ())
@@ -144,7 +146,7 @@ const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationCo
 }
 
 
-const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationControlled::CutScene(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationControlled::CutScene(CCharacterComponent& Character, const SStateEvent& event)
 {
 	switch (event.GetEventId())
 	{
@@ -165,4 +167,5 @@ const CCharacterStateAnimationControlled::TStateIndex CCharacterStateAnimationCo
 	}
 
 	return State_Continue;
+}
 }

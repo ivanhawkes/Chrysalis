@@ -6,6 +6,8 @@
 #include <Utility/CryHash.h>
 
 
+namespace Chrysalis
+{
 #if !defined(_RELEASE) && !CRY_PLATFORM_ORBIS
 #define STATE_DEBUG
 struct SStateDebugContext;
@@ -1158,3 +1160,4 @@ const SStateEvent SStateDebugContext::StateDebugAndLog(CStateHierarchy<HOST>* pS
 #define DEFINE_STATE_CLASS_END( host, stateClass )\
 		}\
 		uint id##host##stateClass = stateClass::Register();
+}

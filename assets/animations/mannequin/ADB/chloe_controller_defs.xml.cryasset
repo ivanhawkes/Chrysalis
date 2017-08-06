@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="{EA3FA496-E02C-99DF-BFEC-9F1585512C29}">
+ <Files>
+  <File path="chloe_controller_defs.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">ControllerDef</Detail>
+ </Details>
+</AssetMetadata>

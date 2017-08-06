@@ -1,6 +1,6 @@
 #include <StdAfx.h>
 
-//#include <Player/Player.h>
+//#include <Components/Player/Player.h>
 //#include <Actor/Character/Character.h>
 //#include <Actor/Character/Movement/CharacterRotation.h>
 //#include <Actor/Character/Movement/CharacterMovementController.h>
@@ -41,7 +41,7 @@
 //	PR_CHECKQNAN_FLT(q.w)
 //
 //
-//CCharacterRotation::CCharacterRotation(const CCharacter& character) :
+//CCharacterRotation::CCharacterRotation(const CCharacterComponent& character) :
 //	m_character(character),
 //	m_baseQuat(IDENTITY),
 //	m_deltaAngles(ZERO),
@@ -188,7 +188,7 @@
 //	//	if (!m_character.GetLinkedVehicle())
 //	//	{
 //	//	//	// #TODO: We might need new aspects for characters instead of players.
-//	//	//	CHANGED_NETWORK_STATE_REF(m_character, CPlayer::ASPECT_INPUT_CLIENT);
+//	//	//	CHANGED_NETWORK_STATE_REF(m_character, CPlayerComponent::ASPECT_INPUT_CLIENT);
 //	//	}
 //}
 //

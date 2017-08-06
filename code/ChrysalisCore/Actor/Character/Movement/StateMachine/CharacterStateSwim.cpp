@@ -13,6 +13,8 @@
 #include "CharacterCamera.h"*/
 
 
+namespace Chrysalis
+{
 static const int s_maxWaterVolumesToConsider = 2;
 CCharacterStateSwim::CSwimmingParams CCharacterStateSwim::s_swimParams;
 
@@ -54,7 +56,7 @@ CCharacterStateSwim::CCharacterStateSwim()
 {}
 
 
-bool CCharacterStateSwim::OnPrePhysicsUpdate(CCharacter& Character, const SActorMovementRequest& movementRequest, float frameTime)
+bool CCharacterStateSwim::OnPrePhysicsUpdate(CCharacterComponent& Character, const SActorMovementRequest& movementRequest, float frameTime)
 {
 	/*	const CCharacterStateSwimWaterTestProxy& waterProxy = Character.m_CharacterStateSwimWaterTestProxy;
 
@@ -78,22 +80,22 @@ bool CCharacterStateSwim::OnPrePhysicsUpdate(CCharacter& Character, const SActor
 		m_headUnderWaterTimer += frameTime;
 		if (m_headUnderWaterTimer <= -0.0f && !m_onSurface)
 		{
-		Character.PlaySound (CCharacter::ESound_DiveIn, true, "speed", velocity.len ());
+		Character.PlaySound (CCharacterComponent::ESound_DiveIn, true, "speed", velocity.len ());
 		m_headUnderWaterTimer = 0.0f;
 		}
 
-		Character.PlaySound (CCharacter::ESound_Underwater, true);
+		Character.PlaySound (CCharacterComponent::ESound_Underwater, true);
 		}
 		else
 		{
 		m_headUnderWaterTimer -= frameTime;
 		if (m_headUnderWaterTimer >= 0.0f && (waterProxy.IsHeadComingOutOfWater () || m_onSurface))
 		{
-		Character.PlaySound (CCharacter::ESound_DiveOut, true, "speed", velocity.len ());
+		Character.PlaySound (CCharacterComponent::ESound_DiveOut, true, "speed", velocity.len ());
 		m_headUnderWaterTimer = 0.0f;
 		}
 
-		Character.PlaySound (CCharacter::ESound_Underwater, false);
+		Character.PlaySound (CCharacterComponent::ESound_Underwater, false);
 		}
 		m_headUnderWaterTimer = clamp_tpl (m_headUnderWaterTimer, -0.2f, 0.2f);
 
@@ -266,7 +268,7 @@ bool CCharacterStateSwim::OnPrePhysicsUpdate(CCharacter& Character, const SActor
 }
 
 
-void CCharacterStateSwim::OnEnter(CCharacter& Character)
+void CCharacterStateSwim::OnEnter(CCharacterComponent& Character)
 {
 	/*Character.m_CharacterStateSwimWaterTestProxy.OnEnterWater (Character);
 
@@ -310,7 +312,7 @@ void CCharacterStateSwim::OnEnter(CCharacter& Character)
 }
 
 
-void CCharacterStateSwim::OnExit(CCharacter& Character)
+void CCharacterStateSwim::OnExit(CCharacterComponent& Character)
 {
 	/*Character.m_CharacterStateSwimWaterTestProxy.OnExitWater (Character);
 	Character.m_actorPhysics.groundNormal = Vec3 (0, 0, 1);
@@ -332,7 +334,7 @@ void CCharacterStateSwim::OnExit(CCharacter& Character)
 	Character.HideLeftHandObject (false);
 	}
 
-	Character.PlaySound (CCharacter::ESound_Underwater, false);
+	Character.PlaySound (CCharacterComponent::ESound_Underwater, false);
 
 	UpdateSoundListener (Character);
 
@@ -351,7 +353,7 @@ void CCharacterStateSwim::OnExit(CCharacter& Character)
 }
 
 
-void CCharacterStateSwim::OnUpdate(CCharacter& Character, float frameTime)
+void CCharacterStateSwim::OnUpdate(CCharacterComponent& Character, float frameTime)
 {
 	// Swim animation not playing after cut-scene due to "NoWeapon" not being equipped as it hasn't been loaded into the inventory yet.
 	// This function is called until "NoWeapon" is equipped.
@@ -363,7 +365,7 @@ void CCharacterStateSwim::OnUpdate(CCharacter& Character, float frameTime)
 }
 
 
-bool CCharacterStateSwim::DetectJump(CCharacter& Character, const SActorMovementRequest& movementRequest, float frameTime, float* pVerticalSpeedModifier) const
+bool CCharacterStateSwim::DetectJump(CCharacterComponent& Character, const SActorMovementRequest& movementRequest, float frameTime, float* pVerticalSpeedModifier) const
 {
 	/*const float minInWaterTime = 0.35f;
 	const CCharacterStateSwimWaterTestProxy& waterProxy = Character.m_CharacterStateSwimWaterTestProxy;
@@ -393,7 +395,7 @@ bool CCharacterStateSwim::DetectJump(CCharacter& Character, const SActorMovement
 }
 
 
-void CCharacterStateSwim::UpdateSoundListener(CCharacter &Character)
+void CCharacterStateSwim::UpdateSoundListener(CCharacterComponent &Character)
 {
 	REINST("needs verification! check SDK version of the code later on...ILH");
 }
@@ -414,4 +416,5 @@ void CCharacterStateSwim::StopEnduranceSound(const EntityId ownerId)
 		return;
 
 	m_enduranceSwimSoundPlaying = false;
+}
 }

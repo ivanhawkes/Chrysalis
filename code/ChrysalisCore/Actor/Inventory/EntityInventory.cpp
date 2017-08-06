@@ -4,12 +4,8 @@
 #include "IItem.h"
 //#include "IWeapon.h"
 
-
-// ***
-// *** IGameObjectExtension
-// ***
-
-
+namespace Chrysalis
+{
 void CEntityInventory::GetMemoryUsage(ICrySizer *pSizer) const
 {
 	pSizer->Add(*this);
@@ -52,7 +48,7 @@ bool CEntityInventory::AddItem(EntityId itemId)
 bool CEntityInventory::RemoveItem(EntityId itemId)
 {
 	bool bWereItemsRemoved(false);
-	
+
 	// #TODO:
 	return bWereItemsRemoved;
 }
@@ -101,5 +97,4 @@ CEntityInventory::CEntityInventory()
 
 CEntityInventory::~CEntityInventory()
 {}
-
-
+}

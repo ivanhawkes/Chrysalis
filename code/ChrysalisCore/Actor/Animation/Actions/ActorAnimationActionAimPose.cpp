@@ -5,6 +5,8 @@
 #include <CryAnimation/IAnimationPoseModifier.h>
 
 
+namespace Chrysalis
+{
 #define AIMPOSE_FRAGMENTS( x ) \
 	x( AimPose )
 
@@ -101,4 +103,5 @@ bool CActorAnimationActionAimPose::IsSupported(const SAnimationContext& context)
 	const FragmentID fragmentId = FindFragmentId(context);
 	const bool isSupported = (fragmentId != FRAGMENT_ID_INVALID);
 	return isSupported;
+}
 }

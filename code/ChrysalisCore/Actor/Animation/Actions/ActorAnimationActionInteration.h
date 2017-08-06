@@ -4,6 +4,8 @@
 #include <Actor/Animation/ActorAnimation.h>
 
 
+namespace Chrysalis
+{
 class CActorAnimationActionInteraction : public CAnimationAction
 {
 public:
@@ -25,4 +27,4 @@ public:
 private:
 	const struct SMannequinInteractionParams* m_interactionParams;
 };
-
+}

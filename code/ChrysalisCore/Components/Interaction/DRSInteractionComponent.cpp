@@ -2,25 +2,28 @@
 
 #include "DRSInteractionComponent.h"
 #include <Components/Interaction/EntityInteractionComponent.h>
-#include <CrySerialization/Enum.h>
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
 
 
-class DRSInteractionComponentRegistrator : public IEntityRegistrator
+namespace Chrysalis
 {
-	virtual void Register() override
-	{
-		RegisterEntityWithDefaultComponent<CDRSInteractionComponent>("DRSInteractionComponent", "Interaction", "physicsobject.bmp", true);
+void CDRSInteractionComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+{
+}
 
-		// This should make the entity class invisible in the editor.
-		//auto cls = gEnv->pEntitySystem->GetClassRegistry()->FindClass("DRSInteractionComponent");
-		//cls->SetFlags(cls->GetFlags() | ECLF_INVISIBLE);
-	}
-};
 
-DRSInteractionComponentRegistrator g_DRSInteractionComponentRegistrator;
+void CDRSInteractionComponent::ReflectType(Schematyc::CTypeDesc<CDRSInteractionComponent>& desc)
+{
+	desc.SetGUID(CDRSInteractionComponent::IID());
+	desc.SetEditorCategory("Interaction");
+	desc.SetLabel("DRS Interaction Component");
+	desc.SetDescription("No description.");
+	desc.SetIcon("icons:ObjectTypes/light.ico");
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
 
-CRYREGISTER_CLASS(CDRSInteractionComponent);
+//	desc.AddMember(&CDRSInteractionComponent::m_drsResponse, 'resp', "DRSResponse", "DRSResponse", "Verb to pass into DRS e.g. interaction_play_audio.", "");
+//	desc.AddMember(&CDRSInteractionComponent::m_drsProperties, 'prop', "DRSProperties", "DRS Properties", "A list of properties to be passed to the DRS entity.", "");
+}
 
 
 void CDRSInteractionComponent::Initialize()
@@ -53,20 +56,6 @@ void CDRSInteractionComponent::ProcessEvent(SEntityEvent& event)
 }
 
 
-void CDRSInteractionComponent::SerializeProperties(Serialization::IArchive& archive)
-{
-	archive(m_drsResponse, "DRSResponse", "DRS Response (verb)");
-	archive.doc("Verb to pass into DRS e.g. interaction_play_audio.");
-
-	archive(m_drsProperties, "DRSProperties", "DRS Properties");
-
-	if (archive.isInput())
-	{
-		OnResetState();
-	}
-}
-
-
 void CDRSInteractionComponent::OnResetState()
 {
 }
@@ -91,10 +80,11 @@ void CDRSInteractionComponent::OnInteractionDRS()
 		// Add each key, value to the DRS variable collection.
 		for (auto it : m_drsProperties)
 		{
-			pContextVariableCollection->CreateVariable(CHashedString(it.key), CHashedString(it.value));			
+			pContextVariableCollection->CreateVariable(CHashedString(it.key), CHashedString(it.value));
 		}
 
 		// Queue it and let the DRS handle it now.
 		pDrsProxy->GetResponseActor()->QueueSignal(m_drsResponse, pContextVariableCollection);
 	}
+}
 }

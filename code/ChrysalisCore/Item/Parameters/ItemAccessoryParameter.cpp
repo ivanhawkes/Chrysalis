@@ -5,6 +5,8 @@
 #include <Item/Parameters/ItemParameter.h>
 
 
+namespace Chrysalis
+{
 CItemAccessoryParameter::CItemAccessoryParameter()
 {
 }
@@ -26,4 +28,5 @@ bool CItemAccessoryParameter::Read(const XmlNodeRef& node)
 	CGameXmlParamReader reader(node);
 
 	return true;
+}
 }

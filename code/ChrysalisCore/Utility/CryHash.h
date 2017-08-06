@@ -1,10 +1,11 @@
 // Copyright 2001-2016 Crytek GmbH / Crytek Group. All rights reserved.
 
-#ifndef __CRY_HASH_UTIL_H__
-#define __CRY_HASH_UTIL_H__
+#pragma once
 
 #include <CryString/StringUtils.h>
 
+namespace Chrysalis
+{
 //-----------------------------------------------------------------------------------
 // HASH Tools.
 // from Frd's code-base courtesy of AW. /FH
@@ -96,5 +97,4 @@ struct CryHashStringId
 #endif
 	CryHash id;
 };
-
-#endif // __CRY_HASH_UTIL_H__
+}

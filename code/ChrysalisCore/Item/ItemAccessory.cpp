@@ -1,123 +1,126 @@
 #include <StdAfx.h>
 
-#include "Item.h"
+#include <Components/Items/ItemComponent.h>
+#include <CryEntitySystem/IEntitySystem.h>
 
 
-CItem *CItem::AddAccessory(IEntityClass* pClass)
+namespace Chrysalis
 {
-/*	if (!pClass)
-	{
-		GameWarning("Trying to add unknown accessory to item '%s'!", GetEntity()->GetName());
-		return nullptr;
-	}
-	
-	const SAccessoryParams* pAccessoryParams = GetAccessoryParams(pClass);
-	if (!pAccessoryParams)
-	{
-		GameWarning("Trying to add unknown accessory '%s' to item '%s'!", pClass->GetName(), GetEntity()->GetName());
-		return nullptr;
-	}
-
-	// #TODO: Nasty fixed size strings. Replace with modern strings. Try to avoid memory thrashing though.
-	char namebuf[128];
-	_snprintf(namebuf, sizeof(namebuf), "%s_%s", GetEntity()->GetName(), pClass->GetName());
-	namebuf[sizeof(namebuf)-1] = '\0';
-
-	SEntitySpawnParams params;
-	params.pClass = pClass;
-	params.sName = namebuf;
-	params.nFlags = ENTITY_FLAG_NO_PROXIMITY | ENTITY_FLAG_CASTSHADOW;
-
-	if (pAccessoryParams->client_only)
-		params.nFlags |= ENTITY_FLAG_CLIENT_ONLY;
-
-	EntityId accId=0;
-	if (IEntity *pEntity = m_pEntitySystem->SpawnEntity(params))
-		accId=pEntity->GetId();
-
-	m_accessories.push_back(SAccessoryInfo(params.pClass, accId));
-	if (accId)
-		return static_cast<CItem *>(m_pItemSystem->GetItem(accId));*/
-
-	return nullptr;
-}
-
-
-bool CItem::HasAccessory(IEntityClass* pClass)
-{
-	const int numAccessories = m_accessories.size();
-
-	for (int i = 0; i < numAccessories; ++i)
-	{
-		if (m_accessories [i].pClass == pClass)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-
-CItem *CItem::GetAccessory(IEntityClass* pClass)
-{
-	const int numAccessories = m_accessories.size();
-
-	for (int i = 0; i < numAccessories; ++i)
-	{
-		if (m_accessories [i].pClass == pClass)
-		{
-			return static_cast<CItem*>(m_pItemSystem->GetItem(m_accessories [i].accessoryId));
-		}
-	}
-
-	return nullptr;
-}
-
-
-void CItem::RemoveAccessory(IEntityClass* pClass)
-{
-	const int numAccessories = m_accessories.size();
-
-	for(int i = 0; i < numAccessories; ++i)
-	{
-		if(m_accessories[i].pClass == pClass)
-		{
-			IEntity* pEntity = m_pEntitySystem->GetEntity(m_accessories[i].accessoryId);
-			if ((pEntity != nullptr) && !pEntity->IsGarbage())
-			{
-				m_pEntitySystem->RemoveEntity(m_accessories[i].accessoryId);
-			}
-			m_accessories.removeAt(i);
-			return;
-		}
-	}
-}
-
-
-
-void CItem::RemoveAllAccessories()
-{
-	const int numAccessories = m_accessories.size();
-
-	for (int i = 0; i < numAccessories; ++i)
-	{
-		EntityId entityId = m_accessories [i].accessoryId;
-		IEntity* pEntity = m_pEntitySystem->GetEntity(entityId);
-		if ((pEntity != nullptr) && !pEntity->IsGarbage())
-		{
-			CItem* pItem = static_cast<CItem*>(m_pItemSystem->GetItem(entityId));
-			if (pItem)
-				pItem->SetParentId(0);
-			m_pEntitySystem->RemoveEntity(m_accessories [i].accessoryId);
-		}
-	}
-
-	m_accessories.clear();
-}
-
-
-//void CItem::DetachAllAccessories()
+//CItemComponent *CItemComponent::AddAccessory(IEntityClass* pClass)
+//{
+//	/*	if (!pClass)
+//		{
+//			GameWarning("Trying to add unknown accessory to item '%s'!", GetEntity()->GetName());
+//			return nullptr;
+//		}
+//
+//		const SAccessoryParams* pAccessoryParams = GetAccessoryParams(pClass);
+//		if (!pAccessoryParams)
+//		{
+//			GameWarning("Trying to add unknown accessory '%s' to item '%s'!", pClass->GetName(), GetEntity()->GetName());
+//			return nullptr;
+//		}
+//
+//		 #TODO: Nasty fixed size strings. Replace with modern strings. Try to avoid memory thrashing though.
+//		char namebuf[128];
+//		_snprintf(namebuf, sizeof(namebuf), "%s_%s", GetEntity()->GetName(), pClass->GetName());
+//		namebuf[sizeof(namebuf)-1] = '\0';
+//
+//		SEntitySpawnParams params;
+//		params.pClass = pClass;
+//		params.sName = namebuf;
+//		params.nFlags = ENTITY_FLAG_NO_PROXIMITY | ENTITY_FLAG_CASTSHADOW;
+//
+//		if (pAccessoryParams->client_only)
+//			params.nFlags |= ENTITY_FLAG_CLIENT_ONLY;
+//
+//		EntityId accId=0;
+//		if (IEntity *pEntity = m_pEntitySystem->SpawnEntity(params))
+//			accId=pEntity->GetId();
+//
+//		m_accessories.push_back(SAccessoryInfo(params.pClass, accId));
+//		if (accId)
+//			return static_cast<CItemComponent *>(m_pItemSystem->GetItem(accId));*/
+//
+//	return nullptr;
+//}
+//
+//
+//bool CItemComponent::HasAccessory(IEntityClass* pClass)
+//{
+//	const int numAccessories = m_accessories.size();
+//
+//	for (int i = 0; i < numAccessories; ++i)
+//	{
+//		if (m_accessories [i].pClass == pClass)
+//		{
+//			return true;
+//		}
+//	}
+//
+//	return false;
+//}
+//
+//
+//CItemComponent *CItemComponent::GetAccessory(IEntityClass* pClass)
+//{
+//	const int numAccessories = m_accessories.size();
+//
+//	for (int i = 0; i < numAccessories; ++i)
+//	{
+//		if (m_accessories [i].pClass == pClass)
+//		{
+//			return static_cast<CItemComponent*>(m_pItemSystem->GetItem(m_accessories [i].accessoryId));
+//		}
+//	}
+//
+//	return nullptr;
+//}
+//
+//
+//void CItemComponent::RemoveAccessory(IEntityClass* pClass)
+//{
+//	const int numAccessories = m_accessories.size();
+//
+//	for (int i = 0; i < numAccessories; ++i)
+//	{
+//		if (m_accessories [i].pClass == pClass)
+//		{
+//			IEntity* pEntity = m_pEntitySystem->GetEntity(m_accessories [i].accessoryId);
+//			if ((pEntity != nullptr) && !pEntity->IsGarbage())
+//			{
+//				m_pEntitySystem->RemoveEntity(m_accessories [i].accessoryId);
+//			}
+//			m_accessories.removeAt(i);
+//			return;
+//		}
+//	}
+//}
+//
+//
+//
+//void CItemComponent::RemoveAllAccessories()
+//{
+//	const int numAccessories = m_accessories.size();
+//
+//	for (int i = 0; i < numAccessories; ++i)
+//	{
+//		EntityId entityId = m_accessories [i].accessoryId;
+//		IEntity* pEntity = m_pEntitySystem->GetEntity(entityId);
+//		if ((pEntity != nullptr) && !pEntity->IsGarbage())
+//		{
+//			CItemComponent* pItem = static_cast<CItemComponent*>(m_pItemSystem->GetItem(entityId));
+//			if (pItem)
+//				pItem->SetParentId(0);
+//			m_pEntitySystem->RemoveEntity(m_accessories [i].accessoryId);
+//		}
+//	}
+//
+//	m_accessories.clear();
+//}
+//
+//
+//void CItemComponent::DetachAllAccessories()
 //{
 //	TAccessoryArray accessoriesToDelete;
 //
@@ -147,9 +150,9 @@ void CItem::RemoveAllAccessories()
 //}
 
 
-//void CItem::ReAttachAccessory(IEntityClass* pClass)
+//void CItemComponent::ReAttachAccessory(IEntityClass* pClass)
 //{
-//	CItem* pAccessory = GetAccessory(pClass);
+//	CItemComponent* pAccessory = GetAccessory(pClass);
 //	const SAccessoryParams* params = GetAccessoryParams(pClass);
 //
 //	if (pAccessory && params && (!params->attachToOwner || m_stats.selected))
@@ -174,7 +177,7 @@ void CItem::RemoveAllAccessories()
 //}
 //
 //
-//void CItem::AttachAccessory(IEntityClass* pAccessoryClass, bool attach, bool noanim, bool force, bool firstTimeAttached, bool initialLoadoutSetup)
+//void CItemComponent::AttachAccessory(IEntityClass* pAccessoryClass, bool attach, bool noanim, bool force, bool firstTimeAttached, bool initialLoadoutSetup)
 //{
 //	if (!force && IsBusy())
 //		return;
@@ -186,7 +189,7 @@ void CItem::RemoveAllAccessories()
 //
 //	CActor* pOwner = GetOwnerActor();
 //	IInventory* pInventory = pOwner ? pOwner->GetInventory() : nullptr;
-//	CItem* pAccessory = GetAccessory(pAccessoryClass);
+//	CItemComponent* pAccessory = GetAccessory(pAccessoryClass);
 //
 //	if (attach && pAccessory == 0)
 //	{
@@ -249,15 +252,15 @@ void CItem::RemoveAllAccessories()
 //				{
 //					if (m_sharedparams->accessoryparams [i].pAccessoryClass == pAccessoryClass)
 //					{
-//						CRY_ASSERT_MESSAGE(i < 16, "CItem::AttachAccessory - attachment history only supports 16 attachments. Need to make m_attachedAccessoryHistory larger.");
+//						CRY_ASSERT_MESSAGE(i < 16, "CItemComponent::AttachAccessory - attachment history only supports 16 attachments. Need to make m_attachedAccessoryHistory larger.");
 //						m_attachedAccessoryHistory |= bit;
 //						break;
 //					}
 //				}
 //
-//				if (GetOwnerId() == g_pGame->GetClientActorId())
+//				if (GetOwnerId() == gEnv->pGameFramework->GetClientActorId())
 //				{
-//					if (CEquipmentLoadout* pLoadout = g_pGame->GetEquipmentLoadout())
+//					if (CEquipmentLoadout* pLoadout = gEnv->pGameFramework->GetEquipmentLoadout())
 //					{
 //						pLoadout->UpdateWeaponAttachments(GetEntity()->GetClass(), pAccessoryClass);
 //					}
@@ -283,11 +286,11 @@ void CItem::RemoveAllAccessories()
 //	AudioCacheItem(attach, pAccessoryClass, "att_", m_stats.fp ? "_fp" : "_3p");
 //
 //	//Luciano - send game event
-//	if (g_pGame) // game gets destroyed before entitysystem, who owns this CItem
+//	if (g_pGame) // game gets destroyed before entitysystem, who owns this CItemComponent
 //	{
 //		gEnv->pGameFramework->GetIGameplayRecorder()->Event(GetOwner(), GameplayEvent(eGE_AttachedAccessory, pAccessoryClass->GetName(), (float) attach, (void*) (EXPAND_PTR) GetEntityId()));
 //
-//		CRecordingSystem* pRecordingSystem = g_pGame->GetRecordingSystem();
+//		CRecordingSystem* pRecordingSystem = gEnv->pGameFramework->GetRecordingSystem();
 //		if (pRecordingSystem)
 //		{
 //			pRecordingSystem->OnAttachAccessory(this);
@@ -305,7 +308,7 @@ void CItem::RemoveAllAccessories()
 //}
 
 
-//void CItem::RemoveAccessoryOnCategory(const ItemString& category)
+//void CItemComponent::RemoveAccessoryOnCategory(const ItemString& category)
 //{
 //	const int numAccessories = m_accessories.size();
 //
@@ -321,7 +324,7 @@ void CItem::RemoveAllAccessories()
 //}
 //
 //
-//void CItem::AccessoryAttachAction(CItem* pAccessory, const SAccessoryParams* params, bool initialLoadoutSetup)
+//void CItemComponent::AccessoryAttachAction(CItemComponent* pAccessory, const SAccessoryParams* params, bool initialLoadoutSetup)
 //{
 //	if (!params->attachToOwner)
 //	{
@@ -351,7 +354,7 @@ void CItem::RemoveAllAccessories()
 //}
 //
 //
-//void CItem::AccessoryDetachAction(CItem* pAccessory, const SAccessoryParams* params)
+//void CItemComponent::AccessoryDetachAction(CItemComponent* pAccessory, const SAccessoryParams* params)
 //{
 //	IEntity* pAccessoryEntity = pAccessory->GetEntity();
 //
@@ -366,7 +369,7 @@ void CItem::RemoveAllAccessories()
 //}
 //
 //
-//void CItem::AttachAccessory(const ItemString& name, bool attach, bool noanim, bool force, bool firstTimeAttached, bool initialLoadoutSetup)
+//void CItemComponent::AttachAccessory(const ItemString& name, bool attach, bool noanim, bool force, bool firstTimeAttached, bool initialLoadoutSetup)
 //{
 //	IEntityClass* pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(name.c_str());
 //
@@ -381,7 +384,7 @@ void CItem::RemoveAllAccessories()
 //}
 //
 //
-//void CItem::AttachDefaultAttachment(IEntityClass* pAccessoryClass)
+//void CItemComponent::AttachDefaultAttachment(IEntityClass* pAccessoryClass)
 //{
 //	eGeometrySlot slot = m_stats.fp ? eIGS_FirstPerson : eIGS_ThirdPerson;
 //	eViewMode viewMode = m_stats.fp ? eIVM_FirstPerson : eIVM_ThirdPerson;
@@ -390,7 +393,7 @@ void CItem::RemoveAllAccessories()
 //	if (!params)
 //		return;
 //	
-//	CItem* pAccessory = AddAccessory(pAccessoryClass);
+//	CItemComponent* pAccessory = AddAccessory(pAccessoryClass);
 //	if (pAccessory)
 //	{
 //		pAccessory->Physicalize(false, false);
@@ -401,7 +404,7 @@ void CItem::RemoveAllAccessories()
 //}
 //
 //
-//void CItem::ShowAttachmentHelper(int slot, const char* name, bool show)
+//void CItemComponent::ShowAttachmentHelper(int slot, const char* name, bool show)
 //{
 //	const size_t nChars = 32;
 //	const int numSubHelpers = 3;
@@ -424,7 +427,7 @@ void CItem::RemoveAllAccessories()
 //}
 //
 //
-//CItem *CItem::GetAccessory(const ItemString& name)
+//CItemComponent *CItemComponent::GetAccessory(const ItemString& name)
 //{
 //	IEntityClass* pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(name.c_str());
 //
@@ -432,7 +435,7 @@ void CItem::RemoveAllAccessories()
 //}
 //
 //
-//bool CItem::HasAccessory(const ItemString& name)
+//bool CItemComponent::HasAccessory(const ItemString& name)
 //{
 //	IEntityClass* pClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(name.c_str());
 //
@@ -440,7 +443,7 @@ void CItem::RemoveAllAccessories()
 //}
 //
 //
-//const SAccessoryParams* CItem::GetAccessoryParams(const IEntityClass* pClass) const
+//const SAccessoryParams* CItemComponent::GetAccessoryParams(const IEntityClass* pClass) const
 //{
 //	const int numParams = m_sharedparams->accessoryparams.size();
 //
@@ -456,7 +459,7 @@ void CItem::RemoveAllAccessories()
 //}
 //
 //
-//bool CItem::IsFirstTimeAccessoryAttached(IEntityClass* pClass) const
+//bool CItemComponent::IsFirstTimeAccessoryAttached(IEntityClass* pClass) const
 //{
 //	const int numAccessories = m_sharedparams->accessoryparams.size();
 //
@@ -473,7 +476,7 @@ void CItem::RemoveAllAccessories()
 //}
 //
 //
-//bool CItem::IsAccessoryHelperFree(const ItemString& helper)
+//bool CItemComponent::IsAccessoryHelperFree(const ItemString& helper)
 //{
 //	const int numAccessories = m_accessories.size();
 //
@@ -489,7 +492,7 @@ void CItem::RemoveAllAccessories()
 //}
 //
 //
-//void CItem::RemoveOwnerAttachedAccessories()
+//void CItemComponent::RemoveOwnerAttachedAccessories()
 //{
 //	const int numParams = m_sharedparams->accessoryparams.size();
 //
@@ -497,7 +500,7 @@ void CItem::RemoveAllAccessories()
 //	{
 //		if(m_sharedparams->accessoryparams[i].attachToOwner)
 //		{
-//			CItem* pAccessory = GetAccessory(m_sharedparams->accessoryparams[i].pAccessoryClass);
+//			CItemComponent* pAccessory = GetAccessory(m_sharedparams->accessoryparams[i].pAccessoryClass);
 //			EntityId accessoryEntId = pAccessory ? pAccessory->GetEntityId() : 0;
 //
 //			ResetCharacterAttachment(eIGS_FirstPerson, m_sharedparams->accessoryparams[i].attach_helper.c_str(), true, accessoryEntId);
@@ -506,7 +509,7 @@ void CItem::RemoveAllAccessories()
 //}
 //
 //
-//void CItem::InitialSetup()
+//void CItemComponent::InitialSetup()
 //{
 //	if(!(GetISystem()->IsSerializingFile() && GetGameObject()->IsJustExchanging()))
 //	{
@@ -521,7 +524,7 @@ void CItem::RemoveAllAccessories()
 //}
 //
 //
-//void CItem::ReAttachAccessories()
+//void CItemComponent::ReAttachAccessories()
 //{
 //	const int numAttachments = m_accessories.size();
 //
@@ -534,7 +537,7 @@ void CItem::RemoveAllAccessories()
 //}
 //
 //
-//void CItem::AccessoriesChanged(bool initialLoadoutSetup)
+//void CItemComponent::AccessoriesChanged(bool initialLoadoutSetup)
 //{
 //	if(m_stats.selected)
 //	{
@@ -556,7 +559,7 @@ void CItem::RemoveAllAccessories()
 //}
 //
 //
-//void CItem::SwitchAccessory(const ItemString& accessory)
+//void CItemComponent::SwitchAccessory(const ItemString& accessory)
 //{
 //	uint16 classId = 0;
 //	bool result = gEnv->pGameFramework->GetNetworkSafeClassId(classId, accessory.c_str());
@@ -565,7 +568,7 @@ void CItem::RemoveAllAccessories()
 //	if(!result)
 //	{
 //		char errorMsg[256];
-//		sprintf(errorMsg, "CItem::SwitchAccessory failed to find network safe class id for %s", accessory.c_str());
+//		sprintf(errorMsg, "CItemComponent::SwitchAccessory failed to find network safe class id for %s", accessory.c_str());
 //		CRY_ASSERT_MESSAGE(result, errorMsg);
 //	}
 //#endif
@@ -575,7 +578,7 @@ void CItem::RemoveAllAccessories()
 //}
 //
 //
-//void CItem::DoSwitchAccessory(const ItemString& inAccessory, bool initialLoadoutSetup)
+//void CItemComponent::DoSwitchAccessory(const ItemString& inAccessory, bool initialLoadoutSetup)
 //{
 //	IEntityClass* pNewClass = gEnv->pEntitySystem->GetClassRegistry()->FindClass(inAccessory.c_str());
 //	
@@ -639,7 +642,7 @@ void CItem::RemoveAllAccessories()
 //}
 //
 //
-//void CItem::DetachAccessory(const ItemString& accessory)
+//void CItemComponent::DetachAccessory(const ItemString& accessory)
 //{
 //	uint16 classId = 0;
 //	bool result = gEnv->pGameFramework->GetNetworkSafeClassId(classId, accessory.c_str());
@@ -648,7 +651,7 @@ void CItem::RemoveAllAccessories()
 //	if(!result)
 //	{
 //		char errorMsg[256];
-//		sprintf(errorMsg, "CItem::DetachAccessory failed to find network safe class id for %s", accessory.c_str());
+//		sprintf(errorMsg, "CItemComponent::DetachAccessory failed to find network safe class id for %s", accessory.c_str());
 //		CRY_ASSERT_MESSAGE(result, errorMsg);
 //	}
 //#endif
@@ -660,13 +663,13 @@ void CItem::RemoveAllAccessories()
 //}
 //
 //
-//void CItem::ResetAccessoriesScreen(IActor* pOwner)
+//void CItemComponent::ResetAccessoriesScreen(IActor* pOwner)
 //{
 //	ClearItemFlags( eIF_Modifying | eIF_Transitioning);
 //}
 //
 //
-//void CItem::PatchInitialSetup()
+//void CItemComponent::PatchInitialSetup()
 //{
 //	const char* temp = nullptr;
 //	// check if the initial setup accessories has been overridden in the level
@@ -706,6 +709,7 @@ void CItem::RemoveAllAccessories()
 //}
 //
 //
-//void CItem::OnAttach(bool attach)
+//void CItemComponent::OnAttach(bool attach)
 //{
 //}
+}

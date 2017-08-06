@@ -3,7 +3,7 @@
 //#include <CryPhysics/RayCastQueue.h>
 //
 //struct IItem;
-//class CCharacter;
+//class CCharacterComponent;
 //struct SActorMovementRequest;
 //struct SAimAccelerationParams;
 //struct SLinkStats;
@@ -13,7 +13,7 @@
 //class CCharacterRotation
 //{
 //public:
-//	CCharacterRotation(const CCharacter& character);
+//	CCharacterRotation(const CCharacterComponent& character);
 //
 //	//	void Process(IItem* pCurrentItem, const SActorMovementRequest& movementRequest, const SAimAccelerationParams& verticalAcceleration, float frameTime);
 //	void Process(const SActorMovementRequest& movementRequest, float frameTime);
@@ -53,7 +53,7 @@
 //	void ProcessNormal(float frameTime);
 //
 //	/** The character. */
-//	const CCharacter& m_character;
+//	const CCharacterComponent& m_character;
 //
 //	Quat m_baseQuat;
 //

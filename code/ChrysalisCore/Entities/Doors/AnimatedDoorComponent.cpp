@@ -1,33 +1,39 @@
 #include <StdAfx.h>
 
 #include "AnimatedDoorComponent.h"
-#include <CrySerialization/Decorators/Resources.h>
 #include <Components/Interaction/EntityInteractionComponent.h>
-#include <Components/Geometry/GeometryComponent.h>
+#include <DefaultComponents/Geometry/StaticMeshComponent.h>
 #include <Components/Lockable/LockableComponent.h>
 #include <Components/Animation/ControlledAnimationComponent.h>
 #include <Components/Animation/SimpleAnimationComponent.h>
 
 
-CRYREGISTER_CLASS(CAnimatedDoorComponent)
-
-class CDoorRegistrator : public IEntityRegistrator
+namespace Chrysalis
 {
-	void Register() override
-	{
-		RegisterEntityWithDefaultComponent<CAnimatedDoorComponent>("AnimatedDoor", "Doors", "door.bmp");
-	}
-};
+void CAnimatedDoorComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+{
+}
 
-CDoorRegistrator g_doorRegistrator;
+
+void CAnimatedDoorComponent::ReflectType(Schematyc::CTypeDesc<CAnimatedDoorComponent>& desc)
+{
+	desc.SetGUID(CAnimatedDoorComponent::IID());
+	desc.SetEditorCategory("Doors");
+	desc.SetLabel("AnimatedDoor");
+	desc.SetDescription("No description.");
+	desc.SetIcon("icons:ObjectTypes/light.ico");
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+
+	desc.AddMember(&CAnimatedDoorComponent::m_IsOpen, 'open', "IsOpen", "Is Open?", "Is the door open?", false);
+}
 
 
 void CAnimatedDoorComponent::Initialize()
 {
-	auto pEntity = GetEntity();
+	const auto pEntity = GetEntity();
 
 	// Get some geometry.
-	m_pGeometryComponent = pEntity->CreateComponent<CGeometryComponent>();
+	m_pGeometryComponent = pEntity->CreateComponent<Cry::DefaultComponents::CAnimatedMeshComponent>();
 
 	// Get a controllable animation component.
 	//m_pAnimationComponent = pEntity->CreateComponent<CControlledAnimationComponent>();
@@ -83,20 +89,7 @@ void CAnimatedDoorComponent::OnInteractionInteract()
 }
 
 
-void CAnimatedDoorComponent::SerializeProperties(Serialization::IArchive& archive)
-{
-	archive(m_IsOpen, "IsOpen", "Is Open?");
-	archive.doc("Is the door open?");
-
-	if (archive.isInput())
-	{
-		OnResetState();
-
-		// #TODO: We should get the door into it's proper state e.g. open / closed.
-	}
-}
-
-
 void CAnimatedDoorComponent::OnResetState()
 {
+}
 }

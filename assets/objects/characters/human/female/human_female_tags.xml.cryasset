@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="{04AA78C7-9A21-6935-4197-5E708677D017}">
+ <Files>
+  <File path="human_female_tags.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">TagDefinition</Detail>
+ </Details>
+</AssetMetadata>

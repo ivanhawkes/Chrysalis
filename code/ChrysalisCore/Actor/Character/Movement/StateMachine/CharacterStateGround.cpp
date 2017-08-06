@@ -9,17 +9,14 @@
 #include "MovementAction.h"*/
 
 
-#ifdef STATE_DEBUG
-static AUTOENUM_BUILDNAMEARRAY(s_ledgeTransitionNames, LedgeTransitionList);
-#endif
-
-
+namespace Chrysalis
+{
 CCharacterStateGround::CCharacterStateGround()
 	: m_inertiaIsZero(false)
 {}
 
 
-void CCharacterStateGround::OnEnter(CCharacter& Character)
+void CCharacterStateGround::OnEnter(CCharacterComponent& Character)
 {
 	Character.GetActorState()->durationInAir = 0.0f;
 
@@ -28,15 +25,15 @@ void CCharacterStateGround::OnEnter(CCharacter& Character)
 }
 
 
-void CCharacterStateGround::OnPrePhysicsUpdate(CCharacter& Character, const SActorMovementRequest& movementRequest, float frameTime, const bool isHeavyWeapon, const bool isCharacter)
+void CCharacterStateGround::OnPrePhysicsUpdate(CCharacterComponent& Character, const SActorMovementRequest& movementRequest, float frameTime, const bool isHeavyWeapon, const bool isLocalPlayer)
 {
 	/*const Matrix34A baseMtx = Matrix34A(Character.GetBaseQuat());
 	Matrix34A baseMtxZ(baseMtx * Matrix33::CreateScale(Vec3Constants<float>::fVec3_OneZ));
 	baseMtxZ.SetTranslation(Vec3Constants<float>::fVec3_Zero);
 
-	const CAutoAimManager& autoAimManager = g_pGame->GetAutoAimManager();
+	const CAutoAimManager& autoAimManager = gEnv->pGameFramework->GetAutoAimManager();
 	const EntityId closeCombatTargetId = autoAimManager.GetCloseCombatSnapTarget();
-	const IActor* pCloseCombatTarget = isCharacter && closeCombatTargetId && Character.IsClient() ? CActor::GetActor(closeCombatTargetId) : NULL;
+	const IActor* pCloseCombatTarget = isLocalPlayer && closeCombatTargetId && Character.IsClient() ? CActor::GetActor(closeCombatTargetId) : NULL;
 
 	// This is to restore inertia if the ProcessAlignToTarget set it previously.
 	if (m_inertiaIsZero)
@@ -47,7 +44,7 @@ void CCharacterStateGround::OnPrePhysicsUpdate(CCharacter& Character, const SAct
 	}
 
 	// Process movement.
-	const bool isRemote = isCharacter && !Character.IsClient();
+	const bool isRemote = isLocalPlayer && !Character.IsClient();
 
 	Vec3 move(ZERO);
 	CCharacterStateUtil::CalculateGroundOrJumpMovement(Character, movementRequest, isHeavyWeapon, move);
@@ -117,7 +114,7 @@ void CCharacterStateGround::OnPrePhysicsUpdate(CCharacter& Character, const SAct
 		{ // Shallow water speed slowdown
 			float shallowWaterMultiplier = 1.0f;
 
-			shallowWaterMultiplier = isCharacter
+			shallowWaterMultiplier = isLocalPlayer
 				? g_pGameCVars->cl_shallowWaterSpeedMulCharacter
 				: g_pGameCVars->cl_shallowWaterSpeedMulAI;
 
@@ -145,7 +142,7 @@ void CCharacterStateGround::OnPrePhysicsUpdate(CCharacter& Character, const SAct
 
 	HWVSaveVecUnaligned(&desiredVel, xmDesiredVel);
 
-	if (isCharacter)
+	if (isLocalPlayer)
 	{
 		Vec3 modifiedSlopeNormal = Character.GetActorPhysics()->groundNormal;
 		float h = Vec2(modifiedSlopeNormal.x, modifiedSlopeNormal.y).GetLength(); // #TODO: OPT: sqrt(x*x+y*y)
@@ -226,14 +223,14 @@ void CCharacterStateGround::OnPrePhysicsUpdate(CCharacter& Character, const SAct
 	}
 #endif
 
-	if (isCharacter)
+	if (isLocalPlayer)
 	{
 		CheckForVaultTrigger(Character, frameTime);
 	}*/
 }
 
 
-bool CCharacterStateGround::CheckForVaultTrigger(CCharacter & Character, float frameTime)
+bool CCharacterStateGround::CheckForVaultTrigger(CCharacterComponent & Character, float frameTime)
 {
 	/*const int enableVaultFromStandingCVar = g_pGameCVars->pl_ledgeClamber.enableVaultFromStanding;
 	const bool doCheck = (enableVaultFromStandingCVar == 3) || ((enableVaultFromStandingCVar > 0) && Character.m_jumpButtonIsPressed);
@@ -247,7 +244,7 @@ bool CCharacterStateGround::CheckForVaultTrigger(CCharacter & Character, float f
 		if (CCharacterStateLedge::TryLedgeGrab(Character, zPos, zPos, true, &ledgeTransition, ignoreMovement) && ledgeTransition.m_ledgeTransition != SLedgeTransitionData::eOLT_None)
 		{
 			CRY_ASSERT(LedgeId(ledgeTransition.m_nearestGrabbableLedgeId).IsValid());
-			const SLedgeInfo ledgeInfo = g_pGame->GetLedgeManager()->GetLedgeById(LedgeId(ledgeTransition.m_nearestGrabbableLedgeId));
+			const SLedgeInfo ledgeInfo = gEnv->pGameFramework->GetLedgeManager()->GetLedgeById(LedgeId(ledgeTransition.m_nearestGrabbableLedgeId));
 
 			CRY_ASSERT(ledgeInfo.IsValid());
 
@@ -319,9 +316,10 @@ bool CCharacterStateGround::CheckForVaultTrigger(CCharacter & Character, float f
 }
 
 
-void CCharacterStateGround::OnUpdate(CCharacter& Character, float frameTime)
+void CCharacterStateGround::OnUpdate(CCharacterComponent& Character, float frameTime)
 {}
 
 
-void CCharacterStateGround::OnExit(CCharacter& Character)
+void CCharacterStateGround::OnExit(CCharacterComponent& Character)
 {}
+}

@@ -9,7 +9,8 @@ Class will perform instantiation and management of inventory systems for all ent
 #include "IGameObject.h"
 #include "IItemSystem.h"
 
-
+namespace Chrysalis
+{
 /**
 An entity inventory.
 
@@ -35,8 +36,6 @@ class CEntityInventory : public CGameObjectExtensionHelper <CEntityInventory, II
 	void HandleEvent(const SGameObjectEvent& event) override {};
 	void ProcessEvent(SEntityEvent& event) override {};
 	void SetChannelId(uint16 id) override {};
-	// FIX: 5.4
-	void SetAuthority(bool auth) override {};
 	void PostRemoteSpawn() override {};
 
 
@@ -71,9 +70,9 @@ class CEntityInventory : public CGameObjectExtensionHelper <CEntityInventory, II
 
 	/**
 	Searches for the first item.
-	
+
 	\param	itemId	Identifier for the item.
-	
+
 	\return	The found item.
 	*/
 	// #TODO: Warning! You are shadowing the exiting function in IInventory. Is this expected behaviour?
@@ -204,3 +203,4 @@ private:
 	typedef std::vector<EntityId> EntityVector;
 	typedef std::vector<IItem> InventoryItemVector;
 };
+}

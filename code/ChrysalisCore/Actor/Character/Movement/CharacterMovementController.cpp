@@ -2,6 +2,8 @@
 
 #include "CharacterMovementController.h"
 
+namespace Chrysalis
+{
 
 // ***
 // *** IMovementController
@@ -11,4 +13,4 @@
 // ***
 // *** CActorMovementController
 // ***
-
+}

@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="{6EF4620E-B1E5-0F21-67EC-B77D1060054F}">
+ <Files>
+  <File path="MaterialEffects.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">Workbook</Detail>
+ </Details>
+</AssetMetadata>

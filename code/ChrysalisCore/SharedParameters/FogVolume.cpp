@@ -7,29 +7,31 @@
 #include <CrySerialization/STL.h>
 #include <CrySerialization/Math.h>
 
+namespace Chrysalis
+{
 DEFINE_SHARED_PARAMS_TYPE_INFO(SFogVolume)
 
 
 void SFogVolume::Reset()
 {
-    // Reset code goes here.
-    *this = SFogVolume();
+	// Reset code goes here.
+	*this = SFogVolume();
 }
 
 
 bool SFogVolume::Read(const XmlNodeRef& node)
 {
-    // Read code goes here.
-    CGameXmlParamReader reader(node);
+	// Read code goes here.
+	CGameXmlParamReader reader(node);
 
-    // Read the parameters.
-    reader.ReadParamValue("color", color);
-    reader.ReadParamValue("globalDensity", globalDensity);
-    reader.ReadParamValue("densityOffset", densityOffset);
+	// Read the parameters.
+	reader.ReadParamValue("color", color);
+	reader.ReadParamValue("globalDensity", globalDensity);
+	reader.ReadParamValue("densityOffset", densityOffset);
 
 	// Adjust color values to an internal range.
 	//color /= 255.0f;
-	
+
 	return true;
 }
 
@@ -53,4 +55,5 @@ void SFogVolume::SerializeProperties(Serialization::IArchive& archive)
 	//{
 	//	OnResetState();
 	//}
+}
 }

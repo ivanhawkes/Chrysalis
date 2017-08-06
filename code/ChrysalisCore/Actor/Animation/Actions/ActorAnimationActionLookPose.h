@@ -4,6 +4,8 @@
 #include <Actor/Animation/ActorAnimation.h>
 
 
+namespace Chrysalis
+{
 class CActorAnimationActionLookPose : public CAnimationAction
 {
 public:
@@ -22,3 +24,4 @@ public:
 private:
 	void InitialiseLookPoseBlender();
 };
+}

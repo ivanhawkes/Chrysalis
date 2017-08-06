@@ -5,6 +5,8 @@
 #include <Item/Parameters/ItemParameter.h>
 
 
+namespace Chrysalis
+{
 CItemLaserParameter::CItemLaserParameter()
 {
 }
@@ -26,4 +28,5 @@ bool CItemLaserParameter::Read(const XmlNodeRef& node)
 	CGameXmlParamReader reader(node);
 
 	return true;
+}
 }

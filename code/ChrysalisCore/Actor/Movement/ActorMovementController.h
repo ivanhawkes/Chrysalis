@@ -7,6 +7,8 @@ Declares the actor movement controller class.
 #include <IMovementController.h>
 
 
+namespace Chrysalis
+{
 class CActor;
 struct SActorMovementRequest;
 
@@ -44,10 +46,10 @@ public:
 	/**
 	ILH: I couldn't see this being called, except in old vehicle code, which we don't need yet. Removing it until
 	such time as it is needed again.
-	
+
 	\param 		   	query The query.
 	\param [in,out]	state The state.
-	
+
 	\return True if it succeeds, false if it fails.
 	**/
 	bool GetStanceState(const SStanceStateQuery& query, SStanceState& state) override { return false; };
@@ -63,7 +65,7 @@ public:
 
 
 	/** Resets this object. */
-	void OnResetState();
+	virtual void OnResetState();
 
 
 	/**
@@ -140,3 +142,4 @@ private:
 	**/
 	const float GetLowerBodyRotation(uint32 movementStateFlags) const;
 };
+}

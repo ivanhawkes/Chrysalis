@@ -6,24 +6,26 @@
 /*#include "Weapon.h"*/
 
 
-class CCharacterStateLinked : public CStateHierarchy < CCharacter >
+namespace Chrysalis
 {
-	DECLARE_STATE_CLASS_BEGIN(CCharacter, CCharacterStateLinked)
-		DECLARE_STATE_CLASS_ADD(CCharacter, Enter)
-		DECLARE_STATE_CLASS_ADD(CCharacter, Vehicle)
-		DECLARE_STATE_CLASS_ADD(CCharacter, Entity)
-	DECLARE_STATE_CLASS_END(CCharacter)
+class CCharacterStateLinked : public CStateHierarchy < CCharacterComponent >
+{
+	DECLARE_STATE_CLASS_BEGIN(CCharacterComponent, CCharacterStateLinked)
+	DECLARE_STATE_CLASS_ADD(CCharacterComponent, Enter)
+	DECLARE_STATE_CLASS_ADD(CCharacterComponent, Vehicle)
+	DECLARE_STATE_CLASS_ADD(CCharacterComponent, Entity)
+	DECLARE_STATE_CLASS_END(CCharacterComponent)
 };
 
 
-DEFINE_STATE_CLASS_BEGIN(CCharacter, CCharacterStateLinked, CHARACTER_STATE_LINKED, Enter)
-	DEFINE_STATE_CLASS_ADD(CCharacter, CCharacterStateLinked, Enter, Root)
-	DEFINE_STATE_CLASS_ADD(CCharacter, CCharacterStateLinked, Vehicle, Root)
-	DEFINE_STATE_CLASS_ADD(CCharacter, CCharacterStateLinked, Entity, Root)
-DEFINE_STATE_CLASS_END(CCharacter, CCharacterStateLinked)
+DEFINE_STATE_CLASS_BEGIN(CCharacterComponent, CCharacterStateLinked, CHARACTER_STATE_LINKED, Enter)
+DEFINE_STATE_CLASS_ADD(CCharacterComponent, CCharacterStateLinked, Enter, Root)
+DEFINE_STATE_CLASS_ADD(CCharacterComponent, CCharacterStateLinked, Vehicle, Root)
+DEFINE_STATE_CLASS_ADD(CCharacterComponent, CCharacterStateLinked, Entity, Root)
+DEFINE_STATE_CLASS_END(CCharacterComponent, CCharacterStateLinked)
 
 
-const CCharacterStateLinked::TStateIndex CCharacterStateLinked::Root(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateLinked::TStateIndex CCharacterStateLinked::Root(CCharacterComponent& Character, const SStateEvent& event)
 {
 	const ECharacterStateEvent eventID = static_cast<ECharacterStateEvent> (event.GetEventId());
 	switch (eventID)
@@ -63,24 +65,24 @@ const CCharacterStateLinked::TStateIndex CCharacterStateLinked::Root(CCharacter&
 }
 
 
-const CCharacterStateLinked::TStateIndex CCharacterStateLinked::Enter(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateLinked::TStateIndex CCharacterStateLinked::Enter(CCharacterComponent& Character, const SStateEvent& event)
 {
-	const ECharacterStateEvent eventID = static_cast<ECharacterStateEvent> (event.GetEventId());
-	switch (eventID)
-	{
-		case CHARACTER_EVENT_ATTACH:
-			if (Character.GetLinkedVehicle())
-			{
-				return State_Vehicle;
-			}
-			return State_Entity;
-	}
+	//const ECharacterStateEvent eventID = static_cast<ECharacterStateEvent> (event.GetEventId());
+	//switch (eventID)
+	//{
+	//	case CHARACTER_EVENT_ATTACH:
+	//		if (Character.GetLinkedVehicle())
+	//		{
+	//			return State_Vehicle;
+	//		}
+	//		return State_Entity;
+	//}
 
 	return State_Continue;
 }
 
 
-const CCharacterStateLinked::TStateIndex CCharacterStateLinked::Vehicle(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateLinked::TStateIndex CCharacterStateLinked::Vehicle(CCharacterComponent& Character, const SStateEvent& event)
 {
 	const ECharacterStateEvent eventID = static_cast<ECharacterStateEvent> (event.GetEventId());
 	switch (eventID)
@@ -97,7 +99,8 @@ const CCharacterStateLinked::TStateIndex CCharacterStateLinked::Vehicle(CCharact
 }
 
 
-const CCharacterStateLinked::TStateIndex CCharacterStateLinked::Entity(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateLinked::TStateIndex CCharacterStateLinked::Entity(CCharacterComponent& Character, const SStateEvent& event)
 {
 	return State_Continue;
+}
 }

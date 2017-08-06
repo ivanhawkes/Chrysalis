@@ -18,8 +18,8 @@
 #include <Actor/Animation/Actions/ActorAnimationActionLookPose.h>
 #include <Actor/Movement/ActorMovementController.h>
 #include <Actor/ActorPhysics.h>
-#include <Player/Input/IPlayerInputComponent.h>
-#include <Player/Player.h>
+#include <Components/Player/Input/IPlayerInputComponent.h>
+#include <Components/Player/Player.h>
 #include <Components/Interaction/EntityAwarenessComponent.h>
 #include <Components/Interaction/EntityInteractionComponent.h>
 #include <Components/Inventory/InventoryComponent.h>
@@ -29,29 +29,39 @@
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
 
 
-CActor::CActor()
+namespace Chrysalis
 {
-	//m_characterRotation = new CCharacterRotation(*this);
+void CActor::Register(Schematyc::CEnvRegistrationScope& componentScope)
+{
 }
 
 
+void CActor::ReflectType(Schematyc::CTypeDesc<CActor>& desc)
+{
+	desc.SetGUID(CActor::IID());
+	desc.SetEditorCategory("Actors");
+	desc.SetLabel("Actor");
+	desc.SetDescription("No description.");
+	desc.SetIcon("icons:ObjectTypes/light.ico");
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+}
+
+	
 CActor::~CActor()
 {
-	// Very important that this gets called. Removes the character from the system.
-	gEnv->pGameFramework->GetIActorSystem()->RemoveActor(GetEntityId());
-
 	// Inventory takes a little extra work to break down.
-	if (m_pInventory)
-	{
-		if (IItem* item = GetCurrentItem())
-		{
-			if (item->IsUsed())
-				item->StopUse(GetEntityId());
-		}
+	// TODO: CRITICAL: HACK: BROKEN: !!
+	//if (m_pInventory)
+	//{
+	//	if (IItem* item = GetCurrentItem())
+	//	{
+	//		if (item->IsUsed())
+	//			item->StopUse(GetEntityId());
+	//	}
 
-		if (gEnv->bServer)
-			m_pInventory->Destroy();
-	}
+	//	if (gEnv->bServer)
+	//		m_pInventory->Destroy();
+	//}
 
 	// Release the controller first, then the animation context. Errors will occur if done the other way.
 	SAFE_DELETE(m_pMovementController);
@@ -73,43 +83,7 @@ CActor::~CActor()
 
 void CActor::Initialize()
 {
-	// #TODO: Move the PostInit into here once we are free of GameObjects.
-	//PostInit(gEnv->pGameFramework->GetGameObject(GetEntityId()));
-}
-
-
-// ***
-// *** IGameObjectExtension
-// ***
-
-
-bool CActor::Init(IGameObject * pGameObject)
-{
-	ISimpleActor::Init(pGameObject);
-
-	// Add this instance to the network.
-	return pGameObject->BindToNetwork();
-}
-
-
-void CActor::PostInit(IGameObject * pGameObject)
-{
-	auto pEntity = GetEntity();
-
-	// Required for 5.3 to call update.
-	pEntity->Activate(true);
-
-	// We need until we can remove the old style of update.
-	pGameObject->EnableUpdateSlot(this, 0);
-
-	// Register for pre-physics update.
-	//RegisterEvent(ENTITY_EVENT_PREPHYSICSUPDATE, IComponent::EComponentFlags_Enable);
-
-	// We will require pre-physics updates.
-	pGameObject->EnablePrePhysicsUpdate(ePPU_Always);
-
-	// Animated characters need to register for the post step immediate event.
-	pGameObject->EnablePhysicsEvent(true, eEPE_OnPostStepImmediate);
+	const auto pEntity = GetEntity();
 
 	// Initialise the movement state machine.
 	MovementHSMInit();
@@ -117,25 +91,22 @@ void CActor::PostInit(IGameObject * pGameObject)
 	// Create a movement controller and set it as the active controller for this game object.
 	// Attempt to acquire an animated character component.
 	m_pMovementController = new CActorMovementController(this);
-	if (m_pMovementController)
-		GetGameObject()->SetMovementController(m_pMovementController);
+
+	// TODO: CRITICAL: HACK: BROKEN: !!
+	//if (m_pMovementController)
+	//	GetGameObject()->SetMovementController(m_pMovementController);
 
 	// #TODO: Always false, for now, since the player is the actual client. Find out if it's ever
 	// right for an actor to be the client and simplify this code if it's not.
 	m_isClient = false;
-
-	// Registers this instance to the actor system.
-	gEnv->pGameFramework->GetIActorSystem()->AddActor(GetEntityId(), this);
 
 	// Default is for a character to be controlled by AI.
 	//	m_isAIControlled = true;
 	m_isAIControlled = false;
 
 	// Attempt to acquire an animated character component.
-	m_pAnimatedCharacter = static_cast<IAnimatedCharacter*> (GetGameObject()->AcquireExtension("AnimatedCharacter"));
-
-	// Attempt to acquire an inventory component.
-	m_pInventory = static_cast<IInventory*>(GetGameObject()->AcquireExtension("Inventory"));
+	// TODO: CRITICAL: HACK: BROKEN: !!
+	//m_pAnimatedCharacter = static_cast<IAnimatedCharacter*> (GetGameObject()->AcquireExtension("AnimatedCharacter"));
 
 	// Tells this instance to trigger areas.
 	pEntity->AddFlags(ENTITY_FLAG_TRIGGER_AREAS);
@@ -195,29 +166,6 @@ void CActor::PostInit(IGameObject * pGameObject)
 }
 
 
-void CActor::FullSerialize(TSerialize ser)
-{
-	// Serialise the movement state machine.
-	MovementHSMSerialize(ser);
-}
-
-
-void CActor::Update(SEntityUpdateContext& ctx, int updateSlot)
-{
-	if (m_pActionController)
-		m_pActionController->Update(ctx.fFrameTime);
-
-	// #HACK: Process this in player instead of here which will affect ALL characters.
-	// Alternatively, and perhaps safer due to uncertain entity sorting, place a check around the character to ensure it's the
-	// player's current attach target.
-	if (m_pMovementController)
-		m_pMovementController->Compute();
-
-	// Update the movement state machine.
-	MovementHSMUpdate(ctx, updateSlot);
-}
-
-
 void CActor::ProcessEvent(SEntityEvent& event)
 {
 	switch (event.event)
@@ -235,16 +183,31 @@ void CActor::ProcessEvent(SEntityEvent& event)
 }
 
 
-// FIX: 5.4
-IEntityComponent::ComponentEventPriority CActor::GetEventPriority(const int eventID) const
-{
-	switch (eventID)
-	{
-		case ENTITY_EVENT_PREPHYSICSUPDATE:
-			return ENTITY_PROXY_LAST - ENTITY_PROXY_USER + EEntityEventPriority_Actor + EEntityEventPriority_Client; // #HACK: only used for when we are the client, fix later.
-	}
+// TODO: CRITICAL: HACK: BROKEN: !!
 
-	return IGameObjectExtension::GetEventPriority(eventID);
+//void CActor::FullSerialize(TSerialize ser)
+//{
+//	// Serialise the movement state machine.
+//	MovementHSMSerialize(ser);
+//}
+
+
+void CActor::Update()
+{
+	const float frameTime = gEnv->pTimer->GetFrameTime();
+
+	if (m_pActionController)
+		m_pActionController->Update(frameTime);
+
+	// #HACK: Process this in player instead of here which will affect ALL characters.
+	// Alternatively, and perhaps safer due to uncertain entity sorting, place a check around the character to ensure it's the
+	// player's current attach target.
+	if (m_pMovementController)
+		m_pMovementController->Compute();
+
+	// Update the movement state machine.
+	// TODO: CRITICAL: HACK: BROKEN: how do we get the ctx now?
+	//MovementHSMUpdate(ctx, updateSlot);
 }
 
 
@@ -413,7 +376,7 @@ Vec3 CActor::GetLocalEyePos() const
 				// This will most likely spam the log. Disable it if it's annoying.
 				if (!alreadyWarned)
 				{
-					CryLogAlways("Character class %s does not have '#camera', 'left_eye' or 'right_eye' defined.", GetActorClassName());
+					CryLogAlways("Character does not have '#camera', 'left_eye' or 'right_eye' defined.");
 					alreadyWarned = true;
 				}
 				break;
@@ -500,19 +463,6 @@ Vec3 CActor::GetLocalRightHandPos() const
 IMovementController* CActor::GetMovementController() const
 {
 	return m_pMovementController;
-}
-
-
-bool CActor::IsPlayer() const
-{
-	//CryLogAlways("[Warning] IsPlayer () tested, possible cast problems if they cast CCharacter to a CPlayer");
-	return m_pAttachedPlayer != nullptr;
-}
-
-
-bool CActor::IsClient() const
-{
-	return m_isClient;
 }
 
 
@@ -682,22 +632,12 @@ void CActor::OnStanceChanged(IActor* pActor, EStance stance)
 {}
 
 
-void CActor::OnToggleThirdPerson(IActor* pActor, bool isThirdPerson)
-{
-	// Track first / third person for each actor.
-	m_isThirdPerson = isThirdPerson;
-
-	// If we switched view modes, we may need to load a new animation context.
-	OnResetState();
-}
-
-
 void CActor::OnSprintStaminaChanged(IActor* pActor, float newStamina)
 {}
 
 
 // ***
-// *** CActor
+// *** Item System
 // ***
 
 
@@ -705,8 +645,10 @@ EntityId CActor::GetCurrentItemId(bool includeVehicle) const
 {
 	// #TODO: Add handling of vehicles in this routine.
 
+	// TODO: CRITICAL: HACK: BROKEN: !!
 	// Let the inventory extension handle the hard work.
-	return m_pInventory ? m_pInventory->GetCurrentItem() : INVALID_ENTITYID;
+	//return m_pInventory ? m_pInventory->GetCurrentItem() : INVALID_ENTITYID;
+	return INVALID_ENTITYID;
 }
 
 
@@ -724,7 +666,7 @@ IItem* CActor::GetCurrentItem(bool includeVehicle) const
 // ***
 
 
-void CActor::OnPlayerAttach(CPlayer& player)
+void CActor::OnPlayerAttach(CPlayerComponent& player)
 {
 	// Make a note of the player for back reference.
 	m_pAttachedPlayer = &player;
@@ -757,13 +699,15 @@ void CActor::OnPlayerDetach()
 
 void CActor::OnResetState()
 {
-	auto pEntity = GetEntity();
+	const auto pEntity = GetEntity();
 
+	// TODO: HACK: Needs switching over to new system for 5.4.
 	// Reset AnimatedCharacter
 	if (m_pAnimatedCharacter)
 	{
 		m_pAnimatedCharacter->ResetState();
-		m_pAnimatedCharacter->Init(GetGameObject());
+		// TODO: CRITICAL: HACK: BROKEN: !!
+		//m_pAnimatedCharacter->Init(GetGameObject());
 		m_pAnimatedCharacter->SetMovementControlMethods(eMCMSlot_Animation, eMCM_Animation, eMCM_Animation);
 
 		if (IActionController* pActionController = m_pAnimatedCharacter->GetActionController())
@@ -773,16 +717,16 @@ void CActor::OnResetState()
 	}
 
 	// Select a character definition based on first / third person mode.
-	string geometry;
+	Schematyc::CharacterFileName geometry;
 	if (IsThirdPerson())
 		geometry = m_geometryThirdPerson;
 	else
 		geometry = m_geometryFirstPerson;
 
-	if (!geometry.IsEmpty())
+	if (!geometry.value.IsEmpty())
 	{
 		// Load character
-		pEntity->LoadCharacter(0, geometry);
+		pEntity->LoadCharacter(0, geometry.value);
 
 		// Mannequin Initialization
 		IMannequin& mannequin = gEnv->pGameFramework->GetMannequinInterface();
@@ -823,7 +767,7 @@ void CActor::OnResetState()
 		CRY_ASSERT(pCharacterInstance != nullptr);
 
 		// Loading a database
-		const IAnimationDatabase* const pAnimationDatabase = animationDatabaseManager.Load(m_animationDatabase);
+		const IAnimationDatabase* const pAnimationDatabase = animationDatabaseManager.Load(m_animationDatabase.value);
 		if (pAnimationDatabase == nullptr)
 		{
 			CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_ERROR, "Failed to load the actor animation database.");
@@ -866,7 +810,6 @@ void CActor::OnResetState()
 		// Mannequin should also be reset.
 		ResetMannequin();
 
-		//SetLastTimeInLedge (0.0f);
 		//SetupAimIKProperties ();
 		//DisableStumbling ();
 		//m_playerStateSwim_WaterTestProxy.Reset (true);
@@ -1321,4 +1264,5 @@ float CActor::GetMovementBaseSpeed(uint32 movementStateFlags) const
 	}
 
 	return baseSpeed * dirScale;
+}
 }

@@ -1,10 +1,11 @@
 #pragma once
 
-#include "CharacterStateLedge.h"
 #include <Actor/IActorEventListener.h>
 
 
-class CCharacter;
+namespace Chrysalis
+{
+class CCharacterComponent;
 
 template<typename HOST>
 class CStateHierarchy;
@@ -25,40 +26,40 @@ public:
 	CCharacterStateJump();
 	~CCharacterStateJump();
 
-	void OnEnter(CCharacter& Character);
-	bool OnPrePhysicsUpdate(CCharacter& Character, const bool isHeavyWeapon, const SActorMovementRequest& movementRequest, float frameTime);
-	void OnExit(CCharacter& Character, const bool isHeavyWeapon);
-	void OnFullSerialize(TSerialize ser, CCharacter& Character);
-	void OnJump(CCharacter& Character, const bool isHeavyWeapon, const float fVerticalSpeedModifier);
-	void OnFall(CCharacter& Character);
+	void OnEnter(CCharacterComponent& Character);
+	bool OnPrePhysicsUpdate(CCharacterComponent& Character, const bool isHeavyWeapon, const SActorMovementRequest& movementRequest, float frameTime);
+	void OnExit(CCharacterComponent& Character, const bool isHeavyWeapon);
+	void OnFullSerialize(TSerialize ser, CCharacterComponent& Character);
+	void OnJump(CCharacterComponent& Character, const bool isHeavyWeapon, const float fVerticalSpeedModifier);
+	void OnFall(CCharacterComponent& Character);
 
-	void SetJumpState(CCharacter &Character, EJumpState jumpState);
+	void SetJumpState(CCharacterComponent &Character, EJumpState jumpState);
 	EJumpState GetJumpState() const;
 	ILINE const float GetExpectedJumpEndHeight() const { return m_expectedJumpEndHeight; }
 	ILINE const float GetStartFallingHeight() const { return m_startFallingHeight; }
 	bool GetSprintJump() const { return m_bSprintJump; }
 
 private:
-	void StartJump(CCharacter& Character, const bool isHeavyWeapon, const float fVerticalSpeedModifier);
+	void StartJump(CCharacterComponent& Character, const bool isHeavyWeapon, const float fVerticalSpeedModifier);
 
 	ILINE bool IsJumping() const { return m_jumpState != JState_None; }
 	ILINE void OnRevive() { m_jumpState = JState_None; }
-	void OnMPWeaponSelect(CCharacter& Character) { SetJumpState(Character, JState_Jump); }
+	void OnMPWeaponSelect(CCharacterComponent& Character) { SetJumpState(Character, JState_Jump); }
 
-	void UpdateJumping(CCharacter& Character, const bool isHeavyWeapon, const SActorMovementRequest& movementRequest, float frameTime);
-	void UpdateFalling(CCharacter& Character, const bool isHeavyWeapon, const SActorMovementRequest& movementRequest, float frameTime);
+	void UpdateJumping(CCharacterComponent& Character, const bool isHeavyWeapon, const SActorMovementRequest& movementRequest, float frameTime);
+	void UpdateFalling(CCharacterComponent& Character, const bool isHeavyWeapon, const SActorMovementRequest& movementRequest, float frameTime);
 
-	bool UpdateCommon(CCharacter& Character, const bool isHeavyWeapon, const Vec3 &move, float frameTime, Vec3* pDesiredVel);
-	bool UpdateCommon(CCharacter& Character, const bool isHeavyWeapon, const SActorMovementRequest& movementRequest, float frameTime, Vec3* pDesiredVel);
+	bool UpdateCommon(CCharacterComponent& Character, const bool isHeavyWeapon, const Vec3 &move, float frameTime, Vec3* pDesiredVel);
+	bool UpdateCommon(CCharacterComponent& Character, const bool isHeavyWeapon, const SActorMovementRequest& movementRequest, float frameTime, Vec3* pDesiredVel);
 
-	void GetDesiredVelocity(const Vec3 & move, const CCharacter &Character, Vec3* pDesiredVel) const;
-	void FinalizeVelocity(CCharacter& Character, const Vec3& newVelocity);
+	void GetDesiredVelocity(const Vec3 & move, const CCharacterComponent &Character, Vec3* pDesiredVel) const;
+	void FinalizeVelocity(CCharacterComponent& Character, const Vec3& newVelocity);
 
-	void Land(CCharacter &Character, const bool isHeavyWeapon, float frameTime);
-	void Landed(CCharacter& Character, const bool isHeavyWeapon, float fallSpeed);
-	const Vec3 CalculateInAirJumpExtraVelocity(const CCharacter& Character, const Vec3& desiredVelocity) const;
+	void Land(CCharacterComponent &Character, const bool isHeavyWeapon, float frameTime);
+	void Landed(CCharacterComponent& Character, const bool isHeavyWeapon, float fallSpeed);
+	const Vec3 CalculateInAirJumpExtraVelocity(const CCharacterComponent& Character, const Vec3& desiredVelocity) const;
 
-	void OnSpecialMove(CCharacter &Character, IActorEventListener::ESpecialMove specialMove);
+	void OnSpecialMove(CCharacterComponent &Character, IActorEventListener::ESpecialMove specialMove);
 
 	EJumpState m_jumpState;
 	mutable float m_jumpLock;
@@ -68,3 +69,4 @@ private:
 	bool m_bSprintJump;
 	class CPlayerJump *m_jumpAction;
 };
+}

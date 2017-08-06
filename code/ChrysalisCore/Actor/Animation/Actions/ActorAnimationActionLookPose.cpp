@@ -5,6 +5,8 @@
 #include <CryAnimation/IAnimationPoseModifier.h>
 
 
+namespace Chrysalis
+{
 #define LOOKPOSE_FRAGMENTS( x ) \
 	x( LookPose )
 
@@ -101,4 +103,5 @@ bool CActorAnimationActionLookPose::IsSupported(const SAnimationContext& context
 	const FragmentID fragmentId = FindFragmentId(context);
 	const bool isSupported = (fragmentId != FRAGMENT_ID_INVALID);
 	return isSupported;
+}
 }

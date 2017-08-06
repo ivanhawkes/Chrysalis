@@ -1,0 +1,26 @@
+<AssetMetadata version="0" type="Material" guid="{09F8BA7E-C2F2-9879-62F2-E7E38531B6EE}">
+ <Files>
+  <File path="chloe.mtl"/>
+ </Files>
+ <Details>
+  <Detail name="subMaterialCount">5</Detail>
+  <Detail name="textureCount">15</Detail>
+ </Details>
+ <Dependencies>
+  <Path>./textures/chloe_top_diff.dds</Path>
+  <Path>./textures/chloe_top_ddna.dds</Path>
+  <Path>./textures/chloe_top_spec.dds</Path>
+  <Path>./textures/chloe_bottom_diff.dds</Path>
+  <Path>./textures/chloe_bottom_ddna.dds</Path>
+  <Path>./textures/chloe_bottom_spec.dds</Path>
+  <Path>./textures/chloe_shoes_diff.dds</Path>
+  <Path>./textures/chloe_shoes_ddna.dds</Path>
+  <Path>./textures/chloe_shoes_spec.dds</Path>
+  <Path>./textures/chloe_hair_diff.dds</Path>
+  <Path>./textures/chloe_hair_ddna.dds</Path>
+  <Path>./textures/chloe_hair_spec.dds</Path>
+  <Path>./textures/chloe_body_diff.dds</Path>
+  <Path>./textures/chloe_body_ddna.dds</Path>
+  <Path>./textures/chloe_body_spec.dds</Path>
+ </Dependencies>
+</AssetMetadata>

@@ -3,6 +3,8 @@
 #include <CryCore/Platform/platform.h>
 
 
+namespace Chrysalis
+{
 struct IInteraction
 {
 	virtual void OnInteractionStart() {};
@@ -484,3 +486,4 @@ DECLARE_SHARED_POINTERS(CInteractionLockableUnlock);
 //	IInteractionContainer* m_subject { nullptr };
 //};
 //DECLARE_SHARED_POINTERS(CInteractionContainerUnlock);
+}

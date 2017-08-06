@@ -1,28 +1,39 @@
 #include "StdAfx.h"
 
 #include "SwitchComponent.h"
-#include <CrySerialization/Decorators/Resources.h>
-#include <CrySerialization/Enum.h>
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
 
 
-class CSwitchEntityRegistrator : public IEntityRegistrator
+namespace Chrysalis
 {
-	virtual void Register() override
-	{
-		RegisterEntityWithDefaultComponent<CSwitchComponent>("SwitchComponent", "Switch", "physicsobject.bmp", true);
-	}
-};
+void CSwitchComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+{
+}
 
-CSwitchEntityRegistrator g_SwitchEntityRegistrator;
 
-CRYREGISTER_CLASS(CSwitchComponent);
+void CSwitchComponent::ReflectType(Schematyc::CTypeDesc<CSwitchComponent>& desc)
+{
+	desc.SetGUID(CSwitchComponent::IID());
+	desc.SetEditorCategory("Switch");
+	desc.SetLabel("Switch");
+	desc.SetDescription("No description.");
+	desc.SetIcon("icons:ObjectTypes/light.ico");
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+
+	desc.AddMember(&CSwitchComponent::m_isEnabled, 'isen', "IsEnabled", "IsEnabled", "Is this switch currently enabled.", true);
+	desc.AddMember(&CSwitchComponent::m_isSwitchedOn, 'ison', "SwitchedOn", "Switched On", "Is this switch currently switch on.", true);
+	desc.AddMember(&CSwitchComponent::m_isSingleUseOnly, 'issi', "IsSingleUseOnly", "Single Use Only", "Is this switch only able to be used once.", true);
+	// TODO: CRITICAL: HACK: BROKEN: !!
+//	desc.AddMember(&CSwitchComponent::m_queueSignal, 'alts', "SwitchVerb", "Switch Verb (Override)", "Send an alternative queue signal to DRS if the string is not empty. ('interaction_switch').", "");
+//	desc.AddMember(&CSwitchComponent::m_switchOnVerb, 'onve', "SwitchOnVerb", "Switch On Verb (Override)", "Send this verb to DRS instead of the default ('interaction_switch_on').", "");
+//	desc.AddMember(&CSwitchComponent::m_switchOffVerb, 'offv', "SwitchOffVerb", "Switch Off Verb (Override)", "Send this verb to DRS instead of the default ('interaction_switch_off').", "");
+}
 
 
 void CSwitchComponent::Initialize()
 {
 	// Get some geometry.
-	m_pGeometryComponent = GetEntity()->CreateComponent<CGeometryComponent>();
+	m_pGeometryComponent = GetEntity()->CreateComponent<Cry::DefaultComponents::CStaticMeshComponent>();
 
 	// We want to supply interaction verbs.
 	m_interactor = GetEntity()->GetOrCreateComponent<CEntityInteractionComponent>();
@@ -36,30 +47,6 @@ void CSwitchComponent::Initialize()
 
 		m_switchOffPtr = std::make_shared<CInteractionSwitchOff>(this);
 		m_interactor->AddInteraction(m_switchOffPtr);
-	}
-
-	CDesignerEntityComponent::Initialize();
-}
-
-
-void CSwitchComponent::SerializeProperties(Serialization::IArchive& archive)
-{
-	archive(m_isEnabled, "IsEnabled", "Enabled");
-	archive.doc("Is this switch currently enabled.");
-	archive(m_isSwitchedOn, "SwitchedOn", "Switched On");
-	archive.doc("Is this switch currently switch on.");
-	archive(m_isSingleUseOnly, "IsSingleUseOnly", "Single Use Only");
-	archive.doc("Is this switch only able to be used once.");
-	archive(m_queueSignal, "SwitchVerb", "Switch Verb (Override)");
-	archive.doc("Send an alternative queue signal to DRS if the string is not empty. ('interaction_switch').");
-	archive(m_switchOnVerb, "SwitchOnVerb", "Switch On Verb (Override)");
-	archive.doc("Send this verb to DRS instead of the default ('interaction_switch_on').");
-	archive(m_switchOffVerb, "SwitchOffVerb", "Switch Off Verb (Override)");
-	archive.doc("Send this verb to DRS instead of the default ('interaction_switch_off').");
-
-	if (archive.isInput())
-	{
-		OnResetState();
 	}
 }
 
@@ -143,7 +130,7 @@ void CSwitchComponent::InformAllLinkedEntities(string verb, bool isSwitchedOn)
 
 		// It might be useful to know which verb triggered the interaction.
 		pContextVariableCollection->CreateVariable("Verb", CHashedString(verb));
-		
+
 		// The switch value is always set, regardless of which verb was triggered.
 		pContextVariableCollection->CreateVariable("IsSwitchedOn", isSwitchedOn);
 
@@ -154,4 +141,5 @@ void CSwitchComponent::InformAllLinkedEntities(string verb, bool isSwitchedOn)
 		// Next please.
 		entityLinks = entityLinks->next;
 	}
+}
 }

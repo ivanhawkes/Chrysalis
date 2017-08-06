@@ -3,9 +3,12 @@
 #include "Accessory.h"
 
 
+namespace Chrysalis
+{
 CAccessory::CAccessory()
 {}
 
 
 CAccessory::~CAccessory()
 {}
+}

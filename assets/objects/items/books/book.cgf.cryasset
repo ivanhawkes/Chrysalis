@@ -7,6 +7,10 @@
    <Detail name="materialCount">3</Detail>
    <Detail name="triangleCount">100</Detail>
    <Detail name="vertexCount">266</Detail>
+   <Detail name="16BitPrecision">false</Detail>
   </Details>
+  <Dependencies>
+   <Path>./book.mtl</Path>
+  </Dependencies>
  </AssetMetadata>
 </cryasset>

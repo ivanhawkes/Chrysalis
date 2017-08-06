@@ -1,52 +1,36 @@
 #pragma once
 
-#include "Helpers/DesignerEntityComponent.h"
 
-
-struct IKeyringComponent : public CDesignerEntityComponent<>
+namespace Chrysalis
 {
-	CRY_ENTITY_COMPONENT_INTERFACE(IKeyringComponent, 0x37D981514F55495F, 0x91C09099BCCA2300)
-};
-
-
-/**
-A key extension.
-
-\sa IEntityComponent
-\sa IEntityPropertyGroup
-**/
-class CKeyringComponent final : public IKeyringComponent, public IEntityPropertyGroup
+/** A key extension. */
+class CKeyringComponent
+	: public IEntityComponent
 {
-//	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CKeyringComponent, "KeyringComponent", 0xA0E8260A5B67C71, 0x814ECD1EAC0A85BC)
-	CRY_ENTITY_COMPONENT_CLASS(CKeyringComponent, IKeyringComponent, "KeyringComponent", 0xA0E8260A5B67C71, 0x814ECD1EAC0A85BC);
+protected:
+	friend CChrysalisCorePlugin;
+	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
 
-public:
 	// IEntityComponent
 	void Initialize() override {};
-	struct IEntityPropertyGroup* GetPropertyGroup() override { return this; }
 	// ~IEntityComponent
 
-	// IEntityPropertyGroup
-	const char* GetLabel() const override { return "Keyring Properties"; };
-	void SerializeProperties(Serialization::IArchive& archive) override;
-	// ~IEntityPropertyGroup
+public:
+	CKeyringComponent() {}
+	virtual ~CKeyringComponent() {}
 
-	// ***
-	// *** CKeyringComponent
-	// ***
+	static void ReflectType(Schematyc::CTypeDesc<CKeyringComponent>& desc);
 
-	CKeyringComponent() {};
-	virtual ~CKeyringComponent() {};
-
-	struct SExternalCVars
+	static CryGUID& IID()
 	{
-		int m_debug;
-	};
-	const SExternalCVars &GetCVars() const;
+		static CryGUID id = "{12CACED6-E8E6-4363-867B-9B59ACBD5D12}"_cry_guid;
+		return id;
+	}
 
-	void OnResetState() override;
+	virtual void OnResetState();
 
 private:
 	string m_keys;
 	bool m_bActive { true };
 };
+}

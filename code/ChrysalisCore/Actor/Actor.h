@@ -1,7 +1,6 @@
 #pragma once
 
 #include <IAnimatedCharacter.h>
-#include <Actor/ISimpleActor.h>
 #include <Actor/Fate.h>
 #include <Actor/ActorState.h>
 #include <Actor/ActorPhysics.h>
@@ -9,17 +8,24 @@
 #include <Actor/IActorEventListener.h>
 #include <CryAISystem/IAgent.h>
 #include "Snaplocks/Snaplock.h"
+#include "DefaultComponents/Geometry/AdvancedAnimationComponent.h"
 //#include <Actor/Character/Movement/CharacterRotation.h>
 
-class CPlayer;
-class CActorMovementController;
 class IActionController;
 struct SAnimationContext;
-struct SActorMovementRequest;
+struct SCharacterMoveRequest;
+
+
+namespace Chrysalis
+{
+class CPlayerComponent;
+class CActorMovementController;
 class CEntityAwarenessComponent;
 class CSnaplockComponent;
 class CInventoryComponent;
 class CEquipmentComponent;
+struct IInventory;
+struct SActorMovementRequest;
 
 
 /** Define a set of snaplock types that will be used by character entities e.g. equipment slots **/
@@ -38,6 +44,7 @@ DECLARE_SNAPLOCK_TYPE(SLT_ACTOR_LEFTLEG, "Actor Left Leg", 0x6C0F6F7269504D25, 0
 DECLARE_SNAPLOCK_TYPE(SLT_ACTOR_RIGHTLEG, "Actor Right Leg", 0xB349158398FD4B19, 0xB0F42137CF694919)
 DECLARE_SNAPLOCK_TYPE(SLT_ACTOR_LEFTFOOT, "Actor Left Foot", 0x8880849B8D5E4A28, 0xB18F39A02772920B)
 DECLARE_SNAPLOCK_TYPE(SLT_ACTOR_RIGHTFOOT, "Actor Right Foot", 0xB3619CEF068F4388, 0xB49947F598CF321D)
+
 
 /** Represents all of the available actor class types. */
 enum EActorClassType
@@ -60,26 +67,60 @@ enum EActorClassType
 
 
 /**
-An implementation of the IActor interface. A CActor is an actor that represents a character within the game,
-either an NPC or PC which can be controlled by a player.
+A very simple base class for all actors. This is replacing the old CryTek interface.
 
-Characters may have inventory.
+TODO: Remove this at some point, or strip it nearly bare.
+**/
+struct IActor
+	: public IEntityComponent
+{
+	// TODO: CRITICAL: HACK: BROKEN: !!
+	// Make this actually work.
+	const bool IsPlayer() const { return true; };
 
-\sa	CGameObjectExtensionHelper&lt;CActor, IActor&gt;
-*/
+	// TODO: CRITICAL: HACK: BROKEN: !!
+	// Make this actually work.
+	const bool IsClient() const { return true; };
+
+	// TODO: CRITICAL: HACK: BROKEN: !!
+	// Make this actually work.
+	const Vec3 GetLocalEyePos() const { return { 0.0f, 0.0f, 1.82f }; };
+};
+DECLARE_SHARED_POINTERS(IActor);
+
+
+/** Base class for any components that wish to provide actor services. */
 
 // #TODO: probably needs to also implement IInventoryListener to listen for inventory changes.
 
-class CActor : public CGameObjectExtensionHelper<CActor, ISimpleActor, 40>, public IActorEventListener
+class CActor
+	: public IActor
+	, public IActorEventListener
 {
-public:
+protected:
+	friend CChrysalisCorePlugin;
+	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
 
 	// IEntityComponent
 	void Initialize() override;
 	void ProcessEvent(SEntityEvent& event) override;
 	uint64 GetEventMask() const { return BIT64(ENTITY_EVENT_UPDATE) | BIT64(ENTITY_EVENT_PREPHYSICSUPDATE); }
-	//struct IEntityPropertyGroup* GetPropertyGroup() override { return this; }
 	// ~IEntityComponent
+
+	virtual void Update();
+
+public:
+	CActor() {/*m_characterRotation = new CMountRotation(*this);*/ };
+	virtual ~CActor();
+
+	static void ReflectType(Schematyc::CTypeDesc<CActor>& desc);
+
+	static CryGUID& IID()
+	{
+		static CryGUID id = "{D11A58F0-09B5-4685-B5EA-CFC04AEFF2E7}"_cry_guid;
+		return id;
+	}
+
 
 	enum EProperties
 	{
@@ -94,119 +135,6 @@ public:
 
 		eNumProperties
 	};
-
-
-	CActor();
-	virtual ~CActor();
-
-	// ISimpleActor
-	bool Init(IGameObject * pGameObject) override;
-	void PostInit(IGameObject * pGameObject) override;
-	void FullSerialize(TSerialize ser) override;
-	void PostSerialize() override {};
-	void SerializeSpawnInfo(TSerialize ser) override {};
-	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
-	bool IsThirdPerson() const override { return m_isThirdPerson; }
-
-	// It is critical we override the event priority to ensure we handle the event before CAnimatedCharacter.
-	// FIX: 5.4
-	virtual IEntityComponent::ComponentEventPriority GetEventPriority(const int eventID) const override;
-
-	int GetTeamId() const override { return m_teamId; };
-
-
-	/**
-	Gets this instance's local-space eye position (for a human, this is typically Vec3 (0, 0, 1.76f)).
-
-	The code will first attempt to return a "#camera" helper if there is one. If only one eye is available (left_eye,
-	right_eye) then that is used as the local position. In the case of two eyes, the position is the average of the two
-	eyes.
-
-	Position is calculated each time using the attachment manager, so it will be better to cache the results if you need
-	to call this a few times in an update.
-
-	\return This instance's local-space eye position.
-	**/
-	Vec3 GetLocalEyePos() const override;
-
-	EntityId GetCurrentItemId(bool includeVehicle) const;
-
-	/**
-	Gets current item.
-
-	\param	includeVehicle true to include, false to exclude the vehicles in the search.
-
-	\return null if it fails, else the current item.
-
-	\sa		GetCurrentItemId for obtaining the Id, since this is a more direct call into the item system.
-	**/
-	IItem* GetCurrentItem(bool includeVehicle = false) const override;
-
-
-
-	/**
-	Gets this instance's movement controller (the class instance that controls how this instance moves around).
-
-	\return	This instance's movement controller.
-	*/
-	IMovementController* GetMovementController() const override;
-
-
-	/**
-	Query if this object is attached to a player. This does not have to be the local player, just as long as a player
-	is attached.
-
-	WARNING! Older code might try and cast this object to a player after receiving a true result here. Need to weed
-	that code out and replace with another method.
-
-	\return	true if player, false if not.
-	*/
-	bool IsPlayer() const override;
-
-
-	/**
-	Gets whether this instance is the "client actor" or not.
-
-	\return	Whether this instance is the "client actor" or not.
-	*/
-	bool IsClient() const override;
-
-	/**
-	Gets the name of this instance's actor class (e.g. "CCharacter").
-
-	NOTE: This must be overridden in derived classes.
-
-	\return The name of this instance's actor class.
-	**/
-	const char* GetActorClassName() const override { return "CActor"; };
-
-
-	/**
-	Gets this instance's actor class type.
-
-	NOTE: This must be overridden in derived classes.
-
-	/sa EActorClassType.
-
-	\return	This instance's actor class type.
-	*/
-	ActorClass GetActorClass() const override { return EActorClassType::EACT_ACTOR; };
-
-
-	/**
-	Gets the animated character of this instance.
-
-	\return	The animated character of this instance.
-	*/
-	IAnimatedCharacter* GetAnimatedCharacter() override { return m_pAnimatedCharacter; }
-
-
-	/**
-	Gets the non-modifiable version of the animated character of this instance.
-
-	\return	The non-modifiable version of the animated character of this instance.
-	*/
-	const IAnimatedCharacter* GetAnimatedCharacter() const override { return m_pAnimatedCharacter; }
 
 
 	// ***
@@ -309,15 +237,6 @@ public:
 
 
 	/**
-	The actor has toggled between third person and first person view modes.
-
-	\param [in,out]	pActor If non-null, the actor.
-	\param	bThirdPerson   true to third person.
-	**/
-	void OnToggleThirdPerson(IActor* pActor, bool isThirdPerson) override;
-
-
-	/**
 	The actor's sprint stamina has changed.
 
 	\param [in,out]	pActor If non-null, the actor.
@@ -368,12 +287,12 @@ public:
 
 	/**
 	Provides access to our movement request object.
-
+	
 	This is used extensively by the movement state machine to store state as it's calculated / updated. Some states will
 	make changes to the move request object e.g. flying and ladders. Most changes are enacted by the ground movement
 	state, as you would generally expect. It's final state will be fed into the FinalizeMovementRequest function to pass
 	the requested movement into the animation system.
-
+	
 	\return The move request.
 	**/
 	ILINE SCharacterMoveRequest& GetMoveRequest() { return m_moveRequest; }
@@ -398,22 +317,12 @@ public:
 	**/
 	IActionController* GetActionController() const { return m_pActionController; }
 
-
-	/**
-	Queries the actor system for the entity.
-	
-	\param	entityId Identifier for the entity.
-	
-	\return Null if it fails, else the actor.
-	**/
-	static CActor* GetActor(EntityId entityId) { return static_cast<CActor*>(gEnv->pGameFramework->GetIActorSystem()->GetActor(entityId)); };
-
 protected:
-	string m_geometryFirstPerson;
-	string m_geometryThirdPerson;
+	Schematyc::CharacterFileName m_geometryFirstPerson;
+	Schematyc::CharacterFileName m_geometryThirdPerson;
 	float m_mass { 82.0f };
 	string m_controllerDefinition { "human_male_controller_defs.xml" };
-	string m_animationDatabase { "human_male.adb" };
+	Schematyc::MannequinAnimationDatabasePath m_animationDatabase { "human_male.adb" };
 
 	/** Called to indicate the entity must reset itself. This is often done during PostInit() and
 	additionally by the editor when you both enter and leave game mode. */
@@ -444,9 +353,6 @@ protected:
 private:
 	/** Specifies whether this instance is the client actor. */
 	bool m_isClient { false };
-
-	/** The actor's inventory. */
-	IInventory* m_pInventory { nullptr };
 
 	/** The actor's animated character. */
 	IAnimatedCharacter* m_pAnimatedCharacter { nullptr };
@@ -481,16 +387,18 @@ private:
 	int m_teamId { 0 };
 
 	/** If a player is controlling this character, this pointer will be valid. */
-	CPlayer* m_pAttachedPlayer { nullptr };
+	CPlayerComponent* m_pAttachedPlayer { nullptr };
 
 	/** The current state for a character. This is shared by a lot of the state machine code. */
 	SActorState m_actorState;
 
 	/** The move request keeps track of how we wish to move this character based on input, state machine, and movement controllers. */
+	// TODO: CRITICAL: HACK: BROKEN: !!
+	// This isn't being updated yet, so it will always return a default movement request.
 	SCharacterMoveRequest m_moveRequest {};
 
 	/** A class that assists in working out animated character rotation. */
-	//CCharacterRotation* m_characterRotation;
+	//CMountRotation* m_characterRotation;
 
 	/** The pre-determined fate for this actor. */
 	CFate m_fate;
@@ -513,11 +421,11 @@ public:
 	/**
 	Call this routine when a player has attached to this character to complete the circle. The player is now in
 	control of this character's movements and may view them through a camera attached to this character. This routine is
-	not meant for direct calling, instead use the AttachToCharacter routine that is provided on a valid CPlayer object.
+	not meant for direct calling, instead use the AttachToCharacter routine that is provided on a valid CPlayerComponent object.
 
 	\param [in,out]	player	The player.
 	*/
-	void OnPlayerAttach(CPlayer& player);
+	void OnPlayerAttach(CPlayerComponent& player);
 
 
 	/**
@@ -790,11 +698,87 @@ private:
 
 
 	// ***
-	// *** Misc
+	// *** Item System.
+	// ***
+
+	EntityId GetCurrentItemId(bool includeVehicle) const;
+
+	/**
+	Gets current item.
+
+	\param	includeVehicle true to include, false to exclude the vehicles in the search.
+
+	\return null if it fails, else the current item.
+
+	\sa		GetCurrentItemId for obtaining the Id, since this is a more direct call into the item system.
+	**/
+	IItem* GetCurrentItem(bool includeVehicle = false) const;
+
+
+	// ***
+	// *** PREVIOUSLY REQUIRED TO BE IMPLEMENTED FOR IACTOR. THESE DEFINITIONS ARE STILL REQUIRED, BUT COULD NOW BE REFACTORED.
 	// ***
 
 public:
+	/**
+	Gets this instance's local-space eye position (for a human, this is typically Vec3 (0, 0, 1.76f)).
+
+	The code will first attempt to return a "#camera" helper if there is one. If only one eye is available (left_eye,
+	right_eye) then that is used as the local position. In the case of two eyes, the position is the average of the two
+	eyes.
+
+	Position is calculated each time using the attachment manager, so it will be better to cache the results if you need
+	to call this a few times in an update.
+
+	\return This instance's local-space eye position.
+	**/
+	virtual Vec3 GetLocalEyePos() const;
+
 	virtual Vec3 GetLocalLeftHandPos() const;
 
 	virtual Vec3 GetLocalRightHandPos() const;
+
+	/**
+	Gets this instance's movement controller (the class instance that controls how this instance moves around).
+
+	\return	This instance's movement controller.
+	*/
+	virtual IMovementController* GetMovementController() const;
+
+	virtual bool IsThirdPerson() const { return m_isThirdPerson; }
+
+
+	/**
+	Gets the animated character of this instance.
+
+	\return	The animated character of this instance.
+	*/
+	IAnimatedCharacter* GetAnimatedCharacter() { return m_pAnimatedCharacter; }
+
+
+	/**
+	Gets the non-modifiable version of the animated character of this instance.
+
+	\return	The non-modifiable version of the animated character of this instance.
+	*/
+	const IAnimatedCharacter* GetAnimatedCharacter() const { return m_pAnimatedCharacter; }
+
+
+	/**
+	Queries the entity for an actor component.
+
+	\param	entityId Identifier for the entity.
+
+	\return Null if it fails, else the actor.
+	**/
+	// TODO: CRITICAL: HACK: BROKEN: !! It's almost certain that this is not the desired functionality. Will this work
+	// with inhereited classes? 
+	static CActor* GetActor(EntityId entityId) {
+		auto pActor = gEnv->pEntitySystem->GetEntity(entityId);
+		if (pActor)
+			return pActor->GetComponent<CActor>();
+
+		return nullptr;
+	};
 };
+}

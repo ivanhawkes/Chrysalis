@@ -1,42 +1,34 @@
 #pragma once
 
-#include "Helpers/DesignerEntityComponent.h"
 #include "Snaplocks/Snaplock.h"
 
-// Remove after testing is complete.
-#include "Actor/Character/Character.h"
-
-
-/**
-A component that manages the snaplock system for an entity.
-
-\sa IEntityComponent
-\sa IEntityPropertyGroup
-**/
-class CSnaplockComponent : public CDesignerEntityComponent<>, public IEntityPropertyGroup
+namespace Chrysalis
 {
-	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CSnaplockComponent, "Snaplock", 0x70010D30B3704ACA, 0xB664623BDB7FA70C)
+/** A component that manages the snaplock system for an entity. */
+class CSnaplockComponent
+	: public IEntityComponent
+{
+protected:
+	friend CChrysalisCorePlugin;
+	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
 
-public:
 	// IEntityComponent
 	void Initialize() override;
-
-	struct IEntityPropertyGroup* GetPropertyGroup() override { return this; }
 	// ~IEntityComponent
 
-	// IEntityPropertyGroup
-	const char* GetLabel() const override { return "Snaplock Properties"; };
-	void SerializeProperties(Serialization::IArchive& archive) override;
-	// ~IEntityPropertyGroup
+public:
+	CSnaplockComponent() {}
+	virtual ~CSnaplockComponent() {}
 
-	// ***
-	// *** CSnaplockComponent
-	// ***
+	static void ReflectType(Schematyc::CTypeDesc<CSnaplockComponent>& desc);
 
-	CSnaplockComponent() {};
-	virtual ~CSnaplockComponent() {};
+	static CryGUID& IID()
+	{
+		static CryGUID id = "{A3C41456-80F1-4E0D-9B46-62685F2AEE4A}"_cry_guid;
+		return id;
+	}
 
-	void OnResetState() override;
+	virtual void OnResetState();
 
 	void AddSnaplock(ISnaplock snaplock);
 
@@ -44,3 +36,4 @@ private:
 	ISnaplock m_snaplock { SLT_ROOT, false };
 	string m_definitionFile;
 };
+}

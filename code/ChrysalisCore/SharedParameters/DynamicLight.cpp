@@ -7,45 +7,47 @@
 #include <CrySerialization/STL.h>
 #include <CrySerialization/Math.h>
 
+namespace Chrysalis
+{
 DEFINE_SHARED_PARAMS_TYPE_INFO(SDynamicLight)
 
 
 void SDynamicLight::Reset()
 {
-    // Reset code goes here.
-    *this = SDynamicLight();
+	// Reset code goes here.
+	*this = SDynamicLight();
 }
 
 
 bool SDynamicLight::Read(const XmlNodeRef& node)
 {
-    // Read code goes here.
-    CGameXmlParamReader reader(node);
+	// Read code goes here.
+	CGameXmlParamReader reader(node);
 
-    // Read the parameters.
-    reader.ReadParamValue("radius", radius);
-    reader.ReadParamValue("specularMultiplier", specularMultiplier);
-    reader.ReadParamValue("diffuseMultiplier", diffuseMultiplier);
-    reader.ReadParamValue("attenuationRadius", attenuationRadius);
-    reader.ReadParamValue("diffuseColor", diffuseColor);
-    reader.ReadParamValue("projectorFoV", projectorFoV);
-    reader.ReadParamValue("projectorNearPlane", projectorNearPlane);
-    projectorTexture = reader.ReadParamValue("projectorTexture");
+	// Read the parameters.
+	reader.ReadParamValue("radius", radius);
+	reader.ReadParamValue("specularMultiplier", specularMultiplier);
+	reader.ReadParamValue("diffuseMultiplier", diffuseMultiplier);
+	reader.ReadParamValue("attenuationRadius", attenuationRadius);
+	reader.ReadParamValue("diffuseColor", diffuseColor);
+	reader.ReadParamValue("projectorFoV", projectorFoV);
+	reader.ReadParamValue("projectorNearPlane", projectorNearPlane);
+	projectorTexture = reader.ReadParamValue("projectorTexture");
 	material = reader.ReadParamValue("material");
 	reader.ReadParamValue("lightStyle", lightStyle);
-    reader.ReadParamValue("animationSpeed", animationSpeed);
-    reader.ReadParamValue("lightPhase", lightPhase);
-    reader.ReadParamValue("shadowBias", shadowBias);
-    reader.ReadParamValue("shadowSlopeBias", shadowSlopeBias);
-    reader.ReadParamValue("shadowResolutionScale", shadowResolutionScale);
-    reader.ReadParamValue("shadowMinimumResolutionPercent", shadowMinimumResolutionPercent);
-    reader.ReadParamValue("shadowUpdateMinimumRadius", shadowUpdateMinimumRadius);
-    reader.ReadParamValue("shadowUpdateRatio", shadowUpdateRatio);
+	reader.ReadParamValue("animationSpeed", animationSpeed);
+	reader.ReadParamValue("lightPhase", lightPhase);
+	reader.ReadParamValue("shadowBias", shadowBias);
+	reader.ReadParamValue("shadowSlopeBias", shadowSlopeBias);
+	reader.ReadParamValue("shadowResolutionScale", shadowResolutionScale);
+	reader.ReadParamValue("shadowMinimumResolutionPercent", shadowMinimumResolutionPercent);
+	reader.ReadParamValue("shadowUpdateMinimumRadius", shadowUpdateMinimumRadius);
+	reader.ReadParamValue("shadowUpdateRatio", shadowUpdateRatio);
 
 	// Adjust color values to an internal range.
 	diffuseColor /= 255.0f;
 
-    return true;
+	return true;
 }
 
 
@@ -96,4 +98,5 @@ void SDynamicLight::SerializeProperties(Serialization::IArchive& archive)
 	//{
 	//	OnResetState();
 	//}
+}
 }

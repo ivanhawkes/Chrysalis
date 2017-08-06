@@ -3,9 +3,12 @@
 #include <CryEntitySystem/IEntity.h>
 
 struct SActorMovementRequest;
-class CCharacter;
-class CCharacterStateSwimWaterTestProxy;
 struct IItemParamsNode;
+
+namespace Chrysalis
+{
+class CCharacterComponent;
+class CCharacterStateSwimWaterTestProxy;
 
 
 class CCharacterStateSwim
@@ -19,14 +22,14 @@ public:
 
 	CCharacterStateSwim();
 
-	void OnEnter(CCharacter& Character);
-	bool OnPrePhysicsUpdate(CCharacter& Character, const SActorMovementRequest& movementRequest, float frameTime);
-	void OnUpdate(CCharacter& Character, float frameTime);
-	void OnExit(CCharacter& Character);
+	void OnEnter(CCharacterComponent& Character);
+	bool OnPrePhysicsUpdate(CCharacterComponent& Character, const SActorMovementRequest& movementRequest, float frameTime);
+	void OnUpdate(CCharacterComponent& Character, float frameTime);
+	void OnExit(CCharacterComponent& Character);
 
-	static void UpdateSoundListener(CCharacter &Character);
+	static void UpdateSoundListener(CCharacterComponent &Character);
 
-	bool DetectJump(CCharacter& Character, const SActorMovementRequest& movementRequest, float frameTime, float* pVerticalSpeedModifier) const;
+	bool DetectJump(CCharacterComponent& Character, const SActorMovementRequest& movementRequest, float frameTime, float* pVerticalSpeedModifier) const;
 
 private:
 	Vec3 m_gravity;
@@ -70,3 +73,4 @@ private:
 	CCharacterStateSwim(const CCharacterStateSwim&);
 	CCharacterStateSwim& operator=(const CCharacterStateSwim&);
 };
+}

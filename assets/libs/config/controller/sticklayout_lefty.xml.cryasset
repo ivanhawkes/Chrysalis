@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="{0173A7CF-906E-5AE9-198B-B0A57F0F1DFE}">
+ <Files>
+  <File path="sticklayout_lefty.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">ActionMaps</Detail>
+ </Details>
+</AssetMetadata>

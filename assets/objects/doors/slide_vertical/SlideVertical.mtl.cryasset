@@ -1,0 +1,12 @@
+<AssetMetadata version="0" type="Material" guid="{7B90BBAB-A380-8E84-6BFD-607510C8D55B}">
+ <Files>
+  <File path="SlideVertical.mtl"/>
+ </Files>
+ <Details>
+  <Detail name="subMaterialCount">2</Detail>
+  <Detail name="textureCount">1</Detail>
+ </Details>
+ <Dependencies>
+  <Path>textures/reference/zone_system.dds</Path>
+ </Dependencies>
+</AssetMetadata>

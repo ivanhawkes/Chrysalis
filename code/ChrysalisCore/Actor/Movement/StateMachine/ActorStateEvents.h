@@ -5,6 +5,8 @@
 #include <IActionMapManager.h>
 
 
+namespace Chrysalis
+{
 class CActor;
 class CMelee;
 
@@ -44,12 +46,6 @@ enum EActorStateEvent
 	///< #TODO: investigate this. Seems to help determine if you're on the ground or falling.
 	ACTOR_EVENT_GROUND_COLLIDER_CHANGED,
 
-	///< Enter ledge state?
-	ACTOR_EVENT_LEDGE,
-
-	///< Ledge animation has finished.
-	ACTOR_EVENT_LEDGE_ANIM_FINISHED,
-
 	///< Seems to be something to do with jumps, slides, sprints and button mashing.
 	ACTOR_EVENT_INPUT,
 
@@ -84,67 +80,12 @@ enum EActorStateEvent
 	f(eActorStateFlags_Swimming) \
 	f(eActorStateFlags_InAir) \
 	f(eActorStateFlags_PhysicsSaysFlying) \
-	f(eActorStateFlags_Ledge) \
 	f(eActorStateFlags_CurrentItemIsHeavy) \
 	f(eActorStateFlags_InteractiveAction) \
 	f(eActorStateFlags_OnLadder)
-//f(eActorStateFlags_Sliding) \
-//f(eActorStateFlags_ExitingSlide) \
-//f(eActorStateFlags_NetSlide) \
-//f(eActorStateFlags_NetExitingSlide) \
-//f(eActorStateFlags_Spectator) \
 
 
 AUTOENUM_BUILDFLAGS_WITHZERO(eActorStateFlags, eActorStateFlags_None);
-
-
-#define LedgeTransitionList(func)	\
-	func(eOLT_MidAir)				\
-	func(eOLT_Falling)				\
-	func(eOLT_VaultOver)			\
-	func(eOLT_VaultOverIntoFall)	\
-	func(eOLT_VaultOnto)			\
-	func(eOLT_HighVaultOver)		\
-	func(eOLT_HighVaultOverIntoFall)\
-	func(eOLT_HighVaultOnto)		\
-	func(eOLT_QuickLedgeGrab)		\
-
-
-struct SLedgeTransitionData
-{
-	SLedgeTransitionData(const uint16 ledgeId)
-		: m_ledgeTransition(eOLT_None)
-		, m_nearestGrabbableLedgeId(ledgeId)
-		, m_comingFromOnGround(false)
-		, m_comingFromSprint(false)
-	{}
-
-	AUTOENUM_BUILDENUMWITHTYPE_WITHINVALID_WITHNUM(EOnLedgeTransition, LedgeTransitionList, eOLT_None, eOLT_MaxTransitions);
-
-	EOnLedgeTransition m_ledgeTransition;
-	uint16	m_nearestGrabbableLedgeId;
-	bool		m_comingFromOnGround;
-	bool		m_comingFromSprint;
-};
-
-
-struct SStateEventLedge : public SStateEvent
-{
-	explicit SStateEventLedge(const SLedgeTransitionData& ledgeData)
-		:
-		SStateEvent(ACTOR_EVENT_LEDGE)
-	{
-		AddData(ledgeData.m_ledgeTransition);
-		AddData(ledgeData.m_nearestGrabbableLedgeId);
-		AddData(ledgeData.m_comingFromOnGround);
-		AddData(ledgeData.m_comingFromSprint);
-	}
-
-	SLedgeTransitionData::EOnLedgeTransition GetLedgeTransition() const { return static_cast<SLedgeTransitionData::EOnLedgeTransition> (GetData(0).GetInt()); }
-	uint16 GetLedgeId() const { return (uint16) GetData(1).GetInt(); }
-	bool GetComingFromOnGround() const { return GetData(2).GetBool(); }
-	bool GetComingFromSprint() const { return GetData(3).GetBool(); }
-};
 
 
 struct SActorPrePhysicsData
@@ -377,4 +318,4 @@ struct SStateEventGroundColliderChanged : public SStateEvent
 
 	ILINE const bool OnGround() const { return GetData(0).GetBool(); }
 };
-
+}

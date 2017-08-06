@@ -8,25 +8,22 @@
 #include <CryExtension/ICryFactoryRegistryImpl.h>
 #include <CryExtension/RegFactoryNode.h>
 
-#define PROCEDURAL_CONTEXT_LOOK_NAME "ProceduralContextLook"
 
-
+namespace Chrysalis
+{
 class CProceduralContextLook
 	: public IProceduralContext
 {
 public:
-	PROCEDURAL_CONTEXT(CProceduralContextLook, PROCEDURAL_CONTEXT_LOOK_NAME, 0x0928592BD91648A5, 0x9024C8221945BB17);
+	PROCEDURAL_CONTEXT(CProceduralContextLook, "ProceduralContextLook", "{6B360860-DCE8-4AD9-BA74-F9464671C4AD}"_cry_guid);
 
-	// *** 
-	// *** IProceduralContext
-	// *** 
+	CProceduralContextLook();
+	virtual ~CProceduralContextLook() {}
 
-	virtual void Initialise(IEntity& entity, IActionController& actionController);
-	virtual void Update(float timePassedSeconds);
-
-	// *** 
-	// *** ~IProceduralContext
-	// *** 
+	// IProceduralContext
+	virtual void Initialise(IEntity& entity, IActionController& actionController) override;
+	virtual void Update(float timePassedSeconds) override;
+	// ~IProceduralContext
 
 	void UpdateGameLookingRequest(const bool lookRequest);
 	void UpdateProcClipLookingRequest(const bool lookRequest);
@@ -48,3 +45,4 @@ private:
 	bool m_procClipRequestsLooking;
 	Vec3 m_gameLookTarget;
 };
+}

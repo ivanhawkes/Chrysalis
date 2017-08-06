@@ -3,6 +3,8 @@
 #include "ActorAnimationActionAiming.h"
 
 
+namespace Chrysalis
+{
 #define AIMING_FRAGMENTS( x ) \
 	x( Aiming )
 
@@ -66,4 +68,5 @@ bool CActorAnimationActionAiming::IsSupported(const SAnimationContext& context)
 	const FragmentID fragmentId = FindFragmentId(context);
 	const bool isSupported = (fragmentId != FRAGMENT_ID_INVALID);
 	return isSupported;
+}
 }

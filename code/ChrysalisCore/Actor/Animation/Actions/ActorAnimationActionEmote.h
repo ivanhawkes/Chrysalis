@@ -4,6 +4,8 @@
 #include <Actor/Animation/ActorAnimation.h>
 
 
+namespace Chrysalis
+{
 #define EMOTE_FRAGMENTS( x ) \
 	x( Emote )
 
@@ -105,3 +107,4 @@ private:
 };
 
 extern SMannequinEmoteParams g_emoteMannequinParams;
+}

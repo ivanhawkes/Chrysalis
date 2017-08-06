@@ -5,6 +5,8 @@
 #include <Actor/ActorStance.h>
 
 
+namespace Chrysalis
+{
 class CActorAnimationActionLocomotion : public CAnimationAction
 {
 public:
@@ -32,4 +34,4 @@ private:
 
 	EActorPosture m_lastPosture { EActorPosture::eAP_Neutral };
 };
-
+}

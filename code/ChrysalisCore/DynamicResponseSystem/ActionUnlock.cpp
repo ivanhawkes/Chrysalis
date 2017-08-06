@@ -4,6 +4,8 @@
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
 
 
+namespace Chrysalis
+{
 DRS::IResponseActionInstanceUniquePtr CActionUnlock::Execute(DRS::IResponseInstance* pResponseInstance)
 {
 	IEntity* pEntity = pResponseInstance->GetCurrentActor()->GetLinkedEntity();
@@ -13,7 +15,7 @@ DRS::IResponseActionInstanceUniquePtr CActionUnlock::Execute(DRS::IResponseInsta
 
 		// DO SOMETHING HERE e.g. populate variables and execute action.
 
-		return DRS::IResponseActionInstanceUniquePtr (new CActionUnlockInstance());
+		return DRS::IResponseActionInstanceUniquePtr(new CActionUnlockInstance());
 	}
 
 	return nullptr;
@@ -50,4 +52,5 @@ DRS::IResponseActionInstance::eCurrentState CActionUnlockInstance::Update()
 
 void CActionUnlockInstance::Cancel()
 {
+}
 }

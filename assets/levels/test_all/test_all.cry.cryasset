@@ -1,8 +1,39 @@
-<cryasset>
- <AssetMetadata version="0" type="Level" guid="{6A24092C-8178-7499-9D2E-527F90FBBE97}">
-  <Files>
-   <File path="test_all.cry"/>
-  </Files>
-  <Details />
- </AssetMetadata>
-</cryasset>
+<AssetMetadata version="0" type="Level" guid="{6A24092C-8178-7499-9D2E-527F90FBBE97}" source="">
+ <Files>
+  <File path="test_all.cry"/>
+ </Files>
+ <Dependencies>
+  <Path>%engine%/config/defaultscripts/compressionpolicy.xml</Path>
+  <Path>%engine%/engineassets/codecoverage/hit.dds</Path>
+  <Path>%engine%/engineassets/codecoverage/pbar.dds</Path>
+  <Path>%engine%/engineassets/codecoverage/unexpected.dds</Path>
+  <Path>%engine%/engineassets/icons/averagememoryusage.dds</Path>
+  <Path>%engine%/engineassets/icons/highmemoryusage.dds</Path>
+  <Path>%engine%/engineassets/icons/livepreview.dds</Path>
+  <Path>%engine%/engineassets/icons/lowmemoryusage.dds</Path>
+  <Path>%engine%/engineassets/texturemsg/defaultsolids.mtl</Path>
+  <Path>animations/skeletonlist.xml</Path>
+  <Path>engineassets/texturemsg/defaultsolids.mtl</Path>
+  <Path>engineassets/textures/grey.dds</Path>
+  <Path>engineassets/textures/white.dds</Path>
+  <Path>libs/environmentpresets/test_all.xml</Path>
+  <Path>objects/characters/human/chloe/chloe.chr</Path>
+  <Path>objects/characters/human/chloe/idle.caf</Path>
+  <Path>objects/characters/human/chloe/locomotion_jump.caf</Path>
+  <Path>objects/characters/human/chloe/locomotion_run.caf</Path>
+  <Path>objects/characters/human/chloe/locomotion_strafe_left.caf</Path>
+  <Path>objects/characters/human/chloe/locomotion_strafe_right.caf</Path>
+  <Path>objects/characters/human/chloe/locomotion_turn_left.caf</Path>
+  <Path>objects/characters/human/chloe/locomotion_turn_right.caf</Path>
+  <Path>objects/characters/human/chloe/locomotion_walk.caf</Path>
+  <Path>objects/characters/human/chloe/opening_a_filing_cabinet.caf</Path>
+  <Path>objects/characters/human/male/human_male.cdf</Path>
+  <Path>objects/characters/human/male/human_male.mtl</Path>
+  <Path>objects/characters/human/male/human_male_controller_defs.xml</Path>
+  <Path>objects/characters/human/male/human_male_fragment_ids.xml</Path>
+  <Path>objects/characters/human/male/human_male_tags.xml</Path>
+  <Path>objects/characters/human/male/textures/human_male_ddna.dds</Path>
+  <Path>objects/default/primitive_cube.cgf</Path>
+  <Path>scripts/network/compressionpolicy.xml</Path>
+ </Dependencies>
+</AssetMetadata>

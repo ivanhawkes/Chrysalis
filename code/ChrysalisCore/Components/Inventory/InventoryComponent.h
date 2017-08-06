@@ -1,43 +1,36 @@
 #pragma once
 
-#include "Helpers/DesignerEntityComponent.h"
 
-
+namespace Chrysalis
+{
 /**
 A Inventory extension.
 
-\sa IEntityComponent.
-\sa IEntityPropertyGroup.
-\sa IInteractionInventory.
-\sa IInteractionLockable.
 **/
-class CInventoryComponent : public CDesignerEntityComponent<>, public IEntityPropertyGroup
+class CInventoryComponent
+	: public IEntityComponent
 {
-	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CInventoryComponent, "Inventory", 0x0E58AE4CF0B84AE8, 0x8BB0C7CC5F585495)
+protected:
+	friend CChrysalisCorePlugin;
+	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
 
-public:
 	// IEntityComponent
 	void Initialize() override;
-	struct IEntityPropertyGroup* GetPropertyGroup() override { return this; }
 	// ~IEntityComponent
 
-	// IEntityPropertyGroup
-	const char* GetLabel() const override { return "Inventory Properties"; };
-	void SerializeProperties(Serialization::IArchive& archive) override;
-	// ~IEntityPropertyGroup
+public:
+	CInventoryComponent() {}
+	virtual ~CInventoryComponent() {}
 
-	// CInventoryComponent
-	CInventoryComponent() {};
-	virtual ~CInventoryComponent() {};
+	static void ReflectType(Schematyc::CTypeDesc<CInventoryComponent>& desc);
 
-	struct SExternalCVars
+	static CryGUID& IID()
 	{
-		int m_debug;
-	};
-	const SExternalCVars &GetCVars() const;
+		static CryGUID id = "{D9CD9BE7-F17F-4331-BEBF-E0ED9567D1DE}"_cry_guid;
+		return id;
+	}
 
 	// Called on entity spawn, or when the state of the entity changes in Editor
-	void OnResetState() override;
-
-private:
+	virtual void OnResetState();
 };
+}

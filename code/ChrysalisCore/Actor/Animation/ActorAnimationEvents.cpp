@@ -3,6 +3,8 @@
 #include "ActorAnimationEvents.h"
 
 
+namespace Chrysalis
+{
 void SActorAnimationEvents::Init()
 {
 	if (!m_initialized)
@@ -38,4 +40,4 @@ void SActorAnimationEvents::Init()
 
 	m_initialized = true;
 }
-
+}

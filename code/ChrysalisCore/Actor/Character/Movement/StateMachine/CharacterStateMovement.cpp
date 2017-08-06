@@ -20,89 +20,83 @@ Use "OnSetStance" if you need this functionality!
 #include "CharacterStateJump.h"
 #include "CharacterStateSwim.h"
 #include "CharacterStateLadder.h"
-/*#include "CharacterInput.h"
-#include "Weapon.h"
-#include "Melee.h"
-#include "SlideController.h"
-#include "Effects/GameEffects/WaterEffects.h"*/
+//#include "CharacterInput.h"
+//#include "Weapon.h"
+//#include "Melee.h"
+//#include "SlideController.h"
+//#include "Effects/GameEffects/WaterEffects.h"
 
 
-class CCharacterStateMovement : private CStateHierarchy < CCharacter >
+namespace Chrysalis
 {
-	DECLARE_STATE_CLASS_BEGIN(CCharacter, CCharacterStateMovement)
-		DECLARE_STATE_CLASS_ADD(CCharacter, MovementRoot);
-		DECLARE_STATE_CLASS_ADD(CCharacter, GroundMovement);
-		DECLARE_STATE_CLASS_ADD(CCharacter, Dead);
-		DECLARE_STATE_CLASS_ADD(CCharacter, Fly);
-		DECLARE_STATE_CLASS_ADD(CCharacter, Ground);
-		DECLARE_STATE_CLASS_ADD(CCharacter, GroundFall);
-		DECLARE_STATE_CLASS_ADD(CCharacter, FallTest);
-		DECLARE_STATE_CLASS_ADD(CCharacter, Jump);
-		DECLARE_STATE_CLASS_ADD(CCharacter, Fall);
-		DECLARE_STATE_CLASS_ADD(CCharacter, Slide);
-		DECLARE_STATE_CLASS_ADD(CCharacter, SlideFall);
-		DECLARE_STATE_CLASS_ADD(CCharacter, Swim);
-		//		DECLARE_STATE_CLASS_ADD (CCharacter, Spectate);
-		DECLARE_STATE_CLASS_ADD(CCharacter, Intro);
-		DECLARE_STATE_CLASS_ADD(CCharacter, SwimTest);
-		DECLARE_STATE_CLASS_ADD(CCharacter, Ledge);
-		DECLARE_STATE_CLASS_ADD(CCharacter, Ladder);
-		DECLARE_STATE_CLASS_ADD_DUMMY(CCharacter, NoMovement);
-		DECLARE_STATE_CLASS_ADD_DUMMY(CCharacter, GroundFallTest);
-		DECLARE_STATE_CLASS_ADD_DUMMY(CCharacter, SlideFallTest);
-	DECLARE_STATE_CLASS_END(CCharacter);
+class CCharacterStateMovement : private CStateHierarchy < CCharacterComponent >
+{
+	DECLARE_STATE_CLASS_BEGIN(CCharacterComponent, CCharacterStateMovement)
+	DECLARE_STATE_CLASS_ADD(CCharacterComponent, MovementRoot);
+	DECLARE_STATE_CLASS_ADD(CCharacterComponent, GroundMovement);
+	DECLARE_STATE_CLASS_ADD(CCharacterComponent, Dead);
+	DECLARE_STATE_CLASS_ADD(CCharacterComponent, Fly);
+	DECLARE_STATE_CLASS_ADD(CCharacterComponent, Ground);
+	DECLARE_STATE_CLASS_ADD(CCharacterComponent, GroundFall);
+	DECLARE_STATE_CLASS_ADD(CCharacterComponent, FallTest);
+	DECLARE_STATE_CLASS_ADD(CCharacterComponent, Jump);
+	DECLARE_STATE_CLASS_ADD(CCharacterComponent, Fall);
+	DECLARE_STATE_CLASS_ADD(CCharacterComponent, Slide);
+	DECLARE_STATE_CLASS_ADD(CCharacterComponent, SlideFall);
+	DECLARE_STATE_CLASS_ADD(CCharacterComponent, Swim);
+	DECLARE_STATE_CLASS_ADD(CCharacterComponent, Intro);
+	DECLARE_STATE_CLASS_ADD(CCharacterComponent, SwimTest);
+	DECLARE_STATE_CLASS_ADD(CCharacterComponent, Ladder);
+	DECLARE_STATE_CLASS_ADD_DUMMY(CCharacterComponent, NoMovement);
+	DECLARE_STATE_CLASS_ADD_DUMMY(CCharacterComponent, GroundFallTest);
+	DECLARE_STATE_CLASS_ADD_DUMMY(CCharacterComponent, SlideFallTest);
+	DECLARE_STATE_CLASS_END(CCharacterComponent);
 
 private:
-	const TStateIndex StateGroundInput(CCharacter& Character, const SInputEventData& inputEvent);
-	void StateSprintInput(CCharacter& Character, const SInputEventData& inputEvent);
-	void ProcessSprint(CCharacter& Character, const SActorPrePhysicsData& prePhysicsEvent);
-	void OnSpecialMove(CCharacter &Character, IActorEventListener::ESpecialMove specialMove);
-	bool IsActionControllerValid(CCharacter& Character) const;
+	const TStateIndex StateGroundInput(CCharacterComponent& Character, const SInputEventData& inputEvent);
+	void StateSprintInput(CCharacterComponent& Character, const SInputEventData& inputEvent);
+	void ProcessSprint(CCharacterComponent& Character, const SActorPrePhysicsData& prePhysicsEvent);
+	void OnSpecialMove(CCharacterComponent &Character, IActorEventListener::ESpecialMove specialMove);
+	bool IsActionControllerValid(CCharacterComponent& Character) const;
 
 	void CreateWaterEffects();
 	void ReleaseWaterEffects();
-	void TriggerOutOfWaterEffectIfNeeded(const CCharacter& Character);
+	void TriggerOutOfWaterEffectIfNeeded(const CCharacterComponent& Character);
 
-	void UpdateCharacterStanceTag(CCharacter &Character);
+	void UpdateCharacterStanceTag(CCharacterComponent &Character);
 
 	CCharacterStateDead m_stateDead;
 	CCharacterStateFly m_stateFly;
 	CCharacterStateGround m_stateGround;
 	CCharacterStateJump m_stateJump;
 	CCharacterStateSwim m_stateSwim;
-	CCharacterStateLedge m_stateCharacterLedge;
 	CCharacterStateLadder m_stateLadder;
-
-	/*CCharacterStateSpectate m_stateSpectate;*/
-	/*CSlideController m_slideController;*/
-	/*CWaterGameEffects* m_pWaterEffects;*/
+	//CWaterGameEffects* m_pWaterEffects;
 };
 
 
-DEFINE_STATE_CLASS_BEGIN(CCharacter, CCharacterStateMovement, CHARACTER_STATE_MOVEMENT, Ground)
-	DEFINE_STATE_CLASS_ADD(CCharacter, CCharacterStateMovement, MovementRoot, Root)
-		DEFINE_STATE_CLASS_ADD(CCharacter, CCharacterStateMovement, GroundMovement, MovementRoot)
-			DEFINE_STATE_CLASS_ADD(CCharacter, CCharacterStateMovement, SwimTest, GroundMovement)
-				DEFINE_STATE_CLASS_ADD(CCharacter, CCharacterStateMovement, Ground, SwimTest)
-					DEFINE_STATE_CLASS_ADD_DUMMY(CCharacter, CCharacterStateMovement, GroundFallTest, FallTest, Ground)
-						DEFINE_STATE_CLASS_ADD(CCharacter, CCharacterStateMovement, GroundFall, GroundFallTest)
-				DEFINE_STATE_CLASS_ADD(CCharacter, CCharacterStateMovement, Slide, SwimTest)
-					DEFINE_STATE_CLASS_ADD_DUMMY(CCharacter, CCharacterStateMovement, SlideFallTest, FallTest, Slide)
-						DEFINE_STATE_CLASS_ADD(CCharacter, CCharacterStateMovement, SlideFall, SlideFallTest)
-		DEFINE_STATE_CLASS_ADD_DUMMY(CCharacter, CCharacterStateMovement, NoMovement, SwimTest, MovementRoot)
-			DEFINE_STATE_CLASS_ADD(CCharacter, CCharacterStateMovement, Jump, NoMovement)
-				DEFINE_STATE_CLASS_ADD(CCharacter, CCharacterStateMovement, Fall, Jump)
-		DEFINE_STATE_CLASS_ADD(CCharacter, CCharacterStateMovement, Swim, MovementRoot)
-		DEFINE_STATE_CLASS_ADD(CCharacter, CCharacterStateMovement, Ladder, MovementRoot)
-	DEFINE_STATE_CLASS_ADD(CCharacter, CCharacterStateMovement, Dead, Root)
-	DEFINE_STATE_CLASS_ADD(CCharacter, CCharacterStateMovement, Ledge, Root)
-	DEFINE_STATE_CLASS_ADD(CCharacter, CCharacterStateMovement, Fly, Root)
-	//	DEFINE_STATE_CLASS_ADD (CCharacter, CCharacterStateMovement, Spectate, Root)
-	DEFINE_STATE_CLASS_ADD(CCharacter, CCharacterStateMovement, Intro, Root)
-DEFINE_STATE_CLASS_END(CCharacter, CCharacterStateMovement);
+DEFINE_STATE_CLASS_BEGIN(CCharacterComponent, CCharacterStateMovement, CHARACTER_STATE_MOVEMENT, Ground)
+DEFINE_STATE_CLASS_ADD(CCharacterComponent, CCharacterStateMovement, MovementRoot, Root)
+DEFINE_STATE_CLASS_ADD(CCharacterComponent, CCharacterStateMovement, GroundMovement, MovementRoot)
+DEFINE_STATE_CLASS_ADD(CCharacterComponent, CCharacterStateMovement, SwimTest, GroundMovement)
+DEFINE_STATE_CLASS_ADD(CCharacterComponent, CCharacterStateMovement, Ground, SwimTest)
+DEFINE_STATE_CLASS_ADD_DUMMY(CCharacterComponent, CCharacterStateMovement, GroundFallTest, FallTest, Ground)
+DEFINE_STATE_CLASS_ADD(CCharacterComponent, CCharacterStateMovement, GroundFall, GroundFallTest)
+DEFINE_STATE_CLASS_ADD(CCharacterComponent, CCharacterStateMovement, Slide, SwimTest)
+DEFINE_STATE_CLASS_ADD_DUMMY(CCharacterComponent, CCharacterStateMovement, SlideFallTest, FallTest, Slide)
+DEFINE_STATE_CLASS_ADD(CCharacterComponent, CCharacterStateMovement, SlideFall, SlideFallTest)
+DEFINE_STATE_CLASS_ADD_DUMMY(CCharacterComponent, CCharacterStateMovement, NoMovement, SwimTest, MovementRoot)
+DEFINE_STATE_CLASS_ADD(CCharacterComponent, CCharacterStateMovement, Jump, NoMovement)
+DEFINE_STATE_CLASS_ADD(CCharacterComponent, CCharacterStateMovement, Fall, Jump)
+DEFINE_STATE_CLASS_ADD(CCharacterComponent, CCharacterStateMovement, Swim, MovementRoot)
+DEFINE_STATE_CLASS_ADD(CCharacterComponent, CCharacterStateMovement, Ladder, MovementRoot)
+DEFINE_STATE_CLASS_ADD(CCharacterComponent, CCharacterStateMovement, Dead, Root)
+DEFINE_STATE_CLASS_ADD(CCharacterComponent, CCharacterStateMovement, Fly, Root)
+DEFINE_STATE_CLASS_ADD(CCharacterComponent, CCharacterStateMovement, Intro, Root)
+DEFINE_STATE_CLASS_END(CCharacterComponent, CCharacterStateMovement);
 
 
-const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Root(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Root(CCharacterComponent& Character, const SStateEvent& event)
 {
 	CRY_ASSERT(!Character.IsAIControlled());
 
@@ -111,7 +105,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Root(CCharac
 	{
 		case STATE_EVENT_INIT:
 			//m_pWaterEffects = NULL;
-			if (Character.IsClient())
+//			if (Character.IsClient())
 			{
 				CreateWaterEffects();
 			}
@@ -160,9 +154,6 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Root(CCharac
 		}
 		break;
 
-		//case CHARACTER_EVENT_SPECTATE:
-		//	return State_Spectate;
-
 		case ACTOR_EVENT_DEAD:
 			return State_Dead;
 
@@ -190,7 +181,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Root(CCharac
 }
 
 
-const CCharacterStateMovement::TStateIndex CCharacterStateMovement::MovementRoot(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateMovement::TStateIndex CCharacterStateMovement::MovementRoot(CCharacterComponent& Character, const SStateEvent& event)
 {
 	CRY_ASSERT(!Character.IsAIControlled());
 
@@ -201,9 +192,6 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::MovementRoot
 			// #TODO: What is this?
 			//Character.SetCanTurnBody (true);
 			break;
-
-		case ACTOR_EVENT_LEDGE:
-			return State_Ledge;
 
 		case CHARACTER_EVENT_LADDER:
 			return State_Ladder;
@@ -226,7 +214,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::MovementRoot
 }
 
 
-const CCharacterStateMovement::TStateIndex CCharacterStateMovement::GroundMovement(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateMovement::TStateIndex CCharacterStateMovement::GroundMovement(CCharacterComponent& Character, const SStateEvent& event)
 {
 	CRY_ASSERT(!Character.IsAIControlled());
 
@@ -274,7 +262,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::GroundMoveme
 }
 
 
-const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Dead(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Dead(CCharacterComponent& Character, const SStateEvent& event)
 {
 	CRY_ASSERT(!Character.IsAIControlled());
 
@@ -320,7 +308,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Dead(CCharac
 }
 
 
-const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Fly(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Fly(CCharacterComponent& Character, const SStateEvent& event)
 {
 	CRY_ASSERT(!Character.IsAIControlled());
 
@@ -355,20 +343,19 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Fly(CCharact
 		}
 		return State_Done;
 
-		case ACTOR_EVENT_FLY:
-		{
-			const int flyMode = static_cast<const SStateEventFly&> (event).GetFlyMode();
-			Character.SetFlyMode(flyMode);
-		}
-		return State_Done;
-
+		//case ACTOR_EVENT_FLY:
+		//{
+		//	const int flyMode = static_cast<const SStateEventFly&> (event).GetFlyMode();
+		//	Character.SetFlyMode(flyMode);
+		//}
+		//return State_Done;
 	}
 
 	return State_Continue;
 }
 
 
-const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Ladder(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Ladder(CCharacterComponent& Character, const SStateEvent& event)
 {
 	const ECharacterStateEvent eventID = static_cast<ECharacterStateEvent> (event.GetEventId());
 
@@ -431,7 +418,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Ladder(CChar
 }
 
 
-const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Intro(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Intro(CCharacterComponent& Character, const SStateEvent& event)
 {
 	CRY_ASSERT(!Character.IsAIControlled());
 
@@ -447,65 +434,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Intro(CChara
 }
 
 
-/*const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Spectate(CCharacter& Character, const SStateEvent& event)
-{
-	CRY_ASSERT(!Character.IsAIControlled());
-
-	const ECharacterStateEvent eventID = static_cast<ECharacterStateEvent> (event.GetEventId());
-	switch (eventID)
-	{
-		case STATE_EVENT_ENTER:
-			m_stateSpectate.OnEnter(Character);
-			Character.SetHealth(0.0f);
-			m_flags.AddFlags(eActorStateFlags_Spectator);
-			break;
-
-		case STATE_EVENT_EXIT:
-			m_flags.ClearFlags(eActorStateFlags_Spectator);
-			m_stateSpectate.OnExit(Character);
-			break;
-
-		case ACTOR_EVENT_PREPHYSICSUPDATE:
-		{
-			const SActorPrePhysicsData& prePhysicsEvent = static_cast<const SStateEventActorMovementPrePhysics&> (event).GetPrePhysicsData();
-
-			if (!m_stateSpectate.OnPrePhysicsUpdate(Character, prePhysicsEvent.m_movement, prePhysicsEvent.m_frameTime))
-			{
-				return State_Ground;
-			}
-
-			// Unsure if Spectate requires a move request.
-			CCharacterStateUtil::ProcessRotation(Character, prePhysicsEvent.m_movement, Character.GetMoveRequest());
-			CCharacterStateUtil::FinalizeMovementRequest(Character, prePhysicsEvent.m_movement, Character.GetMoveRequest());
-		}
-			break;
-
-		case ACTOR_EVENT_UPDATE:
-		{
-			if (Character.IsClient())
-			{
-				m_stateSpectate.UpdateFade(static_cast<const SStateEventUpdate&>(event).GetFrameTime());
-			}
-		}
-			break;
-
-		//case CHARACTER_EVENT_RESET_SPECTATOR_SCREEN:
-		//	m_stateSpectate.ResetFadeParameters();
-		//	break;
-
-		case CHARACTER_EVENT_SPECTATE:
-			return State_Done;
-
-		case ACTOR_EVENT_DEAD:
-			// when we enter this state, we SetHealth(0.0f), this will trigger a transition to the Dead state without this interception.
-			return State_Done;
-	}
-
-	return State_Continue;
-}*/
-
-
-const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Ground(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Ground(CCharacterComponent& Character, const SStateEvent& event)
 {
 	CRY_ASSERT(!Character.IsAIControlled());
 
@@ -559,7 +488,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Ground(CChar
 }
 
 
-const CCharacterStateMovement::TStateIndex CCharacterStateMovement::GroundFall(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateMovement::TStateIndex CCharacterStateMovement::GroundFall(CCharacterComponent& Character, const SStateEvent& event)
 {
 	CRY_ASSERT(!Character.IsAIControlled());
 
@@ -580,7 +509,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::GroundFall(C
 }
 
 
-const CCharacterStateMovement::TStateIndex CCharacterStateMovement::SlideFall(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateMovement::TStateIndex CCharacterStateMovement::SlideFall(CCharacterComponent& Character, const SStateEvent& event)
 {
 	CRY_ASSERT(!Character.IsAIControlled());
 
@@ -601,7 +530,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::SlideFall(CC
 }
 
 
-const CCharacterStateMovement::TStateIndex CCharacterStateMovement::FallTest(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateMovement::TStateIndex CCharacterStateMovement::FallTest(CCharacterComponent& Character, const SStateEvent& event)
 {
 	/*	CRY_ASSERT(!Character.IsAIControlled());
 
@@ -613,7 +542,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::FallTest(CCh
 				const SActorPrePhysicsData& prePhysicsEvent = static_cast<const SStateEventActorMovementPrePhysics&> (event).GetPrePhysicsData();
 
 				// We're considered durationInAir at this point.
-				//  - NOTE: this does not mean CCharacter::IsInAir() returns true.
+				//  - NOTE: this does not mean CCharacterComponent::IsInAir() returns true.
 				float durationInAir = Character.GetActorState()->durationInAir;
 				durationInAir += prePhysicsEvent.m_frameTime;
 				Character.GetActorState()->durationInAir = durationInAir;
@@ -651,7 +580,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::FallTest(CCh
 }
 
 
-const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Jump(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Jump(CCharacterComponent& Character, const SStateEvent& event)
 {
 	CRY_ASSERT(!Character.IsAIControlled());
 
@@ -696,17 +625,6 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Jump(CCharac
 
 			ProcessSprint(Character, prePhysicsEvent);
 
-			//SLedgeTransitionData ledge(LedgeId::invalid_id);
-			//if (CCharacterStateLedge::TryLedgeGrab(Character, m_stateJump.GetExpectedJumpEndHeight(),
-			//	m_stateJump.GetStartFallingHeight(), m_stateJump.GetSprintJump(), &ledge, Character.m_jumpButtonIsPressed))
-			//{
-			//	ledge.m_comingFromOnGround = false; // this definitely true here?
-			//	ledge.m_comingFromSprint = m_flags.AreAnyFlagsActive(eActorStateFlags_Sprinting);
-
-			//	SStateEventLedge ledgeEvent(ledge);
-			//	Character.StateMachineHandleEventMovement(ledgeEvent);
-			//}
-
 			//Character.m_CharacterStateSwimWaterTestProxy.ForceUpdateBottomLevel(Character);
 
 			CCharacterStateUtil::ProcessRotation(Character, prePhysicsEvent.m_movement, Character.GetMoveRequest());
@@ -717,7 +635,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Jump(CCharac
 	return State_Continue;
 }
 
-const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Fall(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Fall(CCharacterComponent& Character, const SStateEvent& event)
 {
 	CRY_ASSERT(!Character.IsAIControlled());
 
@@ -734,7 +652,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Fall(CCharac
 	return State_Continue;
 }
 
-const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Slide(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Slide(CCharacterComponent& Character, const SStateEvent& event)
 {
 	/*	CRY_ASSERT(!Character.IsAIControlled());
 
@@ -820,7 +738,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Slide(CChara
 }
 
 
-const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Swim(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Swim(CCharacterComponent& Character, const SStateEvent& event)
 {
 	/*	CRY_ASSERT(!Character.IsAIControlled());
 
@@ -889,7 +807,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Swim(CCharac
 }
 
 
-const CCharacterStateMovement::TStateIndex CCharacterStateMovement::SwimTest(CCharacter& Character, const SStateEvent& event)
+const CCharacterStateMovement::TStateIndex CCharacterStateMovement::SwimTest(CCharacterComponent& Character, const SStateEvent& event)
 {
 	/*	CRY_ASSERT(!Character.IsAIControlled());
 
@@ -917,91 +835,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::SwimTest(CCh
 }
 
 
-const CCharacterStateMovement::TStateIndex CCharacterStateMovement::Ledge(CCharacter& Character, const SStateEvent& event)
-{
-	/*	CRY_ASSERT(!Character.IsAIControlled());
-
-		switch (event.GetEventId())
-		{
-			case STATE_EVENT_ENTER:
-				m_flags.AddFlags(eActorStateFlags_Ledge);
-				Character.SetLastTimeInLedge(gEnv->pTimer->GetAsyncCurTime());
-				Character.SetStance(STANCE_STAND);
-				if (gEnv->bMultiCharacter && Character.IsClient())
-				{
-					SHUDEvent ledgeEvent(eHUDEvent_OnUseLedge);
-					ledgeEvent.AddData(true);
-					CHUDEventDispatcher::CallEvent(ledgeEvent);
-				}
-				break;
-
-			case STATE_EVENT_EXIT:
-				m_flags.ClearFlags(eActorStateFlags_Ledge);
-				m_stateCharacterLedge.OnExit(Character);
-				if (gEnv->bMultiCharacter && Character.IsClient())
-				{
-					SHUDEvent ledgeEvent(eHUDEvent_OnUseLedge);
-					ledgeEvent.AddData(false);
-					CHUDEventDispatcher::CallEvent(ledgeEvent);
-				}
-				break;
-
-			case STATE_EVENT_SERIALIZE:
-			{
-				TSerialize& serializer = static_cast<const SStateEventSerialize&> (event).GetSerializer();
-
-				m_stateCharacterLedge.Serialize(serializer);
-				break;
-			}
-
-			case STATE_EVENT_POST_SERIALIZE:
-			{
-				m_stateCharacterLedge.PostSerialize(Character);
-				break;
-			}
-
-			case ACTOR_EVENT_LEDGE:
-			{
-				const SStateEventLedge &ledgeEvent = static_cast<const SStateEventLedge&> (event);
-
-				const bool comingFromSprint = ledgeEvent.GetComingFromSprint();
-				if (comingFromSprint)
-				{
-					m_flags.AddFlags(eActorStateFlags_Sprinting); // movement will have stripped this flag as it exited.. we want to carry on sprinting at the end of this sprint vault if possible
-				}
-
-				m_stateCharacterLedge.OnEnter(Character, ledgeEvent);
-				return State_Done;
-			}
-
-			case ACTOR_EVENT_LEDGE_ANIM_FINISHED:
-				m_stateCharacterLedge.OnAnimFinished(Character);
-				break;
-
-			case ACTOR_EVENT_PREPHYSICSUPDATE:
-			{
-				const SActorPrePhysicsData& prePhysicsEvent = static_cast<const SStateEventActorMovementPrePhysics&> (event).GetPrePhysicsData();
-				m_stateCharacterLedge.OnPrePhysicsUpdate(Character, prePhysicsEvent.m_movement, prePhysicsEvent.m_frameTime);
-				CCharacterStateUtil::FinalizeMovementRequest(Character, prePhysicsEvent.m_movement, Character.GetMoveRequest());
-				break;
-			}
-
-			case ACTOR_EVENT_FALL:
-				return State_Fall;
-
-			case ACTOR_EVENT_GROUND:
-				return State_Ground;
-
-			case ACTOR_EVENT_INPUT:
-				// Ensure any sprint input changes are updated and not lost mid-ledge grab / vault.
-				return StateGroundInput(Character, static_cast<const SStateEventActorInput&> (event).GetInputEventData());
-		}
-	*/
-	return State_Continue;
-}
-
-
-const CCharacterStateMovement::TStateIndex CCharacterStateMovement::StateGroundInput(CCharacter& Character, const SInputEventData& inputEvent)
+const CCharacterStateMovement::TStateIndex CCharacterStateMovement::StateGroundInput(CCharacterComponent& Character, const SInputEventData& inputEvent)
 {
 	switch (inputEvent.m_inputEvent)
 	{
@@ -1014,7 +848,7 @@ const CCharacterStateMovement::TStateIndex CCharacterStateMovement::StateGroundI
 }
 
 
-void CCharacterStateMovement::StateSprintInput(CCharacter& Character, const SInputEventData& inputEvent)
+void CCharacterStateMovement::StateSprintInput(CCharacterComponent& Character, const SInputEventData& inputEvent)
 {
 	CRY_ASSERT(inputEvent.m_inputEvent == SInputEventData::EInputEvent_Sprint);
 	inputEvent.m_activationMode == eAAM_OnPress ? m_flags.AddFlags(eActorStateFlags_SprintPressed)
@@ -1022,7 +856,7 @@ void CCharacterStateMovement::StateSprintInput(CCharacter& Character, const SInp
 }
 
 
-void CCharacterStateMovement::ProcessSprint(CCharacter& Character, const SActorPrePhysicsData& prePhysicsEvent)
+void CCharacterStateMovement::ProcessSprint(CCharacterComponent& Character, const SActorPrePhysicsData& prePhysicsEvent)
 {
 	/*	// If sprint toggle is active, then we want to sprint if it is pressed or if we are sprinting.
 		// If sprint toggle is off, then we only want to sprint if it is pressed.
@@ -1050,12 +884,12 @@ void CCharacterStateMovement::ProcessSprint(CCharacter& Character, const SActorP
 }
 
 
-void CCharacterStateMovement::OnSpecialMove(CCharacter &Character, IActorEventListener::ESpecialMove specialMove)
+void CCharacterStateMovement::OnSpecialMove(CCharacterComponent &Character, IActorEventListener::ESpecialMove specialMove)
 {
 	/*	if (Character.m_CharacterEventListeners.empty() == false)
 		{
-			CCharacter::TCharacterEventListeners::const_iterator iter = Character.m_CharacterEventListeners.begin();
-			CCharacter::TCharacterEventListeners::const_iterator cur;
+			CCharacterComponent::TCharacterEventListeners::const_iterator iter = Character.m_CharacterEventListeners.begin();
+			CCharacterComponent::TCharacterEventListeners::const_iterator cur;
 			while (iter != Character.m_CharacterEventListeners.end())
 			{
 				cur = iter;
@@ -1066,7 +900,7 @@ void CCharacterStateMovement::OnSpecialMove(CCharacter &Character, IActorEventLi
 }
 
 
-bool CCharacterStateMovement::IsActionControllerValid(CCharacter& Character) const
+bool CCharacterStateMovement::IsActionControllerValid(CCharacterComponent& Character) const
 {
 	IAnimatedCharacter* pAnimatedCharacter = Character.GetAnimatedCharacter();
 
@@ -1079,7 +913,7 @@ bool CCharacterStateMovement::IsActionControllerValid(CCharacter& Character) con
 }
 
 
-void CCharacterStateMovement::TriggerOutOfWaterEffectIfNeeded(const CCharacter& Character)
+void CCharacterStateMovement::TriggerOutOfWaterEffectIfNeeded(const CCharacterComponent& Character)
 {
 	/*if (m_pWaterEffects != NULL)
 	{
@@ -1114,7 +948,7 @@ void CCharacterStateMovement::ReleaseWaterEffects()
 }
 
 
-void CCharacterStateMovement::UpdateCharacterStanceTag(CCharacter &Character)
+void CCharacterStateMovement::UpdateCharacterStanceTag(CCharacterComponent &Character)
 {
 	/*IAnimatedCharacter *pAnimatedCharacter = Character.GetAnimatedCharacter ();
 	if (pAnimatedCharacter)
@@ -1125,4 +959,5 @@ void CCharacterStateMovement::UpdateCharacterStanceTag(CCharacter &Character)
 	Character.SetStanceTag (Character.GetStance (), pActionController->GetContext ().state);
 	}
 	}*/
+}
 }

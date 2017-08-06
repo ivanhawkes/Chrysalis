@@ -6,6 +6,8 @@
 #include "LocalizeUtility.h"
 
 
+namespace Chrysalis
+{
 namespace LocalizeUtility
 {
 	// ***
@@ -16,7 +18,7 @@ namespace LocalizeUtility
 	void LocalizeString(string &out, const char *text, const char *arg1, const char *arg2, const char *arg3, const char *arg4)
 	{
 #if ENABLE_HUD_EXTRA_DEBUG
-		const int numberOfWs = g_pGame->GetHUD()->GetCVars()->hud_localize_ws_instead;
+		const int numberOfWs = gEnv->pGameFramework->GetHUD()->GetCVars()->hud_localize_ws_instead;
 		if (numberOfWs > 0)
 		{
 			static int lastNumberOfWs = 0;
@@ -154,4 +156,5 @@ namespace LocalizeUtility
 	{
 		cry_strcpy(dest, bufferSizeInBytes, LocalizeNumber(number, decimals));
 	}
+}
 }

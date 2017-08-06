@@ -1,26 +1,31 @@
 #pragma once
 
-#include "Helpers/DesignerEntityComponent.h"
 
-
-class CDRSInteractionEntity final : public CDesignerEntityComponent<>, public IEntityPropertyGroup
+namespace Chrysalis
 {
-	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CDRSInteractionEntity, "DRSInteractionEntity", 0xA723315D3E5345E3, 0x90766D3684FB132F);
+class CDRSInteractionEntity
+	: public IEntityComponent
+{
+protected:
+	friend CChrysalisCorePlugin;
+	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
 
-	virtual ~CDRSInteractionEntity() {}
-
-public:
 	// IEntityComponent
 	void Initialize() override;
-	virtual IEntityPropertyGroup* GetPropertyGroup() final { return this; }
 	// ~IEntityComponent
 
-	// IEntityPropertyGroup
-	virtual const char* GetLabel() const override { return "DRS Entity Properties"; }
-	virtual void SerializeProperties(Serialization::IArchive& archive) override;
-	// ~IEntityPropertyGroup
+public:
+	CDRSInteractionEntity() {}
+	virtual ~CDRSInteractionEntity() {}
 
-	// IDRSInteractionEntityComponent
+	static void ReflectType(Schematyc::CTypeDesc<CDRSInteractionEntity>& desc);
+
+	static CryGUID& IID()
+	{
+		static CryGUID id = "{4300CD23-0892-4334-9128-2123FFF2242D}"_cry_guid;
+		return id;
+	}
+
 	virtual void OnResetState() final;
-	// IDRSInteractionEntityComponent
 };
+}

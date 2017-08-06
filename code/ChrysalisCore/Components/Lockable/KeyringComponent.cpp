@@ -1,49 +1,30 @@
 #include <StdAfx.h>
 
 #include "KeyringComponent.h"
-#include <CrySerialization/Decorators/Resources.h>
 
-
-CRYREGISTER_CLASS(CKeyringComponent)
-
-
-class CKeyringExtensionRegistrator : public IEntityRegistrator, public CKeyringComponent::SExternalCVars
+namespace Chrysalis
 {
-	virtual void Register() override
-	{
-		// Register the entity class.
-		RegisterEntityWithDefaultComponent<CKeyringComponent>("Keyring", "Locks", "door.bmp");
-
-		RegisterCVars();
-	}
-
-	void RegisterCVars()
-	{
-		REGISTER_CVAR2("entity_keyringextension_Debug", &m_debug, 0, VF_CHEAT, "Allow debug display.");
-	}
-};
-
-CKeyringExtensionRegistrator g_KeyringExtensionRegistrator;
-
-
-const CKeyringComponent::SExternalCVars& CKeyringComponent::GetCVars() const
+void CKeyringComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
 {
-	return g_KeyringExtensionRegistrator;
 }
 
 
-void CKeyringComponent::SerializeProperties(Serialization::IArchive& archive)
+void CKeyringComponent::ReflectType(Schematyc::CTypeDesc<CKeyringComponent>& desc)
 {
-	archive(m_bActive, "Active", "Active");
-	archive(m_keys, "Keys", "Keys");
+	desc.SetGUID(CKeyringComponent::IID());
+	desc.SetEditorCategory("Locks");
+	desc.SetLabel("Keyring");
+	desc.SetDescription("No description.");
+	desc.SetIcon("icons:ObjectTypes/light.ico");
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
 
-	if (archive.isInput())
-	{
-		OnResetState();
-	}
+	desc.AddMember(&CKeyringComponent::m_bActive, 'actv', "Active", "Active", "Is this active?", true);
+	// TODO: CRITICAL: HACK: BROKEN: !!
+	//	desc.AddMember(&CKeyringComponent::m_keys, 'keys', "Keys", "Keys", "Keys on this keyring.", "");
 }
 
 
 void CKeyringComponent::OnResetState()
 {
+}
 }

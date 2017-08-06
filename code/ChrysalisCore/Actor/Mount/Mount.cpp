@@ -2,43 +2,33 @@
 
 #include "Mount.h"
 
+namespace Chrysalis
+{
 // Definition of the state machine that controls character movement.
-//DEFINE_STATE_MACHINE(CMount, Movement);
+//DEFINE_STATE_MACHINE(CMountComponent, Movement);
 
 
-CMount::CMount()
+void CMountComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
 {
 }
 
 
-CMount::~CMount()
+void CMountComponent::ReflectType(Schematyc::CTypeDesc<CMountComponent>& desc)
 {
+	desc.SetGUID(CMountComponent::IID());
+	desc.SetEditorCategory("Actors");
+	desc.SetLabel("Mount");
+	desc.SetDescription("No description.");
+	desc.SetIcon("icons:ObjectTypes/light.ico");
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
 }
 
 
-// ***
-// *** IGameObjectExtension
-// ***
-
-
-void CMount::GetMemoryUsage(ICrySizer *pSizer) const
+void CMountComponent::Initialize()
 {
-	CActor::GetMemoryUsage(pSizer);
-	pSizer->Add(*this);
-}
+	CActor::Initialize();
 
-
-bool CMount::Init(IGameObject * pGameObject)
-{
-	CActor::Init(pGameObject);
-
-	return true;
-}
-
-
-void CMount::PostInit(IGameObject * pGameObject)
-{
-	CActor::PostInit(pGameObject);
+	const auto pEntity = GetEntity();
 
 	// Register for game object events.
 	RegisterEvents();
@@ -48,157 +38,78 @@ void CMount::PostInit(IGameObject * pGameObject)
 }
 
 
-bool CMount::ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params)
-{
-	CActor::ReloadExtension(pGameObject, params);
-
-	// Register for game object events again.
-	RegisterEvents();
-
-	return true;
-}
-
-
-void CMount::PostReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params)
-{
-	CActor::PostReloadExtension(pGameObject, params);
-}
-
-
-void CMount::Release()
-{
-	// Destroy this instance.
-	delete this;
-}
-
-
-void CMount::FullSerialize(TSerialize ser)
-{
-	CActor::FullSerialize(ser);
-}
-
-
-bool CMount::NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int pflags)
-{
-	return true;
-}
-
-
-ISerializableInfoPtr CMount::GetSpawnInfo()
-{
-	return nullptr;
-}
-
-
-void CMount::Update(SEntityUpdateContext& ctx, int updateSlot)
-{
-	CActor::Update(ctx, updateSlot);
-}
-
-
-void CMount::HandleEvent(const SGameObjectEvent& event)
-{
-	CActor::HandleEvent(event);
-}
-
-
-void CMount::ProcessEvent(SEntityEvent& event)
+void CMountComponent::ProcessEvent(SEntityEvent& event)
 {
 	switch (event.event)
 	{
-		// Called automatically at the start of every level.
+		// Physicalize on level start for Launcher
 		case ENTITY_EVENT_START_LEVEL:
+
+			// Editor specific, physicalize on reset, property change or transform change
+		case ENTITY_EVENT_RESET:
+		case ENTITY_EVENT_EDITOR_PROPERTY_CHANGED:
+		case ENTITY_EVENT_XFORM_FINISHED_EDITOR:
+			OnResetState();
+			break;
+
+		case ENTITY_EVENT_UPDATE:
+			Update();
 			break;
 
 		case ENTITY_EVENT_PREPHYSICSUPDATE:
 			PrePhysicsUpdate();
 			break;
-
-		case ENTITY_EVENT_SCRIPT_EVENT:
-			OnScriptEvent(event);
-			break;
-
-		case ENTITY_EVENT_EDITOR_PROPERTY_CHANGED:
-			OnEditorPropertyChanged();
-			break;
-
-		case ENTITY_EVENT_RESET:
-			OnResetState();
-			break;
-
-		default:
-			break;
 	}
 }
 
 
-// FIX: 5.4
-IComponent::ComponentEventPriority CMount::GetEventPriority(const int eventID) const
+void CMountComponent::Update()
 {
-	switch (eventID)
-	{
-		case ENTITY_EVENT_PREPHYSICSUPDATE:
-			//			return(ENTITY_PROXY_LAST - ENTITY_PROXY_USER + EEntityEventPriority_Actor + (m_isClient ? EEntityEventPriority_Client : 0));
-			return ENTITY_PROXY_LAST - ENTITY_PROXY_USER + EEntityEventPriority_Actor + EEntityEventPriority_Client; // HACK: only used for when we are the client, fix later.
-	}
-
-	return IGameObjectExtension::GetEventPriority(eventID);
+	CActor::Update();
 }
 
 
-// *** 
-// *** IActor
-// *** 
-
-
-
 // ***
-// *** CActor
+// *** CMountComponent
 // ***
 
 
-
-// ***
-// *** CMount
-// ***
-
-
-bool CMount::Physicalize()
+bool CMountComponent::Physicalize()
 {
 	return CActor::Physicalize();
 }
 
 
-void CMount::PrePhysicsUpdate()
+void CMountComponent::PrePhysicsUpdate()
 {
-	// TODO: HACK: Copy and update the function from CCharacter when time allows. This is strictly for test purposes
+	// TODO: HACK: Copy and update the function from CMountComponent when time allows. This is strictly for test purposes
 	// for now. 
 }
 
 
-void CMount::RegisterEvents()
+void CMountComponent::RegisterEvents()
 {
-	// Lists the game object events we want to be notified about.
-	const int EventsToRegister [] =
-	{
-		eGFE_OnCollision,			// Collision events.
-		eGFE_BecomeLocalPlayer,		// Become client actor events.
-		eGFE_OnPostStep,			// Not sure if it's needed for character animation here...but it is required for us to trap that event in this code.
-	};
+	// TODO: This all needs to be functionally replaced.
+	//// Lists the game object events we want to be notified about.
+	//const int EventsToRegister [] =
+	//{
+	//	eGFE_OnCollision,			// Collision events.
+	//	eGFE_OnPostStep,			// Not sure if it's needed for character animation here...but it is required for us to trap that event in this code.
+	//};
 
-	// Register for the specified game object events.
-	GetGameObject()->UnRegisterExtForEvents(this, nullptr, 0);
-	GetGameObject()->RegisterExtForEvents(this, EventsToRegister, sizeof(EventsToRegister) / sizeof(int));
+	//// Register for the specified game object events.
+	//GetGameObject()->UnRegisterExtForEvents(this, nullptr, 0);
+	//GetGameObject()->RegisterExtForEvents(this, EventsToRegister, sizeof(EventsToRegister) / sizeof(int));
 }
 
 
-void CMount::OnScriptEvent(SEntityEvent& event)
+void CMountComponent::OnScriptEvent(SEntityEvent& event)
 {
 	//CActor::OnScriptEvent(event);
 }
 
 
-void CMount::OnEditorPropertyChanged()
+void CMountComponent::OnEditorPropertyChanged()
 {
 	//CActor::OnEditorPropertyChanged(event);
 }
@@ -209,19 +120,19 @@ void CMount::OnEditorPropertyChanged()
 // ***
 
 
-void CMount::OnResetState()
+void CMountComponent::OnResetState()
 {
 	CActor::OnResetState();
 }
 
 
-void CMount::Kill()
+void CMountComponent::Kill()
 {
 	CActor::Kill();
 }
 
 
-void CMount::Revive(EReasonForRevive reasonForRevive)
+void CMountComponent::Revive(EReasonForRevive reasonForRevive)
 {
 	CActor::Revive(reasonForRevive);
 }
@@ -232,31 +143,31 @@ void CMount::Revive(EReasonForRevive reasonForRevive)
 // ***
 
 
-void CMount::SelectMovementHierarchy()
+void CMountComponent::SelectMovementHierarchy()
 {
 	//StateMachineHandleEventMovement(ACTOR_EVENT_ENTRY);
 }
 
 
-void CMount::MovementHSMRelease()
+void CMountComponent::MovementHSMRelease()
 {
 	//StateMachineReleaseMovement();
 }
 
 
-void CMount::MovementHSMInit()
+void CMountComponent::MovementHSMInit()
 {
 	//StateMachineInitMovement();
 }
 
 
-void CMount::MovementHSMSerialize(TSerialize ser)
+void CMountComponent::MovementHSMSerialize(TSerialize ser)
 {
 	//StateMachineSerializeMovement(SStateEventSerialize(ser));
 }
 
 
-void CMount::MovementHSMUpdate(SEntityUpdateContext& ctx, int updateSlot)
+void CMountComponent::MovementHSMUpdate(SEntityUpdateContext& ctx, int updateSlot)
 {
 	//StateMachineUpdateMovement(ctx.fFrameTime, false);
 
@@ -266,7 +177,8 @@ void CMount::MovementHSMUpdate(SEntityUpdateContext& ctx, int updateSlot)
 }
 
 
-void CMount::MovementHSMReset()
+void CMountComponent::MovementHSMReset()
 {
 	//StateMachineResetMovement();
+}
 }

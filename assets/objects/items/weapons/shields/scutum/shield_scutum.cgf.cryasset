@@ -1,0 +1,14 @@
+<AssetMetadata version="0" type="Mesh" guid="{6E0E6BC6-ED9E-D0CB-5E5B-97784432519E}">
+ <Files>
+  <File path="shield_scutum.cgf"/>
+ </Files>
+ <Details>
+  <Detail name="materialCount">1</Detail>
+  <Detail name="triangleCount">756</Detail>
+  <Detail name="vertexCount">832</Detail>
+  <Detail name="16BitPrecision">false</Detail>
+ </Details>
+ <Dependencies>
+  <Path>Objects/chrysalis/items/weapons/shields/scutum/shield_scutum.mtl</Path>
+ </Dependencies>
+</AssetMetadata>

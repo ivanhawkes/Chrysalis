@@ -6,9 +6,11 @@
 #include <Item/Parameters/ItemParameter.h>
 
 
+namespace Chrysalis
+{
 CItemGeometryParameter::CItemGeometryParameter()
 {
-	
+
 }
 
 
@@ -38,5 +40,6 @@ bool CItemGeometryParameter::Read(const XmlNodeRef& node)
 	reader.ReadParamValue("useParentMaterial", useParentMaterial);
 
 	return true;
+}
 }
 

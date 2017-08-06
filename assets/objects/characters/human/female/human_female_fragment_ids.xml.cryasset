@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="{97693C0C-97E7-7C58-BF1A-9EBFBA943987}">
+ <Files>
+  <File path="human_female_fragment_ids.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">TagDefinition</Detail>
+ </Details>
+</AssetMetadata>

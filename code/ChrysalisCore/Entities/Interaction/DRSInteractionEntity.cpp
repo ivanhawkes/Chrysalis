@@ -2,41 +2,38 @@
 
 #include "DRSInteractionEntity.h"
 #include <Components/Interaction/DRSInteractionComponent.h>
-#include <Components/Geometry/GeometryComponent.h>
+#include <DefaultComponents/Geometry/StaticMeshComponent.h>
 
 
-class DRSInteractionEntityRegistrator : public IEntityRegistrator
+namespace Chrysalis
 {
-	virtual void Register() override
-	{
-		RegisterEntityWithDefaultComponent<CDRSInteractionEntity>("DRSInteractionEntity", "Interaction", "physicsobject.bmp", true);
-	}
-};
+void CDRSInteractionEntity::Register(Schematyc::CEnvRegistrationScope& componentScope)
+{
+}
 
-DRSInteractionEntityRegistrator g_DRSInteractionEntityRegistrator;
 
-CRYREGISTER_CLASS(CDRSInteractionEntity);
+void CDRSInteractionEntity::ReflectType(Schematyc::CTypeDesc<CDRSInteractionEntity>& desc)
+{
+	desc.SetGUID(CDRSInteractionEntity::IID());
+	desc.SetEditorCategory("Interaction");
+	desc.SetLabel("DRSInteractionEntity");
+	desc.SetDescription("Dynamic Reponse System interaction entity.");
+	desc.SetIcon("icons:ObjectTypes/light.ico");
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+}
 
 
 void CDRSInteractionEntity::Initialize()
 {
 	GetEntity()->CreateComponent<CDRSInteractionComponent>();
-	GetEntity()->CreateComponent<CGeometryComponent>();
+	GetEntity()->CreateComponent<Cry::DefaultComponents::CStaticMeshComponent>();
 
 	// Reset the entity.
 	OnResetState();
 }
 
 
-void CDRSInteractionEntity::SerializeProperties(Serialization::IArchive& archive)
-{
-	if (archive.isInput())
-	{
-		OnResetState();
-	}
-}
-
-
 void CDRSInteractionEntity::OnResetState()
 {
+}
 }

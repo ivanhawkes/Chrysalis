@@ -1,13 +1,15 @@
 #pragma once
 
-#include "Item/Item.h"
+#include "Components/Items/ItemComponent.h"
 
 
+namespace Chrysalis
+{
 class CAccessory :
-	public CItem
+	public CItemComponent
 {
 public:
 	CAccessory();
 	virtual ~CAccessory();
 };
-
+}

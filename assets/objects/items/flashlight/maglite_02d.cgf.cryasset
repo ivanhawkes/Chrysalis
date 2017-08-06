@@ -7,6 +7,10 @@
    <Detail name="materialCount">4</Detail>
    <Detail name="triangleCount">1533</Detail>
    <Detail name="vertexCount">4376</Detail>
+   <Detail name="16BitPrecision">false</Detail>
   </Details>
+  <Dependencies>
+   <Path>./MultiMat_0.mtl</Path>
+  </Dependencies>
  </AssetMetadata>
 </cryasset>

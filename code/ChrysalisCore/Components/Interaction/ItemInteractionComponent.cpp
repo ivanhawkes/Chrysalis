@@ -2,29 +2,27 @@
 
 #include "ItemInteractionComponent.h"
 #include <Components/Interaction/EntityInteractionComponent.h>
-#include <Player/Player.h>
-#include <Player/Input/IPlayerInputComponent.h>
+#include <Components/Player/Player.h>
+#include <Components/Player/Input/IPlayerInputComponent.h>
 #include <Actor/Character/Character.h>
 
 
-CRYREGISTER_CLASS(CItemInteractionComponent)
-
-
-class CItemInteractionRegistrator : public IEntityRegistrator
+namespace Chrysalis
 {
-	virtual void Register() override
-	{
-		// Register the class as a factory.
-		RegisterEntityWithDefaultComponent<CItemInteractionComponent>("ItemInteractionComponent", "Interaction", "Item.bmp", true);
+void CItemInteractionComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+{
+}
 
-		// This should make the entity class invisible in the editor.
-		auto cls = gEnv->pEntitySystem->GetClassRegistry()->FindClass("ItemInteractionComponent");
-		cls->SetFlags(cls->GetFlags() | ECLF_INVISIBLE);
-	}
-};
 
-CItemInteractionRegistrator g_ItemInteractionRegistrator;
-
+void CItemInteractionComponent::ReflectType(Schematyc::CTypeDesc<CItemInteractionComponent>& desc)
+{
+	desc.SetGUID(CItemInteractionComponent::IID());
+	desc.SetEditorCategory("Interaction");
+	desc.SetLabel("Item Interaction Component");
+	desc.SetDescription("No description.");
+	desc.SetIcon("icons:ObjectTypes/light.ico");
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+}
 
 
 // ***
@@ -34,9 +32,6 @@ CItemInteractionRegistrator g_ItemInteractionRegistrator;
 
 void CItemInteractionComponent::Initialize()
 {
-	// Required for 5.3 to call update.
-	GetEntity()->Activate(true);
-
 	// Add new verbs to the interactor.
 	m_interactor = GetEntity()->GetOrCreateComponent<CEntityInteractionComponent>();
 	if (m_interactor)
@@ -54,22 +49,11 @@ void CItemInteractionComponent::Initialize()
 
 void CItemInteractionComponent::ProcessEvent(SEntityEvent& event)
 {
-	CDesignerEntityComponent::ProcessEvent(event);
-
 	switch (event.event)
 	{
 		case ENTITY_EVENT_UPDATE:
 			Update();
 			break;
-	}
-}
-
-
-void CItemInteractionComponent::SerializeProperties(Serialization::IArchive& archive)
-{
-	if (archive.isInput())
-	{
-		OnResetState();
 	}
 }
 
@@ -86,9 +70,9 @@ void CItemInteractionComponent::OnInteractionItemInspect()
 	gEnv->pLog->LogAlways("OnInteractionItemInspect fired.");
 	m_inspectionState = InspectionState::eInspecting;
 
-	if (auto pCharacter = CPlayer::GetLocalCharacter())
+	if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
 	{
-		auto pEntity = GetEntity();
+		const auto pEntity = GetEntity();
 		m_initialPosition = pEntity->GetPos();
 		m_initialRotation = pEntity->GetRotation();
 		m_targetPosition = pCharacter->GetEntity()->GetPos() + pCharacter->GetLocalLeftHandPos();
@@ -96,7 +80,7 @@ void CItemInteractionComponent::OnInteractionItemInspect()
 		m_timeInAirRequired = (m_targetPosition - m_initialPosition).GetLength() / kJumpToPlayerSpeed;
 
 		// #TODO: Use a helper method instead of setting directly.
-		if (auto pPlayer = CPlayer::GetLocalPlayer())
+		if (auto pPlayer = CPlayerComponent::GetLocalPlayer())
 		{
 			pPlayer->SetObjectInteractionMode(true);
 		}
@@ -116,7 +100,7 @@ void CItemInteractionComponent::OnInteractionItemPickup()
 	gEnv->pLog->LogAlways("OnInteractionItemPickup fired.");
 	m_inspectionState = InspectionState::ePickingUp;
 
-	if (auto pCharacter = CPlayer::GetLocalCharacter())
+	if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
 	{
 		m_initialPosition = GetEntity()->GetPos();
 		m_targetPosition = pCharacter->GetEntity()->GetPos() + pCharacter->GetLocalRightHandPos();
@@ -124,7 +108,7 @@ void CItemInteractionComponent::OnInteractionItemPickup()
 		m_timeInAirRequired = (m_targetPosition - m_initialPosition).GetLength() / kJumpToPlayerSpeed;
 
 		// #TODO: Use a helper method instead of setting directly.
-		if (auto pPlayer = CPlayer::GetLocalPlayer())
+		if (auto pPlayer = CPlayerComponent::GetLocalPlayer())
 		{
 			pPlayer->SetObjectInteractionMode(true);
 		}
@@ -137,9 +121,9 @@ void CItemInteractionComponent::OnInteractionItemDrop()
 	gEnv->pLog->LogAlways("OnInteractionItemDrop fired.");
 	m_inspectionState = InspectionState::eDroping;
 
-	if (auto pCharacter = CPlayer::GetLocalCharacter())
+	if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
 	{
-		auto pEntity = GetEntity();
+		const auto pEntity = GetEntity();
 
 		pe_action_awake action;
 		action.bAwake = true;
@@ -150,7 +134,7 @@ void CItemInteractionComponent::OnInteractionItemDrop()
 			pPhysEntity->Action(&action);
 	}
 
-	if (auto pPlayer = CPlayer::GetLocalPlayer())
+	if (auto pPlayer = CPlayerComponent::GetLocalPlayer())
 	{
 		pPlayer->SetObjectInteractionMode(false);
 	}
@@ -162,9 +146,9 @@ void CItemInteractionComponent::OnInteractionItemToss()
 	gEnv->pLog->LogAlways("OnInteractionItemToss fired.");
 	m_inspectionState = InspectionState::eTossing;
 
-	if (auto pCharacter = CPlayer::GetLocalCharacter())
+	if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
 	{
-		auto pEntity = GetEntity();
+		const auto pEntity = GetEntity();
 		Vec3 impulse = pCharacter->GetEntity()->GetRotation() * FORWARD_DIRECTION * kTossNewtons;
 
 		// A small impulse to toss it aside.
@@ -177,7 +161,7 @@ void CItemInteractionComponent::OnInteractionItemToss()
 			pPhysEntity->Action(&action);
 	}
 
-	if (auto pPlayer = CPlayer::GetLocalPlayer())
+	if (auto pPlayer = CPlayerComponent::GetLocalPlayer())
 	{
 		pPlayer->SetObjectInteractionMode(false);
 	}
@@ -208,21 +192,21 @@ void CItemInteractionComponent::Update()
 			OnPickingUpUpdate(frameTime);
 			break;
 
-		//case InspectionState::eDroping:
-		//	// #TODO: Start physics simulating again.
-		//	break;
+			//case InspectionState::eDroping:
+			//	// #TODO: Start physics simulating again.
+			//	break;
 
-		//case InspectionState::eTossing:
-		//	// #TODO: Start physics simulating again.
-		//	break;
+			//case InspectionState::eTossing:
+			//	// #TODO: Start physics simulating again.
+			//	break;
 
-		//case InspectionState::eCancelled:
-		//	// #TODO: Start physics simulating again.
-		//	break;
+			//case InspectionState::eCancelled:
+			//	// #TODO: Start physics simulating again.
+			//	break;
 
-		//case InspectionState::eNone:
-		//	// #TODO: Start physics simulating again.
-		//	break;
+			//case InspectionState::eNone:
+			//	// #TODO: Start physics simulating again.
+			//	break;
 	}
 }
 
@@ -234,13 +218,13 @@ void CItemInteractionComponent::OnInspectingUpdate(const float frameTime)
 	// For now, just pull the object to a target location.
 	m_timeInAir = min(m_timeInAirRequired, m_timeInAir + frameTime);
 
-	if (auto pCharacter = CPlayer::GetLocalCharacter())
+	if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
 	{
 		Vec3 delta = (m_targetPosition - m_initialPosition) * (1.0f - (m_timeInAir / m_timeInAirRequired));
 		pEntity->SetPos(m_targetPosition - delta);
 
 		// Allow them to rotate the item in their hands.
-		if (auto pPlayerInput = CPlayer::GetLocalPlayer()->GetPlayerInput())
+		if (auto pPlayerInput = CPlayerComponent::GetLocalPlayer()->GetPlayerInput())
 		{
 			// #TODO: The rotation flips the controls when the item is upside down. That feels weird. Is there a way to remove this
 			// from the rotation?
@@ -259,16 +243,17 @@ void CItemInteractionComponent::OnPickingUpUpdate(const float frameTime)
 	// For now, just pull the object to a target location.
 	m_timeInAir = min(m_timeInAirRequired, m_timeInAir + frameTime);
 
-	if (auto pCharacter = CPlayer::GetLocalCharacter())
+	if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
 	{
 		Vec3 delta = (m_targetPosition - m_initialPosition) * (1.0f - (m_timeInAir / m_timeInAirRequired));
 		pEntity->SetPos(m_targetPosition - delta);
 	}
 
 	// Allow them to rotate the item in their hands.
-	if (auto pPlayerInput = CPlayer::GetLocalPlayer()->GetPlayerInput())
+	if (auto pPlayerInput = CPlayerComponent::GetLocalPlayer()->GetPlayerInput())
 	{
 		const auto rotation = Quat(Ang3(pPlayerInput->GetHeadPitchDelta(), 0.0f, pPlayerInput->GetYawDelta()));
 		pEntity->SetRotation(pEntity->GetRotation() * rotation);
 	}
+}
 }

@@ -1,10 +1,10 @@
 #include <StdAfx.h>
 
 #include "ActorAnimationActionLocomotion.h"
-#include "IActorSystem.h"
-#include <Actor/Actor.h>
 
 
+namespace Chrysalis
+{
 #define LOCOMOTION_FRAGMENTS( x ) \
 	x( Idle ) \
 	x( Move ) \
@@ -176,7 +176,7 @@ IAction::EStatus CActorAnimationActionLocomotion::Update(float timePassed)
 				break;
 		}
 	}
-	
+
 	// Cycle.
 	m_lastStance = newStance;
 
@@ -259,4 +259,5 @@ IAction::EStatus CActorAnimationActionLocomotion::Update(float timePassed)
 	}
 
 	return EStatus();
+}
 }

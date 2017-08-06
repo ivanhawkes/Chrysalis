@@ -6,6 +6,8 @@
 #include <IGameObject.h>
 
 
+namespace Chrysalis
+{
 struct SActorPhysics
 {
 	enum EActorPhysicsFlags
@@ -36,20 +38,21 @@ struct SActorPhysics
 
 	CCryFlags<uint32> flags;
 
-/*	Vec3 angVelocity;
-	Vec3 velocity;
-	Vec3 velocityDelta;
-	Vec3 velocityUnconstrained;
-	Vec3 velocityUnconstrainedLast;
-	Vec3 gravity;
-	Vec3 groundNormal;
+	/*	Vec3 angVelocity;
+		Vec3 velocity;
+		Vec3 velocityDelta;
+		Vec3 velocityUnconstrained;
+		Vec3 velocityUnconstrainedLast;
+		Vec3 gravity;
+		Vec3 groundNormal;
 
-	float speed;
-	float groundHeight;
-	float mass;
+		float speed;
+		float groundHeight;
+		float mass;
 
-	int lastFrameUpdate;
-	int groundMaterialIdx;
-	EntityId groundColliderId;
-*/
+		int lastFrameUpdate;
+		int groundMaterialIdx;
+		EntityId groundColliderId;
+	*/
 };
+}

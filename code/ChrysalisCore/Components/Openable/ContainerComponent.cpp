@@ -2,43 +2,35 @@
 
 #include "ContainerComponent.h"
 #include <Components/Interaction/EntityInteractionComponent.h>
-#include <Components/Geometry/GeometryComponent.h>
+#include <DefaultComponents/Geometry/StaticMeshComponent.h>
 #include <Components/Animation/SimpleAnimationComponent.h>
 #include <Components/Lockable/LockableComponent.h>
 
 
-CRYREGISTER_CLASS(CContainerComponent)
-
-
-class CContainerExtensionRegistrator : public IEntityRegistrator, public CContainerComponent::SExternalCVars
+namespace Chrysalis
 {
-	virtual void Register() override
-	{
-		RegisterEntityWithDefaultComponent<CContainerComponent>("Container", "Containers", "door.bmp");
-
-		RegisterCVars();
-	}
-
-	void RegisterCVars()
-	{
-		REGISTER_CVAR2("entity_containerextension_Debug", &m_debug, 0, VF_CHEAT, "Allow debug display.");
-	}
-};
-
-CContainerExtensionRegistrator g_ContainerExtensionRegistrator;
-
-const CContainerComponent::SExternalCVars& CContainerComponent::GetCVars() const
+void CContainerComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
 {
-	return g_ContainerExtensionRegistrator;
+}
+
+
+void CContainerComponent::ReflectType(Schematyc::CTypeDesc<CContainerComponent>& desc)
+{
+	desc.SetGUID(CContainerComponent::IID());
+	desc.SetEditorCategory("Containers");
+	desc.SetLabel("Container");
+	desc.SetDescription("Chests, bags, etc.");
+	desc.SetIcon("icons:ObjectTypes/light.ico");
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
 }
 
 
 void CContainerComponent::Initialize()
 {
-	auto pEntity = GetEntity();
+	const auto pEntity = GetEntity();
 
 	// Get some geometry.
-	m_pGeometryComponent = pEntity->CreateComponent<CGeometryComponent>();
+	m_pGeometryComponent = pEntity->CreateComponent<Cry::DefaultComponents::CStaticMeshComponent>();
 
 	// Get a simple animation component.
 	m_pSimpleAnimationComponent = pEntity->CreateComponent<CSimpleAnimationComponent>();
@@ -63,12 +55,4 @@ void CContainerComponent::Initialize()
 void CContainerComponent::OnResetState()
 {
 }
-
-
-void CContainerComponent::SerializeProperties(Serialization::IArchive& archive)
-{
-	if (archive.isInput())
-	{
-		OnResetState();
-	}
 }

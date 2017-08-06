@@ -1,43 +1,33 @@
 #pragma once
 
-#include "Helpers/DesignerEntityComponent.h"
 
-
-/**
-A Equipment extension.
-
-\sa IEntityComponent.
-\sa IEntityPropertyGroup.
-\sa IInteractionEquipment.
-\sa IInteractionLockable.
-**/
-class CEquipmentComponent : public CDesignerEntityComponent<>, public IEntityPropertyGroup
+namespace Chrysalis
 {
-	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CEquipmentComponent, "Equipment", 0x9CDB533F110841B2, 0x83A9A7C757F74AB4)
+/** An Equipment extension. */
+class CEquipmentComponent
+	: public IEntityComponent
+{
+protected:
+	friend CChrysalisCorePlugin;
+	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
 
-public:
 	// IEntityComponent
 	void Initialize() override;
-	struct IEntityPropertyGroup* GetPropertyGroup() override { return this; }
 	// ~IEntityComponent
 
-	// IEntityPropertyGroup
-	const char* GetLabel() const override { return "Equipment Properties"; };
-	void SerializeProperties(Serialization::IArchive& archive) override;
-	// ~IEntityPropertyGroup
+public:
+	CEquipmentComponent() {}
+	virtual ~CEquipmentComponent() {}
 
-	// CEquipmentComponent
-	CEquipmentComponent() {};
-	virtual ~CEquipmentComponent() {};
+	static void ReflectType(Schematyc::CTypeDesc<CEquipmentComponent>& desc);
 
-	struct SExternalCVars
+	static CryGUID& IID()
 	{
-		int m_debug;
-	};
-	const SExternalCVars &GetCVars() const;
+		static CryGUID id = "{E288AB46-CC70-46C4-8264-6D4E8F0D832C}"_cry_guid;
+		return id;
+	}
 
 	// Called on entity spawn, or when the state of the entity changes in Editor
-	void OnResetState() override;
-
-private:
+	virtual void OnResetState();
 };
+}

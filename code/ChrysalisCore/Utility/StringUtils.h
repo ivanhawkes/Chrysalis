@@ -8,9 +8,10 @@
    and contents of StringUtils.cpp into CryEngine/CryCommon/StringUtils.cpp
 *************************************************************************/
 
-#ifndef __STRING_UTILS_H__
-#define __STRING_UTILS_H__
+#pragma once
 
+namespace Chrysalis
+{
 //--------------------------------------------------------------------------------
 // cry_copyStringUntilFindChar: Parameter order is the same as strncpy;
 // additional 'until' parameter defines which additional character should
@@ -66,5 +67,4 @@ and seconds.
 \param [in,out]    seconds    The seconds.
 */
 static void ExpandTimeSeconds(int secs, int& days, int& hours, int& minutes, int& seconds);
-
-#endif // __STRING_UTILS_H__
+}

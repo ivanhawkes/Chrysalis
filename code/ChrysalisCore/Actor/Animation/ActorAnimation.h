@@ -3,6 +3,8 @@
 #include <Animation/Animation.h>
 
 
+namespace Chrysalis
+{
 enum EActorActionPriority
 {
 	eAAP_Lowest,
@@ -24,7 +26,6 @@ enum EActorActionPriority
 	f( LadderGetOn ) \
 	f( LadderGetOff ) \
 	f( LadderClimb ) \
-	f( LedgeGrab ) \
 	//f( MotionIdle ) \
 	//f( MotionTurn ) \
 	//f( MotionMovement ) \
@@ -111,24 +112,11 @@ enum EActorActionPriority
 #define MAN_MELEEPOLE_FRAGMENT_TAGS( f ) \
 	//f( SecondSwing )
 
-#define MAN_LEDGEGRAB_FRAGMENT_TAGS( f ) \
-	f( Floor ) \
-	f( Fall ) \
-	f( Ledge ) \
-	f( Vault ) \
-	f( Quick ) \
-	f( Up ) \
-	f( Over ) \
-	f( Drop ) \
-	f( EndCrouched ) \
-	f( FloorSprint ) \
-	f( High )
-
 #define MAN_ACTOR_FRAGMENT_TAGS( f ) \
 	f( melee, MAN_MELEEPOLE_FRAGMENT_TAGS, MANNEQUIN_USER_PARAMS__EMPTY_LIST ) \
 	f( melee_multipart, MAN_MELEE_FRAGMENT_TAGS, MANNEQUIN_USER_PARAMS__EMPTY_LIST ) \
-	f( ledgeGrab, MAN_LEDGEGRAB_FRAGMENT_TAGS, MANNEQUIN_USER_PARAMS__EMPTY_LIST ) \
 
 MANNEQUIN_USER_PARAMS(SActorMannequinParams, MAN_ACTOR_FRAGMENTS, MAN_ACTOR_TAGS, MAN_ACTOR_TAG_GROUPS, MAN_ACTOR_SCOPES, MAN_ACTOR_CONTEXTS, MAN_ACTOR_FRAGMENT_TAGS);
 
 extern SActorMannequinParams g_actorMannequinParams;
+}

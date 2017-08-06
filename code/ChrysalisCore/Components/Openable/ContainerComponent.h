@@ -1,9 +1,12 @@
 #pragma once
 
-#include "Helpers/DesignerEntityComponent.h"
 #include "Entities/Interaction/IEntityInteraction.h"
+#include <DefaultComponents/Geometry/StaticMeshComponent.h>
 
-class CGeometryComponent;
+class Cry::DefaultComponents::CStaticMeshComponent;
+
+namespace Chrysalis
+{
 class CSimpleAnimationComponent;
 class CLockableComponent;
 class CEntityInteractionComponent;
@@ -11,25 +14,31 @@ class CEntityInteractionComponent;
 /**
 A container extension.
 
-\sa IEntityComponent
-\sa IEntityPropertyGroup
-\sa IInteractionContainer
-\sa IInteractionLockable
 **/
-class CContainerComponent : public CDesignerEntityComponent<>, public IEntityPropertyGroup, public IInteractionOpenable, public IInteractionLockable
+class CContainerComponent
+	: public IEntityComponent
+	, public IInteractionOpenable
+	, public IInteractionLockable
 {
-	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CContainerComponent, "Container", 0x6FE7D7D95B364222, 0xB235D9C3207C8956)
+protected:
+	friend CChrysalisCorePlugin;
+	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
 
-public:
 	// IEntityComponent
 	void Initialize() override;
-	struct IEntityPropertyGroup* GetPropertyGroup() override { return this; }
 	// ~IEntityComponent
 
-	// IEntityPropertyGroup
-	const char* GetLabel() const override { return "Container Properties"; };
-	void SerializeProperties(Serialization::IArchive& archive) override;
-	// ~IEntityPropertyGroup
+public:
+	CContainerComponent() {}
+	virtual ~CContainerComponent() {}
+
+	static void ReflectType(Schematyc::CTypeDesc<CContainerComponent>& desc);
+
+	static CryGUID& IID()
+	{
+		static CryGUID id = "{494F4D75-02A8-4A53-83E4-153D0D45CEEB}"_cry_guid;
+		return id;
+	}
 
 	// IInteractionOpenable
 	void OnInteractionOpenableOpen() override { gEnv->pLog->LogAlways("OnInteractionOpenableOpen fired."); };
@@ -41,22 +50,12 @@ public:
 	void OnInteractionLockableUnlock() override { gEnv->pLog->LogAlways("OnInteractionLockableUnlock fired."); };
 	// ~IInteractionLockable
 
-	// CContainerComponent
-	CContainerComponent() {};
-	virtual ~CContainerComponent() {};
-
-	struct SExternalCVars
-	{
-		int m_debug;
-	};
-	const SExternalCVars &GetCVars() const;
-
 	// Called on entity spawn, or when the state of the entity changes in Editor
-	void OnResetState() override;
+	virtual void OnResetState();
 
 private:
 	/** Model for the geometry. */
-	CGeometryComponent* m_pGeometryComponent { nullptr };
+	Cry::DefaultComponents::CStaticMeshComponent* m_pGeometryComponent { nullptr };
 
 	/** Animation for the geometry. */
 	CSimpleAnimationComponent* m_pSimpleAnimationComponent { nullptr };
@@ -67,3 +66,4 @@ private:
 	/** This entity should be interactive. */
 	CEntityInteractionComponent* m_interactor { nullptr };
 };
+}

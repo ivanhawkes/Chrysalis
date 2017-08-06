@@ -1,6 +1,8 @@
 #pragma once
 
-class CCharacter;
+namespace Chrysalis
+{
+class CCharacterComponent;
 struct SActorMovementRequest;
 
 
@@ -9,14 +11,15 @@ class CCharacterStateFly
 public:
 	CCharacterStateFly();
 
-	void OnEnter(CCharacter& Character);
-	bool OnPrePhysicsUpdate(CCharacter& Character, const SActorMovementRequest& movementRequest, float frameTime);
-	void OnExit(CCharacter& Character);
+	void OnEnter(CCharacterComponent& Character);
+	bool OnPrePhysicsUpdate(CCharacterComponent& Character, const SActorMovementRequest& movementRequest, float frameTime);
+	void OnExit(CCharacterComponent& Character);
 
 private:
 
 	uint8 m_flyMode;
 	float m_flyModeDisplayTime;
-	void ProcessFlyMode(CCharacter& Character, const SActorMovementRequest& movementRequest);
+	void ProcessFlyMode(CCharacterComponent& Character, const SActorMovementRequest& movementRequest);
 
 };
+}

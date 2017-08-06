@@ -1,0 +1,15 @@
+<AssetMetadata version="0" type="SkinnedMesh" guid="{62817336-C30D-E18E-601F-5476D1902946}">
+ <Files>
+  <File path="chloe_shoes.skin"/>
+ </Files>
+ <Details>
+  <Detail name="materialCount">3</Detail>
+  <Detail name="triangleCount">2144</Detail>
+  <Detail name="vertexCount">1633</Detail>
+  <Detail name="16BitPrecision">false</Detail>
+  <Detail name="bonesCount">11</Detail>
+ </Details>
+ <Dependencies>
+  <Path>5/chloe.mtl</Path>
+ </Dependencies>
+</AssetMetadata>

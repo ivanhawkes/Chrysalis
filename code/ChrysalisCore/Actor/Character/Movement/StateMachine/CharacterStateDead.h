@@ -1,9 +1,12 @@
 #pragma once
 
-class CCharacter;
+class CCharacterComponent;
 class CCharacterStateMachine;
-struct SActorMovementRequest;
 
+
+namespace Chrysalis
+{
+struct SActorMovementRequest;
 
 class CCharacterStateDead
 {
@@ -23,16 +26,17 @@ public:
 	CCharacterStateDead();
 	~CCharacterStateDead();
 
-	void OnEnter(CCharacter& Character);
-	void OnLeave(CCharacter& Character);
-	void OnPrePhysicsUpdate(CCharacter& Character, const SActorMovementRequest& movementRequest, float frameTime);
-	void OnUpdate(CCharacter& Character, const CCharacterStateDead::UpdateCtx& updateCtx);
+	void OnEnter(CCharacterComponent& Character);
+	void OnLeave(CCharacterComponent& Character);
+	void OnPrePhysicsUpdate(CCharacterComponent& Character, const SActorMovementRequest& movementRequest, float frameTime);
+	void OnUpdate(CCharacterComponent& Character, const CCharacterStateDead::UpdateCtx& updateCtx);
 	void Serialize(TSerialize& serializer);
 
 protected:
-	void UpdateAICorpseStatus(CCharacter& Character, const CCharacterStateDead::UpdateCtx& updateCtx);
+	void UpdateAICorpseStatus(CCharacterComponent& Character, const CCharacterStateDead::UpdateCtx& updateCtx);
 
 private:
 	float m_swapToCorpseTimeout;
 	EAICorpseUpdateStatus m_corpseUpdateStatus;
 };
+}

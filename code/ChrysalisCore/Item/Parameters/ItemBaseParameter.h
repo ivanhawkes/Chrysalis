@@ -5,7 +5,8 @@
 
 class XmlNodeRef;
 
-
+namespace Chrysalis
+{
 struct SItemBaseParameter : public ISharedParams
 {
 	SHARED_PARAMS_BODY(SItemBaseParameter);
@@ -103,14 +104,6 @@ struct SItemBaseParameter : public ISharedParams
 
 
 	// ***
-	// *** Ledges
-	// ***
-
-	/** Can this entity perform a ledge grab? */
-	bool canLedgeGrab { false };
-
-
-	// ***
 	// *** Character attachment and animation / sound.
 	// ***
 
@@ -189,7 +182,7 @@ struct SItemBaseParameter : public ISharedParams
 
 
 	/** Resets this object to it's default state. */
-	void OnResetState();
+	virtual void OnResetState();
 
 	/**
 	Reads the given node.
@@ -202,3 +195,4 @@ struct SItemBaseParameter : public ISharedParams
 };
 
 DECLARE_SHARED_POINTERS(SItemBaseParameter);
+}

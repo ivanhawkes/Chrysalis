@@ -2,36 +2,27 @@
 
 #include "CharacterAttributesComponent.h"
 
-CRYREGISTER_CLASS(CCharacterAttributesComponent)
 
-
-class CCharacterAttributesExtensionRegistrator : public IEntityRegistrator, public CCharacterAttributesComponent::SExternalCVars
+namespace Chrysalis
 {
-	virtual void Register() override
-	{
-		RegisterEntityWithDefaultComponent<CCharacterAttributesComponent>("CharacterAttributes", "Character Attributes", "door.bmp");
-
-		RegisterCVars();
-	}
-
-	void RegisterCVars()
-	{
-		REGISTER_CVAR2("entity_CharacterAttributes_Debug", &m_debug, 0, VF_CHEAT, "Allow debug display.");
-	}
-};
-
-CCharacterAttributesExtensionRegistrator g_CharacterAttributesExtensionRegistrator;
-
-const CCharacterAttributesComponent::SExternalCVars& CCharacterAttributesComponent::GetCVars() const
+void CCharacterAttributesComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
 {
-	return g_CharacterAttributesExtensionRegistrator;
+}
+
+
+void CCharacterAttributesComponent::ReflectType(Schematyc::CTypeDesc<CCharacterAttributesComponent>& desc)
+{
+	desc.SetGUID(CCharacterAttributesComponent::IID());
+	desc.SetEditorCategory("Character Attributes");
+	desc.SetLabel("Character Attributes");
+	desc.SetDescription("No description.");
+	desc.SetIcon("icons:ObjectTypes/light.ico");
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
 }
 
 
 void CCharacterAttributesComponent::Initialize()
 {
-	auto pEntity = GetEntity();
-
 	OnResetState();
 }
 
@@ -39,12 +30,4 @@ void CCharacterAttributesComponent::Initialize()
 void CCharacterAttributesComponent::OnResetState()
 {
 }
-
-
-void CCharacterAttributesComponent::SerializeProperties(Serialization::IArchive& archive)
-{
-	if (archive.isInput())
-	{
-		OnResetState();
-	}
 }

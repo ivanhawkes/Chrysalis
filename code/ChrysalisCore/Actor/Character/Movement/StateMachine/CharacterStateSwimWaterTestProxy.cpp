@@ -7,6 +7,8 @@
 /*#include "CharacterRotation.h"*/
 
 
+namespace Chrysalis
+{
 float CCharacterStateSwimWaterTestProxy::s_rayLength = 10.f;
 
 CCharacterStateSwimWaterTestProxy::CCharacterStateSwimWaterTestProxy()
@@ -57,7 +59,7 @@ void CCharacterStateSwimWaterTestProxy::Reset(bool bCancelRays)
 }
 
 
-void CCharacterStateSwimWaterTestProxy::OnEnterWater(const CCharacter& Character)
+void CCharacterStateSwimWaterTestProxy::OnEnterWater(const CCharacterComponent& Character)
 {
 	// Force refresh water level (needed for serialization, when state is forced when loading a saved game).
 	const Matrix34& CharacterWorldTM = Character.GetEntity()->GetWorldTM();
@@ -73,13 +75,13 @@ void CCharacterStateSwimWaterTestProxy::OnEnterWater(const CCharacter& Character
 }
 
 
-void CCharacterStateSwimWaterTestProxy::OnExitWater(const CCharacter& Character)
+void CCharacterStateSwimWaterTestProxy::OnExitWater(const CCharacterComponent& Character)
 {
 	Reset(true);
 }
 
 
-void CCharacterStateSwimWaterTestProxy::Update(const CCharacter& Character, const float frameTime)
+void CCharacterStateSwimWaterTestProxy::Update(const CCharacterComponent& Character, const float frameTime)
 {
 	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
 
@@ -123,7 +125,7 @@ void CCharacterStateSwimWaterTestProxy::Update(const CCharacter& Character, cons
 }
 
 
-void CCharacterStateSwimWaterTestProxy::ForceUpdateBottomLevel(const CCharacter& Character)
+void CCharacterStateSwimWaterTestProxy::ForceUpdateBottomLevel(const CCharacterComponent& Character)
 {
 	if (!IsWaitingForBottomLevelResults())
 	{
@@ -132,7 +134,7 @@ void CCharacterStateSwimWaterTestProxy::ForceUpdateBottomLevel(const CCharacter&
 }
 
 
-void CCharacterStateSwimWaterTestProxy::PreUpdateNotSwimming(const CCharacter& Character, const float frameTime)
+void CCharacterStateSwimWaterTestProxy::PreUpdateNotSwimming(const CCharacterComponent& Character, const float frameTime)
 {
 	const float submergedThreshold = 0.25f;
 	m_lastInternalState = m_internalState;
@@ -140,14 +142,14 @@ void CCharacterStateSwimWaterTestProxy::PreUpdateNotSwimming(const CCharacter& C
 }
 
 
-void CCharacterStateSwimWaterTestProxy::PreUpdateSwimming(const CCharacter& Character, const float frameTime)
+void CCharacterStateSwimWaterTestProxy::PreUpdateSwimming(const CCharacterComponent& Character, const float frameTime)
 {
 	m_lastInternalState = m_internalState;
 	m_internalState = eProxyInternalState_Swimming;
 }
 
 
-void CCharacterStateSwimWaterTestProxy::UpdateOutOfWater(const CCharacter& Character, const float frameTime)
+void CCharacterStateSwimWaterTestProxy::UpdateOutOfWater(const CCharacterComponent& Character, const float frameTime)
 {
 	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
 
@@ -174,7 +176,7 @@ void CCharacterStateSwimWaterTestProxy::UpdateOutOfWater(const CCharacter& Chara
 }
 
 
-void CCharacterStateSwimWaterTestProxy::UpdateInWater(const CCharacter& Character, const float frameTime)
+void CCharacterStateSwimWaterTestProxy::UpdateInWater(const CCharacterComponent& Character, const float frameTime)
 {
 	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
 
@@ -240,7 +242,7 @@ void CCharacterStateSwimWaterTestProxy::UpdateSubmergedFraction(const float refe
 {
 	const float referenceHeightFinal = max(referenceHeight, 1.3f);
 	const float submergedTotal = CharacterHeight - waterLevel;
-	const float submergedFraction = (float) __fsel(submergedTotal, 0.0f, clamp_tpl(-submergedTotal * __fres(referenceHeightFinal), 0.0f, 1.0f));
+	const float submergedFraction = (float)__fsel(submergedTotal, 0.0f, clamp_tpl(-submergedTotal * __fres(referenceHeightFinal), 0.0f, 1.0f));
 
 	SetSubmergedFraction(submergedFraction);
 }
@@ -269,7 +271,7 @@ bool CCharacterStateSwimWaterTestProxy::ShouldSwim(const float referenceHeight) 
 }
 
 
-Vec3 CCharacterStateSwimWaterTestProxy::GetLocalReferencePosition(const CCharacter& Character)
+Vec3 CCharacterStateSwimWaterTestProxy::GetLocalReferencePosition(const CCharacterComponent& Character)
 {
 	/*const float CAMERA_SURFACE_OFFSET = -0.2f;
 
@@ -319,7 +321,7 @@ void CCharacterStateSwimWaterTestProxy::OnRayCastBottomLevelDataReceived(const Q
 }
 
 
-void CCharacterStateSwimWaterTestProxy::RayTestBottomLevel(const CCharacter& Character, const Vec3& referencePosition, float maxRelevantDepth)
+void CCharacterStateSwimWaterTestProxy::RayTestBottomLevel(const CCharacterComponent& Character, const Vec3& referencePosition, float maxRelevantDepth)
 {
 	/*	FUNCTION_PROFILER (gEnv->pSystem, PROFILE_GAME);
 
@@ -366,7 +368,7 @@ void CCharacterStateSwimWaterTestProxy::UpdateWaterLevel(const Vec3& worldRefere
 
 
 #ifdef STATE_DEBUG
-void CCharacterStateSwimWaterTestProxy::DebugDraw(const CCharacter& Character, const Vec3& referencePosition)
+void CCharacterStateSwimWaterTestProxy::DebugDraw(const CCharacterComponent& Character, const Vec3& referencePosition)
 {
 	// DEBUG RENDERING
 	/*const SActorStats& stats = *Character.GetActorState ();
@@ -414,3 +416,4 @@ void CCharacterStateSwimWaterTestProxy::DebugDraw(const CCharacter& Character, c
 	}*/
 }
 #endif
+}

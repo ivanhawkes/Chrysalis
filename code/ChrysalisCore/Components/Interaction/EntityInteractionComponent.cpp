@@ -1,34 +1,27 @@
 #include <StdAfx.h>
 
 #include "EntityInteractionComponent.h"
-#include <Player/Player.h>
+#include <Components/Player/Player.h>
 
 
-CRYREGISTER_CLASS(CEntityInteractionComponent)
-
-
-class CEntityInteractionRegistrator
-	: public IEntityRegistrator
-	, public CEntityInteractionComponent::SExternalCVars
+namespace Chrysalis
 {
-	virtual void Register() override
-	{
-		RegisterEntityWithDefaultComponent<CEntityInteractionComponent>("EntityInteraction", "Entities");
+void CEntityInteractionComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+{
+}
 
-		// This should make the entity class invisible in the editor.
-		auto cls = gEnv->pEntitySystem->GetClassRegistry()->FindClass("EntityInteraction");
-		cls->SetFlags(cls->GetFlags() | ECLF_INVISIBLE);
 
-		RegisterCVars();
-	}
+void CEntityInteractionComponent::ReflectType(Schematyc::CTypeDesc<CEntityInteractionComponent>& desc)
+{
+	desc.SetGUID(CEntityInteractionComponent::IID());
+	desc.SetEditorCategory("Entities");
+	desc.SetLabel("Entity Interaction");
+	desc.SetDescription("Allow interaction with this entity.");
+	desc.SetIcon("icons:ObjectTypes/light.ico");
 
-	void RegisterCVars()
-	{
-		REGISTER_CVAR2("entity_interaction_Debug", &m_debug, 0, VF_CHEAT, "Allow debug display.");
-	}
-};
-
-CEntityInteractionRegistrator g_entityInteractionRegistrator;
+	// TODO: Do we need a transform for this? Likely not.
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+}
 
 
 // ***
@@ -38,8 +31,6 @@ CEntityInteractionRegistrator g_entityInteractionRegistrator;
 
 void CEntityInteractionComponent::Initialize()
 {
-	// Required for 5.3 to call update.
-	GetEntity()->Activate(true);
 }
 
 
@@ -54,26 +45,17 @@ void CEntityInteractionComponent::ProcessEvent(SEntityEvent& event)
 }
 
 
-void CEntityInteractionComponent::SerializeProperties(Serialization::IArchive& archive)
-{
-	//if (archive.isInput())
-	//{
-	//	OnResetState();
-	//}
-}
-
-
 void CEntityInteractionComponent::Update()
 {
 	// #TODO: Remove this if it's not actually needed.
-	auto pEntity = GetEntity();
+	const auto pEntity = GetEntity();
 	if (!pEntity)
 		return;
 
 	// NOTE: the thinking now is to just use the update on the extension instead.
 	//if (m_selectedInteraction)
 	//{
-	//	auto pPlayer = CPlayer::GetLocalPlayer();
+	//	auto pPlayer = CPlayerComponent::GetLocalPlayer();
 	//	if (pPlayer)
 	//	{
 	//		auto pPlayerInput = pPlayer->GetPlayerInput();
@@ -97,7 +79,7 @@ void CEntityInteractionComponent::AddInteraction(IInteractionPtr interaction)
 void CEntityInteractionComponent::RemoveInteraction(string verb)
 {
 	m_Interactions.erase(std::remove_if(m_Interactions.begin(), m_Interactions.end(),
-		[&] (IInteractionPtr i) { return i->GetVerb().compare(verb) == 0; }),
+		[&](IInteractionPtr i) { return i->GetVerb().compare(verb) == 0; }),
 		m_Interactions.end());
 }
 
@@ -181,9 +163,4 @@ void CEntityInteractionComponent::OnInteractionCancel()
 		m_selectedInteraction->OnInteractionCancel();
 	}
 }
-
-
-const CEntityInteractionComponent::SExternalCVars& CEntityInteractionComponent::GetCVars() const
-{
-	return g_entityInteractionRegistrator;
 }

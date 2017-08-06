@@ -4,6 +4,8 @@
 #include <Actor/Animation/ActorAnimation.h>
 
 
+namespace Chrysalis
+{
 class CActorAnimationActionAimPose : public CAnimationAction
 {
 public:
@@ -23,3 +25,4 @@ private:
 	void InitialiseAimPoseBlender();
 	static FragmentID FindFragmentId(const SAnimationContext& context);
 };
+}

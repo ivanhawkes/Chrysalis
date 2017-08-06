@@ -15,6 +15,8 @@ development. */
 #include <CryMath/Random.h>
 
 
+namespace Chrysalis
+{
 class CFate
 {
 public:
@@ -68,3 +70,4 @@ private:
 	/** The fate seed. */
 	uint64 m_fate { 0 };
 };
+}

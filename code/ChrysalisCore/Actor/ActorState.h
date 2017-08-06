@@ -13,6 +13,10 @@ Provides a place to store the present state of an actor.
 #include <IAnimationGraph.h>
 
 
+struct IVehicle;
+
+namespace Chrysalis
+{
 typedef TBitfield TActorStatusFlags;
 
 // #TODO: can this just be a regular enum?
@@ -23,7 +27,6 @@ typedef TBitfield TActorStatusFlags;
 	func(kActorStatus_stealthKilled)            \
 	func(kActorStatus_attemptingStealthKill)    \
 	func(kActorStatus_pickAndThrow)             \
-	func(kActorStatus_vaultLedge)               \
 	func(kActorStatus_swimming)                 \
 	func(kActorStatus_linkedToVehicle)          \
 
@@ -137,8 +140,6 @@ private:
 
 // #TODO: Not sure these declarations are really suitable for this header. Look into a better organisation.
 // #TODO: Isn't this better named as SLinkStates?
-
-struct IVehicle;
 
 /** Provides a method of tracking if an actor is linked to another entity, and which entity. */
 struct SLinkStats
@@ -287,3 +288,4 @@ struct SActorMovementRequest
 	/** Make a request for cover. */
 	SAICoverRequest coverRequest;
 };
+}

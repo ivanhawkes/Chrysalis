@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="{DB712586-FE68-E31C-4C8E-DACEA839D772}">
+ <Files>
+  <File path="empty.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">EnvironmentPreset</Detail>
+ </Details>
+</AssetMetadata>

@@ -7,6 +7,10 @@
    <Detail name="materialCount">16</Detail>
    <Detail name="triangleCount">164</Detail>
    <Detail name="vertexCount">316</Detail>
+   <Detail name="16BitPrecision">false</Detail>
   </Details>
+  <Dependencies>
+   <Path>./security_pad.mtl</Path>
+  </Dependencies>
  </AssetMetadata>
 </cryasset>

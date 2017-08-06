@@ -7,6 +7,10 @@
    <Detail name="materialCount">3</Detail>
    <Detail name="triangleCount">306</Detail>
    <Detail name="vertexCount">375</Detail>
+   <Detail name="16BitPrecision">false</Detail>
   </Details>
+  <Dependencies>
+   <Path>./Switch.mtl</Path>
+  </Dependencies>
  </AssetMetadata>
 </cryasset>

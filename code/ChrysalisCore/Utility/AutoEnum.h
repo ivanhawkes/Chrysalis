@@ -10,8 +10,10 @@
 
 *************************************************************************/
 
-#ifndef __AUTOENUM_H__
-#define __AUTOENUM_H__
+#pragma once
+
+namespace Chrysalis
+{
 
 typedef uint32 TBitfield;
 
@@ -40,5 +42,4 @@ string AutoEnum_GetStringFromBitfield(TBitfield bitfield, const char** inArray, 
 #else
 #define AutoEnum_GetStringFromBitfield PLEASE_ONLY_CALL_AutoEnum_GetStringFromBitfield_IN_DEBUG_CODE
 #endif
-
-#endif // __AUTOENUM_H__
+}

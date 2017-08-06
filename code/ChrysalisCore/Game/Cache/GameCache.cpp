@@ -7,11 +7,8 @@
 #include <CryString/StringUtils.h>
 
 
-// ***
-// *** CGameCache
-// ***
-
-
+namespace Chrysalis
+{
 CGameCache::CGameCache()
 {}
 
@@ -56,14 +53,14 @@ bool CGameCache::AddCachedCharacterFileModel(const ECharacterFileModelCacheType 
 	uint32 fileNameHash = 0;
 	bool bCached = IsCharacterFileModelCached(szFileName, fileNameHash);
 
-	if (!bCached && szFileName && szFileName[0])
+	if (!bCached && szFileName && szFileName [0])
 	{
 		if (gEnv->IsEditor())
 		{
 			ICharacterInstance *pCachedInstance = gEnv->pCharacterManager->CreateInstance(szFileName);
 			if (pCachedInstance)
 			{
-				m_editorCharacterFileModelCache[type].insert(TEditorCharacterFileModelCache::value_type(fileNameHash, TCharacterInstancePtr(pCachedInstance)));
+				m_editorCharacterFileModelCache [type].insert(TEditorCharacterFileModelCache::value_type(fileNameHash, TCharacterInstancePtr(pCachedInstance)));
 				bCached = true;
 			}
 		}
@@ -84,16 +81,16 @@ ILINE bool CGameCache::IsCharacterFileModelCached(const char* szFileName, uint32
 {
 	outputFileNameHash = 0;
 
-	if (szFileName && szFileName[0])
+	if (szFileName && szFileName [0])
 	{
 		outputFileNameHash = CCrc32::Compute(szFileName);
 		if (gEnv->IsEditor())
 		{
 			for (uint32 i = eCFMCache_Default; i < eCFMCache_COUNT; ++i)
 			{
-				TEditorCharacterFileModelCache::const_iterator itCache = m_editorCharacterFileModelCache[i].find(outputFileNameHash);
+				TEditorCharacterFileModelCache::const_iterator itCache = m_editorCharacterFileModelCache [i].find(outputFileNameHash);
 
-				if (itCache == m_editorCharacterFileModelCache[i].end())
+				if (itCache == m_editorCharacterFileModelCache [i].end())
 					continue;
 
 				return true;
@@ -112,7 +109,7 @@ ILINE bool CGameCache::IsCharacterFileModelCached(const char* szFileName, uint32
 
 void CGameCache::CacheGeometry(const char* geometryFileName)
 {
-	const bool validName = (geometryFileName && geometryFileName[0]);
+	const bool validName = (geometryFileName && geometryFileName [0]);
 	if (validName)
 	{
 		stack_string ext(PathUtil::GetExt(geometryFileName));
@@ -145,7 +142,7 @@ void CGameCache::CacheGeometry(const char* geometryFileName)
 
 void CGameCache::CacheTexture(const char* textureFileName, const int textureFlags)
 {
-	const bool validName = (textureFileName && textureFileName[0]);
+	const bool validName = (textureFileName && textureFileName [0]);
 
 	if (validName)
 	{
@@ -171,7 +168,7 @@ void CGameCache::CacheTexture(const char* textureFileName, const int textureFlag
 
 void CGameCache::CacheMaterial(const char* materialFileName)
 {
-	const bool validName = (materialFileName && materialFileName[0]);
+	const bool validName = (materialFileName && materialFileName [0]);
 
 	if (validName)
 	{
@@ -191,7 +188,7 @@ void CGameCache::CacheMaterial(const char* materialFileName)
 
 CGameCache::TMaterialSmartPtr CGameCache::GetMaterial(const char* materialFileName) const
 {
-	const bool validName = (materialFileName && materialFileName[0]);
+	const bool validName = (materialFileName && materialFileName [0]);
 
 	if (validName)
 	{
@@ -212,7 +209,7 @@ CGameCache::TMaterialSmartPtr CGameCache::GetMaterial(const char* materialFileNa
 
 void CGameCache::CacheParticleEffect(const char* particleEffectFileName)
 {
-	const bool validName = (particleEffectFileName && particleEffectFileName[0]);
+	const bool validName = (particleEffectFileName && particleEffectFileName [0]);
 
 	if (validName)
 	{
@@ -232,7 +229,7 @@ void CGameCache::CacheParticleEffect(const char* particleEffectFileName)
 
 CGameCache::TParticleEffectSmartPtr CGameCache::GetParticleEffect(const char* particleEffectFileName) const
 {
-	const bool validName = (particleEffectFileName && particleEffectFileName[0]);
+	const bool validName = (particleEffectFileName && particleEffectFileName [0]);
 
 	if (validName)
 	{
@@ -243,4 +240,5 @@ CGameCache::TParticleEffectSmartPtr CGameCache::GetParticleEffect(const char* pa
 	}
 
 	return nullptr;
+}
 }

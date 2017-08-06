@@ -11,6 +11,8 @@ all the base sounds you'd expect every actor to require.
 #include <CryCore/BaseTypes.h>
 
 
+namespace Chrysalis
+{
 struct SActorAnimationEvents
 {
 	SActorAnimationEvents()
@@ -55,3 +57,4 @@ struct SActorAnimationEvents
 private:
 	bool m_initialized;
 };
+}

@@ -3,6 +3,10 @@
   <Files>
    <File path="maglite_02d_spec.dds"/>
   </Files>
-  <Details />
+  <Details>
+   <Detail name="width">1024</Detail>
+   <Detail name="height">1024</Detail>
+   <Detail name="mipCount">9</Detail>
+  </Details>
  </AssetMetadata>
 </cryasset>

@@ -2,9 +2,9 @@
 
 class XmlNodeRef;
 
-
+namespace Chrysalis
+{
 // #TODO: Dig into the code to find out what this does.
-
 enum eGeometrySlot
 {
 	eIGS_FirstPerson = 0,
@@ -28,34 +28,34 @@ public:
 	CItemGeometryParameter();
 	~CItemGeometryParameter();
 
-	
+
 	/** Full pathname of the model file. */
 	string modelPath;
 
 	/** The material. */
 	string material;
-	
+
 	/** The position. */
 	Vec3 position { Vec3(0.0f, 0.0f, 0.0f) };
-	
+
 	/** The angles. */
-	Ang3 angles { Ang3 (0.0f, 0.0f, 0.0f) };
-	
+	Ang3 angles { Ang3(0.0f, 0.0f, 0.0f) };
+
 	/** The scale. */
 	float scale { 1.0f };
-	
+
 	/** The slot. */
 	int slot { eGeometrySlot::eIGS_Last };
-	
+
 	/** true to use CGF streaming. */
 	bool useCgfStreaming { false };
-	
+
 	/** true to use parent material. */
 	bool useParentMaterial { false };
 
 
 	/** Resets this object to it's default state. */
-	void OnResetState();
+	virtual void OnResetState();
 
 	/**
 	Reads the given node.
@@ -66,4 +66,4 @@ public:
 	*/
 	bool Read(const XmlNodeRef& node);
 };
-
+}

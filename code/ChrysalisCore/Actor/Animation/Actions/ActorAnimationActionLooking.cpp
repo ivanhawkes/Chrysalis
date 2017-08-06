@@ -3,6 +3,8 @@
 #include "ActorAnimationActionLooking.h"
 
 
+namespace Chrysalis
+{
 #define LOOKING_FRAGMENTS( x ) \
 	x( Looking )
 
@@ -66,4 +68,5 @@ bool CActorAnimationActionLooking::IsSupported(const SAnimationContext& context)
 	const FragmentID fragmentId = FindFragmentId(context);
 	const bool isSupported = (fragmentId != FRAGMENT_ID_INVALID);
 	return isSupported;
+}
 }

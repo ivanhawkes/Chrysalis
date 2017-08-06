@@ -4,6 +4,8 @@
 #include <Actor/Actor.h>
 
 
+namespace Chrysalis
+{
 CActorAnimationActionCooperative::CActorAnimationActionCooperative(CActor &sourceActor, EntityId targetEntityId, FragmentID fragmentID, TagState tagState, TagID targetTagID, const IAnimationDatabase* pTargetOptionalDatabase)
 	: CAnimationAction(EActorActionPriority::eAAP_ActionUrgent, fragmentID, tagState),
 	m_sourceActor(sourceActor),
@@ -39,7 +41,7 @@ CActorAnimationActionCooperative::~CActorAnimationActionCooperative()
 void CActorAnimationActionCooperative::Install()
 {
 	CAnimationAction::Install();
-	
+
 	AddTargetToSlaveContext();
 }
 
@@ -57,7 +59,7 @@ void CActorAnimationActionCooperative::Enter()
 		pAnimChar->SetMovementControlMethods(eMCM_Animation, eMCM_Animation);
 		pAnimChar->RequestPhysicalColliderMode(eColliderMode_Disabled, eColliderModeLayer_Game, "CActorAnimationActionCooperative::Enter()");
 	}
-	
+
 	if (m_pTargetActor)
 	{
 		if (auto pAnimCharTarget = m_pTargetActor->GetAnimatedCharacter())
@@ -81,7 +83,7 @@ void CActorAnimationActionCooperative::Exit()
 		pAnimChar->ForceRefreshPhysicalColliderMode();
 		pAnimChar->RequestPhysicalColliderMode(eColliderMode_Undefined, eColliderModeLayer_Game, "CActorAnimationActionCooperative::Exit()");
 	}
-	
+
 	if (m_pTargetActor)
 	{
 		if (auto pAnimCharTarget = m_pTargetActor->GetEntityId() ? m_pTargetActor->GetAnimatedCharacter() : nullptr)
@@ -135,7 +137,7 @@ void CActorAnimationActionCooperative::AddTargetToSlaveContext()
 	if (const auto pSourceActionController = m_sourceActor.GetActionController())
 	{
 		IActionController* pTargetActionController { nullptr };
-		
+
 		// Check which way we will enslave the target actor.
 		if ((m_pTargetActor) && (pTargetActionController = m_pTargetActor->GetActionController()))
 		{
@@ -184,7 +186,8 @@ void CActorAnimationActionCooperative::RemoveTargetFromSlaveContext()
 
 void CActorAnimationActionCooperative::SendStateEventCoopAnim()
 {
-	// TODO: We have moved the state machine for movement up to derived classes, like CCharacter. I need to investigate this code
+	// TODO: We have moved the state machine for movement up to derived classes, like CCharacterComponent. I need to investigate this code
 	// to determine if it's needed, and if so, add a method(s) to IActor to fire off events like these.
 	//m_sourceActor.StateMachineHandleEventMovement(SStateEventCoopAnim(m_targetEntityId));
+}
 }

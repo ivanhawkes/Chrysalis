@@ -3,32 +3,27 @@
 #include "LockableComponent.h"
 
 
-CRYREGISTER_CLASS(CLockableComponent)
-
-
-class CLockableExtensionRegistrator : public IEntityRegistrator
+namespace Chrysalis
 {
-	virtual void Register() override
-	{
-		// Register the entity class.
-		RegisterEntityWithDefaultComponent<CLockableComponent>("Lockable", "Locks", "door.bmp");
-	}
-};
-
-CLockableExtensionRegistrator g_LockableExtensionRegistrator;
-
-
-void CLockableComponent::SerializeProperties(Serialization::IArchive& archive)
+void CLockableComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
 {
-	archive(m_isLocked, "IsLocked", "IsLocked");
+}
 
-	if (archive.isInput())
-	{
-		OnResetState();
-	}
+
+void CLockableComponent::ReflectType(Schematyc::CTypeDesc<CLockableComponent>& desc)
+{
+	desc.SetGUID(CLockableComponent::IID());
+	desc.SetEditorCategory("Locks");
+	desc.SetLabel("Lockable");
+	desc.SetDescription("No description.");
+	desc.SetIcon("icons:ObjectTypes/door.ico");
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+
+	desc.AddMember(&CLockableComponent::m_isLocked, 'lock', "IsLocked", "Is Locked?", "Is this locked?", true);
 }
 
 
 void CLockableComponent::OnResetState()
 {
+}
 }

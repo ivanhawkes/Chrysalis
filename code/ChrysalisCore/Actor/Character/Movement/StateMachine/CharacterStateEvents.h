@@ -4,6 +4,8 @@
 #include <Actor/Movement/StateMachine/ActorStateEvents.h>
 
 
+namespace Chrysalis
+{
 class CActor;
 class CMelee;
 
@@ -43,10 +45,6 @@ enum ECharacterStateEvent
 	///< Play or stop a cut-scene for this character.
 	CHARACTER_EVENT_CUTSCENE,
 
-	// Spectators.
-	//CHARACTER_EVENT_SPECTATE,
-	//CHARACTER_EVENT_RESET_SPECTATOR_SCREEN,
-
 	// Button mashing.
 	//CHARACTER_EVENT_BUTTONMASHING_SEQUENCE,
 	//CHARACTER_EVENT_BUTTONMASHING_SEQUENCE_END,
@@ -76,7 +74,7 @@ struct SStateEventLadder : public SStateEvent
 		AddData(pLadder);
 	}
 
-	IEntity* GetLadder() const { return (IEntity*) (GetData(0).GetPtr()); }
+	IEntity* GetLadder() const { return (IEntity*)(GetData(0).GetPtr()); }
 };
 
 
@@ -86,10 +84,10 @@ struct SStateEventLeaveLadder : public SStateEvent
 		:
 		SStateEvent(CHARACTER_EVENT_LADDER_LEAVE)
 	{
-		AddData((int) leaveLocation);
+		AddData((int)leaveLocation);
 	}
 
-	ELadderLeaveLocation GetLeaveLocation() const { return (ELadderLeaveLocation) (GetData(0).GetInt()); }
+	ELadderLeaveLocation GetLeaveLocation() const { return (ELadderLeaveLocation)(GetData(0).GetInt()); }
 };
 
 
@@ -177,5 +175,4 @@ struct SStateEventLadderPosition : public SStateEvent
 //
 //	ILINE EntityId GetTargetEntityId() const { return static_cast<EntityId> (GetData(0).GetInt()); }
 //};
-
-
+}

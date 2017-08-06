@@ -15,6 +15,8 @@
 #include "Weapon.h"*/
 
 
+namespace Chrysalis
+{
 void CCharacterStateUtil::InitializeMoveRequest(SCharacterMoveRequest& acRequest)
 {
 	acRequest = SCharacterMoveRequest();
@@ -157,7 +159,7 @@ void CCharacterStateUtil::AdjustMovementForEnvironment(const CActor& actor, Vec3
 
 		if (gEnv->bMultiCharacter)
 		{
-			CGameRules *pGameRules = g_pGame->GetGameRules();
+			CGameRules *pGameRules = gEnv->pGameFramework->GetGameRules();
 			IGameRulesObjectivesModule *pObjectives = pGameRules ? pGameRules->GetObjectivesModule() : NULL;
 
 			if (pObjectives)
@@ -624,7 +626,7 @@ void CCharacterStateUtil::ApplyFallDamage(CActor& actor, const float startFallin
 
 			hit.damage = velFraction * maxDamage;
 
-			g_pGame->GetGameRules()->ClientHit(hit);
+			gEnv->pGameFramework->GetGameRules()->ClientHit(hit);
 
 #ifdef CHARACTER_MOVEMENT_DEBUG_ENABLED
 			actor.GetMovementDebug().LogFallDamage(actor.GetEntity(), velFraction, downwardsImpactSpeed, hit.damage);
@@ -680,4 +682,5 @@ void CCharacterStateUtil::ChangeStance(CActor& actor, const SStateEvent& event)
 	/*const SStateEventStanceChanged& stanceEvent = static_cast<const SStateEventStanceChanged&> (event).GetStance();
 	const EStance stance = static_cast<EStance> (stanceEvent.GetStance());
 	actor.OnSetStance(stance);*/
+}
 }

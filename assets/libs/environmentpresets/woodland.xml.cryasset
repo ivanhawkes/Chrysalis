@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="{1DE426E6-78F4-54F4-3776-FF63733D5BF4}">
+ <Files>
+  <File path="woodland.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">EnvironmentPreset</Detail>
+ </Details>
+</AssetMetadata>

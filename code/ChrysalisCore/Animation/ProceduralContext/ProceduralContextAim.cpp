@@ -1,9 +1,10 @@
-#include <StdAfx.h>
+#include "StdAfx.h"
 #include "ProceduralContextAim.h"
 
 
+namespace Chrysalis
+{
 CRYREGISTER_CLASS(CProceduralContextAim);
-
 
 
 CProceduralContextAim::CProceduralContextAim()
@@ -13,11 +14,8 @@ CProceduralContextAim::CProceduralContextAim()
 	, m_gameAimTarget(0, 0, 0)
 	, m_defaultPolarCoordinatesMaxSmoothRateRadiansPerSecond(DEG2RAD(360), DEG2RAD(360))
 	, m_defaultPolarCoordinatesSmoothTimeSeconds(0.1f)
-{}
-
-
-CProceduralContextAim::~CProceduralContextAim()
-{}
+{
+}
 
 
 void CProceduralContextAim::Initialise(IEntity& entity, IActionController& actionController)
@@ -190,4 +188,5 @@ uint32 CProceduralContextAim::RequestPolarCoordinatesSmoothingParameters(const V
 void CProceduralContextAim::CancelPolarCoordinatesSmoothingParameters(const uint32 requestId)
 {
 	m_polarCoordinatesSmoothingParametersRequestList.RemoveRequest(requestId);
+}
 }

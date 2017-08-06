@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="{C2DF7D54-EDB1-2039-8856-4FCFD506AFA3}">
+ <Files>
+  <File path="buttonlayout_alt.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">ActionMaps</Detail>
+ </Details>
+</AssetMetadata>

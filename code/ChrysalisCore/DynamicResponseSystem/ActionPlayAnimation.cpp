@@ -7,6 +7,8 @@
 #include "Utility/DRS.h"
 
 
+namespace Chrysalis
+{
 // NOTE: This is a cheap and dirty way to get a token that should always be unique for long enough to not matter any more.
 #define PLAY_ANIMATION_TOKEN_BASE 0x0010
 
@@ -83,7 +85,7 @@ void CActionPlayAnimation::StartAnimation(DRS::IResponseInstance* pResponseInsta
 			{
 				// The animation to play.
 				CHashedString animationFile = DRSUtility::GetValueOrDefault(pContextVariables, "PlayAnimationFile", CHashedString(""));
-				
+
 				// Playback parameters.
 				aparams.m_fPlaybackSpeed = DRSUtility::GetValueOrDefault(pContextVariables, "PlayAnimationSpeed", 1.0f);
 				aparams.m_fTransTime = DRSUtility::GetValueOrDefault(pContextVariables, "PlayAnimationBlendTime", 0.2f);
@@ -249,7 +251,6 @@ void CActionPlayAnimation::CancelAnimation(DRS::IResponseInstance* pResponseInst
 		{
 			if (m_isEntityActivationForced)
 			{
-				pEntity->Activate(false);
 				m_isEntityActivationForced = false;
 			}
 
@@ -276,4 +277,4 @@ void CActionPlayAnimation::CancelAnimation(DRS::IResponseInstance* pResponseInst
 		}
 	}
 }
-
+}

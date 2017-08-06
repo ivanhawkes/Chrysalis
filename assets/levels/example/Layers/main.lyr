@@ -91,25 +91,8 @@
     </Brush>
     <Mesh Version="2" BinaryData="AAAAAAAAAAAYAAAAGAAAACQAAAAYAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAPwAAAAAAAIA/AACAPwAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AAAAAAAAgD8AAIA/AAAAAAAAgD8AAIA/AACAPwAAgD8AAAAAAACAPwAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAgD8AAIA/AACAPwAAAAAAAIA/AACAPwAAAAAAAAAAAACAPwAAgD8AAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAgD8AAIA/AAAAAAAAgD8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAAAAAAAAgL8AAIC/AACAvwAAgL8AAAAAAAAAAAAAAAAAAAAAAACAvwAAgL8AAIC/AACAvwAAAAAAAIA/AAAAAAAAgD8AAIC/AAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AACAvwAAgD8AAIC/AAAAAAAAAQACAAAAAgADAAQABQAGAAQABgAHAAgACQAKAAgACgALAAwADQAOAAwADgAPABAAEQASABAAEgATABQAFQAWABQAFgAXAAAAAYAAAAGAAAAAAAGAAYAAAAGAAAABgAAAAAABgAGAAAABgAAAAYAAAAAAAYABgAAAAYAAAAGAAAAAAAGAAYABgAAAAAABgAAAAAABgAGAAYAAAAAAAYAAAAAAAYABgAGAAAAAAAGAAAAAAAGAAYABgAAAAAABgAAAAAABgAGAAAD/fwAAAYAAAAAAAYABgAAA/38AAAGAAAAAAAGAAYAAAP9/AAABgAAAAAABgAGAAAD/fwAAAYAAAAAAAYABgP9/AAAAAAGAAAAAAAGAAYD/fwAAAAABgAAAAAABgAGA/38AAAAAAYAAAAAAAYABgP9/AAAAAAGAAAAAAAGAAYD/fwAAAAABgAAAAYAAAAGA/38AAAAAAYAAAAGAAAABgP9/AAAAAAGAAAABgAAAAYD/fwAAAAABgAAAAYAAAAGAAYAAAAAA/38AAP9/AAD/fwGAAAAAAP9/AAD/fwAA/38BgAAAAAD/fwAA/38AAP9/AYAAAAAA/38AAP9/AAD/fwAAAD8AAAA/AAAAP9ezXT8AAAAAAAAAACQAAAAAAAAAGAAAAAAAAAAAAAAAABAAAA=="/>
    </Object>
-   <Object Type="Entity" Layer="Main" LayerGUID="{1DD3A559-E494-4742-A501-7DAB4AFBBF72}" Id="{67B047A8-A339-4098-BC9B-92DF38635ADB}" Name="Hero" Pos="62.946354,54.551842,32" FloorNumber="-1" Rotate="0.67559022,0,0,-0.73727733" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Character" HasEntity="1">
+   <Object Type="Entity" Layer="Main" LayerGUID="{1DD3A559-E494-4742-A501-7DAB4AFBBF72}" Id="{67B047A8-A339-4098-BC9B-92DF38635ADB}" Name="Hero" Pos="62.946354,54.551842,32" FloorNumber="-1" Rotate="0.67559022,0,0,-0.73727733" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Character" HasEntity="0">
     <Properties />
-    <Components>
-     <Component typeId="{67994647-83DD-41B8-A098-E26B4B2C95FD}"/>
-     <Component typeId="{EC4E2FDC-DCFF-4AB3-A691-B9CC4ECE5788}"/>
-     <Component typeId="{10000000-1000-1000-1000-100000000000}">
-      <Geometry value="objects/Characters/human/sdk_player/sdk_player_blue_hipster.cdf"/>
-      <Mass value="82"/>
-      <ControllerDefinition value="sdk_tutorial3controllerdefs.xml"/>
-      <ScopeContext value="MainCharacter"/>
-      <AnimationDatabase value="sdk_tutorial3database.adb"/>
-     </Component>
-     <Component typeId="{10000000-1000-1000-1000-100000000000}"/>
-     <Component typeId="{3F9D1B59-EBAB-4F73-ABB9-B04C675A32B9}"/>
-     <Component typeId="{0CC3EE7E-1ACE-4BCD-9AEA-E391B81B8E78}"/>
-     <Component typeId="{AA2D677D-23A0-48D5-AA47-116B97DD6216}"/>
-     <Component typeId="{10000000-1000-1000-1000-100000000000}"/>
-     <Component typeId="{B077AB15-47AF-4BEB-9BF9-D68EE49399E1}"/>
-    </Components>
    </Object>
    <Object Type="Designer" Layer="Main" LayerGUID="{1DD3A559-E494-4742-A501-7DAB4AFBBF72}" Id="{75B21A77-A81A-4ECF-B311-7E7AAD41B26B}" Name="Designer45" Pos="67.0457,53.667759,32.375" FloorNumber="-1" Rotate="0.70710683,0,0,0.70710677" Scale="0.49979022,0.49979022,0.49979022" ColorRGB="16777215" Material="EngineAssets/TextureMsg/DefaultSolids" RndFlags="1073741832" StaticObjFlags="0" ViewDistRatio="100">
     <Brush DesignerModeFlags="0" SubdivisionLevel="0" SubdivisionSmoothingGroup="0" MirrorPlaneNormal="0,0,0" MirrorPlaneDistance="0">
@@ -213,63 +196,15 @@
    <Object Type="Entity" Layer="Main" LayerGUID="{1DD3A559-E494-4742-A501-7DAB4AFBBF72}" Id="{BC7A0C0F-E162-42B2-A6B3-849A51444249}" Name="RigidBodyEx2" Pos="69.595421,62.563534,31.999996" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="RigidBody" HasEntity="0">
     <Properties />
    </Object>
-   <Object Type="Entity" Layer="Main" LayerGUID="{1DD3A559-E494-4742-A501-7DAB4AFBBF72}" Id="{E522780C-A6C2-05F2-4580-2458BB078273}" Name="FlashlightComponent1" Pos="64.971619,54.540337,33.273602" FloorNumber="-1" Rotate="0.73727739,0,0,0.67559016" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="200" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="FlashlightComponent" HasEntity="1">
+   <Object Type="Entity" Layer="Main" LayerGUID="{1DD3A559-E494-4742-A501-7DAB4AFBBF72}" Id="{E522780C-A6C2-05F2-4580-2458BB078273}" Name="FlashlightComponent1" Pos="64.971619,54.540337,33.273602" FloorNumber="-1" Rotate="0.73727739,0,0,0.67559016" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="200" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="FlashlightComponent" HasEntity="0">
     <Properties />
-    <Components>
-     <Component typeId="{7BFC30B2-D9F5-41D4-9A79-F422E3B49400}">
-      <BatteryLevel value="1"/>
-      <IsSwitchedOn value="true"/>
-     </Component>
-     <Component typeId="{54B2C130-8E27-4E07-8BF0-F1FE89228D14}">
-      <Geometry value="objects/items/flashlight/maglite_02d.cgf"/>
-      <Physicalize value="ePhysicalizationType_Rigid"/>
-      <ReceiveCollisionEvents value="true"/>
-      <Mass value="1"/>
-     </Component>
-     <Component typeId="{BFAD8CB3-8456-4A3B-8AE6-F05F5D21BBFA}">
-      <Active value="true"/>
-      <Radius value="4"/>
-      <AttenuationBulbSize value="0.1"/>
-      <DiffuseColor>
-       <Element value="1"/>
-       <Element value="1"/>
-       <Element value="1"/>
-       <Element value="1"/>
-      </DiffuseColor>
-      <DiffuseMultiplier value="1"/>
-      <IgnoreVisAreas value="false"/>
-      <AffectsThisAreaOnly value="true"/>
-      <Ambient value="false"/>
-      <FakeLight value="false"/>
-      <AffectVolumetricFog value="true"/>
-      <AffectVolumetricFogOnly value="false"/>
-      <FogRadialLobe value="0"/>
-      <CastShadows value="eCastShadowsSpec_No"/>
-      <Style value="0"/>
-      <Speed value="1"/>
-      <ProjectionTexture value="textures/lights/flashlight_projector.dds"/>
-      <ProjectionFieldOfView value="45"/>
-      <ProjectionNearPlane value="0"/>
-      <FlareTextures value=""/>
-      <FlareFieldOfView value="360"/>
-     </Component>
-     <Component typeId="{E2F360C6-F7FF-41DE-A1A2-D7C7C64AD730}"/>
-    </Components>
    </Object>
    <Object Type="EnvironmentProbe" Layer="Main" LayerGUID="{1DD3A559-E494-4742-A501-7DAB4AFBBF72}" Id="{FF615B1E-60F1-4FF5-B85E-247438EE25BB}" Name="EnvironmentProbe1" Pos="69.125,54.875,36.375" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" cubemap_resolution="256" preview_cubemap="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="EnvironmentLight" HasEntity="1">
     <Properties />
     <Components>
-     <Component typeId="{0D3D1840-D239-411E-8738-14C56CCCEE2C}">
-      <Active value="true"/>
-      <BoxSize>
-       <Element value="10"/>
-       <Element value="10"/>
-       <Element value="10"/>
-      </BoxSize>
-      <IgnoreVisAreas value="false"/>
-      <SortPriority value="0"/>
-      <AttentuationFalloffMax value="1"/>
-      <Cubemap value=""/>
+     <Component typeId="{0D3D1840-D239-411E-8738-14C56CCCEE2C}" guid="{074C53FE-1D75-785D-6E3D-943D3F7D1164}" CryXmlVersion="2" Active="true" IgnoreVisAreas="false" SortPriority="0" AttentuationFalloffMax="1" VolumetricFogOnly="false" AffectsVolumetricFog="true" AffectsOnlyThisArea="true" DiffuseMultiplier="1" SpecularMultiplier="1" ProjectionActive="false" ProjectionHeight="1" ProjectionLength="1" ProjectionWidth="1" Cubemap="">
+      <BoxSize x="10" y="10" z="10"/>
+      <Color r="1" g="1" b="1" a="1"/>
      </Component>
     </Components>
    </Object>

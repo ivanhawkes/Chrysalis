@@ -3,7 +3,9 @@
 #include <CryPhysics/RayCastQueue.h>
 
 
-class CCharacter;
+namespace Chrysalis
+{
+class CCharacterComponent;
 
 
 class CCharacterStateSwimWaterTestProxy
@@ -21,13 +23,13 @@ public:
 
 	void Reset(bool bCancelRays);
 
-	void OnEnterWater(const CCharacter& Character);
-	void OnExitWater(const CCharacter& Character);
+	void OnEnterWater(const CCharacterComponent& Character);
+	void OnExitWater(const CCharacterComponent& Character);
 
-	void PreUpdateNotSwimming(const CCharacter& Character, const float frameTime);
-	void PreUpdateSwimming(const CCharacter& Character, const float frameTime);
-	void Update(const CCharacter& Character, const float frameTime);
-	void ForceUpdateBottomLevel(const CCharacter& Character);
+	void PreUpdateNotSwimming(const CCharacterComponent& Character, const float frameTime);
+	void PreUpdateSwimming(const CCharacterComponent& Character, const float frameTime);
+	void Update(const CCharacterComponent& Character, const float frameTime);
+	void ForceUpdateBottomLevel(const CCharacterComponent& Character);
 
 	ILINE bool ShouldSwim() const { return m_shouldSwim; }
 	ILINE bool IsHeadUnderWater() const { return m_headUnderwater; }
@@ -47,22 +49,22 @@ public:
 
 private:
 	void UpdateWaterLevel(const Vec3& worldReferencePos, const Vec3& CharacterWorldPos, IPhysicalEntity* piPhysEntity);
-	void UpdateOutOfWater(const CCharacter& Character, const float frameTime);
-	void UpdateInWater(const CCharacter& Character, const float frameTime);
+	void UpdateOutOfWater(const CCharacterComponent& Character, const float frameTime);
+	void UpdateInWater(const CCharacterComponent& Character, const float frameTime);
 	void UpdateSubmergedFraction(const float referenceHeight, const float CharacterHeight, const float waterLevel);
 
-	static Vec3 GetLocalReferencePosition(const CCharacter& Character);
+	static Vec3 GetLocalReferencePosition(const CCharacterComponent& Character);
 	bool ShouldSwim(const float referenceHeight) const;
 
 	// Deferred raycast functions.
 	void OnRayCastBottomLevelDataReceived(const QueuedRayID& rayID, const RayCastResult& result);
 	ILINE bool IsWaitingForBottomLevelResults() const { return (m_bottomLevelRayID != 0); }
-	void RayTestBottomLevel(const CCharacter& Character, const Vec3& referencePosition, float maxRelevantDepth);
+	void RayTestBottomLevel(const CCharacterComponent& Character, const Vec3& referencePosition, float maxRelevantDepth);
 	void CancelPendingRays();
 
 	// Debug
 #if !defined(_RELEASE)
-	void DebugDraw(const CCharacter& Character, const Vec3& referencePosition);
+	void DebugDraw(const CCharacterComponent& Character, const Vec3& referencePosition);
 #endif
 
 	EProxyInternalState m_internalState;
@@ -82,3 +84,4 @@ private:
 	QueuedRayID m_bottomLevelRayID;
 	static float s_rayLength;
 };
+}

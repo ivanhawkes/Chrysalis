@@ -11,6 +11,8 @@ trying to reduce the surface area and dependancies of the code.
 #include <Utility/CryHash.h>
 
 
+namespace Chrysalis
+{
 struct CItemParameter;
 
 
@@ -32,7 +34,7 @@ public:
 
 	/** Destructor. */
 	virtual ~CGameCache();
-	
+
 
 	/** Initialises this object. */
 	void Init();
@@ -73,7 +75,7 @@ public:
 private:
 	// Character file model cache.
 	typedef std::map<uint32, TCharacterInstancePtr> TEditorCharacterFileModelCache;
-	TEditorCharacterFileModelCache   m_editorCharacterFileModelCache[eCFMCache_COUNT];
+	TEditorCharacterFileModelCache   m_editorCharacterFileModelCache [eCFMCache_COUNT];
 
 
 	// ***
@@ -156,3 +158,4 @@ private:
 	typedef std::map<CryHash, TParticleEffectSmartPtr> TGameParticleEffectCacheMap;
 	TGameParticleEffectCacheMap m_particleEffectCache;
 };
+}

@@ -1,17 +1,34 @@
 #pragma once
 
-#include "Helpers/DesignerEntityComponent.h"
 #include <Components/Interaction/EntityInteractionComponent.h>
-#include <Components/Geometry/GeometryComponent.h>
+#include <DefaultComponents/Geometry/StaticMeshComponent.h>
 
-
-class CSwitchComponent final : public CDesignerEntityComponent<>, public IEntityPropertyGroup, public IInteractionSwitch
+namespace Chrysalis
 {
-	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CSwitchComponent, "SwitchComponent", 0x814B5D9866864051, 0x948F23D33989D88D)
+class CSwitchComponent
+	: public IEntityComponent
+	, public IInteractionSwitch
+{
+protected:
+	friend CChrysalisCorePlugin;
+	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
 
-	virtual ~CSwitchComponent() {}
+	// IEntityComponent
+	virtual void Initialize() final;
+	// ~IEntityComponent
 
 public:
+	CSwitchComponent() {}
+	virtual ~CSwitchComponent() {}
+
+	static void ReflectType(Schematyc::CTypeDesc<CSwitchComponent>& desc);
+
+	static CryGUID& IID()
+	{
+		static CryGUID id = "00000000-0000-0000-0000-000000000000"_cry_guid;
+		return id;
+	}
+
 	const string kQueueSignal { "interaction_switch" };
 	const string kSwitchOnVerb { "interaction_switch_on" };
 	const string kSwitchOffVerb { "interaction_switch_off" };
@@ -36,29 +53,16 @@ public:
 		m_ListenersList.remove(pListener);
 	}
 
-public:
-	// IEntityComponent
-	virtual void Initialize() final;
-	virtual IEntityPropertyGroup* GetPropertyGroup() final { return this; }
-	// ~IEntityComponent
-
-	// IEntityPropertyGroup
-	virtual const char* GetLabel() const override { return "Switch Properties"; }
-	virtual void SerializeProperties(Serialization::IArchive& archive) override;
-	// ~IEntityPropertyGroup
-
 	// IInteractionSwitch
 	virtual void OnInteractionSwitchToggle() override;;
 	virtual void OnInteractionSwitchOn() override;;
 	virtual void OnInteractionSwitchOff() override;;
 	// ~IInteractionSwitch
 
-	// ISwitchEntityComponent
-	virtual void OnResetState() final;
-	// ISwitchEntityComponent
-
-private:
+protected:
 	void InformAllLinkedEntities(string verb, bool isSwitchedOn);
+
+	virtual void OnResetState();
 
 	typedef std::list<ISwitchListener*> TListenersList;
 	TListenersList m_ListenersList;
@@ -78,7 +82,7 @@ private:
 	CInteractionSwitchOffPtr m_switchOffPtr { nullptr };
 
 	/** Model for the geometry. */
-	CGeometryComponent* m_pGeometryComponent { nullptr };
+	Cry::DefaultComponents::CStaticMeshComponent* m_pGeometryComponent { nullptr };
 
 	/** This entity should be interactive. */
 	CEntityInteractionComponent* m_interactor { nullptr };
@@ -92,3 +96,4 @@ private:
 	/** Send this verb when switching off, if the string in not empty. */
 	string m_switchOffVerb;
 };
+}

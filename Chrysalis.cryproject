@@ -1,4 +1,50 @@
 {
+    "console_variables": [
+        {
+            "name": "entity_awareness_Debug",
+            "value": "8"
+        },
+        {
+            "name": "r_Fullscreen",
+            "value": "0"
+        },
+        {
+            "name": "r_Width",
+            "value": "1440"
+        },
+        {
+            "name": "r_Height",
+            "value": "900"
+        },
+        {
+            "name": "ed_lowercasepaths",
+            "value": "1"
+        },
+        {
+            "name": "e_waterocean",
+            "value": "0"
+        },
+        {
+            "name": "r_displayinfo",
+            "value": "0"
+        },
+        {
+            "name": "e_permanentrenderobjects",
+            "value": "0"
+        },
+        {
+            "name": "s_AudioImplName",
+            "value": "CryAudioImplWwise"
+        },
+        {
+            "name": "ed_usedevmanager",
+            "value": "0"
+        },
+        {
+            "name": "gfx_uiaction_folder",
+            "value": "assets/ui/default/uiactions"
+        }
+    ],
     "content": {
         "assets": [
             "assets"
@@ -10,7 +56,9 @@
             {
                 "name": "Chrysalis",
                 "shared": {
-                    "win_x64": "bin/win_x64/Chrysalis.dll"
+                    "any": "",
+                    "win_x64": "bin/win_x64/Chrysalis.dll",
+                    "win_x86": ""
                 }
             }
         ]
@@ -19,6 +67,26 @@
         "name": "Chrysalis"
     },
     "require": {
-        "engine": "{e799e25f-a5e4-40cf-b15a-26a4d85bf6a4}"
-    }
+        "engine": "engine-5.4",
+        "plugins": [
+            {
+                "path": "CryDefaultEntities",
+                "type": "EPluginType::Native"
+            },
+            {
+                "path": "CrySensorSystem",
+                "type": "EPluginType::Native"
+            },
+            {
+                "path": "CryPerceptionSystem",
+                "type": "EPluginType::Native"
+            },
+            {
+                "path": "bin/win_x64/Chrysalis.dll",
+                "type": "EPluginType::Native"
+            }
+        ]
+    },
+    "type": "",
+    "version": 1
 }

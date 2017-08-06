@@ -1,10 +1,14 @@
 #pragma once
 
-#include "Helpers/DesignerEntityComponent.h"
 #include <Entities/Interaction/IEntityInteraction.h>
+#include <DefaultComponents/Geometry/AnimatedMeshComponent.h>
 
 
-class CGeometryComponent;
+class Cry::DefaultComponents::CAnimatedMeshComponent;
+
+
+namespace Chrysalis
+{
 class CLockableComponent;
 class CEntityInteractionComponent;
 class CControlledAnimationComponent;
@@ -14,30 +18,34 @@ class CSimpleAnimationComponent;
 /**
 An animated door.
 
-\sa IEntityComponent
-\sa IEntityPropertyGroup
-\sa IInteractionContainer
-\sa IInteractionOpenable
-\sa IInteractionLockable
 **/
-class CAnimatedDoorComponent : public CDesignerEntityComponent<>, public IEntityPropertyGroup, public IInteractionInteract, public IInteractionOpenable, public IInteractionLockable
+class CAnimatedDoorComponent
+	: public IEntityComponent
+	, public IInteractionInteract, public IInteractionOpenable, public IInteractionLockable
 {
-	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CAnimatedDoorComponent, "AnimatedDoor", 0xD246E11FE7E248F0, 0xB512402908F84496)
+protected:
+	friend CChrysalisCorePlugin;
+	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
 
-public:
 	// IEntityComponent
 	void Initialize() override;
-	struct IEntityPropertyGroup* GetPropertyGroup() override { return this; }
 	// ~IEntityComponent
+
+public:
+	CAnimatedDoorComponent() {}
+	virtual ~CAnimatedDoorComponent() {}
+
+	static void ReflectType(Schematyc::CTypeDesc<CAnimatedDoorComponent>& desc);
+
+	static CryGUID& IID()
+	{
+		static CryGUID id = "{749AE78C-8577-4EF6-86E0-5B1E4C8ADF80}"_cry_guid;
+		return id;
+	}
 
 	// IInteractionInteract
 	void OnInteractionInteract() override;
 	// ~IInteractionInteract
-
-	// IEntityPropertyGroup
-	const char* GetLabel() const override { return "AnimatedDoor Properties"; };
-	void SerializeProperties(Serialization::IArchive& archive) override;
-	// ~IEntityPropertyGroup
 
 	// IInteractionOpenable
 	void OnInteractionOpenableOpen() override { gEnv->pLog->LogAlways("OnInteractionOpenableOpen fired."); };
@@ -49,24 +57,20 @@ public:
 	void OnInteractionLockableUnlock() override { gEnv->pLog->LogAlways("OnInteractionLockableUnlock fired."); };
 	// ~IInteractionLockable
 
-	// IInteractionLockable
-	CAnimatedDoorComponent() {};
-	virtual ~CAnimatedDoorComponent() {}
-
 private:
-	const string kDoorAnimationOpen { "default" };
-	const string kDoorAnimationClose { "down" };
+	const Schematyc::LowLevelAnimationName kDoorAnimationOpen { "default" };
+	const Schematyc::LowLevelAnimationName kDoorAnimationClose { "down" };
 
 	// Called on entity spawn, or when the state of the entity changes in Editor
-	void OnResetState() override;
+	virtual void OnResetState();
 
 	/** Model for the geometry. */
-	CGeometryComponent* m_pGeometryComponent { nullptr };
+	Cry::DefaultComponents::CAnimatedMeshComponent* m_pGeometryComponent { nullptr };
 
 	/** Animation for the geometry. */
 	//CControlledAnimationComponent* m_pAnimationComponent { nullptr };
 	CSimpleAnimationComponent* m_pAnimationComponent { nullptr };
-	
+
 	/** Doors should be lockable. */
 	CLockableComponent* m_pLockableComponent { nullptr };
 
@@ -76,3 +80,4 @@ private:
 	/** Is the door open? */
 	bool m_IsOpen { false };
 };
+}

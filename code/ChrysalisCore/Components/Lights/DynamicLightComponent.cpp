@@ -1,33 +1,41 @@
 #include "StdAfx.h"
 
 #include "DynamicLightComponent.h"
-#include <CrySerialization/Decorators/Resources.h>
-#include <CrySerialization/Enum.h>
-#include <CrySerialization/Color.h>
-#include <CrySerialization/STL.h>
-#include <CrySerialization/Math.h>
 
 
-class CLightRegistrator : public IEntityRegistrator
+namespace Chrysalis
 {
-public:
-	virtual void Register() override
-	{
-		RegisterEntityWithDefaultComponent<CDynamicLightComponent>("DynamicLightComponent", "Lights", "Light.bmp");
-	}
-};
+void CDynamicLightComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+{
+}
 
-CLightRegistrator g_lightRegistrator;
 
-YASLI_ENUM_BEGIN_NESTED(CDynamicLightComponent, ECastShadowsSpec, "CastShadowsSpec")
-YASLI_ENUM_VALUE_NESTED(CDynamicLightComponent, eCastShadowsSpec_No, "None")
-YASLI_ENUM_VALUE_NESTED(CDynamicLightComponent, eCastShadowsSpec_Low, "Low")
-YASLI_ENUM_VALUE_NESTED(CDynamicLightComponent, eCastShadowsSpec_Medium, "Medium")
-YASLI_ENUM_VALUE_NESTED(CDynamicLightComponent, eCastShadowsSpec_High, "High")
-YASLI_ENUM_VALUE_NESTED(CDynamicLightComponent, eCastShadowsSpec_VeryHigh, "VeryHigh")
-YASLI_ENUM_END()
+void CDynamicLightComponent::ReflectType(Schematyc::CTypeDesc<CDynamicLightComponent>& desc)
+{
+	desc.SetGUID(CDynamicLightComponent::IID());
+	desc.SetEditorCategory("Lights");
+	desc.SetLabel("Point Light");
+	desc.SetDescription("No description.");
+	desc.SetIcon("icons:ObjectTypes/light.ico");
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
 
-CRYREGISTER_CLASS(CDynamicLightComponent);
+	//desc.AddMember(&CDynamicLightComponent::m_bActive, 'actv', "Active", "Active", "Determines whether the light is enabled", true);
+	//desc.AddMember(&CDynamicLightComponent::m_radius, 'radi', "Radius", "Radius", "Determines whether the range of the point light", 10.f);
+	//desc.AddMember(&CDynamicLightComponent::m_color, 'colo', "Color", "Color", "Color emission information", CDynamicLightComponent::SColor());
+	//desc.AddMember(&CDynamicLightComponent::m_shadows, 'shad', "Shadows", "Shadows", "Shadow casting settings", CDynamicLightComponent::SShadows());
+	//desc.AddMember(&CDynamicLightComponent::m_options, 'opt', "Options", "Options", "Specific Light Options", CDynamicLightComponent::SOptions());
+	//desc.AddMember(&CDynamicLightComponent::m_animations, 'anim', "Animations", "Animations", "Light style / animation properties", CDynamicLightComponent::SAnimations());
+}
+
+
+
+//YASLI_ENUM_BEGIN_NESTED(CDynamicLightComponent, ECastShadowsSpec, "CastShadowsSpec")
+//YASLI_ENUM_VALUE_NESTED(CDynamicLightComponent, eCastShadowsSpec_No, "None")
+//YASLI_ENUM_VALUE_NESTED(CDynamicLightComponent, eCastShadowsSpec_Low, "Low")
+//YASLI_ENUM_VALUE_NESTED(CDynamicLightComponent, eCastShadowsSpec_Medium, "Medium")
+//YASLI_ENUM_VALUE_NESTED(CDynamicLightComponent, eCastShadowsSpec_High, "High")
+//YASLI_ENUM_VALUE_NESTED(CDynamicLightComponent, eCastShadowsSpec_VeryHigh, "VeryHigh")
+//YASLI_ENUM_END()
 
 
 void CDynamicLightComponent::OnResetState()
@@ -81,9 +89,9 @@ void CDynamicLightComponent::OnResetState()
 	m_light.m_fShadowUpdateMinRadius = m_light.m_fRadius;
 
 	float shadowUpdateRatio = 1.f;
-	m_light.m_nShadowUpdateRatio = max((uint16) 1, (uint16) (shadowUpdateRatio * (1 << DL_SHADOW_UPDATE_SHIFT)));
+	m_light.m_nShadowUpdateRatio = max((uint16)1, (uint16)(shadowUpdateRatio * (1 << DL_SHADOW_UPDATE_SHIFT)));
 
-	if (m_castShadowSpec != eCastShadowsSpec_No && (int) gEnv->pSystem->GetConfigSpec() >= (int) m_castShadowSpec)
+	if (m_castShadowSpec != eCastShadowsSpec_No && (int)gEnv->pSystem->GetConfigSpec() >= (int)m_castShadowSpec)
 		m_light.m_Flags |= DLF_CASTSHADOW_MAPS;
 	else
 		m_light.m_Flags &= ~DLF_CASTSHADOW_MAPS;
@@ -133,11 +141,11 @@ void CDynamicLightComponent::OnResetState()
 
 				if (m_flareFieldOfView != 0)
 				{
-					int modularAngle = ((int) m_flareFieldOfView) % 360;
+					int modularAngle = ((int)m_flareFieldOfView) % 360;
 					if (modularAngle == 0)
 						m_light.m_LensOpticsFrustumAngle = 255;
 					else
-						m_light.m_LensOpticsFrustumAngle = (uint8) (m_flareFieldOfView * (255.0f / 360.0f));
+						m_light.m_LensOpticsFrustumAngle = (uint8)(m_flareFieldOfView * (255.0f / 360.0f));
 				}
 				else
 				{
@@ -184,67 +192,68 @@ void CDynamicLightComponent::SetLocalTM(Matrix34 localMatrix)
 }
 
 
-void CDynamicLightComponent::SerializeProperties(Serialization::IArchive& archive)
-{
-	archive(m_isActive, "Active", "Active");
-	archive(m_light.m_fRadius, "Radius", "Radius");
-	archive(m_light.m_fAttenuationBulbSize, "AttenuationBulbSize", "AttenuationBulbSize");
-
-	if (archive.openBlock("Color", "Color"))
-	{
-		archive(m_diffuseColor, "DiffuseColor", "DiffuseColor");
-		archive(m_diffuseMultiplier, "DiffuseMultiplier", "DiffuseMultiplier");
-
-		archive.closeBlock();
-	}
-
-	if (archive.openBlock("Options", "Options"))
-	{
-		archive(m_bIgnoreVisAreas, "IgnoreVisAreas", "IgnoreVisAreas");
-		archive(m_bAffectsThisAreaOnly, "AffectsThisAreaOnly", "AffectsThisAreaOnly");
-		archive(m_bAmbient, "Ambient", "Ambient");
-		archive(m_bFake, "FakeLight", "FakeLight");
-		archive(m_bAffectVolumetricFog, "AffectVolumetricFog", "AffectVolumetricFog");
-		archive(m_bAffectVolumetricFogOnly, "AffectVolumetricFogOnly", "AffectVolumetricFogOnly");
-		archive(m_light.m_fFogRadialLobe, "FogRadialLobe", "FogRadialLobe");
-
-		archive.closeBlock();
-	}
-
-	if (archive.openBlock("Shadows", "Shadows"))
-	{
-		archive(m_castShadowSpec, "CastShadows", "CastShadows");
-
-		archive.closeBlock();
-	}
-
-	if (archive.openBlock("Animation", "Animation"))
-	{
-		archive(m_light.m_nLightStyle, "Style", "Style");
-		archive(m_animSpeed, "Speed", "Speed");
-
-		archive.closeBlock();
-	}
-
-	if (archive.openBlock("Projector", "Projector"))
-	{
-		archive(Serialization::TextureFilename(m_projectorTexturePath), "ProjectionTexture", "ProjectionTexture");
-		archive(m_light.m_fLightFrustumAngle, "ProjectionFieldOfView", "ProjectionFieldOfView");
-		archive(m_light.m_fProjectorNearPlane, "ProjectionNearPlane", "ProjectionNearPlane");
-
-		archive.closeBlock();
-	}
-
-	if (archive.openBlock("Flare", "Flare"))
-	{
-		archive(Serialization::TextureFilename(m_flareTexturePath), "FlareTextures", "FlareTextures");
-		archive(m_flareFieldOfView, "FlareFieldOfView", "FlareFieldOfView");
-
-		archive.closeBlock();
-	}
-
-	if (archive.isInput())
-	{
-		OnResetState();
-	}
+//void CDynamicLightComponent::SerializeProperties(Serialization::IArchive& archive)
+//{
+//	archive(m_isActive, "Active", "Active");
+//	archive(m_light.m_fRadius, "Radius", "Radius");
+//	archive(m_light.m_fAttenuationBulbSize, "AttenuationBulbSize", "AttenuationBulbSize");
+//
+//	if (archive.openBlock("Color", "Color"))
+//	{
+//		archive(m_diffuseColor, "DiffuseColor", "DiffuseColor");
+//		archive(m_diffuseMultiplier, "DiffuseMultiplier", "DiffuseMultiplier");
+//
+//		archive.closeBlock();
+//	}
+//
+//	if (archive.openBlock("Options", "Options"))
+//	{
+//		archive(m_bIgnoreVisAreas, "IgnoreVisAreas", "IgnoreVisAreas");
+//		archive(m_bAffectsThisAreaOnly, "AffectsThisAreaOnly", "AffectsThisAreaOnly");
+//		archive(m_bAmbient, "Ambient", "Ambient");
+//		archive(m_bFake, "FakeLight", "FakeLight");
+//		archive(m_bAffectVolumetricFog, "AffectVolumetricFog", "AffectVolumetricFog");
+//		archive(m_bAffectVolumetricFogOnly, "AffectVolumetricFogOnly", "AffectVolumetricFogOnly");
+//		archive(m_light.m_fFogRadialLobe, "FogRadialLobe", "FogRadialLobe");
+//
+//		archive.closeBlock();
+//	}
+//
+//	if (archive.openBlock("Shadows", "Shadows"))
+//	{
+//		archive(m_castShadowSpec, "CastShadows", "CastShadows");
+//
+//		archive.closeBlock();
+//	}
+//
+//	if (archive.openBlock("Animation", "Animation"))
+//	{
+//		archive(m_light.m_nLightStyle, "Style", "Style");
+//		archive(m_animSpeed, "Speed", "Speed");
+//
+//		archive.closeBlock();
+//	}
+//
+//	if (archive.openBlock("Projector", "Projector"))
+//	{
+//		archive(Serialization::TextureFilename(m_projectorTexturePath), "ProjectionTexture", "ProjectionTexture");
+//		archive(m_light.m_fLightFrustumAngle, "ProjectionFieldOfView", "ProjectionFieldOfView");
+//		archive(m_light.m_fProjectorNearPlane, "ProjectionNearPlane", "ProjectionNearPlane");
+//
+//		archive.closeBlock();
+//	}
+//
+//	if (archive.openBlock("Flare", "Flare"))
+//	{
+//		archive(Serialization::TextureFilename(m_flareTexturePath), "FlareTextures", "FlareTextures");
+//		archive(m_flareFieldOfView, "FlareFieldOfView", "FlareFieldOfView");
+//
+//		archive.closeBlock();
+//	}
+//
+//	if (archive.isInput())
+//	{
+//		OnResetState();
+//	}
+//}
 }

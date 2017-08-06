@@ -4,80 +4,42 @@
 #include <StateMachine/StateMachine.h>
 
 
+namespace Chrysalis
+{
 /**
-An implementation of the IActor interface. A CMount is an actor that represents a character within the game,
-either an NPC or PC which can be controlled by a player.
-
-Characters may have inventory.
-
-\sa	CGameObjectExtensionHelper&lt;CMount, IActor&gt;
-*/
-
+A CMountComponent represents a mountable creature within the game.
+**/
 // TODO: probably needs to also implement IInventoryListener to listen for inventory changes.
 
-class CMount : public CActor
+class CMountComponent
+	: public CActor
 {
-private:
+protected:
 	// Declaration of the state machine that controls character movement.
-	//DECLARE_STATE_MACHINE(CMount, Movement);
+	//DECLARE_STATE_MACHINE(CMountComponent, Movement);
 
-public:
+	friend CChrysalisCorePlugin;
+	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
 
-	CMount();
-	virtual ~CMount();
-
-
-	// ***
-	// *** IGameObjectExtension
-	// ***
-
-	void GetMemoryUsage(ICrySizer *pSizer) const override;
-	bool Init(IGameObject * pGameObject) override;
-	void PostInit(IGameObject * pGameObject) override;
-	bool ReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override;
-	void PostReloadExtension(IGameObject * pGameObject, const SEntitySpawnParams &params) override;
-	void Release() override;
-	void FullSerialize(TSerialize ser) override;
-	bool NetSerialize(TSerialize ser, EEntityAspects aspect, uint8 profile, int pflags) override;
-	void PostSerialize() override {};
-	void SerializeSpawnInfo(TSerialize ser) override {};
-	ISerializableInfoPtr GetSpawnInfo() override;
-	void Update(SEntityUpdateContext& ctx, int updateSlot) override;
-	void HandleEvent(const SGameObjectEvent& event) override;
+	// IEntityComponent
+	void Initialize() override;
 	void ProcessEvent(SEntityEvent& event) override;
+	uint64 GetEventMask() const { return BIT64(ENTITY_EVENT_UPDATE) | BIT64(ENTITY_EVENT_PREPHYSICSUPDATE); }
+	// ~IEntityComponent
 
-	// It is critical we override the event priority to ensure we handle the event before CAnimatedCharacter.
-	// FIX: 5.4
-	virtual IComponent::ComponentEventPriority GetEventPriority(const int eventID) const override;
-
-
-	// *** 
-	// *** IActor
-	// *** 
+	virtual void Update() override;
 
 public:
+	CMountComponent() {}
+	virtual ~CMountComponent() {}
 
-	/* You must override CActor for correct behaviour. */
-	const char* GetActorClassName() const override { return "CMount"; };
+	static void ReflectType(Schematyc::CTypeDesc<CMountComponent>& desc);
 
-	/* You must override CActor for correct behaviour. */
-	ActorClass GetActorClass() const override { return EActorClassType::EACT_MOUNT; };
-
-
-
-	// ***
-	// *** CActor
-	// ***
-
-public:
-
-
-	// ***
-	// *** CMount
-	// ***
-
-public:
-
+	static CryGUID& IID()
+	{
+		static CryGUID id = "{19A8D24A-E321-4E28-BFD7-BD35CDF85C32}"_cry_guid;
+		return id;
+	}
 
 protected:
 
@@ -92,7 +54,7 @@ protected:
 	/**
 	Pre physics update.
 	*/
-	void PrePhysicsUpdate() override;
+	virtual void PrePhysicsUpdate();
 
 
 	/**
@@ -123,7 +85,7 @@ protected:
 public:
 
 	/** Resets the character to an initial state. */
-	void OnResetState() override;
+	virtual void OnResetState();
 
 
 	/** Kill the character. */
@@ -166,3 +128,4 @@ public:
 	/** Reset the HSM. */
 	void MovementHSMReset() override;
 };
+}

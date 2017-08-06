@@ -14,6 +14,8 @@
 #include "AutoEnum.h"
 #include <Utility/StringUtils.h>
 
+namespace Chrysalis
+{
 #define DO_PARSE_BITFIELD_STRING_LOGS 0
 
 TBitfield AutoEnum_GetBitfieldFromString(const char* inString, const char** inArray, int arraySize)
@@ -127,3 +129,4 @@ string AutoEnum_GetStringFromBitfield(TBitfield bitfield, const char** inArray, 
 	return string().Format("%s%s", output.empty() ? "none" : output.c_str(), (bitfield >= checkThis) ? ", invalid bits found!" : "");
 }
 #endif
+}

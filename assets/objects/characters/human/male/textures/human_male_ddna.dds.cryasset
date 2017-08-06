@@ -1,8 +1,10 @@
-<cryasset>
- <AssetMetadata version="0" type="Texture" guid="{98140C33-C485-A68F-70D1-BB35A451C709}" source="mcg_ddna.tif">
-  <Files>
-   <File path="human_male_ddna.dds"/>
-  </Files>
-  <Details />
- </AssetMetadata>
-</cryasset>
+<AssetMetadata version="0" type="Texture" guid="{CDE7E928-6224-240D-3F2A-AA8D93E57C39}">
+ <Files>
+  <File path="human_male_ddna.dds"/>
+ </Files>
+ <Details>
+  <Detail name="width">2048</Detail>
+  <Detail name="height">2048</Detail>
+  <Detail name="mipCount">10</Detail>
+ </Details>
+</AssetMetadata>

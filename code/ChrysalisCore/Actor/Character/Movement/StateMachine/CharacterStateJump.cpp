@@ -17,6 +17,8 @@
 #include "PersistantStats.h"*/
 
 
+namespace Chrysalis
+{
 CCharacterStateJump::CCharacterStateJump()
 	:
 	m_jumpState(JState_None),
@@ -32,7 +34,7 @@ CCharacterStateJump::~CCharacterStateJump()
 {}
 
 
-void CCharacterStateJump::OnEnter(CCharacter& Character)
+void CCharacterStateJump::OnEnter(CCharacterComponent& Character)
 {
 	CryLogAlways("Entered state jump");
 
@@ -44,7 +46,7 @@ void CCharacterStateJump::OnEnter(CCharacter& Character)
 }
 
 
-void CCharacterStateJump::OnJump(CCharacter& Character, const bool isHeavyWeapon, const float fVerticalSpeedModifier)
+void CCharacterStateJump::OnJump(CCharacterComponent& Character, const bool isHeavyWeapon, const float fVerticalSpeedModifier)
 {
 	/*Character.GetMoveRequest ().type = eCMT_JumpInstant;
 	Character.GetMoveRequest ().jumping = true;
@@ -56,13 +58,13 @@ void CCharacterStateJump::OnJump(CCharacter& Character, const bool isHeavyWeapon
 
 
 
-void CCharacterStateJump::OnFall(CCharacter& Character)
+void CCharacterStateJump::OnFall(CCharacterComponent& Character)
 {
 	SetJumpState(Character, JState_Falling);
 }
 
 
-void CCharacterStateJump::StartJump(CCharacter& Character, const bool isHeavyWeapon, const float fVerticalSpeedModifier)
+void CCharacterStateJump::StartJump(CCharacterComponent& Character, const bool isHeavyWeapon, const float fVerticalSpeedModifier)
 {
 	/*	const SActorPhysics& actorPhysics = Character.GetActorPhysics ();
 		const SActorStats& stats = *Character.GetActorState ();
@@ -109,7 +111,7 @@ void CCharacterStateJump::StartJump(CCharacter& Character, const bool isHeavyWea
 
 		bool bNormalJump = true;
 
-		Character.PlaySound (CCharacter::ESound_Jump);
+		Character.PlaySound (CCharacterComponent::ESound_Jump);
 
 		OnSpecialMove (Character, IActorEventListener::eSM_Jump);
 
@@ -181,7 +183,7 @@ void CCharacterStateJump::StartJump(CCharacter& Character, const bool isHeavyWea
 }
 
 
-bool CCharacterStateJump::OnPrePhysicsUpdate(CCharacter& Character, const bool isHeavyWeapon, const SActorMovementRequest& movementRequest, float frameTime)
+bool CCharacterStateJump::OnPrePhysicsUpdate(CCharacterComponent& Character, const bool isHeavyWeapon, const SActorMovementRequest& movementRequest, float frameTime)
 {
 	if (!m_firstPrePhysicsUpdate)
 	{
@@ -205,7 +207,7 @@ bool CCharacterStateJump::OnPrePhysicsUpdate(CCharacter& Character, const bool i
 }
 
 
-void CCharacterStateJump::OnExit(CCharacter& Character, const bool isHeavyWeapon)
+void CCharacterStateJump::OnExit(CCharacterComponent& Character, const bool isHeavyWeapon)
 {
 	/*	if (m_jumpAction)
 		{
@@ -238,12 +240,12 @@ void CCharacterStateJump::OnExit(CCharacter& Character, const bool isHeavyWeapon
 }
 
 
-void CCharacterStateJump::OnSpecialMove(CCharacter &Character, IActorEventListener::ESpecialMove specialMove)
+void CCharacterStateJump::OnSpecialMove(CCharacterComponent &Character, IActorEventListener::ESpecialMove specialMove)
 {
 	/*	if (Character.m_CharacterEventListeners.empty() == false)
 		{
-			CCharacter::TCharacterEventListeners::const_iterator iter = Character.m_CharacterEventListeners.begin();
-			CCharacter::TCharacterEventListeners::const_iterator cur;
+			CCharacterComponent::TCharacterEventListeners::const_iterator iter = Character.m_CharacterEventListeners.begin();
+			CCharacterComponent::TCharacterEventListeners::const_iterator cur;
 			while (iter != Character.m_CharacterEventListeners.end())
 			{
 				cur = iter;
@@ -254,7 +256,7 @@ void CCharacterStateJump::OnSpecialMove(CCharacter &Character, IActorEventListen
 }
 
 
-void CCharacterStateJump::OnFullSerialize(TSerialize ser, CCharacter& Character)
+void CCharacterStateJump::OnFullSerialize(TSerialize ser, CCharacterComponent& Character)
 {
 	ser.BeginGroup("StateJump");
 	ser.Value("JumpLock", m_jumpLock);
@@ -272,7 +274,7 @@ void CCharacterStateJump::OnFullSerialize(TSerialize ser, CCharacter& Character)
 }
 
 
-void CCharacterStateJump::SetJumpState(CCharacter& Character, EJumpState jumpState)
+void CCharacterStateJump::SetJumpState(CCharacterComponent& Character, EJumpState jumpState)
 {
 	/*if (jumpState != m_jumpState)
 	{
@@ -315,21 +317,21 @@ CCharacterStateJump::EJumpState CCharacterStateJump::GetJumpState() const
 }
 
 
-void CCharacterStateJump::Landed(CCharacter& Character, const bool isHeavyWeapon, float fallSpeed)
+void CCharacterStateJump::Landed(CCharacterComponent& Character, const bool isHeavyWeapon, float fallSpeed)
 {
-#ifdef STATE_DEBUG
-	bool remoteControlled = false;
-	IVehicle* pVehicle = Character.GetLinkedVehicle();
-	if (pVehicle)
-	{
-		IVehicleSeat* pVehicleSeat = pVehicle->GetSeatForPassenger(Character.GetEntityId());
-		if (pVehicleSeat && pVehicleSeat->IsRemoteControlled())
-		{
-			remoteControlled = true;
-		}
-	}
-	CRY_ASSERT_MESSAGE(Character.GetLinkedEntity() == NULL || remoteControlled, "Cannot 'land' when you're linked to another entity!");
-#endif
+//#ifdef STATE_DEBUG
+//	bool remoteControlled = false;
+//	IVehicle* pVehicle = Character.GetLinkedVehicle();
+//	if (pVehicle)
+//	{
+//		IVehicleSeat* pVehicleSeat = pVehicle->GetSeatForPassenger(Character.GetEntityId());
+//		if (pVehicleSeat && pVehicleSeat->IsRemoteControlled())
+//		{
+//			remoteControlled = true;
+//		}
+//	}
+//	CRY_ASSERT_MESSAGE(Character.GetLinkedEntity() == NULL || remoteControlled, "Cannot 'land' when you're linked to another entity!");
+//#endif
 
 	/*const SActorStats& stats = Character.m_actorState;
 
@@ -409,7 +411,7 @@ void CCharacterStateJump::Landed(CCharacter& Character, const bool isHeavyWeapon
 	const float shakeTime = clamp_tpl (fallTimeMultiplier*fallSpeed*zoomMultiCharacter, 0.0f, fallTimeMax);
 	const Vec3 rotation = Vec3 (-0.5f, 0.15f*direction, 0.05f*direction);
 
-	if (CScreenEffects* pGameScreenEffects = g_pGame->GetScreenEffects ())
+	if (CScreenEffects* pGameScreenEffects = gEnv->pGameFramework->GetScreenEffects ())
 	{
 	pGameScreenEffects->CamShake (rotation*intensity, Vec3 (0, 0, 0), shakeTime, shakeTime, 0.05f, CScreenEffects::eCS_GID_Character);
 	}
@@ -422,10 +424,10 @@ void CCharacterStateJump::Landed(CCharacter& Character, const bool isHeavyWeapon
 
 	if (fallSpeed > 7.0f)
 	{
-	Character.PlaySound (CCharacter::ESound_Fall_Drop);
+	Character.PlaySound (CCharacterComponent::ESound_Fall_Drop);
 	}
 
-	CCharacter::ECharacterSounds CharacterSound = heavyLanded ? CCharacter::ESound_Gear_HeavyLand : CCharacter::ESound_Gear_Land;
+	CCharacterComponent::ECharacterSounds CharacterSound = heavyLanded ? CCharacterComponent::ESound_Gear_HeavyLand : CCharacterComponent::ESound_Gear_Land;
 	Character.PlaySound (CharacterSound, true);
 	}
 	CCCPOINT (CharacterMovement_LocalCharacterLanded);
@@ -447,12 +449,12 @@ void CCharacterStateJump::Landed(CCharacter& Character, const bool isHeavyWeapon
 
 	if (fallSpeed > 0.0f)
 	{
-	Character.CreateScriptEvent (heavyLanded ? "heavylanded" : "landed", stats.fallSpeed);
+	//Character.CreateScriptEvent (heavyLanded ? "heavylanded" : "landed", stats.fallSpeed);
 	}*/
 }
 
 
-const Vec3 CCharacterStateJump::CalculateInAirJumpExtraVelocity(const CCharacter& Character, const Vec3& desiredVelocity) const
+const Vec3 CCharacterStateJump::CalculateInAirJumpExtraVelocity(const CCharacterComponent& Character, const Vec3& desiredVelocity) const
 {
 	/*const SActorStats& stats = Character.m_actorState;
 	const float speedUpFactor = 0.175f;
@@ -492,7 +494,7 @@ const Vec3 CCharacterStateJump::CalculateInAirJumpExtraVelocity(const CCharacter
 }
 
 
-void CCharacterStateJump::UpdateJumping(CCharacter& Character, const bool isHeavyWeapon, const SActorMovementRequest& movementRequest, float frameTime)
+void CCharacterStateJump::UpdateJumping(CCharacterComponent& Character, const bool isHeavyWeapon, const SActorMovementRequest& movementRequest, float frameTime)
 {
 	Vec3 desiredVel(ZERO);
 	if (UpdateCommon(Character, isHeavyWeapon, movementRequest, frameTime, &desiredVel))
@@ -516,7 +518,7 @@ void CCharacterStateJump::UpdateJumping(CCharacter& Character, const bool isHeav
 }
 
 
-void CCharacterStateJump::UpdateFalling(CCharacter& Character, const bool isHeavyWeapon, const SActorMovementRequest& movementRequest, float frameTime)
+void CCharacterStateJump::UpdateFalling(CCharacterComponent& Character, const bool isHeavyWeapon, const SActorMovementRequest& movementRequest, float frameTime)
 {
 	Vec3 desiredVel(ZERO);
 
@@ -535,7 +537,7 @@ void CCharacterStateJump::UpdateFalling(CCharacter& Character, const bool isHeav
 }
 
 
-bool CCharacterStateJump::UpdateCommon(CCharacter& Character, const bool isHeavyWeapon, const SActorMovementRequest& movementRequest, float frameTime, Vec3* pDesiredVel)
+bool CCharacterStateJump::UpdateCommon(CCharacterComponent& Character, const bool isHeavyWeapon, const SActorMovementRequest& movementRequest, float frameTime, Vec3* pDesiredVel)
 {
 	Vec3 move(ZERO);
 	const bool  bigWeaponRestrict = isHeavyWeapon;
@@ -545,7 +547,7 @@ bool CCharacterStateJump::UpdateCommon(CCharacter& Character, const bool isHeavy
 }
 
 
-bool CCharacterStateJump::UpdateCommon(CCharacter& Character, const bool isHeavyWeapon, const Vec3 &move, float frameTime, Vec3* pDesiredVel)
+bool CCharacterStateJump::UpdateCommon(CCharacterComponent& Character, const bool isHeavyWeapon, const Vec3 &move, float frameTime, Vec3* pDesiredVel)
 {
 	/*GetDesiredVelocity (move, Character, pDesiredVel);
 
@@ -571,7 +573,7 @@ bool CCharacterStateJump::UpdateCommon(CCharacter& Character, const bool isHeavy
 }
 
 
-void CCharacterStateJump::FinalizeVelocity(CCharacter& Character, const Vec3& newVelocity)
+void CCharacterStateJump::FinalizeVelocity(CCharacterComponent& Character, const Vec3& newVelocity)
 {
 	/*const float fNewSpeed = newVelocity.len ();
 	const float fVelocityMultiplier = (float) __fsel (fNewSpeed - 22.0f, __fres (fNewSpeed + FLT_EPSILON) * 22.0f, 1.0f);
@@ -581,7 +583,7 @@ void CCharacterStateJump::FinalizeVelocity(CCharacter& Character, const Vec3& ne
 }
 
 
-void CCharacterStateJump::Land(CCharacter &Character, const bool isHeavyWeapon, float frameTime)
+void CCharacterStateJump::Land(CCharacterComponent &Character, const bool isHeavyWeapon, float frameTime)
 {
 	/*if (gEnv->bMultiCharacter && IsJumping ())
 	{
@@ -610,13 +612,13 @@ void CCharacterStateJump::Land(CCharacter &Character, const bool isHeavyWeapon, 
 	const float worldWaterLevel = Character.m_CharacterStateSwimWaterTestProxy.GetWaterLevel ();
 	if (fHeightofEntity < worldWaterLevel)
 	{
-	Character.CreateScriptEvent ("jump_splash", worldWaterLevel - fHeightofEntity);
+	//Character.CreateScriptEvent ("jump_splash", worldWaterLevel - fHeightofEntity);
 	}
 	}*/
 }
 
 
-void CCharacterStateJump::GetDesiredVelocity(const Vec3 & move, const CCharacter &Character, Vec3* pDesiredVel) const
+void CCharacterStateJump::GetDesiredVelocity(const Vec3 & move, const CCharacterComponent &Character, Vec3* pDesiredVel) const
 {
 	// Generate jump velocity.
 	/*SIMDFConstant (xmfMaxMove, 1.0f);
@@ -679,4 +681,5 @@ void CCharacterStateJump::GetDesiredVelocity(const Vec3 & move, const CCharacter
 
 	HWVSaveVecUnaligned (pDesiredVel, xmDesiredVel);
 	}*/
+}
 }

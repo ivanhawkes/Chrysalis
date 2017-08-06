@@ -7,6 +7,8 @@
 #include <CryMath/Random.h>
 
 
+namespace Chrysalis
+{
 CObjectIdFactory::CObjectIdFactory(uint32 instanceId)
 	: m_instanceId(instanceId),
 	m_randomVariant(0),
@@ -65,7 +67,7 @@ ObjectId CObjectIdFactory::CreateObjectId()
 			+ (m_randomVariant & MaxRandomVariant);
 
 		// Unlock!
-		spinLock = false; 
+		spinLock = false;
 	}
 
 	return objectId;
@@ -87,4 +89,5 @@ uint32 CObjectIdFactory::GetInstanceId(ObjectId objectId)
 uint32 CObjectIdFactory::GetRandomVariant(ObjectId objectId)
 {
 	return objectId & MaxRandomVariant;
+}
 }

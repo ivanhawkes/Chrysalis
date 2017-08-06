@@ -2,9 +2,11 @@
 
 #include <CryMath/Cry_Color.h>
 #include <CryString/CryString.h>
-
 #include <CryMath/Cry_Math.h>
 
+
+namespace Chrysalis
+{
 inline Vec3 Vec3FromString(string sVector)
 {
 	size_t yPos = sVector.find(",");
@@ -68,9 +70,9 @@ inline ColorF StringToColor(const char *sColor, bool adjustGamma)
 
 		// Convert to linear space
 		if (adjustGamma)
-			color[i] = powf(fToken / 255, 2.2f);
+			color [i] = powf(fToken / 255, 2.2f);
 		else
-			color[i] = fToken;
+			color [i] = fToken;
 
 		if (pos == colorString.size())
 			break;
@@ -96,7 +98,7 @@ inline Vec3 StringToVec3(const char *sVector)
 
 		float fToken = (float)atof(sToken);
 
-		v[i] = fToken;
+		v [i] = fToken;
 
 		if (pos == vecString.size())
 			break;
@@ -124,18 +126,18 @@ inline Quat StringToQuat(const char *sQuat)
 
 		switch (i)
 		{
-		case 0:
-			q.w = fToken;
-			break;
-		case 1:
-			q.v.x = fToken;
-			break;
-		case 2:
-			q.v.y = fToken;
-			break;
-		case 3:
-			q.v.z = fToken;
-			break;
+			case 0:
+				q.w = fToken;
+				break;
+			case 1:
+				q.v.x = fToken;
+				break;
+			case 2:
+				q.v.y = fToken;
+				break;
+			case 3:
+				q.v.z = fToken;
+				break;
 		}
 
 		if (pos == quatString.size())
@@ -159,4 +161,5 @@ inline uint64 StringToMs(string time)
 	uint64 ms = atoi(sMS.c_str()) + (atoi(sSeconds.c_str()) * 1000) + (atoi(sMinutes.c_str()) * 60000);
 
 	return ms;
+}
 }

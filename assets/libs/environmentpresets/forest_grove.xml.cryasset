@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="{28336851-C35B-807C-8CF4-5283BB78D44A}">
+ <Files>
+  <File path="forest_grove.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">EnvironmentPreset</Detail>
+ </Details>
+</AssetMetadata>

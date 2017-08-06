@@ -3,6 +3,8 @@
 #include <CryDynamicResponseSystem/IDynamicResponseAction.h>
 
 
+namespace Chrysalis
+{
 class CActionPlayAnimation final : public DRS::IResponseAction
 {
 public:
@@ -41,3 +43,4 @@ public:
 	virtual void Cancel() override;
 	// ~IResponseActionInstance
 };
+}

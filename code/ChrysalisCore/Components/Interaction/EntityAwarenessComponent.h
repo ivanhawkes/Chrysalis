@@ -12,32 +12,40 @@ with which the actor might wish to or need to interact.
 #include <CryAction.h>
 #include <CryActionPhysicQueues.h>
 
-
-struct IActor;
-struct IViewSystem;
-
 struct ray_hit;
+
+
+namespace Chrysalis
+{
+struct IActor;
+
 typedef std::vector<EntityId> Entities;
 
-
-class CEntityAwarenessComponent : public IEntityComponent, public IEntityPropertyGroup
+class CEntityAwarenessComponent
+	: public IEntityComponent
 {
-	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CEntityAwarenessComponent, "EntityAwareness", 0xB077AB1547AF4BEB, 0x9BF9D68EE49399E1)
-
-public:
+protected:
+	friend CChrysalisCorePlugin;
+	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
 
 	// IEntityComponent
 	void Initialize() override;
 	void ProcessEvent(SEntityEvent& event) override;
 	uint64 GetEventMask() const { return BIT64(ENTITY_EVENT_UPDATE); }
-	struct IEntityPropertyGroup* GetPropertyGroup() override { return this; }
 	virtual void GetMemoryUsage(ICrySizer* pSizer) const;
 	// ~IEntityComponent
 
-	// IEntityPropertyGroup
-	const char* GetLabel() const override { return "Entity Awareness Properties"; };
-	void SerializeProperties(Serialization::IArchive& archive) override;
-	// ~IEntityPropertyGroup
+public:
+	CEntityAwarenessComponent();
+	virtual ~CEntityAwarenessComponent();
+
+	static void ReflectType(Schematyc::CTypeDesc<CEntityAwarenessComponent>& desc);
+
+	static CryGUID& IID()
+	{
+		static CryGUID id = "{DD951BC3-3EB4-478F-8414-F9A5A5CB3437}"_cry_guid;
+		return id;
+	}
 
 	// ***
 	// *** CEntityAwarenessComponent
@@ -45,23 +53,13 @@ public:
 
 	enum EDebugBits
 	{
-		eDB_Debug					= BIT(0),
-		eDB_ProximalEntities		= BIT(1),
-		eDB_NearEntities			= BIT(2),
-		eDB_RayCast					= BIT(3),
-		eDB_InFront					= BIT(4),
-		eDB_DotFiltered				= BIT(5),
+		eDB_Debug = BIT(0),
+		eDB_ProximalEntities = BIT(1),
+		eDB_NearEntities = BIT(2),
+		eDB_RayCast = BIT(3),
+		eDB_InFront = BIT(4),
+		eDB_DotFiltered = BIT(5),
 	};
-
-	CEntityAwarenessComponent();
-	virtual ~CEntityAwarenessComponent();
-
-
-	struct SExternalCVars
-	{
-		int m_debug;
-	};
-	const SExternalCVars &GetCVars() const;
 
 
 	/** Updates this instance. */
@@ -224,7 +222,7 @@ private:
 		void Reset()
 		{
 			if (rayId != 0)
-			{			
+			{
 				// #HACK: Massive issue, removed due to problems linking to CryAction in 5.3. It's hard to tell why this is even
 				// here now. Reseting the whole queue seems like a terrible idea in a function like this.
 				// static_cast<CCryAction*>(gEnv->pGameFramework)->GetPhysicQueues().GetRayCaster().Reset(); 
@@ -243,9 +241,9 @@ private:
 	Checks to see if we have a query result that is still valid for this FrameId. If no fresh query result is found
 	it will run a query update and mark the new result as being useable within this FrameId. This works like a simple
 	cache that presents multiple calls from needing to run the queries again.
-	
+
 	Results are returned as side-effects of this function.
-	
+
 	\param	query An enum indicating which query should be refreshed (if required).
 	**/
 	ILINE void RefreshQueryCache(EWorldQuery query)
@@ -293,7 +291,8 @@ private:
 
 	/** The actor associated with this instance. It's critical that this value is non-null or the queries
 	will fail to run correctly. */
-	IActor * m_pActor { nullptr };
+	// TODO: CRITICAL: HACK: BROKEN: !!
+	IActor* m_pActor { nullptr };
 
 	/** The eye position for our actor. */
 	Vec3 m_eyePosition = Vec3 { ZERO };
@@ -351,7 +350,7 @@ private:
 	Creates an AABB around the actor and performs a query on entities within that box. The size of the box is based
 	on m_proximityRadius. Any entities which are within the box will be made available in the m_entitiesInProximity
 	container as a side effect of running this query. No culling is performed on the entities returned from the query.
-	
+
 	You can use this as a base on which to build more nuanced and precise queries.
 	**/
 	void UpdateProximityQuery();
@@ -377,7 +376,7 @@ private:
 	/**
 	A proximity based query that limits the results to only those entities which are considered to be in front of the
 	actor. These are limited based on a line segment from the actor's eyes, forward in the direction they are looking.
-	
+
 	\return A reference to a const Entities.
 	**/
 	ILINE const Entities& InFrontOfQuery()
@@ -399,7 +398,7 @@ private:
 	/**
 	Runs through the raycast queue and finds a free slot, if available. If none is available it will kill the oldest
 	slot.
-	
+
 	\return The ray slot Id.
 	**/
 	int RequestRaySlotId();
@@ -407,10 +406,11 @@ private:
 
 	/**
 	Queries the queue to find the slot Id for a queued raycast.
-	
+
 	\param	rayId Identifier for the ray.
-	
+
 	\return The ray slot identifier.
 	**/
 	int QueryRaySlotId(const QueuedRayID& rayId) const;
 };
+}

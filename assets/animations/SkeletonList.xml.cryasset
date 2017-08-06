@@ -3,6 +3,8 @@
   <Files>
    <File path="SkeletonList.xml"/>
   </Files>
-  <Details />
+  <Details>
+   <Detail name="rootTag">SkeletonList</Detail>
+  </Details>
  </AssetMetadata>
 </cryasset>

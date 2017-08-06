@@ -1,0 +1,15 @@
+<AssetMetadata version="0" type="Material" guid="{B22ED63D-A057-3FD5-CF92-17E46D3B27D5}">
+ <Files>
+  <File path="maglite_02d.mtl"/>
+ </Files>
+ <Details>
+  <Detail name="subMaterialCount">2</Detail>
+  <Detail name="textureCount">4</Detail>
+ </Details>
+ <Dependencies>
+  <Path>./maglite_02d_diff.dds</Path>
+  <Path>./maglite_02d_ddna.dds</Path>
+  <Path>textures/defaults/white.dds</Path>
+  <Path>Objects/pbs_reference/gloss0_ddna.dds</Path>
+ </Dependencies>
+</AssetMetadata>

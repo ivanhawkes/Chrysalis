@@ -1,11 +1,12 @@
 #include <StdAfx.h>
-/*
-#include "ProceduralContextRagdoll.h"
-#include <Player/Player.h>
-#include <Game/Game.h>
-//#include "HitDeathReactions.h"
+
+/*#include "ProceduralContextRagdoll.h"
+#include <Components/Player/Player.h>
+#include "HitDeathReactions.h"
 
 
+namespace Chrysalis
+{
 CRYREGISTER_CLASS(CProceduralContextRagdoll);
 
 
@@ -14,10 +15,6 @@ CProceduralContextRagdoll::CProceduralContextRagdoll()
 {
 	Reset();
 }
-
-
-CProceduralContextRagdoll::~CProceduralContextRagdoll()
-{}
 
 
 void CProceduralContextRagdoll::EnableRagdoll(const EntityId entityID, const bool bAlive, const float stiffness, const bool bFromProcClip)
@@ -59,7 +56,7 @@ void CProceduralContextRagdoll::QueueRagdoll(bool bAlive)
 		m_targetEntityId = m_entity->GetId();
 	}
 
-	IActor* piActor = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_targetEntityId);
+	IActor* piActor = gEnv->pGameFramework->GetIActorSystem()->GetActor(m_targetEntityId);
 
 	// NOTE: The case where piActor is NULL is when you're - in the CryMann preview!
 	if (piActor)
@@ -111,7 +108,7 @@ void CProceduralContextRagdoll::QueueRagdoll(bool bAlive)
 			pp.bCopyJointVelocities = true;
 
 			//never ragdollize without mass [Anton]
-			pp.mass = (float) __fsel(-pp.mass, 80.0f, pp.mass);
+			pp.mass = (float)__fsel(-pp.mass, 80.0f, pp.mass);
 
 			pe_player_dimensions playerDim;
 			pe_player_dynamics playerDyn;
@@ -131,6 +128,7 @@ void CProceduralContextRagdoll::QueueRagdoll(bool bAlive)
 	}
 #endif
 }
+
 
 void CProceduralContextRagdoll::Update(float timePassedSeconds)
 {
@@ -160,7 +158,7 @@ void CProceduralContextRagdoll::Update(float timePassedSeconds)
 
 		if (blendOutFactor == 0.0f)
 		{
-			IActor* piActor = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_targetEntityId);
+			IActor* piActor = gEnv->pGameFramework->GetIActorSystem()->GetActor(m_targetEntityId);
 			if (piActor)
 			{
 				ForceRagdollFinish(piActor, false);
@@ -172,13 +170,14 @@ void CProceduralContextRagdoll::Update(float timePassedSeconds)
 	}
 	else if (m_bInRagdoll && !m_bEntityAlive && !m_bFromProcClip)
 	{
-		IActor* piActor = gEnv->pGame->GetIGameFramework()->GetIActorSystem()->GetActor(m_targetEntityId);
+		IActor* piActor = gEnv->pGameFramework->GetIActorSystem()->GetActor(m_targetEntityId);
 		if (piActor)
 		{
 			ForceRagdollFinish(piActor, true);
 		}
 	}
 }
+
 
 void CProceduralContextRagdoll::Reset()
 {
@@ -189,6 +188,7 @@ void CProceduralContextRagdoll::Reset()
 	m_bEntityAlive = true;
 	m_targetEntityId = 0;
 }
+
 
 void CProceduralContextRagdoll::ForceRagdollFinish(IActor* piActor, bool bForceDead)
 {
@@ -208,5 +208,6 @@ void CProceduralContextRagdoll::ForceRagdollFinish(IActor* piActor, bool bForceD
 			}
 		}
 	}
+}
 }
 */

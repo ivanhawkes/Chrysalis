@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="{284DA72D-9CAB-7AB0-9FC0-060B0F887500}">
+ <Files>
+  <File path="islington.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">EnvironmentPreset</Detail>
+ </Details>
+</AssetMetadata>

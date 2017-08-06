@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="{A8002C09-DA0C-3665-F32D-59E8E7B5C2C5}">
+ <Files>
+  <File path="movement.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">EnvironmentPreset</Detail>
+ </Details>
+</AssetMetadata>

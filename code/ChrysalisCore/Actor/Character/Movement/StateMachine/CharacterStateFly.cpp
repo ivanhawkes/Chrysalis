@@ -9,12 +9,14 @@
 //#include "CharacterInput.h"
 
 
+namespace Chrysalis
+{
 CCharacterStateFly::CCharacterStateFly()
 	: m_flyMode(0)
 {}
 
 
-void CCharacterStateFly::OnEnter(CCharacter& Character)
+void CCharacterStateFly::OnEnter(CCharacterComponent& Character)
 {
 	// #TODO: Add this back in.
 
@@ -38,7 +40,7 @@ void CCharacterStateFly::OnEnter(CCharacter& Character)
 }
 
 
-bool CCharacterStateFly::OnPrePhysicsUpdate(CCharacter& Character, const SActorMovementRequest& movementRequest, float frameTime)
+bool CCharacterStateFly::OnPrePhysicsUpdate(CCharacterComponent& Character, const SActorMovementRequest& movementRequest, float frameTime)
 {
 	// #TODO: Add this back in.
 	//	if (Character.GetActorState()->spectatorInfo.mode == 0)
@@ -84,9 +86,9 @@ bool CCharacterStateFly::OnPrePhysicsUpdate(CCharacter& Character, const SActorM
 }
 
 
-void CCharacterStateFly::OnExit(CCharacter& Character)
+void CCharacterStateFly::OnExit(CCharacterComponent& Character)
 {
-	Character.CreateScriptEvent("printhud", 0, "FlyMode/NoClip OFF");
+	//	Character.CreateScriptEvent("printhud", 0, "FlyMode/NoClip OFF");
 
 	pe_player_dynamics simPar;
 
@@ -100,7 +102,7 @@ void CCharacterStateFly::OnExit(CCharacter& Character)
 }
 
 
-void CCharacterStateFly::ProcessFlyMode(CCharacter& Character, const SActorMovementRequest& movementRequest)
+void CCharacterStateFly::ProcessFlyMode(CCharacterComponent& Character, const SActorMovementRequest& movementRequest)
 {
 	// #TODO: Add this back in.
 
@@ -137,4 +139,5 @@ void CCharacterStateFly::ProcessFlyMode(CCharacter& Character, const SActorMovem
 
 	//Character.GetMoveRequest ().type = eCMT_Fly;
 	//Character.GetMoveRequest ().velocity = move;
+}
 }

@@ -1,0 +1,14 @@
+<AssetMetadata version="0" type="Mesh" guid="{8168F7FB-7643-CE61-509C-2278E6B19F85}">
+ <Files>
+  <File path="primitive_cube_noproxy.cgf"/>
+ </Files>
+ <Details>
+  <Detail name="materialCount">1</Detail>
+  <Detail name="triangleCount">12</Detail>
+  <Detail name="vertexCount">24</Detail>
+  <Detail name="16BitPrecision">false</Detail>
+ </Details>
+ <Dependencies>
+  <Path>./editorprimitive.mtl</Path>
+ </Dependencies>
+</AssetMetadata>

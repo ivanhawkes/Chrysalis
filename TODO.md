@@ -1,5 +1,22 @@
 TODO List and Implementation Ideas
 
+# Attaching things
+
+See ProceduralClipProps.cpp in CryAction\Mannequin for examples of attaching geometry.
+
+
+
+```#include <CryEntitySystem/IEntitySystem.h>
+#include <CrySchematyc/CoreAPI.h>
+```
+into stdafx.h
+
+
+
+
+
+
+
 # Definition
 
 An item is an entity that has one or more of the following:

@@ -2,6 +2,8 @@
 
 #include "ICryMannequin.h"
 
+namespace Chrysalis
+{
 typedef TAction<SAnimationContext> CAnimationAction;
 
 
@@ -13,4 +15,5 @@ const T* GetMannequinUserParams(const SAnimationContext& context)
 	CRY_ASSERT(pUserParams);
 
 	return pUserParams;
+}
 }

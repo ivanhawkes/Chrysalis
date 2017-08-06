@@ -1,40 +1,37 @@
 #pragma once
 
-#include "Helpers/DesignerEntityComponent.h"
-
 
 /**
 A lock extension.
-
-\sa IEntityComponent
-\sa IEntityPropertyGroup
 **/
-class CLockableComponent : public CDesignerEntityComponent<>, public IEntityPropertyGroup
+namespace Chrysalis
 {
-	CRY_ENTITY_COMPONENT_INTERFACE_AND_CLASS(CLockableComponent, "Lockable", 0x819A4630CA1840F9, 0xB4C7F93B3F13A69A)
+class CLockableComponent
+	: public IEntityComponent
+{
+protected:
+	friend CChrysalisCorePlugin;
+	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
 
 public:
-	// IEntityComponent
-	struct IEntityPropertyGroup* GetPropertyGroup() override { return this; }
-	// ~IEntityComponent
+	CLockableComponent() {}
+	virtual ~CLockableComponent() {}
 
-	// IEntityPropertyGroup
-	const char* GetLabel() const override { return "Lockable Properties"; };
-	void SerializeProperties(Serialization::IArchive& archive) override;
-	// ~IEntityPropertyGroup
+	static void ReflectType(Schematyc::CTypeDesc<CLockableComponent>& desc);
 
-	// ***
-	// *** CLockableComponent
-	// ***
+	static CryGUID& IID()
+	{
+		static CryGUID id = "{8DEFBD90-4A15-4B2A-B9CD-60AF386658C0}"_cry_guid;
+		return id;
+	}
 
-	CLockableComponent() {};
-	virtual ~CLockableComponent() {};
 
 	bool IsLocked() const { return m_isLocked; }
 	void SetLocked(bool val) { m_isLocked = val; }
 
-	void OnResetState() override;
+	virtual void OnResetState();
 
 private:
 	bool m_isLocked { true };
 };
+}

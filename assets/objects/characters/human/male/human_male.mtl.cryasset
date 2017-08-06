@@ -1,0 +1,14 @@
+<AssetMetadata version="0" type="Material" guid="{E5001809-7EC5-970C-EEC4-A295E14D0029}">
+ <Files>
+  <File path="human_male.mtl"/>
+ </Files>
+ <Details>
+  <Detail name="subMaterialCount">3</Detail>
+  <Detail name="textureCount">3</Detail>
+ </Details>
+ <Dependencies>
+  <Path>./textures/human_male_diff.dds</Path>
+  <Path>./textures/human_male_ddna.dds</Path>
+  <Path>./textures/human_male_spec.dds</Path>
+ </Dependencies>
+</AssetMetadata>

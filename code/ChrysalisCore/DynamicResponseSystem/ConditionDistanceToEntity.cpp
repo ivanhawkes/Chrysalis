@@ -4,6 +4,8 @@
 #include <CrySerialization/IArchive.h>
 
 
+namespace Chrysalis
+{
 CConditionDistanceToEntity::CConditionDistanceToEntity()
 {
 }
@@ -48,4 +50,5 @@ void CConditionDistanceToEntity::Serialize(Serialization::IArchive& ar)
 string CConditionDistanceToEntity::GetVerboseInfo() const
 {
 	return m_entityName + "' < than " + CryStringUtils::toString(sqrt(m_squaredDistance)).c_str();
+}
 }

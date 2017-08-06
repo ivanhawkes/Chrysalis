@@ -1,0 +1,14 @@
+<AssetMetadata version="0" type="Mesh" guid="{80EB485E-4B65-8569-1207-5A30B1FF220D}">
+ <Files>
+  <File path="primitive_pyramid_noproxy.cgf"/>
+ </Files>
+ <Details>
+  <Detail name="materialCount">1</Detail>
+  <Detail name="triangleCount">6</Detail>
+  <Detail name="vertexCount">16</Detail>
+  <Detail name="16BitPrecision">false</Detail>
+ </Details>
+ <Dependencies>
+  <Path>./editorprimitive.mtl</Path>
+ </Dependencies>
+</AssetMetadata>

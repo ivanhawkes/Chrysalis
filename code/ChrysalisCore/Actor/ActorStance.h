@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Chrysalis
+{
 // ***
 // *** Character stances
 // ***
@@ -48,7 +50,7 @@ enum EActorPosture
 	eAP_Depressed,
 };
 
-	
+
 /** Keeps track of the stance the actor is in. */
 
 struct CActorStance
@@ -67,3 +69,4 @@ private:
 	/** The actor's posture, which should indicate their state of mind, or game conditions they presently have e.g. sapped. */
 	EActorPosture m_posture { eAP_Neutral };
 };
+}
