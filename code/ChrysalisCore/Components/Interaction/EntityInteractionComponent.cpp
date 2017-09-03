@@ -1,7 +1,7 @@
 #include <StdAfx.h>
 
 #include "EntityInteractionComponent.h"
-#include <Components/Player/Player.h>
+#include "Components/Player/PlayerComponent.h"
 
 
 namespace Chrysalis
@@ -92,7 +92,7 @@ std::vector<string> CEntityInteractionComponent::GetVerbs(bool includeHidden)
 	{
 		if (it->IsEnabled())
 		{
-			if ((it->IsHidden() == false) || ((it->IsHidden() == true) && includeHidden))
+			if ((!it->IsHidden()) || ((it->IsHidden()) && includeHidden))
 			{
 				verbs.push_back(it->GetVerb());
 			}

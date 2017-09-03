@@ -16,7 +16,7 @@ void CLockableComponent::ReflectType(Schematyc::CTypeDesc<CLockableComponent>& d
 	desc.SetEditorCategory("Locks");
 	desc.SetLabel("Lockable");
 	desc.SetDescription("No description.");
-	desc.SetIcon("icons:ObjectTypes/door.ico");
+	desc.SetIcon("icons:ObjectTypes/light.ico");
 	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
 
 	desc.AddMember(&CLockableComponent::m_isLocked, 'lock', "IsLocked", "Is Locked?", "Is this locked?", true);

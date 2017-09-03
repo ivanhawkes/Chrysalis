@@ -8,13 +8,22 @@ Declares the IPlayerInputComponent interface.
 
 namespace Chrysalis
 {
-enum EMovementStateFlags
+enum class EInputFlagType
+{
+	Hold = 0,
+	Toggle
+};
+
+typedef uint8 TInputFlags;
+
+enum class EInputFlag
+	: TInputFlags
 {
 	None = 0,
-	Forward = BIT(0),
-	Backward = BIT(1),
-	Left = BIT(2),
-	Right = BIT(3),
+	Left = 1 << 0,
+	Right = 1 << 1,
+	Forward = 1 << 2,
+	Backward = 1 << 3
 };
 
 
@@ -194,7 +203,7 @@ public:
 
 	\return The movement state flags.
 	**/
-	virtual uint32 GetMovementStateFlags() const = 0;
+	virtual TInputFlags GetMovementDirectionFlags() const = 0;
 
 
 	// ***

@@ -131,7 +131,7 @@ const char* GetTimeString(int secs, bool useShortForm /*=false*/, bool includeSe
 	}
 	else
 	{
-		if (useSingleLetters == false)
+		if (!useSingleLetters)
 		{
 			if (d == 1)
 				result.Format("%d %s", d, LocalizeUtility::LocalizeString("@ui_day"));

@@ -12,7 +12,7 @@ A CMountComponent represents a mountable creature within the game.
 // TODO: probably needs to also implement IInventoryListener to listen for inventory changes.
 
 class CMountComponent
-	: public CActor
+	: public IEntityComponent
 {
 protected:
 	// Declaration of the state machine that controls character movement.
@@ -27,7 +27,8 @@ protected:
 	uint64 GetEventMask() const { return BIT64(ENTITY_EVENT_UPDATE) | BIT64(ENTITY_EVENT_PREPHYSICSUPDATE); }
 	// ~IEntityComponent
 
-	virtual void Update() override;
+	/** Pre physics update. */
+	virtual void PrePhysicsUpdate();
 
 public:
 	CMountComponent() {}
@@ -41,91 +42,31 @@ public:
 		return id;
 	}
 
-protected:
-
-	/**
-	Physicalies this instance.
-
-	\return	True if physicalization was successful. False otherwise.
-	*/
-	bool Physicalize() override;
-
-
-	/**
-	Pre physics update.
-	*/
-	virtual void PrePhysicsUpdate();
-
-
-	/**
-	Registers this instance for GameObject event notifications (will receive HandleEvent() calls).
-	*/
-	void RegisterEvents();
-
-
-	/**
-	Scripts are able to raise an event which is passed back to the c++ code though the ENTITY_EVENT_SCRIPT_EVENT.
-	This method handles those events.
-
-	\param	eventName	  	Name of the event.
-	\param	eventValueType	Type of the event value.
-	\param	pEventValue   	The event value.
-	*/
-	void OnScriptEvent(SEntityEvent& event);
-
-
-	/** Whenever a property in the editor is changed, this function is called. */
-	void OnEditorPropertyChanged();
-
-
-	// ***
-	// *** Life-cycle
-	// ***
-
-public:
-
 	/** Resets the character to an initial state. */
 	virtual void OnResetState();
 
+	//// ***
+	//// *** Hierarchical State Machine Support - this allows us to abstract the HSM away from the base
+	//// *** actor class - giving the flexibility to use different state machines for different
+	//// *** derived classes e.g. mounts
+	//// ***
 
-	/** Kill the character. */
-	void Kill() override;
+	///** Select movement hierarchy for our HSM. */
+	//void SelectMovementHierarchy() override;
 
+	///** Release the HSM. */
+	//void MovementHSMRelease() override;
 
-	/**
-	Revive the character from death.
+	///** Init the HSM. */
+	//void MovementHSMInit() override;
 
-	\param	reasonForRevive	the reason for revive.
-	*/
-	void Revive(EReasonForRevive reasonForRevive = RFR_Spawn) override;
+	///** Serialize the HSM. */
+	//void MovementHSMSerialize(TSerialize ser) override;
 
+	///** Update the HSM. */
+	//void MovementHSMUpdate(SEntityUpdateContext& ctx, int updateSlot) override;
 
-	// ***
-	// *** Hierarchical State Machine Support - this allows us to abstract the HSM away from the base
-	// *** actor class - giving the flexibility to use different state machines for different
-	// *** derived classes e.g. mounts
-	// ***
-
-public:
-
-	/**
-	Select movement hierarchy for our HSM.
-	*/
-	void SelectMovementHierarchy() override;
-
-	/** Release the HSM. */
-	void MovementHSMRelease() override;
-
-	/** Init the HSM. */
-	void MovementHSMInit() override;
-
-	/** Serialize the HSM. */
-	void MovementHSMSerialize(TSerialize ser) override;
-
-	/** Update the HSM. */
-	void MovementHSMUpdate(SEntityUpdateContext& ctx, int updateSlot) override;
-
-	/** Reset the HSM. */
-	void MovementHSMReset() override;
+	///** Reset the HSM. */
+	//void MovementHSMReset() override;
 };
 }

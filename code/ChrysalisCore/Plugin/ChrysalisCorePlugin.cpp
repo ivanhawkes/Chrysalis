@@ -3,7 +3,6 @@
 #include "ChrysalisCorePlugin.h"
 #include <CrySystem/ISystem.h>
 #include <CryExtension/ICryPluginManager.h>
-#include "Components/Player/Player.h"
 #include <CrySchematyc/Env/IEnvRegistry.h>
 #include <CrySchematyc/Env/EnvPackage.h>
 #include <CrySchematyc/Utils/SharedString.h>
@@ -36,19 +35,21 @@
 #include "Components/Lights/DynamicLightComponent.h"
 #include "Components/Lockable/KeyringComponent.h"
 #include "Components/Lockable/LockableComponent.h"
+#include "Components/Player/PlayerComponent.h"
 #include "Components/Openable/ContainerComponent.h"
-#include "Components/Player/Camera/CameraManagerComponent.h"
-#include "Components/Player/Camera/ActionRPGCameraComponent.h"
-#include "Components/Player/Camera/ExamineCameraComponent.h"
-#include "Components/Player/Camera/FirstPersonCameraComponent.h"
-#include "Components/Player/Input/PlayerInputComponent.h"
-#include "Components/Snaplocks/SnaplockComponent.h"
 #include "Components/Switchable/SwitchComponent.h"
 #include "Entities/Compass/CompassComponent.h"
 #include "Entities/Doors/AnimatedDoorComponent.h"
 #include "Entities/Flashlight/FlashlightComponent.h"
 #include "Entities/Interaction/DRSInteractionEntity.h"
 #include "Entities/SecurityPad/SecurityPadComponent.h"
+
+#include "Components/Player/Input/PlayerInputComponent.h"
+#include "Components/Snaplocks/SnaplockComponent.h"
+#include "Components/Player/Camera/CameraManagerComponent.h"
+#include "Components/Player/Camera/ActionRPGCameraComponent.h"
+#include "Components/Player/Camera/ExamineCameraComponent.h"
+#include "Components/Player/Camera/FirstPersonCameraComponent.h"
 
 
 // Included only once per DLL module.
@@ -76,6 +77,38 @@ void CChrysalisCorePlugin::RegisterComponents(Schematyc::IEnvRegistrar& registra
 {
 	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
 	{
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CPlayerComponent));
+			Chrysalis::CPlayerComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CPlayerInputComponent));
+			Chrysalis::CPlayerInputComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CCameraManagerComponent));
+			Chrysalis::CCameraManagerComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CFirstPersonCameraComponent));
+			Chrysalis::CFirstPersonCameraComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CExamineCameraComponent));
+			Chrysalis::CExamineCameraComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CActionRPGCameraComponent));
+			Chrysalis::CActionRPGCameraComponent::Register(componentScope);
+		}
+		//{
+		//	Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::IActorComponent));
+		//	Chrysalis::IActorComponent::Register(componentScope);
+		//}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CActorComponent));
+			Chrysalis::CActorComponent::Register(componentScope);
+		}
 		{
 			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CCharacterComponent));
 			Chrysalis::CCharacterComponent::Register(componentScope);
@@ -143,26 +176,6 @@ void CChrysalisCorePlugin::RegisterComponents(Schematyc::IEnvRegistrar& registra
 		{
 			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CContainerComponent));
 			Chrysalis::CContainerComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CCameraManagerComponent));
-			Chrysalis::CCameraManagerComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CFirstPersonCameraComponent));
-			Chrysalis::CFirstPersonCameraComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CExamineCameraComponent));
-			Chrysalis::CExamineCameraComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CActionRPGCameraComponent));
-			Chrysalis::CActionRPGCameraComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CPlayerInputComponent));
-			Chrysalis::CPlayerInputComponent::Register(componentScope);
 		}
 		{
 			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CSnaplockComponent));
@@ -282,7 +295,7 @@ void CChrysalisCorePlugin::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UI
 		{
 			auto pPlayer = CPlayerComponent::GetLocalPlayer();
 			if (pPlayer)
-				pPlayer->AttachToCharacter();
+				pPlayer->AttachToHero();
 		}
 		break;
 	}

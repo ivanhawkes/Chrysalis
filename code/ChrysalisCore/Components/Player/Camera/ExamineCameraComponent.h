@@ -26,16 +26,8 @@ protected:
 	void OnShutDown() override;
 	// ~IEntityComponent
 
-	// IAsyncCameraCallback
-	virtual bool OnAsyncCameraCallback(const HmdTrackingState& state, IHmdDevice::AsyncCameraContext& context) final;
-	// ~IAsyncCameraCallback
-
-	// IEntityEventListener
-	virtual void OnEntityEvent(IEntity* pEntity, SEntityEvent& event) final;
-	// ~IEntityEventListener
-
 public:
-	CExamineCameraComponent() { ResetCamera(); }
+	CExamineCameraComponent() {}
 	virtual ~CExamineCameraComponent() {}
 
 	static void ReflectType(Schematyc::CTypeDesc<CExamineCameraComponent>& desc);

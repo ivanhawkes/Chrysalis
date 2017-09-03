@@ -17,7 +17,7 @@ struct ray_hit;
 
 namespace Chrysalis
 {
-struct IActor;
+class IActorComponent;
 
 typedef std::vector<EntityId> Entities;
 
@@ -292,7 +292,7 @@ private:
 	/** The actor associated with this instance. It's critical that this value is non-null or the queries
 	will fail to run correctly. */
 	// TODO: CRITICAL: HACK: BROKEN: !!
-	IActor* m_pActor { nullptr };
+	IActorComponent* m_pActor { nullptr };
 
 	/** The eye position for our actor. */
 	Vec3 m_eyePosition = Vec3 { ZERO };

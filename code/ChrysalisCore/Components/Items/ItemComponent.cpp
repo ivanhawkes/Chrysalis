@@ -110,7 +110,7 @@ void CItemComponent::EnablePicking(bool enable, bool dropped)
 
 void CItemComponent::PickUp(EntityId actorId, bool sound, bool select, bool keepHistory, const char* setup)
 {
-	//IActor* pActor = CActor::GetActor(actorId);
+	//IActor* pActor = CActorComponent::GetActor(actorId);
 	//if (!pActor)
 	//	return;
 
@@ -239,8 +239,8 @@ void CItemComponent::PickUp(EntityId actorId, bool sound, bool select, bool keep
 	//	GetGameObject()->SetNetworkParent(pickerId);
 	//	if ((GetEntity()->GetFlags()&(ENTITY_FLAG_CLIENT_ONLY | ENTITY_FLAG_SERVER_ONLY)) == 0)
 	//	{
-	//		pActor->GetGameObject()->InvokeRMIWithDependentObject(CActor::ClPickUp(),
-	//			CActor::PickItemParams(GetEntity()->GetId(), m_itemStatus.selected, sound, false),
+	//		pActor->GetGameObject()->InvokeRMIWithDependentObject(CActorComponent::ClPickUp(),
+	//			CActorComponent::PickItemParams(GetEntity()->GetId(), m_itemStatus.selected, sound, false),
 	//			eRMI_ToAllClients | eRMI_NoLocalCalls, GetEntity()->GetId());
 	//	}
 	//}

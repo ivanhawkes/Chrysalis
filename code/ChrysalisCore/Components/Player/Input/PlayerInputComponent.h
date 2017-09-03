@@ -2,7 +2,8 @@
 
 #include "IPlayerInputComponent.h"
 #include <IActionMapManager.h>
-#include <Components/Player/Player.h>
+#include "Components/Player/PlayerComponent.h"
+#include <DefaultComponents/Input/InputComponent.h>
 
 
 namespace Chrysalis
@@ -12,7 +13,6 @@ class CCameraManagerComponent;
 
 class CPlayerInputComponent
 	: public IPlayerInputComponent
-	, public IActionListener
 {
 protected:
 	friend CChrysalisCorePlugin;
@@ -60,8 +60,8 @@ public:
 	float GetZoomDelta() override { return m_lastZoomDelta; };
 
 	/** Provides access to the raw input movement directions as a set of flags for forward, backward, left and right.
-	See EMovementStateFlags for the relevant flags. */
-	uint32 GetMovementStateFlags() const { return m_movementStateFlags; };
+	See EmovementDirectionFlags for the relevant flags. */
+	TInputFlags GetMovementDirectionFlags() const { return m_inputFlags; };
 
 	Vec3 GetHeadMovement(const Quat& baseRotation) override { return Vec3(0.0f, 0.0f, 0.0f); }
 	Ang3 GetHeadRotationDelta() override { return Ang3(0.0f, 0.0f, 0.0f); }
@@ -78,58 +78,30 @@ public:
 
 
 	// ***
-	// *** IActionListener
-	// ***
-
-public:
-
-	/**
-	Handles the action event.
-
-	\param	action		  	The action.
-	\param	activationMode	The activation mode.
-	\param	value		  	An optional value that may contain useful information for an action.
-	*/
-	void OnAction(const ActionId& action, int activationMode, float value) override;
-
-
-	/** After action. */
-	virtual void AfterAction() {};
-
-
-	// ***
 	// ***  CPlayerInputComponent
 	// ***
 
 protected:
-	bool OnActionEscape(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionExamine(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	void OnActionEscape(int activationMode, float value);
+	void OnActionExamine(int activationMode, float value);
 
-	bool OnActionMoveLeft(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionMoveRight(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionMoveForward(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionMoveBackward(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	void OnActionRotateYaw(int activationMode, float value);
+	void OnActionRotatePitch(int activationMode, float value);
+	void OnActionXIRotateYaw(int activationMode, float value);
+	void OnActionXIRotatePitch(int activationMode, float value);
 
-	bool OnActionRotateYaw(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionRotatePitch(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionXIRotateYaw(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionXIRotatePitch(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	void OnActionJump(int activationMode, float value);
+	void OnActionCrouchToggle(int activationMode, float value);
+	void OnActionCrawlToggle(int activationMode, float value);
+	void OnActionKneelToggle(int activationMode, float value);
+	void OnActionSitToggle(int activationMode, float value);
+	void OnActionSprintToggle(int activationMode, float value);
+	void OnActionWalkJog(int activationMode, float value);
 
-	bool OnActionZoomIn(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionZoomOut(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-
-	bool OnActionJump(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionCrouchToggle(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionCrawlToggle(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionKneelToggle(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionSitToggle(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionSprintToggle(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionWalkJog(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-
-	bool OnActionItemUse(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionItemPickup(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionItemDrop(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionInteraction(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	void OnActionItemUse(int activationMode, float value);
+	void OnActionItemPickup(int activationMode, float value);
+	void OnActionItemDrop(int activationMode, float value);
+	void OnActionInteraction(int activationMode, float value);
 
 
 	/**
@@ -142,7 +114,7 @@ protected:
 
 	\return	true if it succeeds, false if it fails.
 	*/
-	bool OnActionItemToss(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	void OnActionItemToss(int activationMode, float value);
 
 
 	/**
@@ -155,20 +127,8 @@ protected:
 
 	\return true if it succeeds, false if it fails.
 	**/
-	bool OnActionBar(EntityId entityId, const ActionId& actionId, int activationMode, int buttonId);
+	void OnActionBar(int activationMode, int buttonId);
 
-	bool OnActionBar01(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionBar02(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionBar03(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionBar04(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionBar05(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionBar06(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionBar07(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionBar08(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionBar09(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionBar10(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionBar11(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionBar12(EntityId entityId, const ActionId& actionId, int activationMode, float value);
 
 	/**
 	Generic numberpad action.
@@ -180,30 +140,19 @@ protected:
 
 	\return true if it succeeds, false if it fails.
 	**/
-	bool OnNumpad(EntityId entityId, const ActionId& actionId, int activationMode, int buttonId);
-
-	bool OnActionNumpad0(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionNumpad1(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionNumpad2(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionNumpad3(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionNumpad4(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionNumpad5(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionNumpad6(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionNumpad7(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionNumpad8(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionNumpad9(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	void OnNumpad(int activationMode, int buttonId);
 
 	/**	Camera debug actions. **/
-	bool OnActionCameraShiftUp(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionCameraShiftDown(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionCameraShiftLeft(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionCameraShiftRight(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionCameraShiftForward(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionCameraShiftBackward(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	void OnActionCameraShiftUp(int activationMode, float value);
+	void OnActionCameraShiftDown(int activationMode, float value);
+	void OnActionCameraShiftLeft(int activationMode, float value);
+	void OnActionCameraShiftRight(int activationMode, float value);
+	void OnActionCameraShiftForward(int activationMode, float value);
+	void OnActionCameraShiftBackward(int activationMode, float value);
 
-	bool OnActionInspectStart(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionInspect(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionInspectEnd(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	void OnActionInspectStart(int activationMode, float value);
+	void OnActionInspect(int activationMode, float value);
+	void OnActionInspectEnd(int activationMode, float value);
 
 	/** The player. */
 	CPlayerComponent* m_pPlayer { nullptr };
@@ -217,15 +166,16 @@ private:
 	/** Registers the action maps and starts to listen for action map events. */
 	void RegisterActionMaps();
 
-	void InitializeActionHandler();
+	void HandleInputFlagChange(TInputFlags flags, int activationMode, EInputFlagType type = EInputFlagType::Hold);
 
-	/** A static handler for the actions we are interested in hooking. */
-	TActionHandler<CPlayerInputComponent> m_actionHandler;
+	/** The input component */
+	Cry::DefaultComponents::CInputComponent* m_pInputComponent = nullptr;
 
 	/** The movement mask. */
-	uint32 m_movementStateFlags { EMovementStateFlags::None };
+	TInputFlags m_inputFlags { (TInputFlags) EInputFlag::None };
 
 	/** Drop incoming actions if this is false. Prevents actions arriving after we start to shut down from being serviced. */
+	// TODO: this was to fix a bug in cryaction, and can probably be removed now.
 	bool m_allowActions { false };
 
 	/**

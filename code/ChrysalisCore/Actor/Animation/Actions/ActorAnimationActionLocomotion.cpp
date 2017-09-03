@@ -123,7 +123,7 @@ IAction::EStatus CActorAnimationActionLocomotion::Update(float timePassed)
 
 	// Grab the actor in the root scope.
 	const IScope& rootScope = GetRootScope();
-	CActor& actor = *CActor::GetActor(rootScope.GetEntityId());
+	CActorComponent& actor = *CActorComponent::GetActor(rootScope.GetEntityId());
 
 	// Set stance tags if they have changed.
 	const auto newStance = actor.GetStance();
@@ -240,7 +240,7 @@ IAction::EStatus CActorAnimationActionLocomotion::Update(float timePassed)
 	m_lastPosture = newPosture;
 
 	FragmentID newFragmentId;
-	if (actor.GetMovingLastFrame())
+	if (actor.GetVelocity().len() > FLT_EPSILON)
 		newFragmentId = m_locomotionParams->fragmentIDs.Move;
 	else
 		newFragmentId = m_locomotionParams->fragmentIDs.Idle;

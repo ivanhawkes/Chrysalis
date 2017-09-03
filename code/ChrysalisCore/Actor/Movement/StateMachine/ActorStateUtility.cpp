@@ -3,9 +3,8 @@
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
 #include <IAnimatedCharacter.h>
 #include <IItem.h>
-#include <Actor/Character/Movement/StateMachine/CharacterStateJump.h>
+#include <Actor/Movement/StateMachine/ActorStateJump.h>
 #include <Actor/Actor.h>
-#include <Utility/CryWatch.h>
 /*#include "CharacterInput.h"
 #include "NetCharacterInput.h"
 #include "NetInputChainDebug.h"
@@ -17,63 +16,63 @@
 
 namespace Chrysalis
 {
-void CCharacterStateUtil::InitializeMoveRequest(SCharacterMoveRequest& acRequest)
+void CActorStateUtility::InitializeMoveRequest(SCharacterMoveRequest& acRequest)
 {
 	acRequest = SCharacterMoveRequest();
 	acRequest.type = eCMT_Normal;
 }
 
 
-void CCharacterStateUtil::ProcessRotation(CActor& actor, const SActorMovementRequest& movementRequest, SCharacterMoveRequest& acRequest)
+void CActorStateUtility::ProcessRotation(IActorComponent& actorComponent, const SActorMovementRequest& movementRequest, SCharacterMoveRequest& acRequest)
 {
-	auto pEntity = actor.GetEntity();
+	auto pEntity = actorComponent.GetEntity();
 	Quat rotationQuat = Quat(movementRequest.deltaAngles);
 
-	// Physically rotate the actor in the direction indicated by the request.
+	// Physically rotate the actorComponent in the direction indicated by the request.
 	pEntity->SetRotation(pEntity->GetRotation() * Quat(movementRequest.deltaAngles));
 
 	// Rotate the animation in the inverse direction, this will have the effect of nullifying the physical rotation.
-	// The animated actor code will then take care of applying the required turning animations over the next few
+	// The animated actorComponent code will then take care of applying the required turning animations over the next few
 	// frames - giving a smooth effect. 
 	acRequest.rotation = rotationQuat.GetInverted();
 }
 
 
-void CCharacterStateUtil::FinalizeMovementRequest(CActor& actor, const SActorMovementRequest& movementRequest, SCharacterMoveRequest& acRequest)
+void CActorStateUtility::FinalizeMovementRequest(IActorComponent& actorComponent, const SActorMovementRequest& movementRequest, SCharacterMoveRequest& acRequest)
 {
 	// Remote Characters stuff...
-	UpdateRemoteInterpolation(actor, movementRequest, acRequest);
+	UpdateRemoteInterpolation(actorComponent, movementRequest, acRequest);
 
-	// Send the request to animated actor.
-	if (actor.GetAnimatedCharacter())
-	{
-		acRequest.type = eCMT_Normal;
-		acRequest.velocity = movementRequest.desiredVelocity;
-		acRequest.rotation = Quat { movementRequest.deltaAngles };
-		acRequest.prediction = movementRequest.prediction;
-		acRequest.allowStrafe = movementRequest.allowStrafe;
-		acRequest.proceduralLeaning = movementRequest.desiredLean;
+	//// Send the request to animated actorComponent.
+	//if (actorComponent.GetAnimatedCharacter())
+	//{
+	//	acRequest.type = eCMT_Normal;
+	//	acRequest.velocity = movementRequest.desiredVelocity;
+	//	acRequest.rotation = Quat { movementRequest.deltaAngles };
+	//	acRequest.prediction = movementRequest.prediction;
+	//	acRequest.allowStrafe = movementRequest.allowStrafe;
+	//	acRequest.proceduralLeaning = movementRequest.desiredLean;
 
-		// Jumping.
-		// #TODO: Does jumping need a different request type of eCMT_JumpInstant or eCMT_JumpAccumulate?
-		acRequest.jumping = movementRequest.shouldJump;
+	//	// Jumping.
+	//	// #TODO: Does jumping need a different request type of eCMT_JumpInstant or eCMT_JumpAccumulate?
+	//	acRequest.jumping = movementRequest.shouldJump;
 
-		// Send the request into the animated actor system.
-		actor.GetAnimatedCharacter()->AddMovement(acRequest);
-	}
+	//	// Send the request into the animated actorComponent system.
+	//	actorComponent.GetAnimatedCharacter()->AddMovement(acRequest);
+	//}
 
 	// #TODO: find out what this line was used for. Seems to be used for footstep speed and debug, plus doubles up to test
 	// if we're moving. Might be a better way to handle all that.
-	//actor.m_lastRequestedVelocity = acRequest.velocity;
+	//actorComponent.m_lastRequestedVelocity = acRequest.velocity;
 
 	// Reset the request for the next frame!
 	InitializeMoveRequest(acRequest);
 }
 
 
-void CCharacterStateUtil::CalculateGroundOrJumpMovement(const CActor& actor, const SActorMovementRequest& movementRequest, const bool bigWeaponRestrict, Vec3 &move)
+void CActorStateUtility::CalculateGroundOrJumpMovement(const IActorComponent& actorComponent, const SActorMovementRequest& movementRequest, const bool bigWeaponRestrict, Vec3 &move)
 {
-	/*	const bool isPlayer = actor.IsPlayer();
+	/*	const bool isPlayer = actorComponent.IsPlayer();
 		const float totalMovement = fabsf(movementRequest.desiredVelocity.x) + fabsf(movementRequest.desiredVelocity.y);
 		const bool moving = (totalMovement > FLT_EPSILON);
 
@@ -102,10 +101,10 @@ void CCharacterStateUtil::CalculateGroundOrJumpMovement(const CActor& actor, con
 			// Going back?
 			if (isPlayer) // Do not limit backwards movement when controlling AI.
 			{
-				backwardMul = (float) __fsel(desiredVelocityClamped.y, 1.0f, LERP(backwardMul, actor.m_params.backwardMultiplier, -desiredVelocityClamped.y));
+				backwardMul = (float) __fsel(desiredVelocityClamped.y, 1.0f, LERP(backwardMul, actorComponent.m_params.backwardMultiplier, -desiredVelocityClamped.y));
 			}
 
-			const Quat oldBaseQuat = actor.GetEntity()->GetWorldRotation(); // we cannot use m_baseQuat: that one is already updated to a new orientation while desiredVelocity was relative to the old entity frame
+			const Quat oldBaseQuat = actorComponent.GetEntity()->GetWorldRotation(); // we cannot use m_baseQuat: that one is already updated to a new orientation while desiredVelocity was relative to the old entity frame
 			move += oldBaseQuat.GetColumn0() * desiredVelocityClamped.x * strafeMul * backwardMul;
 			move += oldBaseQuat.GetColumn1() * desiredVelocityClamped.y * backwardMul;
 		}
@@ -124,26 +123,28 @@ void CCharacterStateUtil::CalculateGroundOrJumpMovement(const CActor& actor, con
 		}
 
 		// Character movement don't need the m_frameTime, its handled already in the physics
-		float scale = actor.GetStanceMaxSpeed(actor.GetStance());
+		float scale = actorComponent.GetStanceMaxSpeed(actorComponent.GetStance());
 		move *= scale;
 
 		if (isPlayer)
 		{
-			const bool isCrouching = ((actor.m_actions & ACTION_CROUCH) != 0);
-			AdjustMovementForEnvironment(actor, move, bigWeaponRestrict, isCrouching);
+			const bool isCrouching = ((actorComponent.m_actions & ACTION_CROUCH) != 0);
+			AdjustMovementForEnvironment(actorComponent, move, bigWeaponRestrict, isCrouching);
 		}*/
 }
 
 
-bool CCharacterStateUtil::IsOnGround(CActor& actor)
+bool CActorStateUtility::IsOnGround(IActorComponent& actorComponent)
 {
-	return(!actor.GetActorPhysics()->flags.AreAnyFlagsActive(SActorPhysics::EActorPhysicsFlags::Flying));
+	//return(!actorComponent.GetActorPhysics()->flags.AreAnyFlagsActive(SActorPhysics::EActorPhysicsFlags::Flying));
+	// TODO: CRITICAL: HACK: BROKEN: !!
+	return true;
 }
 
 
-bool CCharacterStateUtil::GetPhysicsLivingStatus(const CActor& actor, pe_status_living* physicsStatus)
+bool CActorStateUtility::GetPhysicsLivingStatus(const IActorComponent& actorComponent, pe_status_living* physicsStatus)
 {
-	IPhysicalEntity *pPhysEnt = actor.GetEntity()->GetPhysics();
+	IPhysicalEntity *pPhysEnt = actorComponent.GetEntity()->GetPhysics();
 	if (pPhysEnt)
 		return(pPhysEnt->GetStatus(physicsStatus) > 0);
 
@@ -151,10 +152,10 @@ bool CCharacterStateUtil::GetPhysicsLivingStatus(const CActor& actor, pe_status_
 }
 
 
-void CCharacterStateUtil::AdjustMovementForEnvironment(const CActor& actor, Vec3& move, const bool bigWeaponRestrict, const bool crouching)
+void CActorStateUtility::AdjustMovementForEnvironment(const IActorComponent& actorComponent, Vec3& move, const bool bigWeaponRestrict, const bool crouching)
 {
 	/*	float mult = (bigWeaponRestrict)
-			? g_pGameCVars->pl_movement.nonCombat_heavy_weapon_speed_scale * actor.GetModifiableValues().GetValue(kPMV_HeavyWeaponMovementMultiplier)
+			? g_pGameCVars->pl_movement.nonCombat_heavy_weapon_speed_scale * actorComponent.GetModifiableValues().GetValue(kPMV_HeavyWeaponMovementMultiplier)
 			: 1.0f;
 
 		if (gEnv->bMultiCharacter)
@@ -168,7 +169,7 @@ void CCharacterStateUtil::AdjustMovementForEnvironment(const CActor& actor, Vec3
 				{
 					case eGM_Extraction:
 					{
-						if (pObjectives->CheckIsCharacterEntityUsingObjective(actor.GetEntityId())) // Carrying a tick
+						if (pObjectives->CheckIsCharacterEntityUsingObjective(actorComponent.GetEntityId())) // Carrying a tick
 						{
 							mult *= g_pGameCVars->mp_extractionParams.carryingTick_SpeedScale;
 						}
@@ -177,7 +178,7 @@ void CCharacterStateUtil::AdjustMovementForEnvironment(const CActor& actor, Vec3
 
 					case eGM_CaptureTheFlag:
 					{
-						if (pObjectives->CheckIsCharacterEntityUsingObjective(actor.GetEntityId())) // Carrying a flag
+						if (pObjectives->CheckIsCharacterEntityUsingObjective(actorComponent.GetEntityId())) // Carrying a flag
 						{
 							mult *= g_pGameCVars->mp_ctfParams.carryingFlag_SpeedScale;
 						}
@@ -192,7 +193,7 @@ void CCharacterStateUtil::AdjustMovementForEnvironment(const CActor& actor, Vec3
 
 		mult *= g_pGameCVars->pl_movement.speedScale;
 
-		if (actor.IsSprinting())
+		if (actorComponent.IsSprinting())
 		{
 			if (bigWeaponRestrict)
 			{
@@ -219,9 +220,9 @@ void CCharacterStateUtil::AdjustMovementForEnvironment(const CActor& actor, Vec3
 }
 
 
-void CCharacterStateUtil::PhySetFly(CActor& actor)
+void CActorStateUtility::PhySetFly(IActorComponent& actorComponent)
 {
-	IPhysicalEntity* pPhysEnt = actor.GetEntity()->GetPhysics();
+	IPhysicalEntity* pPhysEnt = actorComponent.GetEntity()->GetPhysics();
 	if (pPhysEnt != NULL)
 	{
 		pe_player_dynamics pd;
@@ -234,17 +235,17 @@ void CCharacterStateUtil::PhySetFly(CActor& actor)
 }
 
 
-void CCharacterStateUtil::PhySetNoFly(CActor& actor, const Vec3& gravity)
+void CActorStateUtility::PhySetNoFly(IActorComponent& actorComponent, const Vec3& gravity)
 {
-	/*IPhysicalEntity* pPhysEnt = actor.GetEntity()->GetPhysics();
+	/*IPhysicalEntity* pPhysEnt = actorComponent.GetEntity()->GetPhysics();
 	if (pPhysEnt != NULL)
 	{
 		pe_player_dynamics pd;
-		pd.kAirControl = actor.GetAirControl();
-		pd.kAirResistance = actor.GetAirResistance();
+		pd.kAirControl = actorComponent.GetAirControl();
+		pd.kAirResistance = actorComponent.GetAirResistance();
 		pd.bSwimming = false;
 		pd.gravity = gravity;
-		actor.m_actorPhysics.gravity = gravity;
+		actorComponent.m_actorPhysics.gravity = gravity;
 		pPhysEnt->SetParams(&pd);
 	}*/
 }
@@ -252,9 +253,9 @@ void CCharacterStateUtil::PhySetNoFly(CActor& actor, const Vec3& gravity)
 
 // #TODO: Investigate jumping.
 
-bool CCharacterStateUtil::IsJumpAllowed(CActor& actor, const SActorMovementRequest& movementRequest)
+bool CActorStateUtility::IsJumpAllowed(IActorComponent& actorComponent, const SActorMovementRequest& movementRequest)
 {
-	/*const bool allowJump = movementRequest.shouldJump && !actor.IsJumping();
+	/*const bool allowJump = movementRequest.shouldJump && !actorComponent.IsJumping();
 
 	if (allowJump)
 	{
@@ -264,13 +265,13 @@ bool CCharacterStateUtil::IsJumpAllowed(CActor& actor, const SActorMovementReque
 		// even being airborne for one frame. CharacterMovement set m_actorState.durationOnGround=0.0f when the jump is triggered, which
 		// prevents the on ground timer from before the jump to be inherited and incorrectly and prematurely used to
 		// identify landing in MP.
-		const SActorStats& stats = *actor.GetActorState();
-		const SActorPhysics& actorPhysics = actor.GetActorPhysics();
+		const SActorStats& stats = *actorComponent.GetActorState();
+		const SActorPhysics& actorPhysics = actorComponent.GetActorPhysics();
 		const float fUnconstrainedZ = actorPhysics.velocityUnconstrained.z;
 		bool jumpFailed = (stats.durationOnGround > 0.0f) && (fUnconstrainedZ <= 0.0f);
 
 		const float onGroundTime = 0.2f;
-		if (((stats.durationOnGround > onGroundTime) || actor.IsRemote())) // && !jumpFailed )
+		if (((stats.durationOnGround > onGroundTime) || actorComponent.IsRemote())) // && !jumpFailed )
 		{
 			return true;
 		}
@@ -284,37 +285,37 @@ bool CCharacterStateUtil::IsJumpAllowed(CActor& actor, const SActorMovementReque
 }
 
 
-void CCharacterStateUtil::RestorePhysics(CActor& actor)
+void CActorStateUtility::RestorePhysics(IActorComponent& actorComponent)
 {
-	/*IAnimatedCharacter* pAC = actor.GetAnimatedCharacter();
+	/*IAnimatedCharacter* pAC = actorComponent.GetAnimatedCharacter();
 	if (pAC)
 	{
 		SAnimatedCharacterParams params;
 
 		params = pAC->GetParams();
 
-		params.inertia = actor.GetInertia();
-		params.inertiaAccel = actor.GetInertiaAccel();
-		params.timeImpulseRecover = actor.GetTimeImpulseRecover();
+		params.inertia = actorComponent.GetInertia();
+		params.inertiaAccel = actorComponent.GetInertiaAccel();
+		params.timeImpulseRecover = actorComponent.GetTimeImpulseRecover();
 
-		actor.SetAnimatedCharacterParams(params);
+		actorComponent.SetAnimatedCharacterParams(params);
 	}*/
 }
 
 
-void CCharacterStateUtil::UpdatePhysicsState(CActor& actor, SActorPhysics& actorPhysics, float frameTime)
+void CActorStateUtility::UpdatePhysicsState(IActorComponent& actorComponent, SActorPhysics& actorPhysics, float frameTime)
 {
 	/*const int currentFrameID = gEnv->pRenderer->GetFrameID();
 
 	if (actorPhysics.lastFrameUpdate < currentFrameID)
 	{
 		pe_status_living livStat;
-		if (!CCharacterStateUtil::GetPhysicsLivingStatus(actor, &livStat))
+		if (!CActorStateUtility::GetPhysicsLivingStatus(actorComponent, &livStat))
 		{
 			return;
 		}
 
-		SActorStats& stats = *actor.GetActorState();
+		SActorStats& stats = *actorComponent.GetActorState();
 
 		const Vec3 newVelocity = livStat.vel - livStat.velGround;
 		actorPhysics.velocityDelta = newVelocity - actorPhysics.velocity;
@@ -325,11 +326,11 @@ void CCharacterStateUtil::UpdatePhysicsState(CActor& actor, SActorPhysics& actor
 		actorPhysics.flags.SetFlags(SActorPhysics::EActorPhysicsFlags::Flying, livStat.bFlying > 0);
 		actorPhysics.flags.SetFlags(SActorPhysics::EActorPhysicsFlags::Stuck, livStat.bStuck > 0);
 
-		Vec3 flatVel(actor.m_pCharacterRotation->GetBaseQuat().GetInverted()*newVelocity);
+		Vec3 flatVel(actorComponent.m_pCharacterRotation->GetBaseQuat().GetInverted()*newVelocity);
 		flatVel.z = 0;
 		stats.speedFlat = flatVel.len();
 
-		if (actor.IsInAir())
+		if (actorComponent.IsInAir())
 		{
 			stats.maxAirSpeed = max(stats.maxAirSpeed, newVelocity.GetLengthFast());
 		}
@@ -364,7 +365,7 @@ void CCharacterStateUtil::UpdatePhysicsState(CActor& actor, SActorPhysics& actor
 				if (IGameObject* pGameObject = gEnv->pGameFramework->GetGameObject(actorPhysics.groundColliderId))
 				{
 					SGameObjectEvent event(eGFE_StoodOnChange, eGOEF_ToExtensions);
-					event.ptr = &actor;
+					event.ptr = &actorComponent;
 					event.paramAsBool = false;
 					pGameObject->SendEvent(event);
 				}
@@ -375,7 +376,7 @@ void CCharacterStateUtil::UpdatePhysicsState(CActor& actor, SActorPhysics& actor
 				if (IGameObject* pGameObject = gEnv->pGameFramework->GetGameObject(newGroundColliderId))
 				{
 					SGameObjectEvent event(eGFE_StoodOnChange, eGOEF_ToExtensions);
-					event.ptr = &actor;
+					event.ptr = &actorComponent;
 					event.paramAsBool = true;
 					pGameObject->SendEvent(event);
 				}
@@ -384,7 +385,7 @@ void CCharacterStateUtil::UpdatePhysicsState(CActor& actor, SActorPhysics& actor
 			actorPhysics.groundColliderId = newGroundColliderId;
 		}
 
-		IPhysicalEntity *pPhysEnt = actor.GetEntity()->GetPhysics();
+		IPhysicalEntity *pPhysEnt = actorComponent.GetEntity()->GetPhysics();
 		if (pPhysEnt)
 		{
 			pe_status_dynamics dynStat;
@@ -403,28 +404,28 @@ void CCharacterStateUtil::UpdatePhysicsState(CActor& actor, SActorPhysics& actor
 		actorPhysics.lastFrameUpdate = currentFrameID;
 
 #ifdef CHARACTER_MOVEMENT_DEBUG_ENABLED
-		actor.GetMovementDebug().DebugGraph_AddValue("PhysVelo", livStat.vel.GetLength());
-		actor.GetMovementDebug().DebugGraph_AddValue("PhysVeloX", livStat.vel.x);
-		actor.GetMovementDebug().DebugGraph_AddValue("PhysVeloY", livStat.vel.y);
-		actor.GetMovementDebug().DebugGraph_AddValue("PhysVeloZ", livStat.vel.z);
+		actorComponent.GetMovementDebug().DebugGraph_AddValue("PhysVelo", livStat.vel.GetLength());
+		actorComponent.GetMovementDebug().DebugGraph_AddValue("PhysVeloX", livStat.vel.x);
+		actorComponent.GetMovementDebug().DebugGraph_AddValue("PhysVeloY", livStat.vel.y);
+		actorComponent.GetMovementDebug().DebugGraph_AddValue("PhysVeloZ", livStat.vel.z);
 
-		actor.GetMovementDebug().DebugGraph_AddValue("PhysVeloUn", livStat.velUnconstrained.GetLength());
-		actor.GetMovementDebug().DebugGraph_AddValue("PhysVeloUnX", livStat.velUnconstrained.x);
-		actor.GetMovementDebug().DebugGraph_AddValue("PhysVeloUnY", livStat.velUnconstrained.y);
-		actor.GetMovementDebug().DebugGraph_AddValue("PhysVeloUnZ", livStat.velUnconstrained.z);
+		actorComponent.GetMovementDebug().DebugGraph_AddValue("PhysVeloUn", livStat.velUnconstrained.GetLength());
+		actorComponent.GetMovementDebug().DebugGraph_AddValue("PhysVeloUnX", livStat.velUnconstrained.x);
+		actorComponent.GetMovementDebug().DebugGraph_AddValue("PhysVeloUnY", livStat.velUnconstrained.y);
+		actorComponent.GetMovementDebug().DebugGraph_AddValue("PhysVeloUnZ", livStat.velUnconstrained.z);
 
-		actor.GetMovementDebug().DebugGraph_AddValue("PhysVelReq", livStat.velRequested.GetLength());
-		actor.GetMovementDebug().DebugGraph_AddValue("PhysVelReqX", livStat.velRequested.x);
-		actor.GetMovementDebug().DebugGraph_AddValue("PhysVelReqY", livStat.velRequested.y);
-		actor.GetMovementDebug().DebugGraph_AddValue("PhysVelReqZ", livStat.velRequested.z);
+		actorComponent.GetMovementDebug().DebugGraph_AddValue("PhysVelReq", livStat.velRequested.GetLength());
+		actorComponent.GetMovementDebug().DebugGraph_AddValue("PhysVelReqX", livStat.velRequested.x);
+		actorComponent.GetMovementDebug().DebugGraph_AddValue("PhysVelReqY", livStat.velRequested.y);
+		actorComponent.GetMovementDebug().DebugGraph_AddValue("PhysVelReqZ", livStat.velRequested.z);
 
-		actor.GetMovementDebug().LogVelocityStats(actor.GetEntity(), livStat, stats.downwardsImpactVelocity, stats.fallSpeed);
+		actorComponent.GetMovementDebug().LogVelocityStats(actorComponent.GetEntity(), livStat, stats.downwardsImpactVelocity, stats.fallSpeed);
 #endif
 	}*/
 }
 
 
-void CCharacterStateUtil::UpdateRemoteInterpolation(CActor& actor, const SActorMovementRequest& movementRequest, SCharacterMoveRequest& frameRequest)
+void CActorStateUtility::UpdateRemoteInterpolation(IActorComponent& actorComponent, const SActorMovementRequest& movementRequest, SCharacterMoveRequest& frameRequest)
 {
 	/*if (!gEnv->bMultiCharacter)
 		return;
@@ -434,16 +435,16 @@ void CCharacterStateUtil::UpdateRemoteInterpolation(CActor& actor, const SActorM
 	// *** Interpolation for remote Characters
 	// ***
 
-	const bool isRemoteClient = actor.IsRemote();
-	const bool doVelInterpolation = isRemoteClient && actor.GetCharacterInput();
+	const bool isRemoteClient = actorComponent.IsRemote();
+	const bool doVelInterpolation = isRemoteClient && actorComponent.GetCharacterInput();
 
 	if (doVelInterpolation)
 	{
 		if (g_pGameCVars->pl_clientInertia >= 0.0f)
 		{
-			actor.m_inertia = g_pGameCVars->pl_clientInertia;
+			actorComponent.m_inertia = g_pGameCVars->pl_clientInertia;
 		}
-		actor.m_inertiaAccel = actor.m_inertia;
+		actorComponent.m_inertiaAccel = actorComponent.m_inertia;
 
 		const bool isNetJumping = g_pGameCVars->pl_velocityInterpSynchJump && movementRequest.jump && isRemoteClient;
 
@@ -452,25 +453,25 @@ void CCharacterStateUtil::UpdateRemoteInterpolation(CActor& actor, const SActorM
 #ifdef STATE_DEBUG
 			if (g_pGameCVars->pl_debugInterpolation)
 			{
-				CryWatch("SetVel (%f, %f, %f)", actor.m_jumpVel.x, actor.m_jumpVel.y, actor.m_jumpVel.z);
+				CryWatch("SetVel (%f, %f, %f)", actorComponent.m_jumpVel.x, actorComponent.m_jumpVel.y, actorComponent.m_jumpVel.z);
 			}
 #endif //_RELEASE
-			frameRequest.velocity = actor.m_jumpVel;
+			frameRequest.velocity = actorComponent.m_jumpVel;
 			frameRequest.type = eCMT_JumpAccumulate;
 		}
 		else
 		{
-			CNetCharacterInput *CharacterInput = static_cast<CNetCharacterInput*>(actor.GetCharacterInput());
+			CNetCharacterInput *CharacterInput = static_cast<CNetCharacterInput*>(actorComponent.GetCharacterInput());
 			Vec3 interVel, desiredVel;
 
 			bool durationInAir;
 			desiredVel = CharacterInput->GetDesiredVelocity(durationInAir);
 			interVel = desiredVel;
 
-			IPhysicalEntity* pPhysEnt = actor.GetEntity()->GetPhysics();
+			IPhysicalEntity* pPhysEnt = actorComponent.GetEntity()->GetPhysics();
 			CRY_ASSERT_MESSAGE(pPhysEnt, "Entity not physicalised! TomB would like to look at this.");
 
-			const bool isCharacterInAir = actor.IsInAir();
+			const bool isCharacterInAir = actorComponent.IsInAir();
 			if (durationInAir && isCharacterInAir)
 			{
 				if (pPhysEnt && (g_pGameCVars->pl_velocityInterpAirDeltaFactor < 1.0f))
@@ -481,7 +482,7 @@ void CCharacterStateUtil::UpdateRemoteInterpolation(CActor& actor, const SActorM
 					Vec3  velDiff = interVel - dynStat.v;
 					interVel = dynStat.v + (velDiff * g_pGameCVars->pl_velocityInterpAirDeltaFactor);
 					frameRequest.velocity.z = interVel.z;
-					frameRequest.velocity.z -= actor.GetActorPhysics()->gravity.z*gEnv->pTimer->GetFrameTime();
+					frameRequest.velocity.z -= actorComponent.GetActorPhysics()->gravity.z*gEnv->pTimer->GetFrameTime();
 					frameRequest.type = eCMT_Fly;
 				}
 			}
@@ -504,12 +505,12 @@ void CCharacterStateUtil::UpdateRemoteInterpolation(CActor& actor, const SActorM
 }
 
 
-bool CCharacterStateUtil::IsMovingForward(const CActor& actor, const SActorMovementRequest& movementRequest)
+bool CActorStateUtility::IsMovingForward(const IActorComponent& actorComponent, const SActorMovementRequest& movementRequest)
 {
-	/*const float fSpeedFlatSelector = actor.GetActorState ()->speedFlat - 0.1f;
+	/*const float fSpeedFlatSelector = actorComponent.GetActorState ()->speedFlat - 0.1f;
 	bool movingForward = (fSpeedFlatSelector > 0.1f);
 
-	if (!gEnv->bMultiCharacter || actor.IsClient ())
+	if (!gEnv->bMultiCharacter || actorComponent.IsClient ())
 	{
 	// IsMovingForward() doesn't return particularly reliable results for client characters in MP, I think because of
 	// interpolation inaccuracies on the Y velocity. This was causing client characters to incorrectly report that they're
@@ -529,22 +530,22 @@ bool CCharacterStateUtil::IsMovingForward(const CActor& actor, const SActorMovem
 }
 
 
-bool CCharacterStateUtil::IsSprintingAllowed(const CActor& actor, const SActorMovementRequest& movementRequest, IItem* pCurrentActorItem)
+bool CActorStateUtility::IsSprintingAllowed(const IActorComponent& actorComponent, const SActorMovementRequest& movementRequest, IItem* pCurrentActorItem)
 {
 	/*bool shouldSprint = false;
-	const SActorStats& stats = actor.m_actorState;
-	const bool movingForward = IsMovingForward(actor, movementRequest);
+	const SActorStats& stats = actorComponent.m_actorState;
+	const bool movingForward = IsMovingForward(actorComponent, movementRequest);
 
-	bool restrictSprint = actor.IsJumping() || stats.bIgnoreSprinting || actor.IsSliding() || actor.IsCinematicFlagActive(SActorStats::eCinematicFlag_RestrictMovement);
+	bool restrictSprint = actorComponent.IsJumping() || stats.bIgnoreSprinting || actorComponent.IsSliding() || actorComponent.IsCinematicFlagActive(SActorStats::eCinematicFlag_RestrictMovement);
 
 	CWeapon* pWeapon = pCurrentActorItem ? static_cast<CWeapon*>(pCurrentActorItem->GetIWeapon()) : NULL;
 	bool isZooming = pWeapon ? pWeapon->IsZoomed() && !pWeapon->IsZoomingInOrOut() : false;
 	if (pWeapon && !pWeapon->CanSprint())
 		restrictSprint = true;
 
-	restrictSprint = restrictSprint || (actor.GetSprintStaminaLevel() <= 0.f);
+	restrictSprint = restrictSprint || (actorComponent.GetSprintStaminaLevel() <= 0.f);
 
-	if (actor.IsSprinting() == false)
+	if (!actorComponent.IsSprinting())
 	{
 		shouldSprint = movingForward && !restrictSprint && !isZooming;
 		CCCPOINT_IF(shouldSprint, CharacterMovement_SprintOn);
@@ -553,7 +554,7 @@ bool CCharacterStateUtil::IsSprintingAllowed(const CActor& actor, const SActorMo
 	{
 		shouldSprint = movingForward && !restrictSprint && !isZooming;
 
-		shouldSprint = shouldSprint && (!(actor.m_actions & ACTION_CROUCH));
+		shouldSprint = shouldSprint && (!(actorComponent.m_actions & ACTION_CROUCH));
 
 		if (!shouldSprint && pWeapon)
 		{
@@ -561,8 +562,8 @@ bool CCharacterStateUtil::IsSprintingAllowed(const CActor& actor, const SActorMo
 		}
 	}
 
-	CCCPOINT_IF(!actor.IsSprinting() && !shouldSprint && (actor.m_actions & ACTION_SPRINT), CharacterMovement_SprintRequestIgnored);
-	CCCPOINT_IF(actor.IsSprinting() && !shouldSprint, CharacterMovement_SprintOff);
+	CCCPOINT_IF(!actorComponent.IsSprinting() && !shouldSprint && (actorComponent.m_actions & ACTION_SPRINT), CharacterMovement_SprintRequestIgnored);
+	CCCPOINT_IF(actorComponent.IsSprinting() && !shouldSprint, CharacterMovement_SprintOff);
 
 	return shouldSprint;*/
 
@@ -570,16 +571,16 @@ bool CCharacterStateUtil::IsSprintingAllowed(const CActor& actor, const SActorMo
 }
 
 
-void CCharacterStateUtil::ApplyFallDamage(CActor& actor, const float startFallingHeight, const float fHeightofEntity)
+void CActorStateUtility::ApplyFallDamage(IActorComponent& actorComponent, const float startFallingHeight, const float fHeightofEntity)
 {
-	/*CRY_ASSERT(actor.IsClient());
+	/*CRY_ASSERT(actorComponent.IsClient());
 
-	// Zero downwards impact velocity used for fall damage calculations if actor was in water within the last 0.5 seconds.
+	// Zero downwards impact velocity used for fall damage calculations if actorComponent was in water within the last 0.5 seconds.
 	// Strength jumping straight up and down should theoretically land with a safe velocity,
 	// but together with the water surface stickyness the velocity can sometimes go above the safe impact velocity threshold.
 
 	// DEPRECATED: comment left for posterity in case dedicated server problems re-appear (author cannot test it).
-	// On dedicated server the actor can still be flying this frame as well,
+	// On dedicated server the actorComponent can still be flying this frame as well,
 	// since synced pos from client is interpolated/smoothed and will not land immediately,
 	// even though the velocity is set to zero.
 	// Thus we need to use the velocity change instead of landing to identify impact.
@@ -587,9 +588,9 @@ void CCharacterStateUtil::ApplyFallDamage(CActor& actor, const float startFallin
 	// DT: 12475: Falling a huge distance to a ledge grab results in no damage.
 	// Now using the last velocity because when ledge grabbing the velocity is unchanged for this frame, thus zero damage is applied.
 	// Assuming this a physics lag issue, using the last good velocity should be more-or-less ok.
-	const float downwardsImpactSpeed = -(float) __fsel(-(actor.m_CharacterStateSwimWaterTestProxy.GetSwimmingTimer() + 0.5f), actor.GetActorPhysics()->velocityUnconstrainedLast.z, 0.0f);
+	const float downwardsImpactSpeed = -(float) __fsel(-(actorComponent.m_stateSwimWaterTestProxy.GetSwimmingTimer() + 0.5f), actorComponent.GetActorPhysics()->velocityUnconstrainedLast.z, 0.0f);
 
-	const SActorStats& stats = *actor.GetActorState();
+	const SActorStats& stats = *actorComponent.GetActorState();
 
 	CRY_ASSERT(NumberValid(downwardsImpactSpeed));
 	const float MIN_FALL_DAMAGE_DISTANCE = 3.0f;
@@ -607,20 +608,20 @@ void CCharacterStateUtil::ApplyFallDamage(CActor& actor, const float startFallin
 		if (velFraction > 0.0f)
 		{
 			//Stop crouching after taking falling damage
-			if (actor.GetStance() == STANCE_CROUCH)
+			if (actorComponent.GetStance() == STANCE_CROUCH)
 			{
-				static_cast<CCharacterInput*>(actor.GetCharacterInput())->ClearCrouchAction();
+				static_cast<CCharacterInput*>(actorComponent.GetCharacterInput())->ClearCrouchAction();
 			}
 
 			velFraction = powf(velFraction, gEnv->bMultiCharacter ? healthCVars.fallDamage_CurveAttackMP : healthCVars.fallDamage_CurveAttack);
 
-			const float maxHealth = actor.GetMaxHealth();
-			const float currentHealth = actor.GetHealth();
+			const float maxHealth = actorComponent.GetMaxHealth();
+			const float currentHealth = actorComponent.GetHealth();
 
 			HitInfo hit;
 			hit.dir.zero();
 			hit.type = CGameRules::EHitType::Fall;
-			hit.shooterId = hit.targetId = hit.weaponId = actor.GetEntityId();
+			hit.shooterId = hit.targetId = hit.weaponId = actorComponent.GetEntityId();
 
 			const float maxDamage = (float) __fsel(velFraction - 1.0f, maxHealth, max(0.0f, (gEnv->bMultiCharacter ? maxHealth : currentHealth) - healthCVars.fallDamage_health_threshold));
 
@@ -629,11 +630,11 @@ void CCharacterStateUtil::ApplyFallDamage(CActor& actor, const float startFallin
 			gEnv->pGameFramework->GetGameRules()->ClientHit(hit);
 
 #ifdef CHARACTER_MOVEMENT_DEBUG_ENABLED
-			actor.GetMovementDebug().LogFallDamage(actor.GetEntity(), velFraction, downwardsImpactSpeed, hit.damage);
+			actorComponent.GetMovementDebug().LogFallDamage(actorComponent.GetEntity(), velFraction, downwardsImpactSpeed, hit.damage);
 		}
 		else
 		{
-			actor.GetMovementDebug().LogFallDamageNone(actor.GetEntity(), downwardsImpactSpeed);
+			actorComponent.GetMovementDebug().LogFallDamageNone(actorComponent.GetEntity(), downwardsImpactSpeed);
 		}
 #else
 		}
@@ -642,7 +643,7 @@ void CCharacterStateUtil::ApplyFallDamage(CActor& actor, const float startFallin
 }
 
 
-bool CCharacterStateUtil::DoesArmorAbsorptFallDamage(CActor& actor, const float downwardsImpactSpeed, float& absorptedDamageFraction)
+bool CActorStateUtility::DoesArmorAbsorptFallDamage(IActorComponent& actorComponent, const float downwardsImpactSpeed, float& absorptedDamageFraction)
 {
 	/*CRY_ASSERT(!gEnv->bMultiCharacter);
 
@@ -664,9 +665,9 @@ bool CCharacterStateUtil::DoesArmorAbsorptFallDamage(CActor& actor, const float 
 }
 
 
-void CCharacterStateUtil::CancelCrouchAndProneInputs(CActor& actor)
+void CActorStateUtility::CancelCrouchAndProneInputs(IActorComponent& actorComponent)
 {
-	/*ICharacterInput* CharacterInputInterface = actor.GetCharacterInput();
+	/*ICharacterInput* CharacterInputInterface = actorComponent.GetCharacterInput();
 
 	if (CharacterInputInterface && CharacterInputInterface->GetType() == ICharacterInput::CHARACTER_INPUT)
 	{
@@ -677,10 +678,10 @@ void CCharacterStateUtil::CancelCrouchAndProneInputs(CActor& actor)
 }
 
 
-void CCharacterStateUtil::ChangeStance(CActor& actor, const SStateEvent& event)
+void CActorStateUtility::ChangeStance(IActorComponent& actorComponent, const SStateEvent& event)
 {
 	/*const SStateEventStanceChanged& stanceEvent = static_cast<const SStateEventStanceChanged&> (event).GetStance();
 	const EStance stance = static_cast<EStance> (stanceEvent.GetStance());
-	actor.OnSetStance(stance);*/
+	actorComponent.OnSetStance(stance);*/
 }
 }

@@ -2,7 +2,7 @@
 
 #include "PlayerInputComponent.h"
 #include <CryMath/Cry_Math.h>
-#include <Components/Player/Player.h>
+#include "Components/Player/PlayerComponent.h"
 #include <Actor/Character/Character.h>
 #include "../Camera/CameraManagerComponent.h"
 #include "../Camera/ICameraComponent.h"
@@ -11,6 +11,10 @@
 
 namespace Chrysalis
 {
+
+#define IF_ACTOR_DO(run_action) if (auto pActorComponent = CPlayerComponent::GetLocalActor()) { pActorComponent->run_action(); }
+
+
 void CPlayerInputComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
 {
 }
@@ -22,7 +26,7 @@ void CPlayerInputComponent::ReflectType(Schematyc::CTypeDesc<CPlayerInputCompone
 	desc.SetEditorCategory("Hidden");
 	desc.SetLabel("Player Input");
 	desc.SetDescription("No description.");
-	desc.SetIcon("icons:ObjectTypes/character.ico");
+	desc.SetIcon("icons:ObjectTypes/light.ico");
 	desc.SetComponentFlags({ IEntityComponent::EFlags::None });
 }
 
@@ -70,17 +74,17 @@ void CPlayerInputComponent::Update()
 	// We can just add up all the acculmated requests to find out how much pitch / yaw is being requested.
 	// It's also a good time to filter out any small movement requests to stabilise the camera / etc.
 	m_lastPitchDelta = m_mousePitchDelta + m_xiPitchDelta;
-	if (abs(m_lastPitchDelta) < m_pitchFilter)
+	if (std::abs(m_lastPitchDelta) < m_pitchFilter)
 		m_lastPitchDelta = 0.0f;
 	m_lastYawDelta = m_mouseYawDelta + m_xiYawDelta;
-	if (abs(m_lastYawDelta) < m_yawFilter)
+	if (std::abs(m_lastYawDelta) < m_yawFilter)
 		m_lastYawDelta = 0.0f;
 
 	// Track the last values for mouse and xbox inputs. They're filtered individually for low level noise.
-	m_lastMousePitchDelta = abs(m_mousePitchDelta) >= m_pitchFilter ? m_mousePitchDelta : 0.0f;
-	m_lastMouseYawDelta = abs(m_mouseYawDelta) >= m_yawFilter ? m_mouseYawDelta : 0.0f;
-	m_lastXiPitchDelta = abs(m_xiPitchDelta) >= m_pitchFilter ? m_xiPitchDelta : 0.0f;
-	m_lastXiYawDelta = abs(m_xiYawDelta) >= m_yawFilter ? m_xiYawDelta : 0.0f;
+	m_lastMousePitchDelta = std::abs(m_mousePitchDelta) >= m_pitchFilter ? m_mousePitchDelta : 0.0f;
+	m_lastMouseYawDelta = std::abs(m_mouseYawDelta) >= m_yawFilter ? m_mouseYawDelta : 0.0f;
+	m_lastXiPitchDelta = std::abs(m_xiPitchDelta) >= m_pitchFilter ? m_xiPitchDelta : 0.0f;
+	m_lastXiYawDelta = std::abs(m_xiYawDelta) >= m_yawFilter ? m_xiYawDelta : 0.0f;
 
 	// Circle of life!
 	m_mousePitchDelta = m_mouseYawDelta = 0.0f;
@@ -98,7 +102,7 @@ void CPlayerInputComponent::Update()
 
 void CPlayerInputComponent::ResetMovementState()
 {
-	m_movementStateFlags = EMovementStateFlags::None;
+	m_inputFlags = (TInputFlags)EInputFlag::None;
 }
 
 
@@ -111,41 +115,41 @@ Vec3 CPlayerInputComponent::GetMovement(const Quat& baseRotation)
 {
 	bool allowMovement = true;
 	Quat quatRelativeDirection;
-	Vec3 vecMovement = Vec3(0.0f, 0.0f, 0.0f);
+	Vec3 vecMovement = Vec3(ZERO);
 
 	// Take the mask and turn it into a vector to indicate the direction we need to pan independent of the
 	// present camera direction.
-	switch (m_movementStateFlags)
+	switch (m_inputFlags)
 	{
-		case EMovementStateFlags::Forward:
+		case (TInputFlags)EInputFlag::Forward:
 			quatRelativeDirection = Quat::CreateIdentity();
 			break;
 
-		case (EMovementStateFlags::Forward | EMovementStateFlags::Right):
+		case ((TInputFlags)EInputFlag::Forward | (TInputFlags)EInputFlag::Right):
 			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(45.0f));
 			break;
 
-		case EMovementStateFlags::Right:
+		case (TInputFlags)EInputFlag::Right:
 			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(90.0f));
 			break;
 
-		case (EMovementStateFlags::Backward | EMovementStateFlags::Right):
+		case ((TInputFlags)EInputFlag::Backward | (TInputFlags)EInputFlag::Right):
 			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(135.0f));
 			break;
 
-		case EMovementStateFlags::Backward:
+		case (TInputFlags)EInputFlag::Backward:
 			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(180.0f));
 			break;
 
-		case (EMovementStateFlags::Backward | EMovementStateFlags::Left):
+		case ((TInputFlags)EInputFlag::Backward | (TInputFlags)EInputFlag::Left):
 			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(225.0f));
 			break;
 
-		case EMovementStateFlags::Left:
+		case (TInputFlags)EInputFlag::Left:
 			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(270.0f));
 			break;
 
-		case (EMovementStateFlags::Forward | EMovementStateFlags::Left):
+		case ((TInputFlags)EInputFlag::Forward | (TInputFlags)EInputFlag::Left):
 			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(315.0f));
 			break;
 
@@ -164,19 +168,6 @@ Vec3 CPlayerInputComponent::GetMovement(const Quat& baseRotation)
 
 
 // ***
-// *** IActionListener
-// ***
-
-
-void CPlayerInputComponent::OnAction(const ActionId& action, int activationMode, float value)
-{
-	// We want to dispatch the action as if it were for the character that this player is currently attached onto.
-	if (m_allowActions)
-		m_actionHandler.Dispatch(this, CPlayerComponent::GetLocalPlayer()->GetAttachedEntityId(), action, activationMode, value);
-}
-
-
-// ***
 // *** CPlayerInputComponent
 // ***
 
@@ -184,16 +175,6 @@ CPlayerInputComponent::~CPlayerInputComponent()
 {
 	// Clean up our action map usage.
 	m_allowActions = false;
-	IActionMapManager* pActionMapManager = gEnv->pGameFramework->GetIActionMapManager();
-	pActionMapManager->EnableActionMap("player", false);
-	pActionMapManager->RemoveExtraActionListener(this, "player");
-	pActionMapManager->EnableActionMap("camera", false);
-	pActionMapManager->RemoveExtraActionListener(this, "camera");
-	pActionMapManager->EnableActionMap("inspection", false);
-	pActionMapManager->RemoveExtraActionListener(this, "inspection");
-
-	// TODO: CRITICAL: HACK: BROKEN: !!
-	//GetGameObject()->ReleaseActions(this);
 }
 
 
@@ -201,117 +182,197 @@ void CPlayerInputComponent::RegisterActionMaps()
 {
 	// Populate the action handler callbacks so that we get action map events.
 	m_allowActions = true;
-	InitializeActionHandler();
 
-	// Load and init the default action map profile.
-	IActionMapManager* pActionMapManager = gEnv->pGameFramework->GetIActionMapManager();
-	pActionMapManager->SetDefaultActionEntity(GetEntityId());
-	pActionMapManager->InitActionMaps("libs/config/defaultprofile.xml");
-	pActionMapManager->Enable(true);
+	// Get the input component, wraps access to action mapping so we can easily get callbacks when inputs are triggered.
+	m_pInputComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CInputComponent>();
 
-	// Try and enable the "player" actions, which control our player.
-	//pActionMapManager->AddExtraActionListener(this, "player"); // NOTE: Only seem to need one for all the action maps to work.
-	pActionMapManager->EnableActionMap("player", true);
-	pActionMapManager->EnableActionMap("camera", true);
-	pActionMapManager->EnableActionMap("inspection", true);
+	// Escape.
+	m_pInputComponent->RegisterAction("player", "special_esc", [this](int activationMode, float value) { OnActionEscape(activationMode, value); });
+	m_pInputComponent->BindAction("player", "special_esc", eAID_KeyboardMouse, EKeyId::eKI_Escape);
 
-	// Only one extension should capture the actions, so we are handling all action maps here.
-	// TODO: CRITICAL: HACK: BROKEN: !!
-	//GetGameObject()->CaptureActions(this);
-}
+	// Move left.
+	m_pInputComponent->RegisterAction("player", "move_left", [this](int activationMode, float value) { HandleInputFlagChange((TInputFlags)EInputFlag::Left, activationMode); });
+	m_pInputComponent->BindAction("player", "move_left", eAID_KeyboardMouse, EKeyId::eKI_A);
+	m_pInputComponent->BindAction("player", "move_left", eAID_XboxPad, EKeyId::eKI_XI_DPadLeft);
 
+	// Move right.
+	m_pInputComponent->RegisterAction("player", "move_right", [this](int activationMode, float value) { HandleInputFlagChange((TInputFlags)EInputFlag::Right, activationMode); });
+	m_pInputComponent->BindAction("player", "move_right", eAID_KeyboardMouse, EKeyId::eKI_D);
+	m_pInputComponent->BindAction("player", "move_right", eAID_XboxPad, EKeyId::eKI_XI_DPadRight);
 
-void CPlayerInputComponent::InitializeActionHandler()
-{
-	m_actionHandler.AddHandler(ActionId("special_esc"), &CPlayerInputComponent::OnActionEscape);
-	m_actionHandler.AddHandler(ActionId("special_examine"), &CPlayerInputComponent::OnActionExamine);
+	// Move forward.
+	m_pInputComponent->RegisterAction("player", "move_forward", [this](int activationMode, float value) { HandleInputFlagChange((TInputFlags)EInputFlag::Forward, activationMode); });
+	m_pInputComponent->BindAction("player", "move_forward", eAID_KeyboardMouse, EKeyId::eKI_W);
+	m_pInputComponent->BindAction("player", "move_forward", eAID_XboxPad, EKeyId::eKI_XI_DPadUp);
 
-	// Basic movement.
-	m_actionHandler.AddHandler(ActionId("move_left"), &CPlayerInputComponent::OnActionMoveLeft);
-	m_actionHandler.AddHandler(ActionId("move_right"), &CPlayerInputComponent::OnActionMoveRight);
-	m_actionHandler.AddHandler(ActionId("move_forward"), &CPlayerInputComponent::OnActionMoveForward);
-	m_actionHandler.AddHandler(ActionId("move_backward"), &CPlayerInputComponent::OnActionMoveBackward);
+	// Move backward.
+	m_pInputComponent->RegisterAction("player", "move_backward", [this](int activationMode, float value) { HandleInputFlagChange((TInputFlags)EInputFlag::Backward, activationMode); });
+	m_pInputComponent->BindAction("player", "move_backward", eAID_KeyboardMouse, EKeyId::eKI_S);
+	m_pInputComponent->BindAction("player", "move_backward", eAID_XboxPad, EKeyId::eKI_XI_DPadDown);
+
+	// Examine.
+	m_pInputComponent->RegisterAction("player", "special_examine", [this](int activationMode, float value) { OnActionExamine(activationMode, value); });
+	m_pInputComponent->BindAction("player", "special_examine", eAID_KeyboardMouse, EKeyId::eKI_Z);
 
 	// Interaction.
-	m_actionHandler.AddHandler(ActionId("player_interaction"), &CPlayerInputComponent::OnActionInteraction);
+	m_pInputComponent->RegisterAction("player", "player_interaction", [this](int activationMode, float value) { OnActionInteraction(activationMode, value); });
+	m_pInputComponent->BindAction("player", "player_interaction", eAID_KeyboardMouse, EKeyId::eKI_Mouse1);
 
 	// Mouse yaw and pitch handlers.
-	m_actionHandler.AddHandler(ActionId("mouse_rotateyaw"), &CPlayerInputComponent::OnActionRotateYaw);
-	m_actionHandler.AddHandler(ActionId("mouse_rotatepitch"), &CPlayerInputComponent::OnActionRotatePitch);
-
-	// Zoom handlers.
-	m_actionHandler.AddHandler(ActionId("tpv_zoom_in"), &CPlayerInputComponent::OnActionZoomIn);
-	m_actionHandler.AddHandler(ActionId("tpv_zoom_out"), &CPlayerInputComponent::OnActionZoomOut);
+	m_pInputComponent->RegisterAction("player", "mouse_rotateyaw", [this](int activationMode, float value) { OnActionRotateYaw(activationMode, value); });
+	m_pInputComponent->BindAction("player", "mouse_rotateyaw", eAID_KeyboardMouse, EKeyId::eKI_MouseX);
+	m_pInputComponent->RegisterAction("player", "mouse_rotatepitch", [this](int activationMode, float value) { OnActionRotatePitch(activationMode, value); });
+	m_pInputComponent->BindAction("player", "mouse_rotatepitch", eAID_KeyboardMouse, EKeyId::eKI_MouseY);
 
 	// XBox controller yaw and pitch handlers.
-	m_actionHandler.AddHandler(ActionId("xi_rotateyaw"), &CPlayerInputComponent::OnActionXIRotateYaw);
-	m_actionHandler.AddHandler(ActionId("xi_rotatepitch"), &CPlayerInputComponent::OnActionXIRotatePitch);
+	m_pInputComponent->RegisterAction("player", "xi_rotateyaw", [this](int activationMode, float value) { OnActionXIRotateYaw(activationMode, value); });
+	m_pInputComponent->BindAction("player", "xi_rotateyaw", eAID_XboxPad, EKeyId::eKI_XI_ThumbRX);
+	m_pInputComponent->RegisterAction("player", "xi_rotatepitch", [this](int activationMode, float value) { OnActionXIRotatePitch(activationMode, value); });
+	m_pInputComponent->BindAction("player", "xi_rotatepitch", eAID_XboxPad, EKeyId::eKI_XI_ThumbRY);
 
 	// Jump.
-	m_actionHandler.AddHandler(ActionId("move_jump"), &CPlayerInputComponent::OnActionJump);
+	m_pInputComponent->RegisterAction("player", "move_jump", [this](int activationMode, float value) { OnActionJump(activationMode, value); });
+	m_pInputComponent->BindAction("player", "move_jump", eAID_KeyboardMouse, EKeyId::eKI_Space);
 
 	// Walk, jog, sprint.
-	m_actionHandler.AddHandler(ActionId("move_walkjog"), &CPlayerInputComponent::OnActionWalkJog);
-	m_actionHandler.AddHandler(ActionId("move_sprint"), &CPlayerInputComponent::OnActionSprintToggle);
+	m_pInputComponent->RegisterAction("player", "move_walkjog", [this](int activationMode, float value) { OnActionWalkJog(activationMode, value); });
+	m_pInputComponent->BindAction("player", "move_walkjog", eAID_KeyboardMouse, EKeyId::eKI_N);
+	m_pInputComponent->RegisterAction("player", "move_sprint", [this](int activationMode, float value) { OnActionSprintToggle(activationMode, value); });
+	m_pInputComponent->BindAction("player", "move_sprint", eAID_KeyboardMouse, EKeyId::eKI_LShift);
 
 	// Stances under player control.
-	m_actionHandler.AddHandler(ActionId("stance_crouch"), &CPlayerInputComponent::OnActionCrouchToggle);
-	m_actionHandler.AddHandler(ActionId("stance_crawl"), &CPlayerInputComponent::OnActionCrawlToggle);
-	m_actionHandler.AddHandler(ActionId("stance_kneel"), &CPlayerInputComponent::OnActionKneelToggle);
-	m_actionHandler.AddHandler(ActionId("stance_sit"), &CPlayerInputComponent::OnActionSitToggle);
+	m_pInputComponent->RegisterAction("player", "stance_crouch", [this](int activationMode, float value) { OnActionCrouchToggle(activationMode, value); });
+	m_pInputComponent->BindAction("player", "stance_crouch", eAID_KeyboardMouse, EKeyId::eKI_C);
+	m_pInputComponent->RegisterAction("player", "stance_crawl", [this](int activationMode, float value) { OnActionCrawlToggle(activationMode, value); });
+	m_pInputComponent->BindAction("player", "stance_crawl", eAID_KeyboardMouse, EKeyId::eKI_H);
+	m_pInputComponent->RegisterAction("player", "stance_kneel", [this](int activationMode, float value) { OnActionKneelToggle(activationMode, value); });
+	m_pInputComponent->BindAction("player", "stance_kneel", eAID_KeyboardMouse, EKeyId::eKI_V);
+	m_pInputComponent->RegisterAction("player", "stance_sit", [this](int activationMode, float value) { OnActionSitToggle(activationMode, value); });
+	m_pInputComponent->BindAction("player", "stance_sit", eAID_KeyboardMouse, EKeyId::eKI_B);
 
 	// Interact with an object.
-	m_actionHandler.AddHandler(ActionId("item_use"), &CPlayerInputComponent::OnActionItemUse);
-	m_actionHandler.AddHandler(ActionId("item_pickup"), &CPlayerInputComponent::OnActionItemPickup);
-	m_actionHandler.AddHandler(ActionId("item_drop"), &CPlayerInputComponent::OnActionItemDrop);
-	m_actionHandler.AddHandler(ActionId("item_toss"), &CPlayerInputComponent::OnActionItemToss);
+	m_pInputComponent->RegisterAction("player", "item_use", [this](int activationMode, float value) { OnActionItemUse(activationMode, value); });
+	m_pInputComponent->BindAction("player", "item_use", eAID_KeyboardMouse, EKeyId::eKI_F);
+	m_pInputComponent->BindAction("player", "item_use", eAID_XboxPad, EKeyId::eKI_XI_A);
+	//m_pInputComponent->RegisterAction("player", "item_pickup", [this](int activationMode, float value) { OnActionItemPickup(activationMode, value); });
+	//m_pInputComponent->BindAction("player", "item_pickup", eAID_KeyboardMouse, EKeyId::eKI_G);
+	//m_pInputComponent->BindAction("player", "item_pickup", eAID_XboxPad, EKeyId::eKI_XI_Y);
+	m_pInputComponent->RegisterAction("player", "item_drop", [this](int activationMode, float value) { OnActionItemDrop(activationMode, value); });
+	m_pInputComponent->BindAction("player", "item_drop", eAID_KeyboardMouse, EKeyId::eKI_M);
+	m_pInputComponent->BindAction("player", "item_drop", eAID_XboxPad, EKeyId::eKI_XI_B);
+	m_pInputComponent->RegisterAction("player", "item_toss", [this](int activationMode, float value) { OnActionItemToss(activationMode, value); });
+	m_pInputComponent->BindAction("player", "item_toss", eAID_KeyboardMouse, EKeyId::eKI_X);
+	m_pInputComponent->BindAction("player", "item_toss", eAID_XboxPad, EKeyId::eKI_XI_X);
 
 	// Action bars.
-	m_actionHandler.AddHandler(ActionId("actionbar_01"), &CPlayerInputComponent::OnActionBar01);
-	m_actionHandler.AddHandler(ActionId("actionbar_02"), &CPlayerInputComponent::OnActionBar02);
-	m_actionHandler.AddHandler(ActionId("actionbar_03"), &CPlayerInputComponent::OnActionBar03);
-	m_actionHandler.AddHandler(ActionId("actionbar_04"), &CPlayerInputComponent::OnActionBar04);
-	m_actionHandler.AddHandler(ActionId("actionbar_05"), &CPlayerInputComponent::OnActionBar05);
-	m_actionHandler.AddHandler(ActionId("actionbar_06"), &CPlayerInputComponent::OnActionBar06);
-	m_actionHandler.AddHandler(ActionId("actionbar_07"), &CPlayerInputComponent::OnActionBar07);
-	m_actionHandler.AddHandler(ActionId("actionbar_08"), &CPlayerInputComponent::OnActionBar08);
-	m_actionHandler.AddHandler(ActionId("actionbar_09"), &CPlayerInputComponent::OnActionBar09);
-	m_actionHandler.AddHandler(ActionId("actionbar_10"), &CPlayerInputComponent::OnActionBar10);
-	m_actionHandler.AddHandler(ActionId("actionbar_11"), &CPlayerInputComponent::OnActionBar11);
-	m_actionHandler.AddHandler(ActionId("actionbar_12"), &CPlayerInputComponent::OnActionBar12);
+	m_pInputComponent->RegisterAction("player", "actionbar_01", [this](int activationMode, float value) { OnActionBar(activationMode, 1); });
+	m_pInputComponent->BindAction("player", "actionbar_01", eAID_KeyboardMouse, EKeyId::eKI_1);
+	m_pInputComponent->RegisterAction("player", "actionbar_02", [this](int activationMode, float value) { OnActionBar(activationMode, 2); });
+	m_pInputComponent->BindAction("player", "actionbar_02", eAID_KeyboardMouse, EKeyId::eKI_2);
+	m_pInputComponent->RegisterAction("player", "actionbar_03", [this](int activationMode, float value) { OnActionBar(activationMode, 3); });
+	m_pInputComponent->BindAction("player", "actionbar_03", eAID_KeyboardMouse, EKeyId::eKI_3);
+	m_pInputComponent->RegisterAction("player", "actionbar_04", [this](int activationMode, float value) { OnActionBar(activationMode, 4); });
+	m_pInputComponent->BindAction("player", "actionbar_04", eAID_KeyboardMouse, EKeyId::eKI_4);
+	m_pInputComponent->RegisterAction("player", "actionbar_05", [this](int activationMode, float value) { OnActionBar(activationMode, 5); });
+	m_pInputComponent->BindAction("player", "actionbar_05", eAID_KeyboardMouse, EKeyId::eKI_5);
+	m_pInputComponent->RegisterAction("player", "actionbar_06", [this](int activationMode, float value) { OnActionBar(activationMode, 6); });
+	m_pInputComponent->BindAction("player", "actionbar_06", eAID_KeyboardMouse, EKeyId::eKI_6);
+	m_pInputComponent->RegisterAction("player", "actionbar_07", [this](int activationMode, float value) { OnActionBar(activationMode, 7); });
+	m_pInputComponent->BindAction("player", "actionbar_07", eAID_KeyboardMouse, EKeyId::eKI_7);
+	m_pInputComponent->RegisterAction("player", "actionbar_08", [this](int activationMode, float value) { OnActionBar(activationMode, 8); });
+	m_pInputComponent->BindAction("player", "actionbar_08", eAID_KeyboardMouse, EKeyId::eKI_8);
+	m_pInputComponent->RegisterAction("player", "actionbar_09", [this](int activationMode, float value) { OnActionBar(activationMode, 9); });
+	m_pInputComponent->BindAction("player", "actionbar_09", eAID_KeyboardMouse, EKeyId::eKI_9);
+	m_pInputComponent->RegisterAction("player", "actionbar_10", [this](int activationMode, float value) { OnActionBar(activationMode, 10); });
+	m_pInputComponent->BindAction("player", "actionbar_10", eAID_KeyboardMouse, EKeyId::eKI_0);
+	m_pInputComponent->RegisterAction("player", "actionbar_11", [this](int activationMode, float value) { OnActionBar(activationMode, 11); });
+	m_pInputComponent->BindAction("player", "actionbar_11", eAID_KeyboardMouse, EKeyId::eKI_Minus);
+	m_pInputComponent->RegisterAction("player", "actionbar_12", [this](int activationMode, float value) { OnActionBar(activationMode, 12); });
+	m_pInputComponent->BindAction("player", "actionbar_12", eAID_KeyboardMouse, EKeyId::eKI_Equals);
 
 	// Numpad.
-	m_actionHandler.AddHandler(ActionId("np_0"), &CPlayerInputComponent::OnActionNumpad0);
-	m_actionHandler.AddHandler(ActionId("np_1"), &CPlayerInputComponent::OnActionNumpad1);
-	m_actionHandler.AddHandler(ActionId("np_2"), &CPlayerInputComponent::OnActionNumpad2);
-	m_actionHandler.AddHandler(ActionId("np_3"), &CPlayerInputComponent::OnActionNumpad3);
-	m_actionHandler.AddHandler(ActionId("np_4"), &CPlayerInputComponent::OnActionNumpad4);
-	m_actionHandler.AddHandler(ActionId("np_5"), &CPlayerInputComponent::OnActionNumpad5);
-	m_actionHandler.AddHandler(ActionId("np_6"), &CPlayerInputComponent::OnActionNumpad6);
-	m_actionHandler.AddHandler(ActionId("np_7"), &CPlayerInputComponent::OnActionNumpad7);
-	m_actionHandler.AddHandler(ActionId("np_8"), &CPlayerInputComponent::OnActionNumpad8);
-	m_actionHandler.AddHandler(ActionId("np_9"), &CPlayerInputComponent::OnActionNumpad9);
-
-	// Camera movements.
-	m_actionHandler.AddHandler(ActionId("camera_shift_up"), &CPlayerInputComponent::OnActionCameraShiftUp);
-	m_actionHandler.AddHandler(ActionId("camera_shift_down"), &CPlayerInputComponent::OnActionCameraShiftDown);
-	m_actionHandler.AddHandler(ActionId("camera_shift_left"), &CPlayerInputComponent::OnActionCameraShiftLeft);
-	m_actionHandler.AddHandler(ActionId("camera_shift_right"), &CPlayerInputComponent::OnActionCameraShiftRight);
-	m_actionHandler.AddHandler(ActionId("camera_shift_forward"), &CPlayerInputComponent::OnActionCameraShiftForward);
-	m_actionHandler.AddHandler(ActionId("camera_shift_backward"), &CPlayerInputComponent::OnActionCameraShiftBackward);
+	m_pInputComponent->RegisterAction("player", "np_0", [this](int activationMode, float value) { OnNumpad(activationMode, 0); });
+	m_pInputComponent->BindAction("player", "np_0", eAID_KeyboardMouse, EKeyId::eKI_NP_0);
+	m_pInputComponent->RegisterAction("player", "np_1", [this](int activationMode, float value) { OnNumpad(activationMode, 1); });
+	m_pInputComponent->BindAction("player", "np_1", eAID_KeyboardMouse, EKeyId::eKI_NP_1);
+	m_pInputComponent->RegisterAction("player", "np_2", [this](int activationMode, float value) { OnNumpad(activationMode, 2); });
+	m_pInputComponent->BindAction("player", "np_2", eAID_KeyboardMouse, EKeyId::eKI_NP_2);
+	m_pInputComponent->RegisterAction("player", "np_3", [this](int activationMode, float value) { OnNumpad(activationMode, 3); });
+	m_pInputComponent->BindAction("player", "np_3", eAID_KeyboardMouse, EKeyId::eKI_NP_3);
+	m_pInputComponent->RegisterAction("player", "np_4", [this](int activationMode, float value) { OnNumpad(activationMode, 4); });
+	m_pInputComponent->BindAction("player", "np_4", eAID_KeyboardMouse, EKeyId::eKI_NP_4);
+	m_pInputComponent->RegisterAction("player", "np_5", [this](int activationMode, float value) { OnNumpad(activationMode, 5);; });
+	m_pInputComponent->BindAction("player", "np_5", eAID_KeyboardMouse, EKeyId::eKI_NP_5);
+	m_pInputComponent->RegisterAction("player", "np_6", [this](int activationMode, float value) { OnNumpad(activationMode, 6); });
+	m_pInputComponent->BindAction("player", "np_6", eAID_KeyboardMouse, EKeyId::eKI_NP_6);
+	m_pInputComponent->RegisterAction("player", "np_7", [this](int activationMode, float value) { OnNumpad(activationMode, 7); });
+	m_pInputComponent->BindAction("player", "np_7", eAID_KeyboardMouse, EKeyId::eKI_NP_7);
+	m_pInputComponent->RegisterAction("player", "np_8", [this](int activationMode, float value) { OnNumpad(activationMode, 8); });
+	m_pInputComponent->BindAction("player", "np_8", eAID_KeyboardMouse, EKeyId::eKI_NP_8);
+	m_pInputComponent->RegisterAction("player", "np_9", [this](int activationMode, float value) { OnNumpad(activationMode, 9); });
+	m_pInputComponent->BindAction("player", "np_9", eAID_KeyboardMouse, EKeyId::eKI_NP_9);
 
 	// Inspection.
-	m_actionHandler.AddHandler(ActionId("inspect_start"), &CPlayerInputComponent::OnActionInspectStart);
-	m_actionHandler.AddHandler(ActionId("inspect"), &CPlayerInputComponent::OnActionInspect);
-	m_actionHandler.AddHandler(ActionId("inspect_end"), &CPlayerInputComponent::OnActionInspectEnd);
+	m_pInputComponent->RegisterAction("player", "inspect_start", [this](int activationMode, float value) { OnActionInspectStart(activationMode, value); });
+	m_pInputComponent->BindAction("player", "inspect_start", eAID_KeyboardMouse, EKeyId::eKI_J);
+	m_pInputComponent->RegisterAction("player", "inspect", [this](int activationMode, float value) { OnActionInspect(activationMode, value); });
+	m_pInputComponent->BindAction("player", "inspect", eAID_KeyboardMouse, EKeyId::eKI_K);
+	m_pInputComponent->RegisterAction("player", "inspect_end", [this](int activationMode, float value) { OnActionInspectEnd(activationMode, value); });
+	m_pInputComponent->BindAction("player", "inspect_end", eAID_KeyboardMouse, EKeyId::eKI_L);
+
+	// Zoom handlers.
+	m_pInputComponent->RegisterAction("camera", "tpv_zoom_in", [this](int activationMode, float value) { m_zoomDelta -= 1.0f; });
+	m_pInputComponent->BindAction("camera", "tpv_zoom_in", eAID_KeyboardMouse, EKeyId::eKI_MouseWheelUp);
+	m_pInputComponent->RegisterAction("camera", "tpv_zoom_out", [this](int activationMode, float value) { m_zoomDelta += 1.0f; });
+	m_pInputComponent->BindAction("camera", "tpv_zoom_out", eAID_KeyboardMouse, EKeyId::eKI_MouseWheelDown);
+
+	// Camera movements.
+	m_pInputComponent->RegisterAction("camera", "camera_shift_up", [this](int activationMode, float value) { OnActionCameraShiftUp(activationMode, value); });
+	m_pInputComponent->BindAction("camera", "camera_shift_up", eAID_KeyboardMouse, EKeyId::eKI_PgUp);
+	m_pInputComponent->RegisterAction("camera", "camera_shift_down", [this](int activationMode, float value) { OnActionCameraShiftDown(activationMode, value); });
+	m_pInputComponent->BindAction("camera", "camera_shift_down", eAID_KeyboardMouse, EKeyId::eKI_Down);
+	m_pInputComponent->RegisterAction("camera", "camera_shift_left", [this](int activationMode, float value) { OnActionCameraShiftLeft(activationMode, value); });
+	m_pInputComponent->BindAction("camera", "camera_shift_left", eAID_KeyboardMouse, EKeyId::eKI_Left);
+	m_pInputComponent->RegisterAction("camera", "camera_shift_right", [this](int activationMode, float value) { OnActionCameraShiftRight(activationMode, value); });
+	m_pInputComponent->BindAction("camera", "camera_shift_right", eAID_KeyboardMouse, EKeyId::eKI_Right);
+	m_pInputComponent->RegisterAction("camera", "camera_shift_forward", [this](int activationMode, float value) { OnActionCameraShiftForward(activationMode, value); });
+	m_pInputComponent->BindAction("camera", "camera_shift_forward", eAID_KeyboardMouse, EKeyId::eKI_Up);
+	m_pInputComponent->RegisterAction("camera", "camera_shift_backward", [this](int activationMode, float value) { OnActionCameraShiftBackward(activationMode, value); });
+	m_pInputComponent->BindAction("camera", "camera_shift_backward", eAID_KeyboardMouse, EKeyId::eKI_Down);
 }
 
 
-// ***
-// *** Action handlers.
-// ***
+void CPlayerInputComponent::HandleInputFlagChange(TInputFlags flags, int activationMode, EInputFlagType type)
+{
+	switch (type)
+	{
+		case EInputFlagType::Hold:
+		{
+			if (activationMode == eIS_Released)
+			{
+				m_inputFlags &= ~flags;
+			}
+			else
+			{
+				m_inputFlags |= flags;
+			}
+		}
+		break;
 
-bool CPlayerInputComponent::OnActionEscape(EntityId entityId, const ActionId & actionId, int activationMode, float value)
+		case EInputFlagType::Toggle:
+		{
+			if (activationMode == eIS_Released)
+			{
+				// Toggle the bit(s)
+				m_inputFlags ^= flags;
+			}
+		}
+		break;
+	}
+}
+
+
+void CPlayerInputComponent::OnActionEscape(int activationMode, float value)
 {
 	if (activationMode == eAAM_OnPress)
 	{
@@ -321,12 +382,10 @@ bool CPlayerInputComponent::OnActionEscape(EntityId entityId, const ActionId & a
 		for (auto& it : m_listenersSpecial.GetListeners())
 			it->OnInputSpecialEsc();
 	}
-
-	return false;
 }
 
 
-bool CPlayerInputComponent::OnActionExamine(EntityId entityId, const ActionId & actionId, int activationMode, float value)
+void CPlayerInputComponent::OnActionExamine(int activationMode, float value)
 {
 	if (activationMode == eAAM_OnPress)
 	{
@@ -336,72 +395,10 @@ bool CPlayerInputComponent::OnActionExamine(EntityId entityId, const ActionId & 
 		for (auto& it : m_listenersSpecial.GetListeners())
 			it->OnInputSpecialExamine();
 	}
-
-	return false;
 }
 
 
-bool CPlayerInputComponent::OnActionMoveLeft(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	if (activationMode == eAAM_OnRelease)
-	{
-		m_movementStateFlags &= ~EMovementStateFlags::Left;
-	}
-	else if (activationMode & (eAAM_OnPress | eAAM_OnHold))
-	{
-		m_movementStateFlags |= EMovementStateFlags::Left;
-	}
-
-	return false;
-}
-
-
-bool CPlayerInputComponent::OnActionMoveRight(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	if (activationMode == eAAM_OnRelease)
-	{
-		m_movementStateFlags &= ~EMovementStateFlags::Right;
-	}
-	else if (activationMode & (eAAM_OnPress | eAAM_OnHold))
-	{
-		m_movementStateFlags |= EMovementStateFlags::Right;
-	}
-
-	return false;
-}
-
-
-bool CPlayerInputComponent::OnActionMoveForward(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	if (activationMode == eAAM_OnRelease)
-	{
-		m_movementStateFlags &= ~EMovementStateFlags::Forward;
-	}
-	else if (activationMode & (eAAM_OnPress | eAAM_OnHold))
-	{
-		m_movementStateFlags |= EMovementStateFlags::Forward;
-	}
-
-	return false;
-}
-
-
-bool CPlayerInputComponent::OnActionMoveBackward(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	if (activationMode == eAAM_OnRelease)
-	{
-		m_movementStateFlags &= ~EMovementStateFlags::Backward;
-	}
-	else if (activationMode & (eAAM_OnPress | eAAM_OnHold))
-	{
-		m_movementStateFlags |= EMovementStateFlags::Backward;
-	}
-
-	return false;
-}
-
-
-bool CPlayerInputComponent::OnActionRotateYaw(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+void CPlayerInputComponent::OnActionRotateYaw(int activationMode, float value)
 {
 	float cl_mouseSensitivity = CChrysalisCorePlugin::Get() ? g_cvars.m_cl_mouseSensitivity : 1.0f;
 
@@ -410,12 +407,10 @@ bool CPlayerInputComponent::OnActionRotateYaw(EntityId entityId, const ActionId&
 
 	// Add the yaw delta.
 	m_mouseYawDelta -= value * mouseSensitivity;
-
-	return false;
 }
 
 
-bool CPlayerInputComponent::OnActionRotatePitch(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+void CPlayerInputComponent::OnActionRotatePitch(int activationMode, float value)
 {
 	float cl_mouseSensitivity = CChrysalisCorePlugin::Get() ? g_cvars.m_cl_mouseSensitivity : 1.0f;
 
@@ -429,484 +424,210 @@ bool CPlayerInputComponent::OnActionRotatePitch(EntityId entityId, const ActionI
 	// Add the delta, taking into account mouse inversion.  Clamp the result.
 	float invertYAxis = m_mouseInvertPitch ? -1.0f : 1.0f;
 	m_mousePitchDelta += value * mouseSensitivity * invertYAxis;
-
-	return false;
 }
 
 
 // XBox controller rotation is handled differently. Movements on the thumb stick set a value for
 // rotation that should be applied every frame update.
-bool CPlayerInputComponent::OnActionXIRotateYaw(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+void CPlayerInputComponent::OnActionXIRotateYaw(int activationMode, float value)
 {
 	float radians = DEG2RAD(value);
 
-	if (abs(radians) < m_xiYawFilter)
+	if (std::abs(radians) < m_xiYawFilter)
 		m_xiYawDelta = 0.0f;
 	else
 		m_xiYawDelta = radians;
-
-	return false;
 }
 
 
 // Xbox controller pitch is handled differently. Movements on the thumb stick set a value for
 // pitch that should be applied every frame update.
-bool CPlayerInputComponent::OnActionXIRotatePitch(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+void CPlayerInputComponent::OnActionXIRotatePitch(int activationMode, float value)
 {
 	float radians = DEG2RAD(value);
 
-	if (abs(radians) < m_xiPitchFilter)
+	if (std::abs(radians) < m_xiPitchFilter)
 		m_xiPitchDelta = 0.0f;
 	else
 		m_xiPitchDelta = radians;
-
-	return false;
 }
 
 
-bool CPlayerInputComponent::OnActionZoomIn(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	m_zoomDelta -= 1.0f;
-
-	return false;
-}
-
-
-bool CPlayerInputComponent::OnActionZoomOut(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	m_zoomDelta += 1.0f;
-
-	return false;
-}
-
-
-bool CPlayerInputComponent::OnActionJump(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+void CPlayerInputComponent::OnActionJump(int activationMode, float value)
 {
 	if (activationMode == eAAM_OnPress)
-	{
 		CryLogAlways("Player jumped");
-	}
-
-	return false;
 }
 
 
-bool CPlayerInputComponent::OnActionCrouchToggle(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+void CPlayerInputComponent::OnActionCrouchToggle(int activationMode, float value)
 {
 	if (activationMode == eAAM_OnPress)
-	{
-		if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
-		{
-			pCharacter->OnActionCrouchToggle(entityId);
-		}
-	}
-
-	return false;
+		IF_ACTOR_DO(OnActionCrouchToggle);
 }
 
 
-bool CPlayerInputComponent::OnActionCrawlToggle(EntityId entityId, const ActionId & actionId, int activationMode, float value)
+void CPlayerInputComponent::OnActionCrawlToggle(int activationMode, float value)
 {
 	if (activationMode == eAAM_OnPress)
-	{
-		if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
-		{
-			pCharacter->OnActionCrawlToggle(entityId);
-		}
-	}
-
-	return false;
+		IF_ACTOR_DO(OnActionCrawlToggle);
 }
 
 
-bool CPlayerInputComponent::OnActionKneelToggle(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+void CPlayerInputComponent::OnActionKneelToggle(int activationMode, float value)
 {
 	if (activationMode == eAAM_OnPress)
-	{
-		if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
-		{
-			pCharacter->OnActionKneelToggle(entityId);
-		}
-	}
-
-	return false;
+		IF_ACTOR_DO(OnActionKneelToggle);
 }
 
 
-bool CPlayerInputComponent::OnActionSitToggle(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+void CPlayerInputComponent::OnActionSitToggle(int activationMode, float value)
 {
 	if (activationMode == eAAM_OnPress)
-	{
-		if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
-		{
-			pCharacter->OnActionSitToggle(entityId);
-		}
-	}
-
-	return false;
+		IF_ACTOR_DO(OnActionSitToggle);
 }
 
 
-bool CPlayerInputComponent::OnActionWalkJog(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+void CPlayerInputComponent::OnActionWalkJog(int activationMode, float value)
 {
 	if (activationMode == eAAM_OnPress)
-	{
-		if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
-		{
-			pCharacter->OnActionJogToggle(entityId);
-		}
-	}
-
-	return false;
+		IF_ACTOR_DO(OnActionJogToggle);
 }
 
 
-bool CPlayerInputComponent::OnActionSprintToggle(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+void CPlayerInputComponent::OnActionSprintToggle(int activationMode, float value)
 {
 	if (activationMode == eAAM_OnRelease)
 	{
-		if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
-		{
-			pCharacter->OnActionSprintStop(entityId);
-		}
+		IF_ACTOR_DO(OnActionSprintStop);
 	}
 	else if (activationMode & (eAAM_OnPress | eAAM_OnHold))
 	{
-		if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
-		{
-			pCharacter->OnActionSprintStart(entityId);
-		}
+		IF_ACTOR_DO(OnActionSprintStart);
 	}
-
-	return false;
 }
 
 
-bool CPlayerInputComponent::OnActionItemUse(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	// #TODO: BUG this gets called twice for every press of the "f" key. Not sure if others are being called twice as well.
-	if (activationMode == eAAM_OnPress)
-	{
-		if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
-		{
-			pCharacter->OnActionItemUse(entityId);
-		}
-	}
-
-	return false;
-}
-
-
-bool CPlayerInputComponent::OnActionItemPickup(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+void CPlayerInputComponent::OnActionItemUse(int activationMode, float value)
 {
 	if (activationMode == eAAM_OnPress)
-	{
-		if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
-		{
-			pCharacter->OnActionItemPickup(entityId);
-		}
-	}
-
-	return false;
+		IF_ACTOR_DO(OnActionItemUse);
 }
 
 
-bool CPlayerInputComponent::OnActionItemDrop(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+void CPlayerInputComponent::OnActionItemPickup(int activationMode, float value)
 {
 	if (activationMode == eAAM_OnPress)
-	{
-		if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
-		{
-			pCharacter->OnActionItemDrop(entityId);
-		}
-	}
-
-	return false;
+		IF_ACTOR_DO(OnActionItemPickup);
 }
 
 
-bool CPlayerInputComponent::OnActionItemToss(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+void CPlayerInputComponent::OnActionItemDrop(int activationMode, float value)
 {
 	if (activationMode == eAAM_OnPress)
-	{
-		if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
-		{
-			pCharacter->OnActionItemToss(entityId);
-		}
-	}
-
-	return false;
+		IF_ACTOR_DO(OnActionItemDrop);
 }
 
 
-bool CPlayerInputComponent::OnActionBar(EntityId entityId, const ActionId& actionId, int activationMode, int buttonId)
+void CPlayerInputComponent::OnActionItemToss(int activationMode, float value)
+{
+	if (activationMode == eAAM_OnPress)
+		IF_ACTOR_DO(OnActionItemToss);
+}
+
+
+void CPlayerInputComponent::OnActionBar(int activationMode, int buttonId)
 {
 	if (activationMode == eAAM_OnPress || activationMode == eAAM_OnHold)
 	{
 		CryLogAlways("OnActionBar");
-		if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
-		{
-			pCharacter->OnActionBarUse(entityId, buttonId);
-		}
+		if (auto pActorComponent = CPlayerComponent::GetLocalActor())
+			pActorComponent->OnActionBarUse(buttonId);
 	}
-
-	return false;
 }
 
 
-bool CPlayerInputComponent::OnActionBar01(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return OnActionBar(entityId, actionId, activationMode, 1);
-}
-
-
-bool CPlayerInputComponent::OnActionBar02(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return OnActionBar(entityId, actionId, activationMode, 2);
-}
-
-
-bool CPlayerInputComponent::OnActionBar03(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return OnActionBar(entityId, actionId, activationMode, 3);
-}
-
-
-bool CPlayerInputComponent::OnActionBar04(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return OnActionBar(entityId, actionId, activationMode, 4);
-}
-
-
-bool CPlayerInputComponent::OnActionBar05(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return OnActionBar(entityId, actionId, activationMode, 5);
-}
-
-
-bool CPlayerInputComponent::OnActionBar06(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return OnActionBar(entityId, actionId, activationMode, 6);
-}
-
-
-bool CPlayerInputComponent::OnActionBar07(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return OnActionBar(entityId, actionId, activationMode, 7);
-}
-
-
-bool CPlayerInputComponent::OnActionBar08(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return OnActionBar(entityId, actionId, activationMode, 8);
-}
-
-
-bool CPlayerInputComponent::OnActionBar09(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return OnActionBar(entityId, actionId, activationMode, 9);
-}
-
-
-bool CPlayerInputComponent::OnActionBar10(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return OnActionBar(entityId, actionId, activationMode, 10);
-}
-
-
-bool CPlayerInputComponent::OnActionBar11(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return OnActionBar(entityId, actionId, activationMode, 11);
-}
-
-
-bool CPlayerInputComponent::OnActionBar12(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return OnActionBar(entityId, actionId, activationMode, 12);
-}
-
-
-bool CPlayerInputComponent::OnNumpad(EntityId entityId, const ActionId& actionId, int activationMode, int buttonId)
+void CPlayerInputComponent::OnNumpad(int activationMode, int buttonId)
 {
 	if (activationMode == eAAM_OnPress || activationMode == eAAM_OnHold)
 	{
 		CryLogAlways("OnNumpad");
 	}
-
-	return false;
 }
 
 
-bool CPlayerInputComponent::OnActionNumpad0(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return OnNumpad(entityId, actionId, activationMode, 0);
-}
-
-
-bool CPlayerInputComponent::OnActionNumpad1(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return OnNumpad(entityId, actionId, activationMode, 1);
-}
-
-
-bool CPlayerInputComponent::OnActionNumpad2(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return OnNumpad(entityId, actionId, activationMode, 2);
-}
-
-
-bool CPlayerInputComponent::OnActionNumpad3(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return OnNumpad(entityId, actionId, activationMode, 3);
-}
-
-
-bool CPlayerInputComponent::OnActionNumpad4(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return OnNumpad(entityId, actionId, activationMode, 4);
-}
-
-
-bool CPlayerInputComponent::OnActionNumpad5(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return OnNumpad(entityId, actionId, activationMode, 5);
-}
-
-
-bool CPlayerInputComponent::OnActionNumpad6(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return OnNumpad(entityId, actionId, activationMode, 6);
-}
-
-
-bool CPlayerInputComponent::OnActionNumpad7(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return OnNumpad(entityId, actionId, activationMode, 7);
-}
-
-
-bool CPlayerInputComponent::OnActionNumpad8(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return OnNumpad(entityId, actionId, activationMode, 8);
-}
-
-
-bool CPlayerInputComponent::OnActionNumpad9(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return OnNumpad(entityId, actionId, activationMode, 9);
-}
-
-
-bool CPlayerInputComponent::OnActionCameraShiftUp(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return m_pCameraManager->OnActionCameraShiftUp(entityId, actionId, activationMode, value);
-}
-
-
-bool CPlayerInputComponent::OnActionCameraShiftDown(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return m_pCameraManager->OnActionCameraShiftDown(entityId, actionId, activationMode, value);
-}
-
-
-bool CPlayerInputComponent::OnActionCameraShiftLeft(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return m_pCameraManager->OnActionCameraShiftLeft(entityId, actionId, activationMode, value);
-}
-
-
-bool CPlayerInputComponent::OnActionCameraShiftRight(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return m_pCameraManager->OnActionCameraShiftRight(entityId, actionId, activationMode, value);
-}
-
-
-bool CPlayerInputComponent::OnActionCameraShiftForward(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return m_pCameraManager->OnActionCameraShiftForward(entityId, actionId, activationMode, value);
-}
-
-
-bool CPlayerInputComponent::OnActionCameraShiftBackward(EntityId entityId, const ActionId& actionId, int activationMode, float value)
-{
-	return m_pCameraManager->OnActionCameraShiftBackward(entityId, actionId, activationMode, value);
-}
-
-
-bool CPlayerInputComponent::OnActionInspectStart(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+void CPlayerInputComponent::OnActionInspectStart(int activationMode, float value)
 {
 	if (activationMode == eAAM_OnPress)
-	{
-		if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
-		{
-			pCharacter->OnActionInspectStart(entityId);
-		}
-	}
-
-	return false;
+		IF_ACTOR_DO(OnActionInspectStart);
 }
 
 
-bool CPlayerInputComponent::OnActionInspect(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+void CPlayerInputComponent::OnActionInspect(int activationMode, float value)
 {
 	if (activationMode == eAAM_OnPress)
-	{
-		if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
-		{
-			pCharacter->OnActionInspect(entityId);
-		}
-	}
-
-	return false;
+		IF_ACTOR_DO(OnActionInspect);
 }
 
 
-bool CPlayerInputComponent::OnActionInspectEnd(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+void CPlayerInputComponent::OnActionInspectEnd(int activationMode, float value)
 {
 	if (activationMode == eAAM_OnPress)
-	{
-		if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
-		{
-			pCharacter->OnActionInspectEnd(entityId);
-		}
-	}
-
-	return false;
+		IF_ACTOR_DO(OnActionInspectEnd);
 }
 
 
-bool CPlayerInputComponent::OnActionInteraction(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+void CPlayerInputComponent::OnActionInteraction(int activationMode, float value)
 {
 	switch (activationMode)
 	{
 		case eAAM_OnPress:
-		{
-			if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
-			{
-				pCharacter->OnActionInteractionStart(entityId);
-			}
-		}
+			IF_ACTOR_DO(OnActionInteractionStart);
 		break;
 
 		case eAAM_OnHold:
-		{
-			if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
-			{
-				pCharacter->OnActionInteraction(entityId);
-			}
-		}
+			IF_ACTOR_DO(OnActionInteraction);
 		break;
 
 		case eAAM_OnRelease:
-		{
-			if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
-			{
-				pCharacter->OnActionInteractionEnd(entityId);
-			}
-		}
+			IF_ACTOR_DO(OnActionInteractionEnd);
 		break;
 	}
+}
 
-	return false;
+
+void CPlayerInputComponent::OnActionCameraShiftUp(int activationMode, float value)
+{
+	m_pCameraManager->OnActionCameraShiftUp(activationMode, value);
+}
+
+
+void CPlayerInputComponent::OnActionCameraShiftDown(int activationMode, float value)
+{
+	m_pCameraManager->OnActionCameraShiftDown(activationMode, value);
+}
+
+
+void CPlayerInputComponent::OnActionCameraShiftLeft(int activationMode, float value)
+{
+	m_pCameraManager->OnActionCameraShiftLeft(activationMode, value);
+}
+
+
+void CPlayerInputComponent::OnActionCameraShiftRight(int activationMode, float value)
+{
+	m_pCameraManager->OnActionCameraShiftRight(activationMode, value);
+}
+
+
+void CPlayerInputComponent::OnActionCameraShiftForward(int activationMode, float value)
+{
+	m_pCameraManager->OnActionCameraShiftForward(activationMode, value);
+}
+
+
+void CPlayerInputComponent::OnActionCameraShiftBackward(int activationMode, float value)
+{
+	m_pCameraManager->OnActionCameraShiftBackward(activationMode, value);
 }
 }

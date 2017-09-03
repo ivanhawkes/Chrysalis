@@ -2,7 +2,7 @@
 
 #include "ItemInteractionComponent.h"
 #include <Components/Interaction/EntityInteractionComponent.h>
-#include <Components/Player/Player.h>
+#include "Components/Player/PlayerComponent.h"
 #include <Components/Player/Input/IPlayerInputComponent.h>
 #include <Actor/Character/Character.h>
 
@@ -70,12 +70,12 @@ void CItemInteractionComponent::OnInteractionItemInspect()
 	gEnv->pLog->LogAlways("OnInteractionItemInspect fired.");
 	m_inspectionState = InspectionState::eInspecting;
 
-	if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
+	if (auto pActorComponent = CPlayerComponent::GetLocalActor())
 	{
 		const auto pEntity = GetEntity();
 		m_initialPosition = pEntity->GetPos();
 		m_initialRotation = pEntity->GetRotation();
-		m_targetPosition = pCharacter->GetEntity()->GetPos() + pCharacter->GetLocalLeftHandPos();
+		m_targetPosition = pActorComponent->GetEntity()->GetPos() + pActorComponent->GetLocalLeftHandPos();
 		m_timeInAir = 0.0f;
 		m_timeInAirRequired = (m_targetPosition - m_initialPosition).GetLength() / kJumpToPlayerSpeed;
 
@@ -100,10 +100,10 @@ void CItemInteractionComponent::OnInteractionItemPickup()
 	gEnv->pLog->LogAlways("OnInteractionItemPickup fired.");
 	m_inspectionState = InspectionState::ePickingUp;
 
-	if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
+	if (auto pActorComponent = CPlayerComponent::GetLocalActor())
 	{
 		m_initialPosition = GetEntity()->GetPos();
-		m_targetPosition = pCharacter->GetEntity()->GetPos() + pCharacter->GetLocalRightHandPos();
+		m_targetPosition = pActorComponent->GetEntity()->GetPos() + pActorComponent->GetLocalRightHandPos();
 		m_timeInAir = 0.0f;
 		m_timeInAirRequired = (m_targetPosition - m_initialPosition).GetLength() / kJumpToPlayerSpeed;
 
@@ -121,7 +121,7 @@ void CItemInteractionComponent::OnInteractionItemDrop()
 	gEnv->pLog->LogAlways("OnInteractionItemDrop fired.");
 	m_inspectionState = InspectionState::eDroping;
 
-	if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
+	if (auto pActorComponent = CPlayerComponent::GetLocalActor())
 	{
 		const auto pEntity = GetEntity();
 
@@ -146,15 +146,15 @@ void CItemInteractionComponent::OnInteractionItemToss()
 	gEnv->pLog->LogAlways("OnInteractionItemToss fired.");
 	m_inspectionState = InspectionState::eTossing;
 
-	if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
+	if (auto pActorComponent = CPlayerComponent::GetLocalActor())
 	{
 		const auto pEntity = GetEntity();
-		Vec3 impulse = pCharacter->GetEntity()->GetRotation() * FORWARD_DIRECTION * kTossNewtons;
+		Vec3 impulse = pActorComponent->GetEntity()->GetRotation() * FORWARD_DIRECTION * kTossNewtons;
 
 		// A small impulse to toss it aside.
 		pe_action_impulse action;
 		action.impulse = impulse;
-		action.point = pCharacter->GetLocalRightHandPos();
+		action.point = pActorComponent->GetLocalRightHandPos();
 
 		IPhysicalEntity* pPhysEntity = pEntity->GetPhysics();
 		if (pPhysEntity)
@@ -218,7 +218,7 @@ void CItemInteractionComponent::OnInspectingUpdate(const float frameTime)
 	// For now, just pull the object to a target location.
 	m_timeInAir = min(m_timeInAirRequired, m_timeInAir + frameTime);
 
-	if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
+	if (auto pActorComponent = CPlayerComponent::GetLocalActor())
 	{
 		Vec3 delta = (m_targetPosition - m_initialPosition) * (1.0f - (m_timeInAir / m_timeInAirRequired));
 		pEntity->SetPos(m_targetPosition - delta);
@@ -229,7 +229,7 @@ void CItemInteractionComponent::OnInspectingUpdate(const float frameTime)
 			// #TODO: The rotation flips the controls when the item is upside down. That feels weird. Is there a way to remove this
 			// from the rotation?
 			const auto inputRotation = Quat(Ang3(pPlayerInput->GetPitchDelta() * kInspectionRotationFactor, pPlayerInput->GetYawDelta() * kInspectionRotationFactor, 0.0f));
-			const auto characterRotation = Quat(Ang3(0.0f, 0.0f, pCharacter->GetEntity()->GetRotation().GetFwdZ())).GetNormalized();
+			const auto characterRotation = Quat(Ang3(0.0f, 0.0f, pActorComponent->GetEntity()->GetRotation().GetFwdZ())).GetNormalized();
 			pEntity->SetRotation(pEntity->GetRotation() * inputRotation * characterRotation);
 		}
 	}
@@ -243,7 +243,7 @@ void CItemInteractionComponent::OnPickingUpUpdate(const float frameTime)
 	// For now, just pull the object to a target location.
 	m_timeInAir = min(m_timeInAirRequired, m_timeInAir + frameTime);
 
-	if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
+	if (auto pActorComponent = CPlayerComponent::GetLocalActor())
 	{
 		Vec3 delta = (m_targetPosition - m_initialPosition) * (1.0f - (m_timeInAir / m_timeInAirRequired));
 		pEntity->SetPos(m_targetPosition - delta);

@@ -5,11 +5,12 @@ Declares the actor movement controller class.
 
 #include <IGameObject.h>
 #include <IMovementController.h>
+#include <Components/Player/Input/IPlayerInputComponent.h>
 
 
 namespace Chrysalis
 {
-class CActor;
+class CActorComponent;
 struct SActorMovementRequest;
 
 
@@ -60,7 +61,7 @@ public:
 	// ***
 
 
-	CActorMovementController(CActor* pActor);
+	CActorMovementController(CActorComponent* pActor);
 	virtual ~CActorMovementController();
 
 
@@ -98,7 +99,7 @@ private:
 	void ComputeMovementState();
 
 	/** The actor. */
-	CActor* m_pActor { nullptr };
+	CActorComponent* m_pActor { nullptr };
 
 	/** The movement request. */
 	CMovementRequest m_movementRequest;
@@ -140,6 +141,6 @@ private:
 	a
 	\return The body rotation in degrees relative to the movement direction in the state flags.
 	**/
-	const float GetLowerBodyRotation(uint32 movementStateFlags) const;
+	const float GetLowerBodyRotation(TInputFlags movementDirectionFlags) const;
 };
 }

@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 
 #include "SecurityPadComponent.h"
-#include <Components/Player/Player.h>
+#include "Components/Player/PlayerComponent.h"
 #include <Components/Player/Camera/CameraManagerComponent.h>
 
 
@@ -15,7 +15,7 @@ void CSecurityPadComponent::Register(Schematyc::CEnvRegistrationScope& component
 void CSecurityPadComponent::ReflectType(Schematyc::CTypeDesc<CSecurityPadComponent>& desc)
 {
 	desc.SetGUID(CSecurityPadComponent::IID());
-	desc.SetEditorCategory("Interactive");
+	desc.SetEditorCategory("Interaction");
 	desc.SetLabel("Security Pad");
 	desc.SetDescription("Interactive security pad for controlling access to locked areas.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");

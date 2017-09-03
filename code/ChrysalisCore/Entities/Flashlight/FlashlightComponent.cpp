@@ -22,7 +22,7 @@ void CFlashlightComponent::ReflectType(Schematyc::CTypeDesc<CFlashlightComponent
 	desc.SetEditorCategory("Items");
 	desc.SetLabel("Flashlight Component");
 	desc.SetDescription("No description.");
-	desc.SetIcon("icons:ObjectTypes/item.ico");
+	desc.SetIcon("icons:ObjectTypes/light.ico");
 	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
 
 	desc.AddMember(&CFlashlightComponent::m_batteryLevel, 'batl', "BatteryLevel", "Battery Level", "Amount battery power left.", 1.0f);

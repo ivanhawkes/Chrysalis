@@ -1,9 +1,8 @@
-<AssetMetadata version="0" type="Level" guid="{6A24092C-8178-7499-9D2E-527F90FBBE97}" source="">
+<AssetMetadata version="0" type="Level" guid="6a24092c-8178-7499-9d2e-527f90fbbe97" source="">
  <Files>
   <File path="test_all.cry"/>
  </Files>
  <Dependencies>
-  <Path>%engine%/config/defaultscripts/compressionpolicy.xml</Path>
   <Path>%engine%/engineassets/codecoverage/hit.dds</Path>
   <Path>%engine%/engineassets/codecoverage/pbar.dds</Path>
   <Path>%engine%/engineassets/codecoverage/unexpected.dds</Path>
@@ -11,29 +10,95 @@
   <Path>%engine%/engineassets/icons/highmemoryusage.dds</Path>
   <Path>%engine%/engineassets/icons/livepreview.dds</Path>
   <Path>%engine%/engineassets/icons/lowmemoryusage.dds</Path>
+  <Path>%engine%/engineassets/materials/fog/fogvolumebox.mtl</Path>
+  <Path>%engine%/engineassets/materials/fog/fogvolumeellipsoid.mtl</Path>
+  <Path>%engine%/engineassets/materials/fog/oceaninto.mtl</Path>
+  <Path>%engine%/engineassets/materials/fog/oceanintolowspec.mtl</Path>
+  <Path>%engine%/engineassets/materials/fog/oceanoutof.mtl</Path>
+  <Path>%engine%/engineassets/materials/fog/oceanoutoflowspec.mtl</Path>
+  <Path>%engine%/engineassets/materials/water/wateroceanbottom.mtl</Path>
+  <Path>%engine%/engineassets/texturemsg/defaultnouvs.dds</Path>
   <Path>%engine%/engineassets/texturemsg/defaultsolids.mtl</Path>
-  <Path>animations/skeletonlist.xml</Path>
+  <Path>%engine%/engineassets/textures/defaults/16_12.dds</Path>
+  <Path>%engine%/engineassets/textures/defaults/16_34.dds</Path>
+  <Path>%engine%/engineassets/textures/defaults/16_5.dds</Path>
+  <Path>%engine%/engineassets/textures/defaults/16_grey.dds</Path>
+  <Path>engineassets/materials/material_terrain_default.mtl</Path>
+  <Path>engineassets/materials/sky/sky.mtl</Path>
+  <Path>engineassets/materials/water/ocean_default.mtl</Path>
   <Path>engineassets/texturemsg/defaultsolids.mtl</Path>
   <Path>engineassets/textures/grey.dds</Path>
   <Path>engineassets/textures/white.dds</Path>
   <Path>libs/environmentpresets/test_all.xml</Path>
-  <Path>objects/characters/human/chloe/chloe.chr</Path>
-  <Path>objects/characters/human/chloe/idle.caf</Path>
-  <Path>objects/characters/human/chloe/locomotion_jump.caf</Path>
-  <Path>objects/characters/human/chloe/locomotion_run.caf</Path>
-  <Path>objects/characters/human/chloe/locomotion_strafe_left.caf</Path>
-  <Path>objects/characters/human/chloe/locomotion_strafe_right.caf</Path>
-  <Path>objects/characters/human/chloe/locomotion_turn_left.caf</Path>
-  <Path>objects/characters/human/chloe/locomotion_turn_right.caf</Path>
-  <Path>objects/characters/human/chloe/locomotion_walk.caf</Path>
-  <Path>objects/characters/human/chloe/opening_a_filing_cabinet.caf</Path>
+  <Path>materials/terrain/grass/grass_01.mtl</Path>
+  <Path>objects/characters/human/male/animations/crouch/crouch_idle.caf</Path>
+  <Path>objects/characters/human/male/animations/crouch/crouch_idle_v2.caf</Path>
+  <Path>objects/characters/human/male/animations/crouch/crouch_l_90.caf</Path>
+  <Path>objects/characters/human/male/animations/crouch/crouch_look_center.caf</Path>
+  <Path>objects/characters/human/male/animations/crouch/crouch_look_d90.caf</Path>
+  <Path>objects/characters/human/male/animations/crouch/crouch_look_l90.caf</Path>
+  <Path>objects/characters/human/male/animations/crouch/crouch_look_r90.caf</Path>
+  <Path>objects/characters/human/male/animations/crouch/crouch_look_u90.caf</Path>
+  <Path>objects/characters/human/male/animations/crouch/crouch_r_90.caf</Path>
+  <Path>objects/characters/human/male/animations/crouch/crouch_to_crouchwalk_f.caf</Path>
+  <Path>objects/characters/human/male/animations/crouch/crouch_to_stand_relaxed.caf</Path>
+  <Path>objects/characters/human/male/animations/crouch/crouchwalk_b.caf</Path>
+  <Path>objects/characters/human/male/animations/crouch/crouchwalk_b_ip.caf</Path>
+  <Path>objects/characters/human/male/animations/crouch/crouchwalk_f.caf</Path>
+  <Path>objects/characters/human/male/animations/crouch/crouchwalk_f_ip.caf</Path>
+  <Path>objects/characters/human/male/animations/crouch/crouchwalk_f_to_crouch_ru.caf</Path>
+  <Path>objects/characters/human/male/animations/crouch/crouchwalk_l.caf</Path>
+  <Path>objects/characters/human/male/animations/crouch/crouchwalk_l_ip.caf</Path>
+  <Path>objects/characters/human/male/animations/crouch/crouchwalk_r.caf</Path>
+  <Path>objects/characters/human/male/animations/crouch/crouchwalk_r_ip.caf</Path>
+  <Path>objects/characters/human/male/animations/idle/idle_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/idle2move/idle_to_jog_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/idle2move/idle_to_run_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/idle2move/idle_to_walk_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/idle2move/jog_to_idle_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/idle2move/run_to_idle_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/idle2move/walk_to_idle_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/jog_bck_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/jog_fwd_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/jogcross_bck_lft_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/jogcross_bck_rgt_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/jogcross_fwd_lft_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/jogcross_fwd_rgt_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/jogstrafe_lft_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/jogstrafe_rgt_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/run_fwd_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/runcross_fwd_lft_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/runcross_fwd_rgt_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/runstrafe_lft_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/runstrafe_rgt_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/walk_bck_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/walk_fwd_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/walkcross_bck_lft_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/walkcross_bck_rgt_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/walkcross_fwd_lft_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/walkcross_fwd_rgt_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/walkstrafe_lft_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/walkstrafe_rgt_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/steprotate/steprotate_lft_135_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/steprotate/steprotate_lft_180_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/steprotate/steprotate_lft_45_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/steprotate/steprotate_lft_90_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/steprotate/steprotate_rgt_135_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/steprotate/steprotate_rgt_180_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/steprotate/steprotate_rgt_45_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/steprotate/steprotate_rgt_90_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/turns/jogturn_lft_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/turns/jogturn_rgt_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/turns/runturn_lft_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/turns/runturn_rgt_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/turns/walkturn_lft_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/turns/walkturn_rgt_3p.caf</Path>
   <Path>objects/characters/human/male/human_male.cdf</Path>
-  <Path>objects/characters/human/male/human_male.mtl</Path>
   <Path>objects/characters/human/male/human_male_controller_defs.xml</Path>
   <Path>objects/characters/human/male/human_male_fragment_ids.xml</Path>
   <Path>objects/characters/human/male/human_male_tags.xml</Path>
   <Path>objects/characters/human/male/textures/human_male_ddna.dds</Path>
-  <Path>objects/default/primitive_cube.cgf</Path>
-  <Path>scripts/network/compressionpolicy.xml</Path>
+  <Path>objects/characters/human/male/textures/human_male_diff.dds</Path>
+  <Path>objects/characters/human/male/textures/human_male_spec.dds</Path>
  </Dependencies>
 </AssetMetadata>

@@ -110,7 +110,7 @@ void CActionPlayAnimation::StartAnimation(DRS::IResponseInstance* pResponseInsta
 				//if (GetPortBool(pActInfo, IN_FORCE_UPDATE))
 				//{
 				//	aparams.m_nFlags |= CA_FORCE_SKELETON_UPDATE;
-				//	if (pEntity->IsActive() == false)
+				//	if (!pEntity->IsActive())
 				//	{
 				//		m_isEntityActivationForced = true;
 				//		pEntity->Activate(true); // maybe unforce update as well

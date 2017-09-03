@@ -1,6 +1,4 @@
 /**
-\file	d:\Chrysalis\Source\Chrysalis\Actor\Player\Player.h
-
 Provides functionality for a bare bones player entity. For Chrysalis we envision the player as an entity that represents the person
 at the keyboard playing the game. The entity is responsible for gathering player input, overall camera management, and attaching to
 character entities. It should be fairly lightweight and instead delegate the work out to other components.
@@ -9,9 +7,11 @@ In places where CRYENGINE makes implicit assumptions about the player class also
 as possible to the character class.
 
 At present, entering game mode without being attached to an existing character entity will likely crash or cause unwanted effects.
-Code should be added to armour against this.
 */
 #pragma once
+
+
+#include <DefaultComponents/Physics/CharacterControllerComponent.h>
 
 
 namespace Chrysalis
@@ -19,9 +19,9 @@ namespace Chrysalis
 struct ICameraComponent;
 struct IPlayerInputComponent;
 class CCameraManagerComponent;
+class IActorComponent;
+class CActorComponent;
 class CCharacterComponent;
-class CItemComponent;
-class CWeapon;
 
 
 /** Defines the player class. Used to provide the player a way to control a character / puppet in the game. */
@@ -34,6 +34,8 @@ protected:
 
 	// IEntityComponent
 	void Initialize() override;
+	virtual void ProcessEvent(SEntityEvent& event) override;
+	uint64 GetEventMask() const { return BIT64(ENTITY_EVENT_START_GAME) | BIT64(ENTITY_EVENT_UPDATE); }
 	// ~IEntityComponent
 
 public:
@@ -79,7 +81,7 @@ public:
 
 
 	/** Attach to a character with the default name 'Hero'. */
-	void AttachToCharacter();
+	void AttachToHero();
 
 
 	/**
@@ -107,11 +109,11 @@ public:
 
 
 	/**
-	Gets CCharacterComponent for the character / actor who is acting as our pawn.
+	Gets IActorComponent for the character / actor who is acting as our pawn.
 
 	\return	The character identifier.
 	*/
-	CCharacterComponent* GetAttachedCharacter() const;
+	IActorComponent* GetAttachedActor() const;
 
 
 	/**
@@ -164,29 +166,12 @@ public:
 
 	\return	null if it fails, else the local character.
 	*/
-	static CCharacterComponent* GetLocalCharacter();
+	static IActorComponent* GetLocalActor();
 
 
-	/**
-	If we have a local player and they are attached to a character, this will retrieve the
-	item that character is using.
-
-	\return	null if it fails, else the local item.
-	*/
-	static CItemComponent* GetLocalItem();
-
-
-	/**
-	If we have a local player and they are attached to a character, this will retrieve the
-	weapon that character is using.
-
-	\return	null if it fails, else the local weapon.
-	*/
-	static CWeapon* GetLocalWeapon();
-
-	bool GetAllowCharacterMovement() const { return m_allowCharacterMovement; }
-	bool GetAllowCharacterRotation() const { return m_allowCharacterRotation; }
-	bool GetAllowCameraMovement() const { return m_allowCameraMovement; }
+	bool IsCharacterMovementAllowed() const { return m_allowCharacterMovement; }
+	bool IsCharacterRotationAllowed() const { return m_allowCharacterRotation; }
+	bool IsCameraMovementAllowed() const { return m_allowCameraMovement; }
 
 
 	/**
@@ -229,9 +214,6 @@ private:
 
 	EPlayerInteractionMode m_playerInteractionMode { EPlayerInteractionMode::eNoMode };
 
-	/** Specifies whether this instance is the client actor. */
-	bool m_isClient { false };
-
 	/** The camera that this instance uses. */
 	CCameraManagerComponent* m_pCameraManager { nullptr };
 
@@ -247,9 +229,6 @@ private:
 	/** The player input handler. The player is responsible for ensuring the correct character entity / UI gets the input
 	as appropriate. */
 	IPlayerInputComponent* m_pPlayerInput { nullptr };
-
-	/** Identifier for the team. */
-	int m_teamId { 0 };
 
 	/** Is the player allowed to move their character? */
 	bool m_allowCharacterMovement { true };

@@ -2,6 +2,9 @@
 
 #include <CryMath/Cry_Math.h>
 #include <CryRenderer/Tarray.h>
+#include <CrySystem/VR/IHMDDevice.h>
+#include <CrySystem/VR/IHMDManager.h>
+#include "DefaultComponents/Audio/ListenerComponent.h"
 
 
 namespace Chrysalis
@@ -23,129 +26,17 @@ enum ECameraMode
 const Vec3 AverageEyePosition { 0.0f, 0.0f, 1.82f };
 
 
-/**
-A camera pose provides both a position and rotation which may be used to represent the position of a camera
-within the game world. Simple member functions provides helpers for composing, scaling and constructing these
-representations.
-**/
-struct CCameraPose
-{
-public:
-
-	/** Constructs a camera with zero position and an identity quaternion for it's rotation component. */
-	CCameraPose() :
-		m_position(ZERO),
-		m_rotation(IDENTITY)
-	{}
-
-
-	/**
-	Constructor.
-
-	\param	position The position.
-	\param	rotation The rotation.
-	**/
-	CCameraPose(Vec3 position, Quat rotation) :
-		m_position(position),
-		m_rotation(rotation)
-	{}
-
-
-	/**
-	A constructor which copies it's position and rotation values from another CCameraPose object.
-
-	\param	copy The object from which we will copy the position and rotation members.
-	**/
-	CCameraPose(const CCameraPose& copy) :
-		m_position(copy.m_position),
-		m_rotation(copy.m_rotation)
-	{}
-
-
-	/**
-	The left hand camera pose is composed with the right hand camera pose.
-
-	\param	lhs The left hand side.
-	\param	rhs The right hand side.
-
-	\return A CCameraPose that is the result of composing the lhs and the rhs.
-	**/
-	static CCameraPose Compose(const CCameraPose& lhs, const CCameraPose& rhs)
-	{
-		return CCameraPose(
-			lhs.GetPosition() + rhs.GetPosition(),
-			lhs.GetRotation() * rhs.GetRotation());
-	}
-
-
-	/**
-	Scales both the vector and the rotation for the camera pose by the factor provided. The rotation is scaled using
-	a SLERP between the identity quaternion and the lhs rotation.
-
-	\param	lhs    The left hand side.
-	\param	factor The factor.
-
-	\return A CCameraPose that is a copy of the lhs scaled by factor.
-	**/
-	static CCameraPose Scale(const CCameraPose& lhs, float factor)
-	{
-		if (factor == 1.0f)
-			return lhs;
-		else
-			return CCameraPose(
-				lhs.GetPosition() * factor,
-				Quat::CreateSlerp(IDENTITY, lhs.GetRotation(), factor));
-	}
-
-
-	/**
-	Linear interpolation between two camera poses.
-
-	\param	from   A valid camera pose that defines a position and rotation from which you wish to interpolate.
-	\param	to	   A valid camera pose that defines a position and rotation towards which you wish to interpolate.
-	\param	stride The stride.
-
-	\return A camera pose that represents a linear interpolation between the 'from' and 'to' parameters.
-	**/
-	static CCameraPose Lerp(const CCameraPose& from, const CCameraPose& to, float stride)
-	{
-		return CCameraPose(
-			LERP(from.GetPosition(), to.GetPosition(), stride),
-			Quat::CreateSlerp(from.GetRotation(), to.GetRotation(), stride));
-	}
-
-
-	/**
-	Gets the position.
-
-	\return The position.
-	**/
-	Vec3 GetPosition() const { return m_position; }
-
-
-	/**
-	Gets the rotation.
-
-	\return The rotation.
-	**/
-	Quat GetRotation() const { return m_rotation; }
-
-private:
-
-	/** Position of the camera. */
-	Vec3 m_position;
-
-	/** Rotation of the camera. */
-	Quat m_rotation;
-};
-
-
 struct ICameraComponent
 	: public IEntityComponent
+	, public IHmdDevice::IAsyncCameraCallback
 {
 protected:
 	friend CChrysalisCorePlugin;
 	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
+
+	// IAsyncCameraCallback
+	virtual bool OnAsyncCameraCallback(const HmdTrackingState& state, IHmdDevice::AsyncCameraContext& context) final;
+	// ~IAsyncCameraCallback
 
 public:
 	ICameraComponent() {}
@@ -237,7 +128,7 @@ public:
 
 	\return The position.
 	**/
-	Vec3 const GetPosition() const { return m_cameraPose.GetPosition(); }
+	Vec3 const GetPosition() const { return m_cameraMatrix.GetTranslation(); }
 
 
 	/**
@@ -245,17 +136,7 @@ public:
 
 	\return The rotation.
 	**/
-	Quat const GetRotation() const { return m_cameraPose.GetRotation(); }
-
-
-	/**
-	Gets the previously stored camera pose.
-
-	\param	cameraPose The camera pose.
-
-	\return The camera pose.
-	**/
-	const CCameraPose& GetCameraPose() { return m_cameraPose; }
+	Quat const GetRotation() const { return Quat(m_cameraMatrix); }
 
 
 	/**
@@ -270,27 +151,25 @@ public:
 	**/
 	const Vec3 GetAimTarget(const IEntity* pRayCastingEntity) const;
 
-
 	/** Executes the activate action. */
 	virtual void OnActivate() = 0;
 
 	/** Executes the deactivate action. */
 	virtual void OnDeactivate() = 0;
 
+	virtual CCamera& GetCamera() { return m_camera; }
+	const CCamera& GetCamera() const { return m_camera; }
+
+	/** Called by an active camera during it's update to update the camera view. */
+	virtual void UpdateView();
 
 protected:
+	/** The camera matrix. **/
+	Matrix34 m_cameraMatrix { ZERO, IDENTITY };
 
-	/**
-	Sets camera pose. This stores the position and rotation for this camera. This should be called during a camera's
-	update function after the new camera pose is calculated.
-
-	\param	cameraPose The camera pose.
-	**/
-	void SetCameraPose(const CCameraPose& cameraPose) { m_cameraPose = cameraPose; }
-
-
-	/** The position and rotation of the camera. This should be updated every frame during the update function. */
-	CCameraPose m_cameraPose { CCameraPose() };
+	Schematyc::Range<0, 32768> m_nearPlane = 0.25f;
+	CryTransform::CClampedAngle<20, 360> m_fieldOfView = 75.0_degrees;
+	CCamera m_camera;
 
 	/** Is debugging allowed? */
 	bool m_isDebugEnabled { false };

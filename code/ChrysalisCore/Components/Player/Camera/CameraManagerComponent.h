@@ -114,12 +114,12 @@ public:
 	Vec3 GetViewOffset();
 
 	/**	Camera debug actions. **/
-	bool OnActionCameraShiftUp(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionCameraShiftDown(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionCameraShiftLeft(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionCameraShiftRight(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionCameraShiftForward(EntityId entityId, const ActionId& actionId, int activationMode, float value);
-	bool OnActionCameraShiftBackward(EntityId entityId, const ActionId& actionId, int activationMode, float value);
+	bool OnActionCameraShiftUp(int activationMode, float value);
+	bool OnActionCameraShiftDown(int activationMode, float value);
+	bool OnActionCameraShiftLeft(int activationMode, float value);
+	bool OnActionCameraShiftRight(int activationMode, float value);
+	bool OnActionCameraShiftForward(int activationMode, float value);
+	bool OnActionCameraShiftBackward(int activationMode, float value);
 
 
 private:

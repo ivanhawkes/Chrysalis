@@ -1,7 +1,7 @@
 #include <StdAfx.h>
 
 /*#include "ProceduralContextRagdoll.h"
-#include <Components/Player/Player.h>
+#include "Components/Player/PlayerComponent.h"
 #include "HitDeathReactions.h"
 
 
@@ -69,7 +69,7 @@ void CProceduralContextRagdoll::QueueRagdoll(bool bAlive)
 		else if (!m_bInRagdoll || (m_bInRagdoll && !bAlive && m_bEntityAlive))
 		{
 			SRagdollizeParams params;
-			params.mass = static_cast<CActor*>(piActor)->GetActorPhysics().mass;
+			params.mass = static_cast<CActorComponent*>(piActor)->GetActorPhysics().mass;
 			params.sleep = m_bEntityAlive = bAlive;
 			params.stiffness = m_stiffness;
 

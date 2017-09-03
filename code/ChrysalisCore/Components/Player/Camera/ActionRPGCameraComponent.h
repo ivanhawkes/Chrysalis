@@ -23,16 +23,8 @@ protected:
 	void OnShutDown() override;
 	// ~IEntityComponent
 
-	// IAsyncCameraCallback
-	virtual bool OnAsyncCameraCallback(const HmdTrackingState& state, IHmdDevice::AsyncCameraContext& context) final;
-	// ~IAsyncCameraCallback
-
-	// IEntityEventListener
-	virtual void OnEntityEvent(IEntity* pEntity, SEntityEvent& event) final;
-	// ~IEntityEventListener
-
 public:
-	CActionRPGCameraComponent() { ResetCamera(); }
+	CActionRPGCameraComponent() {}
 	virtual ~CActionRPGCameraComponent() {}
 
 	static void ReflectType(Schematyc::CTypeDesc<CActionRPGCameraComponent>& desc);
@@ -74,14 +66,13 @@ public:
 	/** Resets the results of all player based camera movements back to their defaults. */
 	virtual void ResetCamera();
 
+
 	/**
 	Determines the position for camera to aim at on the target entity. It relies on the target being an actor for
 	accurate results, otherwise the position will be based on the average height for a person.
-
-	\param [in,out]	vecTargetPosition The target's position will be returned in this parameter.
-
+	
 	\param [in,out]	pEntity If non-null, the entity.
-
+	
 	\return The target aim position.
 	**/
 	Vec3 GetTargetAimPosition(IEntity* const pEntity);
@@ -90,10 +81,10 @@ public:
 	/**
 	Performs a very simple collision detection. The camera view position is updated to the best viewing location
 	based on the results of the raycasting.
-
-	\param	Goal				   The goal.
+	
+	\param 		   	Goal		   The goal.
 	\param [in,out]	CameraPosition The camera position.
-
+	
 	\return true if it succeeds, false if it fails.
 	**/
 	bool CollisionDetection(const Vec3& Goal, Vec3& CameraPosition);

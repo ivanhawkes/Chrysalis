@@ -30,7 +30,7 @@ public:
 
 	\param	fate	The fate.
 	*/
-	ILINE void ChangeYourFate() { m_fate = (static_cast<uint64_t>(cry_random_uint32()) << 32) + static_cast<uint64_t>(cry_random_uint32()); }
+	void ChangeYourFate() { m_fate = (static_cast<uint64_t>(cry_random_uint32()) << 32) + static_cast<uint64_t>(cry_random_uint32()); }
 
 
 	/**
@@ -38,14 +38,14 @@ public:
 
 	\param	fate	The fate.
 	*/
-	ILINE void SetFate(uint64 fate) { m_fate = fate; }
+	void SetFate(uint64 fate) { m_fate = fate; }
 
 	/**
 	Gets the character's complete fate.
 
 	\return	The fate.
 	*/
-	ILINE uint64 GetFate() const { return m_fate; }
+	uint64 GetFate() const { return m_fate; }
 
 
 	/**
@@ -54,7 +54,7 @@ public:
 
 	\return	The greater fate.
 	*/
-	ILINE uint32 GetGreaterFate() const { return static_cast<uint32_t>(m_fate >> 32); }
+	uint32 GetGreaterFate() const { return static_cast<uint32_t>(m_fate >> 32); }
 
 
 	/**
@@ -63,7 +63,7 @@ public:
 
 	\return	The lesser fate.
 	*/
-	ILINE uint32 GetLesserFate() const { return static_cast<uint32_t>(m_fate & 0x0000FFFF); }
+	uint32 GetLesserFate() const { return static_cast<uint32_t>(m_fate & 0x0000FFFF); }
 
 private:
 

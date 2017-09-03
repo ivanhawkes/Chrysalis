@@ -1,7 +1,7 @@
 #include <StdAfx.h>
 
 #include "ActionRPGCameraComponent.h"
-#include <Components/Player/Player.h>
+#include "Components/Player/PlayerComponent.h"
 #include <Components/Player/Input/IPlayerInputComponent.h>
 #include <Utility/StringConversions.h>
 #include <Console/CVars.h>
@@ -21,7 +21,7 @@ void CActionRPGCameraComponent::ReflectType(Schematyc::CTypeDesc<CActionRPGCamer
 	desc.SetEditorCategory("Cameras");
 	desc.SetLabel("Action RPG Camera");
 	desc.SetDescription("An action RPG style of camera that orbits around a target.");
-	desc.SetIcon("icons:General/Camera.ico");
+	desc.SetIcon("icons:ObjectTypes/light.ico");
 	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform, IEntityComponent::EFlags::Socket, IEntityComponent::EFlags::Attach, IEntityComponent::EFlags::ClientOnly });
 }
 
@@ -46,14 +46,10 @@ void CActionRPGCameraComponent::Initialize()
 	// It's a good idea to use the entity as a default for our target entity.
 	m_targetEntityID = GetEntityId();
 
-	// TODO: CRITICAL: HACK: BROKEN: !!
-	// Create a new view and link it to this entity.
-	//auto pViewSystem = gEnv->pGameFramework->GetIViewSystem();
-	//m_pView = pViewSystem->CreateView();
-	//m_pView->LinkTo(GetGameObject());
-
 	// We are usually hosted in the same entity as a camera manager. Use it if you can find one.
 	m_pCameraManager = GetEntity()->GetComponent<CCameraManagerComponent>();
+
+	m_skipInterpolation = true;
 }
 
 
@@ -63,52 +59,19 @@ void CActionRPGCameraComponent::ProcessEvent(SEntityEvent& event)
 	{
 		case ENTITY_EVENT_UPDATE:
 			Update();
+			UpdateView();
 			break;
-	}
-}
-
-
-bool CActionRPGCameraComponent::OnAsyncCameraCallback(const HmdTrackingState& sensorState, IHmdDevice::AsyncCameraContext& context)
-{
-	context.outputCameraMatrix = GetWorldTransformMatrix();
-
-	Matrix33 orientation = Matrix33(context.outputCameraMatrix);
-	Vec3 position = context.outputCameraMatrix.GetTranslation();
-
-	context.outputCameraMatrix.AddTranslation(orientation * sensorState.pose.position);
-	context.outputCameraMatrix.SetRotation33(orientation * Matrix33(sensorState.pose.orientation));
-
-	return true;
-}
-
-
-void CActionRPGCameraComponent::OnEntityEvent(IEntity* pEntity, SEntityEvent& event)
-{
-	switch (event.event)
-	{
-		case ENTITY_EVENT_DONE:
-		{
-			break;
-		}
 	}
 }
 
 
 void CActionRPGCameraComponent::OnShutDown()
 {
-	// Release the view.
-	// TODO: CRITICAL: HACK: BROKEN: !!
-	//GetGameObject()->ReleaseView(this);
-	//gEnv->pGameFramework->GetIViewSystem()->RemoveView(m_pView);
-	//m_pView = nullptr;
 }
 
 
 void CActionRPGCameraComponent::Update()
 {
-	// Default on failure is to return a cleanly constructed blank camera pose.
-	CCameraPose newCameraPose { CCameraPose() };
-
 	auto pEntity = gEnv->pEntitySystem->GetEntity(m_targetEntityID);
 	auto pPlayer = CPlayerComponent::GetLocalPlayer();
 	auto pPlayerInput = pPlayer->GetPlayerInput();
@@ -128,7 +91,7 @@ void CActionRPGCameraComponent::Update()
 		m_lastZoomGoal = m_zoomGoal;
 
 		// Apply the player input rotation for this frame, and limit the pitch / yaw movement according to the set max and min values.
-		if (pPlayer->GetAllowCameraMovement())
+		if (pPlayer->IsCameraMovementAllowed())
 		{
 			m_viewPitch += pPlayerInput->GetMousePitchDelta() + pPlayerInput->GetXiPitchDelta();
 			m_viewPitch = clamp_tpl(m_viewPitch, DEG2RAD(g_cvars.m_actionRPGCameraPitchMin), DEG2RAD(g_cvars.m_actionRPGCameraPitchMax));
@@ -221,42 +184,19 @@ void CActionRPGCameraComponent::Update()
 				m_vecLastPosition = vecViewPosition;
 
 				// Return the newly calculated pose.
-				newCameraPose = CCameraPose(vecViewPosition, quatOrbitRotation);
-				SetCameraPose(newCameraPose);
+				m_cameraMatrix = Matrix34::Create(Vec3(1.0f), quatOrbitRotation, vecViewPosition);
 
 				return;
 			}
 		}
 	}
 
-	// We set the pose, regardless of the result.
-	SetCameraPose(newCameraPose);
+	// The calulation failed somewhere, so just use an default matrix.
+	m_cameraMatrix = Matrix34::Create(Vec3(1.0f), IDENTITY, ZERO);
 
 	// If we made it here, we will want to avoid interpolating, since the last frame result will be wrong in some way.
 	m_skipInterpolation = true;
 }
-
-
-// ***
-// *** IGameObjectView
-// ***
-
-
-//void CActionRPGCameraComponent::UpdateView(SViewParams& params)
-//{
-//	// The last update call should have given us a new updated position and rotation.
-//	// We now pass those off to the view system. 
-//	params.SaveLast();
-//	params.position = GetCameraPose().GetPosition();
-//	params.rotation = GetCameraPose().GetRotation();
-//
-//	// Apply a last minute offset if available for debugging purposes.
-//	if (m_pCameraManager)
-//		params.position += GetCameraPose().GetRotation() * m_pCameraManager->GetViewOffset();
-//
-//	// For simplicity at present we are just hard coding the FoV.
-//	params.fov = DEG2RAD(60.0f);
-//}
 
 
 // ***
@@ -292,18 +232,17 @@ void CActionRPGCameraComponent::AttachToEntity(EntityId entityId)
 
 void CActionRPGCameraComponent::OnActivate()
 {
-	// TODO: CRITICAL: HACK: BROKEN: !!
-	//gEnv->pGameFramework->GetIViewSystem()->SetActiveView(m_pView);
-	//GetGameObject()->CaptureView(this);
 	m_EventMask |= BIT64(ENTITY_EVENT_UPDATE);
+	GetEntity()->UpdateComponentEventMask(this);
+	m_skipInterpolation = true;
+	ResetCamera();
 }
 
 
 void CActionRPGCameraComponent::OnDeactivate()
 {
-	// TODO: CRITICAL: HACK: BROKEN: !!
-	//GetGameObject()->ReleaseView(this);
 	m_EventMask &= ~BIT64(ENTITY_EVENT_UPDATE);
+	GetEntity()->UpdateComponentEventMask(this);
 }
 
 
@@ -321,7 +260,17 @@ void CActionRPGCameraComponent::ResetCamera()
 	m_viewPitch = (DEG2RAD(g_cvars.m_actionRPGCameraPitchMax) + DEG2RAD(g_cvars.m_actionRPGCameraPitchMin)) / 2;
 
 	// We'll start from behind our character as a default.
-	m_viewYaw = DEG2RAD(180.0f);
+	if (auto pTargetEntity = gEnv->pEntitySystem->GetEntity(m_targetEntityID))
+	{
+		// The camera should default to being behind the actor.
+		Vec3 backward = pTargetEntity->GetForwardDir();
+		backward.Flip();
+		m_viewYaw = CCamera::CreateAnglesYPR(backward).x;
+	}
+	else
+	{
+		m_viewYaw = 180.0f;
+	}
 }
 
 
@@ -333,7 +282,7 @@ Vec3 CActionRPGCameraComponent::GetTargetAimPosition(IEntity* const pEntity)
 	{
 		// If we are attached to an entity that is an actor we can use their eye position.
 		Vec3 localEyePosition = position;
-		auto pActor = CActor::GetActor(m_targetEntityID);
+		auto pActor = CActorComponent::GetActor(m_targetEntityID);
 		if (pActor)
 			localEyePosition = pActor->GetLocalEyePos();
 

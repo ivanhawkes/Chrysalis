@@ -7,7 +7,7 @@
 
 namespace Chrysalis
 {
-class CActor;
+class CActorComponent;
 class CMelee;
 
 
@@ -64,6 +64,28 @@ enum EActorStateEvent
 	// It seems to be used to go into an animation controlled state.
 	ACTOR_EVENT_INTERACTIVE_ACTION,
 
+	// Required to use ladders.
+	// #TODO: Would it be possible for AI / Pets / Mounts to use ladders?
+	ACTOR_EVENT_LADDER,
+	ACTOR_EVENT_LADDER_LEAVE,
+	ACTOR_EVENT_LADDER_POSITION,
+
+	// Vehicles / characters?
+	ACTOR_EVENT_ATTACH,
+	ACTOR_EVENT_DETACH,
+
+	// I believe these are used for viewing or skipping some form of player intro video. Unsure at present.
+	ACTOR_EVENT_INTRO_START,
+	ACTOR_EVENT_INTRO_FINISHED,
+
+	// Button mashing.
+	//ACTOR_EVENT_BUTTONMASHING_SEQUENCE,
+	//ACTOR_EVENT_BUTTONMASHING_SEQUENCE_END,
+
+	// Used with co-operative animations, for instance stealth kills.
+	//ACTOR_EVENT_STEALTHKILL,
+	//ACTOR_EVENT_COOP_ANIMATION_FINISHED,
+
 	///< Don't use, except to chain more events to the end of this list.
 	ACTOR_EVENT_LAST,
 };
@@ -86,6 +108,17 @@ enum EActorStateEvent
 
 
 AUTOENUM_BUILDFLAGS_WITHZERO(eActorStateFlags, eActorStateFlags_None);
+
+
+enum EActorStates
+{
+	ACTOR_STATE_ENTRY = STATE_FIRST,
+	ACTOR_STATE_MOVEMENT,
+	ACTOR_STATE_MOVEMENT_AI,
+	ACTOR_STATE_ANIMATION,
+	ACTOR_STATE_LINKED,
+};
+
 
 
 struct SActorPrePhysicsData
@@ -318,4 +351,126 @@ struct SStateEventGroundColliderChanged : public SStateEvent
 
 	ILINE const bool OnGround() const { return GetData(0).GetBool(); }
 };
+
+
+enum ELadderLeaveLocation
+{
+	eLLL_First = 0,
+	eLLL_Top = eLLL_First,
+	eLLL_Bottom,
+	eLLL_Drop,
+	eLLL_Count,
+};
+
+
+struct SStateEventLadder : public SStateEvent
+{
+	SStateEventLadder(IEntity* pLadder)
+		:
+		SStateEvent(ACTOR_EVENT_LADDER)
+	{
+		AddData(pLadder);
+	}
+
+	IEntity* GetLadder() const { return (IEntity*)(GetData(0).GetPtr()); }
+};
+
+
+struct SStateEventLeaveLadder : public SStateEvent
+{
+	SStateEventLeaveLadder(ELadderLeaveLocation leaveLocation)
+		:
+		SStateEvent(ACTOR_EVENT_LADDER_LEAVE)
+	{
+		AddData((int)leaveLocation);
+	}
+
+	ELadderLeaveLocation GetLeaveLocation() const { return (ELadderLeaveLocation)(GetData(0).GetInt()); }
+};
+
+
+struct SStateEventLadderPosition : public SStateEvent
+{
+	SStateEventLadderPosition(float heightFrac)
+		:
+		SStateEvent(ACTOR_EVENT_LADDER_POSITION)
+	{
+		AddData(heightFrac);
+	}
+
+	float GetHeightFrac() const { return GetData(0).GetFloat(); }
+};
+
+
+//struct SStateEventButtonMashingSequence : public SStateEvent
+//{
+//	enum Type
+//	{
+//		SystemX = 0,
+//	};
+//
+//	struct Params
+//	{
+//		EntityId targetLocationId;
+//		EntityId lookAtTargetId;
+//		float beamingTime;
+//
+//		// While the Character is struggling to escape from the boss, he will push 
+//		// himself back a certain distance (depending on the progression of
+//		// the button-mashing) (>= 0.0f) (in meters).
+//		float strugglingMovementDistance;
+//
+//		// The speed with which the Character will move along the 'struggling
+//		// line' (>= 0.0f) (in meters / second).
+//		float strugglingMovementSpeed;
+//	};
+//
+//	struct CallBacks
+//	{
+//		Functor1<const float&>	onSequenceStart;
+//		Functor1<const float&>  onSequenceUpdate;
+//		Functor1<const bool&>   onSequenceEnd;
+//	};
+//
+//	explicit SStateEventButtonMashingSequence(const Type sequenceType, const Params& params, const CallBacks& callbacks)
+//		: SStateEvent(ACTOR_EVENT_BUTTONMASHING_SEQUENCE)
+//	{
+//		AddData((int) sequenceType);
+//		AddData((const void*) &params);
+//		AddData((const void*) &callbacks);
+//	}
+//
+//	ILINE const Type GetEnemyType() const { return static_cast<Type>(GetData(0).GetInt()); }
+//	ILINE const Params& GetParams() const { return *static_cast<const Params*>(GetData(1).GetPtr()); }
+//	ILINE const CallBacks& GetCallBacks() const { return *static_cast<const CallBacks*>(GetData(2).GetPtr()); }
+//};
+
+
+
+//struct SStateEventSlideKick : public SStateEvent
+//{
+//	SStateEventSlideKick(CMelee* pMelee)
+//		:
+//		SStateEvent(ACTOR_EVENT_SLIDE_KICK)
+//	{
+//		AddData(pMelee);
+//	}
+//
+//	CMelee* GetMelee() const { return (CMelee*) GetData(1).GetPtr(); }
+//};
+//
+//
+
+
+//struct SStateEventCoopAnim : public SStateEvent
+//{
+//	explicit SStateEventCoopAnim(EntityId targetID)
+//		:
+//		SStateEvent(ACTOR_EVENT_COOP_ANIMATION_FINISHED)
+//	{
+//		AddData(static_cast<int>(targetID));
+//	}
+//
+//	ILINE EntityId GetTargetEntityId() const { return static_cast<EntityId> (GetData(0).GetInt()); }
+//};
 }

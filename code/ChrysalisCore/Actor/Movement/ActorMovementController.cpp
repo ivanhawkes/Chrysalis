@@ -5,7 +5,7 @@
 #include <Actor/Actor.h>
 #include <Actor/ActorStance.h>
 #include <Actor/ActorState.h>
-#include <Components/Player/Player.h>
+#include "Components/Player/PlayerComponent.h"
 #include <Components/Player/Camera/ICameraComponent.h>
 #include <Components/Player/Input/IPlayerInputComponent.h>
 #include <IMovementController.h>
@@ -55,7 +55,7 @@ bool CActorMovementController::RequestMovement(CMovementRequest& request)
 // ***
 
 
-CActorMovementController::CActorMovementController(CActor* pActor)
+CActorMovementController::CActorMovementController(CActorComponent* pActor)
 {
 	m_pActor = pActor;
 	OnResetState();
@@ -172,8 +172,8 @@ void CActorMovementController::ComputeMovementRequest()
 			const Vec3 unitMovement = pPlayerInput->GetMovement(movementDirection);
 
 			// #HACK: movement speed should be done much cleaner than this. We shouldn't need to mess
-			// around working out if they are jogging or sprinting. Move to CActor.
-			Vec3 movement = unitMovement * m_pActor->GetMovementBaseSpeed(pPlayerInput->GetMovementStateFlags());
+			// around working out if they are jogging or sprinting. Move to CActorComponent.
+			Vec3 movement = unitMovement * m_pActor->GetMovementBaseSpeed(pPlayerInput->GetMovementDirectionFlags());
 
 			// Rotation is handled differently in third person views.
 			if (pPlayer->IsThirdPerson())
@@ -181,16 +181,16 @@ void CActorMovementController::ComputeMovementRequest()
 				// Handle turning differently, based on whether they are moving.
 				if (unitMovement.GetLengthFast() > FLT_EPSILON)
 				{
-					if (pPlayer->GetAllowCharacterMovement())
+					if (pPlayer->IsCharacterMovementAllowed())
 					{
 						// Add the movement.
 						request.AddDeltaMovement(movement);
 					}
 
-					if (pPlayer->GetAllowCharacterRotation())
+					if (pPlayer->IsCharacterRotationAllowed())
 					{
 						// Find out the relative direction the body should naturally be facing when moving in the given direction.
-						auto bodyRotation = GetLowerBodyRotation(pPlayerInput->GetMovementStateFlags());
+						auto bodyRotation = GetLowerBodyRotation(pPlayerInput->GetMovementDirectionFlags());
 
 						// Because they are moving, we want to turn their character to face the direction they are moving.
 						float zDelta = movementDirection.GetRotZ() - m_pActor->GetEntity()->GetWorldAngles().z + bodyRotation;
@@ -207,13 +207,13 @@ void CActorMovementController::ComputeMovementRequest()
 			else
 			{
 				// Add the movement.
-				if (pPlayer->GetAllowCharacterMovement())
+				if (pPlayer->IsCharacterMovementAllowed())
 				{
 					request.AddDeltaMovement(movement);
 				}
 
 				// Rotate the actor based on player input.
-				if (pPlayer->GetAllowCharacterRotation())
+				if (pPlayer->IsCharacterRotationAllowed())
 				{
 					request.AddDeltaRotation(Ang3(0.0f, 0.0f, pPlayerInput->GetMouseYawDelta() - pPlayerInput->GetXiYawDelta()));
 				}
@@ -371,47 +371,47 @@ void CActorMovementController::FullSerialize(TSerialize ser)
 }
 
 
-const float CActorMovementController::GetLowerBodyRotation(uint32 movementStateFlags) const
+const float CActorMovementController::GetLowerBodyRotation(TInputFlags movementDirectionFlags) const
 {
 	float relativeDirection;
 
 	// Take the mask and turn it into an angular rotation delta which represents which
 	// direction the body is turned when moving in a given direction.
-	switch (movementStateFlags)
+	switch (movementDirectionFlags)
 	{
-		case EMovementStateFlags::Forward:
+		case (TInputFlags) EInputFlag::Forward:
 			relativeDirection = 0.0f;
 			break;
 
-		case (EMovementStateFlags::Forward | EMovementStateFlags::Right):
+		case ((TInputFlags) EInputFlag::Forward | (TInputFlags) EInputFlag::Right):
 			relativeDirection = -45.0f;
 			break;
 
-		case EMovementStateFlags::Right:
+		case (TInputFlags) EInputFlag::Right:
 			//relativeDirection = -90.0f;
 			relativeDirection = -45.0f;
 			break;
 
-		case (EMovementStateFlags::Backward | EMovementStateFlags::Right):
+		case ((TInputFlags) EInputFlag::Backward | (TInputFlags) EInputFlag::Right):
 			//relativeDirection = 45.0f;
 			relativeDirection = 0.0f;
 			break;
 
-		case EMovementStateFlags::Backward:
+		case (TInputFlags) EInputFlag::Backward:
 			relativeDirection = 0.0f;
 			break;
 
-		case (EMovementStateFlags::Backward | EMovementStateFlags::Left):
+		case ((TInputFlags) EInputFlag::Backward | (TInputFlags) EInputFlag::Left):
 			//relativeDirection = -45.0f;
 			relativeDirection = 0.0f;
 			break;
 
-		case EMovementStateFlags::Left:
+		case (TInputFlags) EInputFlag::Left:
 			//relativeDirection = 90.0f;
 			relativeDirection = 45.0f;
 			break;
 
-		case (EMovementStateFlags::Forward | EMovementStateFlags::Left):
+		case ((TInputFlags) EInputFlag::Forward | (TInputFlags) EInputFlag::Left):
 			relativeDirection = 45.0f;
 			break;
 

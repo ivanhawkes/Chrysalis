@@ -1,12 +1,11 @@
 #include <StdAfx.h>
 
-#include "CharacterStateLadder.h"
+#include "ActorStateLadder.h"
 #include <Actor/Animation/ActorAnimation.h>
 #include <Actor/Character/Character.h>
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
 #include <Entities/EntityScriptCalls.h>
-#include "Utility/CryWatch.h"
-#include "CharacterStateEvents.h"
+#include "ActorStateEvents.h"
 #include <Console/CVars.h>
 
 
@@ -29,12 +28,12 @@ static uint32 s_ladderFractionCRC = 0;
 class CLadderAction : public CAnimationAction
 {
 public:
-	CLadderAction(CCharacterStateLadder * ladderState, CCharacterComponent & Character, FragmentID fragmentID,
-		CCharacterStateLadder::ELadderAnimType animType, const char* cameraAnimFactorAtStart,
+	CLadderAction(CActorStateLadder * ladderState, IActorComponent& actorComponent, FragmentID fragmentID,
+		CActorStateLadder::ELadderAnimType animType, const char* cameraAnimFactorAtStart,
 		const char* cameraAnimFactorAtEnd) :
 		CAnimationAction(EActorActionPriority::eAAP_ActionUrgent, fragmentID),
 		m_ladderState(ladderState),
-		m_Character(Character),
+		m_actorComponent(actorComponent),
 		m_animType(animType),
 		m_cameraAnimFactorAtStart(0.f),
 		m_cameraAnimFactorAtEnd(0.f),
@@ -48,7 +47,7 @@ public:
 				EntityScripts::GetEntityProperty (pLadder, "Camera", cameraAnimFactorAtStart, m_cameraAnimFactorAtStart);
 				EntityScripts::GetEntityProperty (pLadder, "Camera", cameraAnimFactorAtEnd, m_cameraAnimFactorAtEnd);
 				}
-				LadderLog ("Constructing %s instance for %s who's %s a ladder", GetName (), Character.GetEntity ()->GetEntityTextDescription (),Character.IsOnLadder () ? "on" : "not on");
+				LadderLog ("Constructing %s instance for %s who's %s a ladder", GetName (), actorComponent.GetEntity ()->GetEntityTextDescription (),actorComponent.IsOnLadder () ? "on" : "not on");
 
 				#ifndef _RELEASE
 				ladderState->UpdateNumActions (1);
@@ -68,7 +67,7 @@ public:
 	{
 		/*const CTagDefinition* pFragTagDef = m_context->controllerDef.GetFragmentTagDef (m_fragmentID);
 
-		LadderLog ("Initializing %s instance for %s performing action defined in '%s' direction=%s, foot=%s", GetName (), m_Character.GetEntity ()->GetEntityTextDescription (), pFragTagDef->GetFilename (), directionText, footText);
+		LadderLog ("Initializing %s instance for %s performing action defined in '%s' direction=%s, foot=%s", GetName (), m_actorComponent.GetEntity ()->GetEntityTextDescription (), pFragTagDef->GetFilename (), directionText, footText);
 		LadderLogIndent ();
 
 		if (directionText)
@@ -93,12 +92,12 @@ public:
 
 	virtual void Enter()
 	{
-		/*LadderLog ("Entering %s instance for %s", GetName (), m_Character.GetEntity ()->GetEntityTextDescription ());
+		/*LadderLog ("Entering %s instance for %s", GetName (), m_actorComponent.GetEntity ()->GetEntityTextDescription ());
 		LadderLogIndent ();
 
 		CAnimationAction::Enter ();
 
-		IAnimatedCharacter* pAnimChar = m_Character.GetAnimatedCharacter ();
+		IAnimatedCharacter* pAnimChar = m_actorComponent.GetAnimatedCharacter ();
 
 		if (pAnimChar)
 		{
@@ -106,21 +105,21 @@ public:
 		pAnimChar->SetMovementControlMethods (method, method);
 		}
 
-		m_Character.BlendPartialCameraAnim (m_cameraAnimFactorAtStart, 0.1f);
-		m_Character.SetCanTurnBody (false);
+		m_actorComponent.BlendPartialCameraAnim (m_cameraAnimFactorAtStart, 0.1f);
+		m_actorComponent.SetCanTurnBody (false);
 
-		m_ladderState->InformLadderAnimEnter (m_Character, this);*/
+		m_ladderState->InformLadderAnimEnter (m_actorComponent, this);*/
 	}
 
 
 	virtual void Exit()
 	{
-		/*LadderLog ("Exiting %s instance for %s", GetName (), m_Character.GetEntity ()->GetEntityTextDescription ());
+		/*LadderLog ("Exiting %s instance for %s", GetName (), m_actorComponent.GetEntity ()->GetEntityTextDescription ());
 		LadderLogIndent ();
 
 		CAnimationAction::Exit ();
 
-		m_ladderState->InformLadderAnimIsDone (m_Character, this);*/
+		m_ladderState->InformLadderAnimIsDone (m_actorComponent, this);*/
 	}
 
 
@@ -144,15 +143,15 @@ public:
 		}
 
 		m_duration = duration;
-		m_Character.BlendPartialCameraAnim (LERP (m_cameraAnimFactorAtStart, m_cameraAnimFactorAtEnd, fractionComplete), 0.1f);
+		m_actorComponent.BlendPartialCameraAnim (LERP (m_cameraAnimFactorAtStart, m_cameraAnimFactorAtEnd, fractionComplete), 0.1f);
 		}*/
 	}
 
 
 protected:
-	CCharacterComponent & m_Character;
-	CCharacterStateLadder * m_ladderState;
-	CCharacterStateLadder::ELadderAnimType m_animType;
+	IActorComponent& m_actorComponent;
+	CActorStateLadder * m_ladderState;
+	CActorStateLadder::ELadderAnimType m_animType;
 	float m_cameraAnimFactorAtStart;
 	float m_cameraAnimFactorAtEnd;
 	float m_duration;
@@ -165,8 +164,8 @@ class CActionLadderGetOn : public CLadderAction
 public:
 	DEFINE_ACTION("LadderGetOn");
 
-	CActionLadderGetOn(CCharacterStateLadder * ladderState, CCharacterComponent &Character, CCharacterStateLadder::ELadderAnimType animType) :
-		CLadderAction(ladderState, Character, g_actorMannequinParams.fragmentIDs.LadderGetOn, animType, "cameraAnimFraction_getOn", "cameraAnimFraction_onLadder")
+	CActionLadderGetOn(CActorStateLadder * ladderState, IActorComponent& actorComponent, CActorStateLadder::ELadderAnimType animType) :
+		CLadderAction(ladderState, actorComponent, g_actorMannequinParams.fragmentIDs.LadderGetOn, animType, "cameraAnimFraction_getOn", "cameraAnimFraction_onLadder")
 	{}
 
 
@@ -174,15 +173,15 @@ public:
 	{
 		/*switch (m_animType)
 		{
-		case CCharacterStateLadder::kLadderAnimType_atBottom:
+		case CActorStateLadder::kLadderAnimType_atBottom:
 		InitialiseWithParams ("up", NULL);
 		return;
 
-		case CCharacterStateLadder::kLadderAnimType_atTopLeftFoot:
+		case CActorStateLadder::kLadderAnimType_atTopLeftFoot:
 		InitialiseWithParams ("down", "left");
 		return;
 
-		case CCharacterStateLadder::kLadderAnimType_atTopRightFoot:
+		case CActorStateLadder::kLadderAnimType_atTopRightFoot:
 		InitialiseWithParams ("down", "right");
 		return;
 		}
@@ -193,11 +192,11 @@ public:
 
 	virtual void Exit()
 	{
-		/*if (IAnimatedCharacter* pAnimChar = m_Character.GetAnimatedCharacter ())
+		/*if (IAnimatedCharacter* pAnimChar = m_actorComponent.GetAnimatedCharacter ())
 		{
 		Quat animQuat = pAnimChar->GetAnimLocation ().q;
 
-		m_Character.SetViewRotation (animQuat);
+		m_actorComponent.SetViewRotation (animQuat);
 		}
 
 		CLadderAction::Exit ();*/
@@ -210,8 +209,8 @@ class CActionLadderGetOff : public CLadderAction
 public:
 	DEFINE_ACTION("LadderGetOff");
 
-	CActionLadderGetOff(CCharacterStateLadder * ladderState, CCharacterComponent &Character, CCharacterStateLadder::ELadderAnimType animType) :
-		CLadderAction(ladderState, Character, g_actorMannequinParams.fragmentIDs.LadderGetOff, animType, "cameraAnimFraction_onLadder", "cameraAnimFraction_getOff")
+	CActionLadderGetOff(CActorStateLadder * ladderState, IActorComponent& actorComponent, CActorStateLadder::ELadderAnimType animType) :
+		CLadderAction(ladderState, actorComponent, g_actorMannequinParams.fragmentIDs.LadderGetOff, animType, "cameraAnimFraction_onLadder", "cameraAnimFraction_getOff")
 	{}
 
 
@@ -219,19 +218,19 @@ public:
 	{
 		/*switch (m_animType)
 		{
-		case CCharacterStateLadder::kLadderAnimType_atBottom:
+		case CActorStateLadder::kLadderAnimType_atBottom:
 		{
 		InitialiseWithParams ("down", NULL);
 		return;
 		}
 
-		case CCharacterStateLadder::kLadderAnimType_atTopLeftFoot:
+		case CActorStateLadder::kLadderAnimType_atTopLeftFoot:
 		{
 		InitialiseWithParams ("up", "left");
 		return;
 		}
 
-		case CCharacterStateLadder::kLadderAnimType_atTopRightFoot:
+		case CActorStateLadder::kLadderAnimType_atTopRightFoot:
 		{
 		InitialiseWithParams ("up", "right");
 		return;
@@ -244,11 +243,11 @@ public:
 
 	virtual void Exit()
 	{
-		/*if (IAnimatedCharacter* pAnimChar = m_Character.GetAnimatedCharacter ())
+		/*if (IAnimatedCharacter* pAnimChar = m_actorComponent.GetAnimatedCharacter ())
 		{
 		Quat animQuat = pAnimChar->GetAnimLocation ().q;
 
-		m_Character.SetViewRotation (animQuat);
+		m_actorComponent.SetViewRotation (animQuat);
 		}
 
 		CLadderAction::Exit ();*/
@@ -261,8 +260,8 @@ class CActionLadderClimbUpDown : public CLadderAction
 public:
 	DEFINE_ACTION("LadderClimbUpDown");
 
-	CActionLadderClimbUpDown(CCharacterStateLadder * ladderState, CCharacterComponent &Character) :
-		CLadderAction(ladderState, Character, g_actorMannequinParams.fragmentIDs.LadderClimb, CCharacterStateLadder::kLadderAnimType_upLoop, "cameraAnimFraction_onLadder", "cameraAnimFraction_onLadder")
+	CActionLadderClimbUpDown(CActorStateLadder* ladderState, IActorComponent& actorComponent) :
+		CLadderAction(ladderState, actorComponent, g_actorMannequinParams.fragmentIDs.LadderClimb, CActorStateLadder::kLadderAnimType_upLoop, "cameraAnimFraction_onLadder", "cameraAnimFraction_onLadder")
 	{
 		m_interruptable = true;
 	}
@@ -275,7 +274,7 @@ public:
 };
 
 
-CCharacterStateLadder::CCharacterStateLadder()
+CActorStateLadder::CActorStateLadder()
 {
 #ifndef _RELEASE
 	m_dbgNumActions = 0;
@@ -290,7 +289,7 @@ CCharacterStateLadder::CCharacterStateLadder()
 }
 
 
-void CCharacterStateLadder::SetClientCharacterOnLadder(IEntity * pLadder, bool onOff)
+void CActorStateLadder::SetClientCharacterOnLadder(IEntity * pLadder, bool onOff)
 {
 	/*bool renderLadderLast = false;
 	EntityScripts::GetEntityProperty (pLadder, "Camera", "bRenderLadderLast", renderLadderLast);
@@ -303,31 +302,31 @@ void CCharacterStateLadder::SetClientCharacterOnLadder(IEntity * pLadder, bool o
 }
 
 
-void CCharacterStateLadder::OnUseLadder(CCharacterComponent& Character, IEntity* pLadder)
+void CActorStateLadder::OnUseLadder(IActorComponent& actorComponent, IEntity* pLadder)
 {
 	/*CRY_ASSERT (pLadder);
 
-	LadderLog ("%s has started using ladder %s", Character.GetEntity ()->GetEntityTextDescription (), pLadder->GetEntityTextDescription ());
+	LadderLog ("%s has started using ladder %s", actorComponent.GetEntity ()->GetEntityTextDescription (), pLadder->GetEntityTextDescription ());
 	LadderLogIndent ();
 
 	#ifndef _RELEASE
-	CRY_ASSERT_TRACE (m_dbgNumActions == 0, ("%s shouldn't have any leftover ladder actions but has %d", Character.GetEntity ()->GetEntityTextDescription (), m_dbgNumActions));
+	CRY_ASSERT_TRACE (m_dbgNumActions == 0, ("%s shouldn't have any leftover ladder actions but has %d", actorComponent.GetEntity ()->GetEntityTextDescription (), m_dbgNumActions));
 	#endif
 
-	CRY_ASSERT (Character.IsOnLadder ());
-	Character.UpdateVisibility ();
+	CRY_ASSERT (actorComponent.IsOnLadder ());
+	actorComponent.UpdateVisibility ();
 
-	m_CharacterIsThirdPerson = Character.IsThirdPerson ();
+	m_CharacterIsThirdPerson = actorComponent.IsThirdPerson ();
 
-	if (Character.IsClient ())
+	if (actorComponent.IsClient ())
 	{
-	Character.GetCharacterInput ()->AddInputCancelHandler (this);
+	actorComponent.GetCharacterInput ()->AddInputCancelHandler (this);
 	SetClientCharacterOnLadder (pLadder, true);
 	}
 
 	const Vec3 worldPos (pLadder->GetWorldPos ());
 	const Vec3 direction (pLadder->GetWorldTM ().GetColumn1 ());
-	const Vec3 CharacterEntityPos (Character.GetEntity ()->GetWorldPos ());
+	const Vec3 CharacterEntityPos (actorComponent.GetEntity ()->GetWorldPos ());
 
 	float height = 0.f;
 	float horizontalViewLimit = 0.f;
@@ -369,24 +368,24 @@ void CCharacterStateLadder::OnUseLadder(CCharacterComponent& Character, IEntity*
 	m_climbInertia = 0.f;
 	m_scaleSettle = 0.f;
 
-	SendLadderFlowgraphEvent (Character, pLadder, "CharacterOn");
+	SendLadderFlowgraphEvent (actorComponent, pLadder, "CharacterOn");
 
 	const float numberOfRungsFloat = ladderClimbableHeight / distanceBetweenRungs;
 	m_topRungNumber = (uint32) max (0.f, numberOfRungsFloat + 0.5f);
 
-	Character.SetCanTurnBody (false);
-	Character.GetActorParams ().viewLimits.SetViewLimit (-direction, DEG2RAD (horizontalViewLimit),
+	actorComponent.SetCanTurnBody (false);
+	actorComponent.GetActorParams ().viewLimits.SetViewLimit (-direction, DEG2RAD (horizontalViewLimit),
 	0.f, DEG2RAD (verticalUpViewLimit),
 	DEG2RAD (verticalDownViewLimit), SViewLimitParams::eVLS_Ladder);
 
-	CCharacterStateUtil::PhySetFly (Character);
-	CCharacterStateUtil::CancelCrouchAndProneInputs (Character);
+	CActorStateUtility::PhySetFly (actorComponent);
+	CActorStateUtility::CancelCrouchAndProneInputs (actorComponent);
 
-	IAnimatedCharacter* pAnimChar = Character.GetAnimatedCharacter ();
+	IAnimatedCharacter* pAnimChar = actorComponent.GetAnimatedCharacter ();
 
 	if (pAnimChar)
 	{
-	pAnimChar->RequestPhysicalColliderMode (eColliderMode_Disabled, eColliderModeLayer_Game, "CCharacterStateLadder::OnUseLadder");
+	pAnimChar->RequestPhysicalColliderMode (eColliderMode_Disabled, eColliderModeLayer_Game, "CActorStateLadder::OnUseLadder");
 	pAnimChar->EnableRigidCollider (0.45f);
 	}
 
@@ -417,68 +416,68 @@ void CCharacterStateLadder::OnUseLadder(CCharacterComponent& Character, IEntity*
 	m_playGetOnAnim = kLadderAnimType_midAirGrab;
 	}
 
-	if (Character.IsInPickAndThrowMode ())
+	if (actorComponent.IsInPickAndThrowMode ())
 	{
-	Character.HolsterItem (true);
+	actorComponent.HolsterItem (true);
 	}
 	else
 	{
-	CWeapon * pCurrentWeapon = Character.GetWeapon (Character.GetCurrentItemId ());
+	CWeapon * pCurrentWeapon = actorComponent.GetWeapon (actorComponent.GetCurrentItemId ());
 	if (pCurrentWeapon)
 	{
 	pCurrentWeapon->SetPlaySelectAction (playLowerAnimation);
 	}
 	}
 
-	Character.GetEntity ()->SetPosRotScale (snapCharacterToPosition, snapCharacterToRotation, Vec3 (1.f, 1.f, 1.f));
+	actorComponent.GetEntity ()->SetPosRotScale (snapCharacterToPosition, snapCharacterToRotation, Vec3 (1.f, 1.f, 1.f));
 
 	if (ladderUseThirdPerson)
 	{
-	Character.SetThirdPerson (true);
+	actorComponent.SetThirdPerson (true);
 	}
 
 	float heightFrac = (m_numRungsFromBottomPosition + m_fractionBetweenRungs) / m_topRungNumber;
-	Character.OnUseLadder (m_ladderEntityId, heightFrac);*/
+	actorComponent.OnUseLadder (m_ladderEntityId, heightFrac);*/
 }
 
 
-// Called when the Character finishes his exit animation (or from OnExit if it triggers no exit animation)
-static void LadderExitIsComplete(CCharacterComponent & Character)
+// Called when the actorComponent finishes his exit animation (or from OnExit if it triggers no exit animation)
+static void LadderExitIsComplete(CCharacterComponent & actorComponent)
 {
 	LadderLog("Ladder exit is complete");
 	LadderLogIndent();
 
-	/*	CRY_ASSERT (!Character.IsOnLadder ());
-		Character.BlendPartialCameraAnim (0.0f, 0.1f);
-		Character.SetCanTurnBody (true);
-		//Character.SelectLastValidItem();
+	/*	CRY_ASSERT (!actorComponent.IsOnLadder ());
+		actorComponent.BlendPartialCameraAnim (0.0f, 0.1f);
+		actorComponent.SetCanTurnBody (true);
+		//actorComponent.SelectLastValidItem();
 
-		if (!Character.IsCinematicFlagActive (SActorStats::eCinematicFlag_HolsterWeapon))
+		if (!actorComponent.IsCinematicFlagActive (SActorStats::eCinematicFlag_HolsterWeapon))
 		{
-		Character.HolsterItem (false);
+		actorComponent.HolsterItem (false);
 		}
 
-		IAnimatedCharacter* pAnimChar = Character.GetAnimatedCharacter ();
+		IAnimatedCharacter* pAnimChar = actorComponent.GetAnimatedCharacter ();
 
 		if (pAnimChar)
 		{
 		pAnimChar->SetMovementControlMethods (eMCM_Entity, eMCM_Entity);
 		pAnimChar->ForceRefreshPhysicalColliderMode ();
-		pAnimChar->RequestPhysicalColliderMode (eColliderMode_Undefined, eColliderModeLayer_Game, "CCharacterStateLadder::OnExit()");
+		pAnimChar->RequestPhysicalColliderMode (eColliderMode_Undefined, eColliderModeLayer_Game, "CActorStateLadder::OnExit()");
 		pAnimChar->DisableRigidCollider ();
 		}*/
 }
 
 
-void CCharacterStateLadder::OnExit(CCharacterComponent& Character)
+void CActorStateLadder::OnExit(IActorComponent& actorComponent)
 {
-	/*LadderLog ("%s has stopped using ladder (%s)", Character.GetEntity ()->GetEntityTextDescription (), s_onOffAnimTypeNames [m_playGetOffAnim]);
+	/*LadderLog ("%s has stopped using ladder (%s)", actorComponent.GetEntity ()->GetEntityTextDescription (), s_onOffAnimTypeNames [m_playGetOffAnim]);
 	LadderLogIndent ();
 
-	CRY_ASSERT (!Character.IsOnLadder ());
-	Character.UpdateVisibility ();
+	CRY_ASSERT (!actorComponent.IsOnLadder ());
+	actorComponent.UpdateVisibility ();
 
-	ICharacterInput * pCharacterInput = Character.GetCharacterInput ();
+	ICharacterInput * pCharacterInput = actorComponent.GetCharacterInput ();
 
 	if (pCharacterInput)
 	{
@@ -489,43 +488,43 @@ void CCharacterStateLadder::OnExit(CCharacterComponent& Character)
 
 	if (pLadder)
 	{
-	if (Character.IsClient ())
+	if (actorComponent.IsClient ())
 	{
 	SetClientCharacterOnLadder (pLadder, false);
 	}
-	SendLadderFlowgraphEvent (Character, pLadder, "CharacterOff");
+	SendLadderFlowgraphEvent (actorComponent, pLadder, "CharacterOff");
 	}
 
 	m_ladderBottom.zero ();
 	m_ladderEntityId = 0;
 
-	Character.GetActorParams ().viewLimits.ClearViewLimit (SViewLimitParams::eVLS_Ladder);
+	actorComponent.GetActorParams ().viewLimits.ClearViewLimit (SViewLimitParams::eVLS_Ladder);
 
 	pe_player_dynamics simPar;
 
-	IPhysicalEntity* piPhysics = Character.GetEntity ()->GetPhysics ();
+	IPhysicalEntity* piPhysics = actorComponent.GetEntity ()->GetPhysics ();
 	if (!piPhysics || piPhysics->GetParams (&simPar) == 0)
 	{
 	return;
 	}
 
-	IAnimatedCharacter* pAnimChar = Character.GetAnimatedCharacter ();
-	CCharacterStateUtil::PhySetNoFly (Character, simPar.gravity);
-	CCharacterStateUtil::CancelCrouchAndProneInputs (Character);
+	IAnimatedCharacter* pAnimChar = actorComponent.GetAnimatedCharacter ();
+	CActorStateUtility::PhySetNoFly (actorComponent, simPar.gravity);
+	CActorStateUtility::CancelCrouchAndProneInputs (actorComponent);
 
 	InterruptCurrentAnimation ();
 	SetMostRecentlyEnteredAction (NULL);
 
 	if (m_playGetOffAnim)
 	{
-	QueueLadderAction (Character, new CActionLadderGetOff (this, Character, m_playGetOffAnim));
+	QueueLadderAction (actorComponent, new CActionLadderGetOff (this, actorComponent, m_playGetOffAnim));
 	}
 	else
 	{
-	// Finishing the above 'get off' animation will retrieve the Character's weapon...
+	// Finishing the above 'get off' animation will retrieve the actorComponent's weapon...
 	// if we're not playing one then we unholster it now.
-	QueueLadderAction (Character, NULL);
-	LadderExitIsComplete (Character);
+	QueueLadderAction (actorComponent, NULL);
+	LadderExitIsComplete (actorComponent);
 	}
 
 	bool ladderUseThirdPerson = false;
@@ -533,7 +532,7 @@ void CCharacterStateLadder::OnExit(CCharacterComponent& Character)
 
 	if (ladderUseThirdPerson && !m_CharacterIsThirdPerson)
 	{
-	Character.SetThirdPerson (false);
+	actorComponent.SetThirdPerson (false);
 	}
 
 	ELadderLeaveLocation loc = eLLL_Drop;
@@ -546,11 +545,11 @@ void CCharacterStateLadder::OnExit(CCharacterComponent& Character)
 	loc = eLLL_Top;
 	}
 
-	Character.OnLeaveLadder (loc);*/
+	actorComponent.OnLeaveLadder (loc);*/
 }
 
 
-void CCharacterStateLadder::InterruptCurrentAnimation()
+void CActorStateLadder::InterruptCurrentAnimation()
 {
 	if (m_mostRecentlyEnteredAction)
 	{
@@ -559,43 +558,43 @@ void CCharacterStateLadder::InterruptCurrentAnimation()
 }
 
 
-void CCharacterStateLadder::QueueLadderAction(CCharacterComponent& Character, CLadderAction * action)
+void CActorStateLadder::QueueLadderAction(IActorComponent& actorComponent, CLadderAction * action)
 {
-	LadderLog("Queuing %s ladder anim '%s'", Character.GetEntity()->GetEntityTextDescription(), action ? action->GetName() : "NULL");
+	LadderLog("Queuing %s ladder anim '%s'", actorComponent.GetEntity()->GetEntityTextDescription(), action ? action->GetName() : "NULL");
 	LadderLogIndent();
 
 	/*if (action)
 	{
-	Character.GetAnimatedCharacter ()->GetActionController ()->Queue (action);
+	actorComponent.GetAnimatedCharacter ()->GetActionController ()->Queue (action);
 	}*/
 }
 
 
-void CCharacterStateLadder::SendLadderFlowgraphEvent(CCharacterComponent & Character, IEntity * pLadderEntity, const char * eventName)
+void CActorStateLadder::SendLadderFlowgraphEvent(IActorComponent& actorComponent, IEntity * pLadderEntity, const char * eventName)
 {
 	/*SEntityEvent event (ENTITY_EVENT_SCRIPT_EVENT);
 	event.nParam [0] = (INT_PTR) eventName;
 	event.nParam [1] = IEntityClass::EVT_ENTITY;
 
-	EntityId entityId = Character.GetEntityId ();
+	EntityId entityId = actorComponent.GetEntityId ();
 	event.nParam [2] = (INT_PTR) &entityId;
 
 	pLadderEntity->SendEvent (event);*/
 }
 
 
-bool CCharacterStateLadder::OnPrePhysicsUpdate(CCharacterComponent& Character, const SActorMovementRequest& movementRequest, float frameTime)
+bool CActorStateLadder::OnPrePhysicsUpdate(IActorComponent& actorComponent, const SActorMovementRequest& movementRequest, float frameTime)
 {
 	/*	Vec3 requiredMovement (ZERO);
 
 		IEntity * pLadder = gEnv->pEntitySystem->GetEntity (m_ladderEntityId);
 
-		CRY_ASSERT (Character.IsOnLadder ());
+		CRY_ASSERT (actorComponent.IsOnLadder ());
 
 		#ifndef _RELEASE
 		if (gEnv->pGameFramework->GetCVars()->m_ladder_logVerbosity)
 		{
-		CryWatch ("[LADDER] RUNG=$3%u/%u$o FRAC=$3%.2f$o: %s is %.2fm up a ladder, move=%.2f - %s, %s, %s, camAnim=%.2f, $7INERTIA=%.2f SETTLE=%.2f", m_numRungsFromBottomPosition, m_topRungNumber, m_fractionBetweenRungs, Character.GetEntity ()->GetEntityTextDescription (), Character.GetEntity ()->GetWorldPos ().z - m_ladderBottom.z, requiredMovement.z, Character.CanTurnBody () ? "$4can turn body$o" : "$3cannot turn body$o", (Character.GetEntity ()->GetSlotFlags (0) & ENTITY_SLOT_RENDER_NEAREST) ? "render nearest" : "render normal", Character.IsOnLadder () ? "$3on a ladder$o" : "$4not on a ladder$o", Character.GetActorState ()->partialCameraAnimFactor, m_climbInertia, m_scaleSettle);
+		CryWatch ("[LADDER] RUNG=$3%u/%u$o FRAC=$3%.2f$o: %s is %.2fm up a ladder, move=%.2f - %s, %s, %s, camAnim=%.2f, $7INERTIA=%.2f SETTLE=%.2f", m_numRungsFromBottomPosition, m_topRungNumber, m_fractionBetweenRungs, actorComponent.GetEntity ()->GetEntityTextDescription (), actorComponent.GetEntity ()->GetWorldPos ().z - m_ladderBottom.z, requiredMovement.z, actorComponent.CanTurnBody () ? "$4can turn body$o" : "$3cannot turn body$o", (actorComponent.GetEntity ()->GetSlotFlags (0) & ENTITY_SLOT_RENDER_NEAREST) ? "render nearest" : "render normal", actorComponent.IsOnLadder () ? "$3on a ladder$o" : "$4not on a ladder$o", actorComponent.GetActorState ()->partialCameraAnimFactor, m_climbInertia, m_scaleSettle);
 
 		if (m_mostRecentlyEnteredAction && m_mostRecentlyEnteredAction->GetStatus () == IAction::Installed)
 		{
@@ -621,29 +620,29 @@ bool CCharacterStateLadder::OnPrePhysicsUpdate(CCharacterComponent& Character, c
 		int bUsable = 0;
 		if (pLadder == NULL || (propertiesTable->GetValue ("bUsable", bUsable) && bUsable == 0))
 		{
-		Character.StateMachineHandleEventMovement (SStateEventLeaveLadder (eLLL_Drop));
+		actorComponent.StateMachineHandleEventMovement (SStateEventLeaveLadder (eLLL_Drop));
 		}
 		else if (m_playGetOnAnim != kLadderAnimType_none)
 		{
-		if (!Character.IsCinematicFlagActive (SActorStats::eCinematicFlag_HolsterWeapon))
+		if (!actorComponent.IsCinematicFlagActive (SActorStats::eCinematicFlag_HolsterWeapon))
 		{
-		Character.HolsterItem (true);
+		actorComponent.HolsterItem (true);
 		}
 
-		IItem * pItem = Character.GetCurrentItem ();
+		IItem * pItem = actorComponent.GetCurrentItem ();
 		bool canPlayGetOnAnim = (pItem == NULL);
 
 		if (!canPlayGetOnAnim)
 		{
-		// Waiting for Character to switch to 'NoWeapon' item - check this is still happening! (If not, warn
+		// Waiting for actorComponent to switch to 'NoWeapon' item - check this is still happening! (If not, warn
 		// and play the get on animation anyway - let's not get stuck here!)
-		EntityId switchingToItemID = Character.GetActorState ()->exchangeItemStats.switchingToItemID;
+		EntityId switchingToItemID = actorComponent.GetActorState ()->exchangeItemStats.switchingToItemID;
 		IEntity * pEntity = gEnv->pEntitySystem->GetEntity (switchingToItemID);
 
 		if (pEntity == NULL)
 		{
 		GameWarning ("!%s should be switching to 'NoWeapon' but is using %s and switching to %s",
-		Character.GetEntity ()->GetEntityTextDescription (), pItem->GetEntity ()->GetClass ()->GetName (),
+		actorComponent.GetEntity ()->GetEntityTextDescription (), pItem->GetEntity ()->GetClass ()->GetName (),
 		pEntity ? pEntity->GetClass ()->GetName () : "<NULL>");
 		canPlayGetOnAnim = true;
 		}
@@ -654,9 +653,9 @@ bool CCharacterStateLadder::OnPrePhysicsUpdate(CCharacterComponent& Character, c
 		// Currently we don't have a mid-air grab animation, so let's just go straight to the climbing anim if that's why we're here
 		if (m_playGetOnAnim != kLadderAnimType_midAirGrab)
 		{
-		QueueLadderAction (Character, new CActionLadderGetOn (this, Character, m_playGetOnAnim));
+		QueueLadderAction (actorComponent, new CActionLadderGetOn (this, actorComponent, m_playGetOnAnim));
 		}
-		QueueLadderAction (Character, new CActionLadderClimbUpDown (this, Character));
+		QueueLadderAction (actorComponent, new CActionLadderClimbUpDown (this, actorComponent));
 		m_playGetOnAnim = kLadderAnimType_none;
 		}
 		}
@@ -664,7 +663,7 @@ bool CCharacterStateLadder::OnPrePhysicsUpdate(CCharacterComponent& Character, c
 		{
 		m_mostRecentlyEnteredAction->UpdateCameraAnimFactor ();
 		}
-		else if (Character.GetActorState ())
+		else if (actorComponent.GetActorState ())
 		{
 		float pushUpDown = movementRequest.desiredVelocity.y;
 		const float deflection = fabsf (pushUpDown);
@@ -747,21 +746,21 @@ bool CCharacterStateLadder::OnPrePhysicsUpdate(CCharacterComponent& Character, c
 		int topBlockedValue = 0;
 		const bool bTopIsBlocked = propertiesTable->GetValue ("bTopBlocked", topBlockedValue) && topBlockedValue;
 
-		if (bTopIsBlocked == false)
+		if (!bTopIsBlocked)
 		{
 		m_playGetOffAnim = (m_topRungNumber & 1) ? kLadderAnimType_atTopRightFoot : kLadderAnimType_atTopLeftFoot;
 		}
 		#ifndef _RELEASE
 		else if (gEnv->pGameFramework->GetCVars()->m_ladder_logVerbosity)
 		{
-		CryWatch ("[LADDER] %s can't climb up and off %s - top is blocked", Character.GetEntity ()->GetName (), pLadder->GetEntityTextDescription ());
+		CryWatch ("[LADDER] %s can't climb up and off %s - top is blocked", actorComponent.GetEntity ()->GetName (), pLadder->GetEntityTextDescription ());
 		}
 		#endif
 		}
 		}
 
 		float heightFrac = (m_numRungsFromBottomPosition + m_fractionBetweenRungs) / m_topRungNumber;
-		Character.OnLadderPositionUpdated (heightFrac);
+		actorComponent.OnLadderPositionUpdated (heightFrac);
 		}
 
 		float distanceBetweenRungs = 0.f;
@@ -771,7 +770,7 @@ bool CCharacterStateLadder::OnPrePhysicsUpdate(CCharacterComponent& Character, c
 		const float distanceUpLadder = (m_numRungsFromBottomPosition + m_fractionBetweenRungs) * distanceBetweenRungs;
 		const Vec3 setThisPosition (stopAtPosBottom.x, stopAtPosBottom.y, stopAtPosBottom.z + distanceUpLadder);
 
-		Character.GetEntity ()->SetPos (setThisPosition);
+		actorComponent.GetEntity ()->SetPos (setThisPosition);
 
 		if (m_mostRecentlyEnteredAction)
 		{
@@ -792,13 +791,13 @@ bool CCharacterStateLadder::OnPrePhysicsUpdate(CCharacterComponent& Character, c
 }
 
 
-void CCharacterStateLadder::LeaveLadder(CCharacterComponent& Character, ELadderLeaveLocation leaveLocation)
+void CActorStateLadder::LeaveLadder(IActorComponent& actorComponent, ELadderLeaveLocation leaveLocation)
 {
 	switch (leaveLocation)
 	{
 		case eLLL_Drop:
-			/*Character.GetMoveRequest ().velocity = Vec3 (0.f, 0.f, -1.f);
-			Character.GetMoveRequest ().type = eCMT_Impulse;*/
+			/*actorComponent.GetMoveRequest ().velocity = Vec3 (0.f, 0.f, -1.f);
+			actorComponent.GetMoveRequest ().type = eCMT_Impulse;*/
 			break;
 
 		case eLLL_Top:
@@ -812,7 +811,7 @@ void CCharacterStateLadder::LeaveLadder(CCharacterComponent& Character, ELadderL
 }
 
 
-void CCharacterStateLadder::SetHeightFrac(CCharacterComponent& Character, float heightFrac)
+void CActorStateLadder::SetHeightFrac(IActorComponent& actorComponent, float heightFrac)
 {
 	heightFrac *= m_topRungNumber;
 	m_numRungsFromBottomPosition = (int)heightFrac;
@@ -820,11 +819,11 @@ void CCharacterStateLadder::SetHeightFrac(CCharacterComponent& Character, float 
 }
 
 
-bool CCharacterStateLadder::IsUsableLadder(CCharacterComponent& Character, IEntity* pLadder, const SmartScriptTable& ladderProperties)
+bool CActorStateLadder::IsUsableLadder(IActorComponent& actorComponent, IEntity* pLadder, const SmartScriptTable& ladderProperties)
 {
 	bool retVal = false;
 
-	/*	if (pLadder && !Character.IsOnLadder () && Character.CanTurnBody ())
+	/*	if (pLadder && !actorComponent.IsOnLadder () && actorComponent.CanTurnBody ())
 		{
 		float height = 0.f;
 		ladderProperties->GetValue ("height", height);
@@ -833,7 +832,7 @@ bool CCharacterStateLadder::IsUsableLadder(CCharacterComponent& Character, IEnti
 		{
 		const Matrix34& ladderTM = pLadder->GetWorldTM ();
 		Vec3 ladderPos = ladderTM.GetTranslation ();
-		Vec3 CharacterPos = Character.GetEntity ()->GetWorldPos ();
+		Vec3 CharacterPos = actorComponent.GetEntity ()->GetWorldPos ();
 
 		const char* angleVariable = ((CharacterPos.z + 0.1f) > (ladderPos.z + height)) ? "approachAngleTop" : "approachAngle";
 
@@ -897,7 +896,7 @@ bool CCharacterStateLadder::IsUsableLadder(CCharacterComponent& Character, IEnti
 		pGeom->DrawLine (ladderBasePos + rungEndSideways, ladderColour, ladderBasePos + rungEndSideways + offsetToTop, ladderColour, 20.f);
 		}
 
-		CryWatch ("[LADDER] Is %s usable by %s? %s", pLadder ? pLadder->GetEntityTextDescription () : "<NULL ladder entity>", Character.GetEntity ()->GetEntityTextDescription (), retVal ? "$3YES$o" : "$4NO$o");
+		CryWatch ("[LADDER] Is %s usable by %s? %s", pLadder ? pLadder->GetEntityTextDescription () : "<NULL ladder entity>", actorComponent.GetEntity ()->GetEntityTextDescription (), retVal ? "$3YES$o" : "$4NO$o");
 		}
 		#endif
 		*/
@@ -905,7 +904,7 @@ bool CCharacterStateLadder::IsUsableLadder(CCharacterComponent& Character, IEnti
 }
 
 
-void CCharacterStateLadder::SetMostRecentlyEnteredAction(CLadderAction * thisAction)
+void CActorStateLadder::SetMostRecentlyEnteredAction(CLadderAction * thisAction)
 {
 	if (thisAction)
 	{
@@ -921,7 +920,7 @@ void CCharacterStateLadder::SetMostRecentlyEnteredAction(CLadderAction * thisAct
 }
 
 
-void CCharacterStateLadder::InformLadderAnimEnter(CCharacterComponent & Character, CLadderAction * thisAction)
+void CActorStateLadder::InformLadderAnimEnter(IActorComponent& actorComponent, CLadderAction * thisAction)
 {
 	CRY_ASSERT(thisAction);
 
@@ -932,16 +931,16 @@ void CCharacterStateLadder::InformLadderAnimEnter(CCharacterComponent & Characte
 }
 
 
-void CCharacterStateLadder::InformLadderAnimIsDone(CCharacterComponent & Character, CLadderAction * thisAction)
+void CActorStateLadder::InformLadderAnimIsDone(IActorComponent& actorComponent, CLadderAction * thisAction)
 {
 	CRY_ASSERT(thisAction);
 
 	LadderLog("Action '%s' is done", thisAction->GetName());
 	LadderLogIndent();
 
-	/*	if (Character.IsClient ())
+	/*	if (actorComponent.IsClient ())
 		{
-		if (Character.IsOnLadder ())
+		if (actorComponent.IsOnLadder ())
 		{
 		if (IEntity * pLadder = gEnv->pEntitySystem->GetEntity (m_ladderEntityId))
 		{
@@ -952,23 +951,23 @@ void CCharacterStateLadder::InformLadderAnimIsDone(CCharacterComponent & Charact
 
 		if (thisAction == m_mostRecentlyEnteredAction)
 		{
-		if (Character.IsOnLadder () == false && thisAction->GetIsInterruptable () == false)
+		if (!actorComponent.IsOnLadder () && !thisAction->GetIsInterruptable ())
 		{
-		LadderExitIsComplete (Character);
+		LadderExitIsComplete (actorComponent);
 		}
 		}*/
 }
 
 
-bool CCharacterStateLadder::HandleCancelInput(CPlayerComponent & player, TCancelButtonBitfield cancelButtonPressed)
+bool CActorStateLadder::HandleCancelInput(CPlayerComponent & player, TCancelButtonBitfield cancelButtonPressed)
 {
-	/*	CRY_ASSERT (Character.IsOnLadder ());
+	/*	CRY_ASSERT (actorComponent.IsOnLadder ());
 
 		if ((cancelButtonPressed & (kCancelPressFlag_switchItem)) == 0)
 		{
 		if (m_mostRecentlyEnteredAction && m_mostRecentlyEnteredAction->GetIsInterruptable ())
 		{
-		Character.StateMachineHandleEventMovement (SStateEventLeaveLadder (eLLL_Drop));
+		actorComponent.StateMachineHandleEventMovement (SStateEventLeaveLadder (eLLL_Drop));
 		}
 		return true;
 		}*/
@@ -978,7 +977,7 @@ bool CCharacterStateLadder::HandleCancelInput(CPlayerComponent & player, TCancel
 
 
 #ifndef _RELEASE
-void CCharacterStateLadder::UpdateNumActions(int change)
+void CActorStateLadder::UpdateNumActions(int change)
 {
 	CRY_ASSERT(change == 1 || change == -1);
 

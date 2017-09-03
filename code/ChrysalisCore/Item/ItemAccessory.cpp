@@ -187,7 +187,7 @@ namespace Chrysalis
 //	if (!params)
 //		return;
 //
-//	CActor* pOwner = GetOwnerActor();
+//	CActorComponent* pOwner = GetOwnerActor();
 //	IInventory* pInventory = pOwner ? pOwner->GetInventory() : nullptr;
 //	CItemComponent* pAccessory = GetAccessory(pAccessoryClass);
 //
@@ -541,7 +541,7 @@ namespace Chrysalis
 //{
 //	if(m_stats.selected)
 //	{
-//		CActor* pOwner = GetOwnerActor();
+//		CActorComponent* pOwner = GetOwnerActor();
 //		IActionController* pController = GetActionController();
 //		if(pController)
 //		{

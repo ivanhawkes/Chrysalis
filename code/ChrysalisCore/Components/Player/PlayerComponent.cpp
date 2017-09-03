@@ -1,11 +1,12 @@
 #include <StdAfx.h>
 
-#include "Player.h"
+#include "PlayerComponent.h"
 #include <Components/Items/ItemComponent.h>
 #include <Item/Weapon/Weapon.h>
 #include <Actor/Character/Character.h>
 #include "Camera/CameraManagerComponent.h"
 #include <Components/Player/Input/PlayerInputComponent.h>
+#include <Actor/Actor.h>
 
 
 namespace Chrysalis
@@ -18,7 +19,7 @@ void CPlayerComponent::Register(Schematyc::CEnvRegistrationScope& componentScope
 void CPlayerComponent::ReflectType(Schematyc::CTypeDesc<CPlayerComponent>& desc)
 {
 	desc.SetGUID(CPlayerComponent::IID());
-	desc.SetEditorCategory("Actors");
+	desc.SetEditorCategory("Player");
 	desc.SetLabel("Player");
 	desc.SetDescription("A local / remote player.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
@@ -42,21 +43,28 @@ void CPlayerComponent::Initialize()
 	// Acquire a player input component. At a later time it will be useful to check if a network version is needed, or
 	// perhaps AI / NULL versions.
 	// NOTE: This component requires a pointer to a camera manager - so it must always load after that component.
-	//auto gameObject = GetGameObject();
 	m_pPlayerInput = pEntity->CreateComponent<CPlayerInputComponent>();
-
-	// #HACK: #TODO: Is this right? We only want to register action maps on the local client.
-	if (GetEntityId() == gEnv->pGameFramework->GetClientActorId())
-	{
-		m_isClient = true;
-		gEnv->pLog->LogAlways("CPlayerComponent::HandleEvent(): Entity \"%s\" became the local player!", GetEntity()->GetName());
-	}
 }
 
 
-// ***
-// *** CPlayerComponent
-// ***
+void CPlayerComponent::ProcessEvent(SEntityEvent& event)
+{
+	switch (event.event)
+	{
+		case ENTITY_EVENT_START_GAME:
+		{
+			// Revive the entity when gameplay starts
+			Revive();
+		}
+		break;
+
+		case ENTITY_EVENT_UPDATE:
+		{
+			SEntityUpdateContext* pCtx = (SEntityUpdateContext*)event.nParam [0];
+		}
+		break;
+	}
+}
 
 
 bool CPlayerComponent::IsThirdPerson() const
@@ -67,41 +75,41 @@ bool CPlayerComponent::IsThirdPerson() const
 
 void CPlayerComponent::OnToggleThirdPerson()
 {
-	//// Track first / third person for each actor.
+	// Track first / third person for each actor.
 	m_pCameraManager->ToggleThirdPerson();
 
 	// If we switched view modes, we may need to load a new animation context.
-	if (auto pCharacter = GetLocalCharacter())
+	if (auto pActorComponent = GetLocalActor())
 	{
-		pCharacter->OnResetState();
+		pActorComponent->OnToggleThirdPerson();
 	}
 }
 
 
 void CPlayerComponent::AttachToCharacter(EntityId characterId)
 {
-	// Track these for our use.
-	m_attachedCharacterId = characterId;
-	m_cameraTargetId = characterId;
-
-	// Inform the camera system we are now watching a different entity.
-	m_pCameraManager->AttachToEntity(characterId);
-
-	// Ensure the object is a character, then inform it we are now attached.
-	// #TODO: put in a check to ensure only characters will ever be cast.
-	auto pCharacter = static_cast<CCharacterComponent*>(CActor::GetActor(characterId));
-	if (pCharacter)
+	// Ensure the object is an actor, then inform it we are now attached.
+	if (auto pAttachedEntity = gEnv->pEntitySystem->GetEntity(characterId))
 	{
-		pCharacter->OnPlayerAttach(*this);
+		if (auto pActorComponent = pAttachedEntity->GetComponent<CActorComponent>())
+		{
+			// If the target was an actor then it's safe to complete the attachment.
+			m_attachedCharacterId = m_cameraTargetId = characterId;
+			pActorComponent->OnPlayerAttach(*this);
 
-		// Flip the camera between FP / TP if needed.
-		if (pCharacter->IsThirdPerson() != IsThirdPerson())
-			OnToggleThirdPerson();
+			// Inform the camera system we are now watching a different entity.
+			m_pCameraManager->AttachToEntity(m_cameraTargetId);
+
+			// Flip the camera between FP / TP if needed.
+			// TODO: Needed or not?
+			//if (pActorComponent->IsThirdPerson() != IsThirdPerson())
+			//	OnToggleThirdPerson();
+		}
 	}
 }
 
 
-void CPlayerComponent::AttachToCharacter()
+void CPlayerComponent::AttachToHero()
 {
 	// #HACK: hard coded effort to grab an entity to attach to as our pawn / character. It must occur after the camera has a chance to create itself.
 	auto pCharacterEntity = gEnv->pEntitySystem->FindEntityByName("Hero");
@@ -113,7 +121,7 @@ void CPlayerComponent::AttachToCharacter()
 
 EntityId CPlayerComponent::GetAttachedEntityId() const
 {
-	CRY_ASSERT_MESSAGE(m_attachedCharacterId != INVALID_ENTITYID, "There is no character attached to this player.");
+	CRY_ASSERT_MESSAGE(m_attachedCharacterId != INVALID_ENTITYID, "This player is not attached to an entity.");
 
 	return m_attachedCharacterId;
 }
@@ -121,26 +129,31 @@ EntityId CPlayerComponent::GetAttachedEntityId() const
 
 IEntity* CPlayerComponent::GetAttachedEntity() const
 {
-	CRY_ASSERT_MESSAGE(m_attachedCharacterId != INVALID_ENTITYID, "There is no character attached to this player.");
+	CRY_ASSERT_MESSAGE(m_attachedCharacterId != INVALID_ENTITYID, "This player is not attached to an entity.");
 
 	return gEnv->pEntitySystem->GetEntity(m_attachedCharacterId);
 }
 
 
-CCharacterComponent* CPlayerComponent::GetAttachedCharacter() const
+IActorComponent * CPlayerComponent::GetAttachedActor() const
 {
-	CRY_ASSERT_MESSAGE(m_attachedCharacterId != INVALID_ENTITYID, "There is no character attached to this player.");
+	if (auto pAttachedEntity = GetAttachedEntity())
+	{
+		return pAttachedEntity->GetComponent<CActorComponent>();
+	}
 
-	return static_cast<CCharacterComponent*> (CActor::GetActor(m_attachedCharacterId));
+	CRY_ASSERT_MESSAGE(false, "Attempt to retrieve attached actor failed. Check your logic.");
+
+	return nullptr;
 }
 
 
-CCharacterComponent* CPlayerComponent::GetLocalCharacter()
+IActorComponent* CPlayerComponent::GetLocalActor()
 {
 	// Try and find a local player on this client.
 	auto pPlayer = CPlayerComponent::GetLocalPlayer();
 	if (pPlayer)
-		return pPlayer->GetAttachedCharacter();
+		return pPlayer->GetAttachedActor();
 
 	CRY_ASSERT_MESSAGE(false, "Attempt to retrieve local character failed. Check your logic.");
 
@@ -148,37 +161,11 @@ CCharacterComponent* CPlayerComponent::GetLocalCharacter()
 }
 
 
-CItemComponent* CPlayerComponent::GetLocalItem()
-{
-	// HACK: FIX: 5.4 for now, this is a broken concept. Fix it when adding the item system back in.
-
-	// Try and find a local player on this client.
-	//auto pPlayer = CPlayerComponent::GetLocalPlayer();
-	//if (pPlayer)
-	//	return static_cast<CItemComponent*>(pPlayer->GetCurrentItem());
-
-	return nullptr;
-}
-
-
-CWeapon* CPlayerComponent::GetLocalWeapon()
-{
-	// HACK: FIX: 5.4 for now, this is a broken concept. Fix it when adding the item system back in.
-
-	//// Try and find a local player on this client.
-	//auto pItem = CPlayerComponent::GetLocalItem();
-	//if (pItem)
-	//	return static_cast<CWeapon*>(pItem->GetIWeapon());
-
-	return nullptr;
-}
-
-
 void CPlayerComponent::Revive()
 {
-	if (auto pCharacter = GetLocalCharacter())
+	if (auto pActorComponent = GetLocalActor())
 	{
-		pCharacter->Revive();
+		pActorComponent->Revive();
 	}
 }
 
@@ -191,7 +178,7 @@ EntityId CPlayerComponent::GetCameraTargetId() const
 
 CCameraManagerComponent* CPlayerComponent::GetCameraManager() const
 {
-	//	CRY_ASSERT_MESSAGE(m_pCameraManager, "A camera manager is critical when the level contains actors.");
+	//CRY_ASSERT_MESSAGE(m_pCameraManager, "A camera manager is critical when the level contains actors.");
 	return m_pCameraManager;
 }
 

@@ -78,7 +78,7 @@ IAction::EStatus CActorAnimationActionInteraction::Update(float timePassed)
 
 	// Grab the actor in the root scope.
 	const IScope& rootScope = GetRootScope();
-	CActor& actor = *CActor::GetActor(rootScope.GetEntityId());
+	CActorComponent& actor = *CActorComponent::GetActor(rootScope.GetEntityId());
 
 	// Update the fragments and tags if they are different.
 	if (rootScope.IsDifferent(m_fragmentID, m_fragTags))

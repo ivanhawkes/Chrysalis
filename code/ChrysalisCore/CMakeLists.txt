@@ -76,29 +76,6 @@ add_sources("Movement_uber.cpp"
 		"Actor/Character/Movement/CharacterMovementController.h"
 		"Actor/Character/Movement/CharacterRotation.h"
 )
-add_sources("StateMachine_uber.cpp"
-    PROJECTS Chrysalis
-    SOURCE_GROUP "Actor\\\\Character\\\\Movement\\\\StateMachine"
-		"Actor/Character/Movement/StateMachine/CharacterStateAnimationControlled.cpp"
-		"Actor/Character/Movement/StateMachine/CharacterStateDead.cpp"
-		"Actor/Character/Movement/StateMachine/CharacterStateEntry.cpp"
-		"Actor/Character/Movement/StateMachine/CharacterStateFly.cpp"
-		"Actor/Character/Movement/StateMachine/CharacterStateGround.cpp"
-		"Actor/Character/Movement/StateMachine/CharacterStateJump.cpp"
-		"Actor/Character/Movement/StateMachine/CharacterStateLadder.cpp"
-		"Actor/Character/Movement/StateMachine/CharacterStateLinked.cpp"
-		"Actor/Character/Movement/StateMachine/CharacterStateMovement.cpp"
-		"Actor/Character/Movement/StateMachine/CharacterStateSwim.cpp"
-		"Actor/Character/Movement/StateMachine/CharacterStateSwimWaterTestProxy.cpp"
-		"Actor/Character/Movement/StateMachine/CharacterStateDead.h"
-		"Actor/Character/Movement/StateMachine/CharacterStateEvents.h"
-		"Actor/Character/Movement/StateMachine/CharacterStateFly.h"
-		"Actor/Character/Movement/StateMachine/CharacterStateGround.h"
-		"Actor/Character/Movement/StateMachine/CharacterStateJump.h"
-		"Actor/Character/Movement/StateMachine/CharacterStateLadder.h"
-		"Actor/Character/Movement/StateMachine/CharacterStateSwim.h"
-		"Actor/Character/Movement/StateMachine/CharacterStateSwimWaterTestProxy.h"
-)
 add_sources("Inventory_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Actor\\\\Inventory"
@@ -120,8 +97,26 @@ add_sources("Movement_uber.cpp"
 add_sources("StateMachine_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Actor\\\\Movement\\\\StateMachine"
+		"Actor/Movement/StateMachine/ActorStateAnimationControlled.cpp"
+		"Actor/Movement/StateMachine/ActorStateDead.cpp"
+		"Actor/Movement/StateMachine/ActorStateEntry.cpp"
+		"Actor/Movement/StateMachine/ActorStateFly.cpp"
+		"Actor/Movement/StateMachine/ActorStateGround.cpp"
+		"Actor/Movement/StateMachine/ActorStateJump.cpp"
+		"Actor/Movement/StateMachine/ActorStateLadder.cpp"
+		"Actor/Movement/StateMachine/ActorStateLinked.cpp"
+		"Actor/Movement/StateMachine/ActorStateMovement.cpp"
+		"Actor/Movement/StateMachine/ActorStateSwim.cpp"
+		"Actor/Movement/StateMachine/ActorStateSwimWaterTestProxy.cpp"
 		"Actor/Movement/StateMachine/ActorStateUtility.cpp"
+		"Actor/Movement/StateMachine/ActorStateDead.h"
 		"Actor/Movement/StateMachine/ActorStateEvents.h"
+		"Actor/Movement/StateMachine/ActorStateFly.h"
+		"Actor/Movement/StateMachine/ActorStateGround.h"
+		"Actor/Movement/StateMachine/ActorStateJump.h"
+		"Actor/Movement/StateMachine/ActorStateLadder.h"
+		"Actor/Movement/StateMachine/ActorStateSwim.h"
+		"Actor/Movement/StateMachine/ActorStateSwimWaterTestProxy.h"
 		"Actor/Movement/StateMachine/ActorStateUtility.h"
 )
 add_sources("Pet_uber.cpp"
@@ -216,8 +211,8 @@ add_sources("Openable_uber.cpp"
 add_sources("Player_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Player"
-		"Components/Player/Player.cpp"
-		"Components/Player/Player.h"
+		"Components/Player/PlayerComponent.cpp"
+		"Components/Player/PlayerComponent.h"
 )
 add_sources("Camera_uber.cpp"
     PROJECTS Chrysalis
@@ -442,7 +437,26 @@ PRIVATE
 )
 
 # Set StartUp project in Visual Studio
-set_solution_startup_target(${THIS_PROJECT})
+
+add_library(GameLauncher STATIC "${CRYENGINE_DIR}/Code/CryEngine/CryCommon/CryCore/Platform/platform.h")
+set_target_properties(GameLauncher PROPERTIES LINKER_LANGUAGE CXX)
+if (WIN32)
+    set_visual_studio_debugger_command(GameLauncher "${CRYENGINE_DIR}/bin/win_x64/GameLauncher.exe" "-project \"D:/Chrysalis/Chrysalis.cryproject\"")
+endif()
+
+add_library(Sandbox STATIC "${CRYENGINE_DIR}/Code/CryEngine/CryCommon/CryCore/Platform/platform.h")
+set_target_properties(Sandbox PROPERTIES LINKER_LANGUAGE CXX)
+if (WIN32)
+    set_visual_studio_debugger_command(Sandbox "${CRYENGINE_DIR}/bin/win_x64/Sandbox.exe" "-project \"D:/Chrysalis/Chrysalis.cryproject\"")
+endif()
+
+add_library(GameServer STATIC "${CRYENGINE_DIR}/Code/CryEngine/CryCommon/CryCore/Platform/platform.h")
+set_target_properties(GameServer PROPERTIES LINKER_LANGUAGE CXX)
+if (WIN32)
+    set_visual_studio_debugger_command(GameServer "${CRYENGINE_DIR}/bin/win_x64/Game_Server.exe" "-project \"D:/Chrysalis/Chrysalis.cryproject\"")
+endif()
+
+set_solution_startup_target(GameLauncher)
 
 if (WIN32)
     set_visual_studio_debugger_command( ${THIS_PROJECT} "${CRYENGINE_DIR}/bin/win_x64/GameLauncher.exe" "-project \"D:/Chrysalis/Chrysalis.cryproject\"" )

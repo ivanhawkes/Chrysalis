@@ -4,12 +4,12 @@
 #include <GameObjects/GameObject.h>
 #include <IActorSystem.h>
 #include <IMovementController.h>
-#include <Components/Player/Player.h>
+#include "Components/Player/PlayerComponent.h"
 #include <Actor/Character/Character.h>
+#include <Actor/Actor.h>
 #include <Components/Player/Camera/ICameraComponent.h>
 #include <Components/Interaction/EntityInteractionComponent.h>
 #include <Console/CVars.h>
-#include "Utility/CryWatch.h"
 
 
 namespace Chrysalis
@@ -48,7 +48,7 @@ void CEntityAwarenessComponent::Initialize()
 {
 	// This extension is only valid for actors.
 	// TODO: CRITICAL: HACK: BROKEN: !!
-	//m_pActor = CActor::GetActor(GetEntityId());
+	//m_pActor = CActorComponent::GetActor(GetEntityId());
 	//if (!m_pActor)
 	//	GameWarning("EntityAwareness extension only available for actors");
 }
@@ -81,10 +81,10 @@ void CEntityAwarenessComponent::Update()
 	if (localPlayer)
 	{
 		// HACK: We should get the actor instead, do this when patching for 5.4.
-		if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
+		if (auto pActorComponent = CPlayerComponent::GetLocalActor())
 		{
 			// Is this entity under local control?
-			if (pCharacter->GetEntityId() == GetEntityId())
+			if (pActorComponent->GetEntityId() == GetEntityId())
 			{
 				// If we're playing as this character, we should use the camera as the eye direction for ray casting, etc.
 				auto camera = localPlayer->GetCamera();

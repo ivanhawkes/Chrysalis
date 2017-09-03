@@ -8,6 +8,7 @@
 #include <CryEntitySystem/IEntitySystem.h>
 #include <CrySchematyc/CoreAPI.h>
 #include "Plugin/ChrysalisCorePlugin.h"
+#include "Utility/CryWatch.h"
 
 
 namespace Chrysalis

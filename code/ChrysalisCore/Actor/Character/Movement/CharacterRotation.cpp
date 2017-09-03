@@ -1,10 +1,9 @@
 #include <StdAfx.h>
 
-//#include <Components/Player/Player.h>
+//#include "Components/Player/PlayerComponent.h"
 //#include <Actor/Character/Character.h>
 //#include <Actor/Character/Movement/CharacterRotation.h>
 //#include <Actor/Character/Movement/CharacterMovementController.h>
-//#include <Utility/CryWatch.h>
 //#include <IItemSystem.h>
 //#include <Actor/ActorState.h>
 //#include <IVehicleSystem.h>
@@ -422,7 +421,7 @@
 ////			{
 ////				limit.x = asinf(localDir.z) + m_deltaAngles.x;
 ////
-////				const float deltaX(limitV - fabs(limit.x));
+////				const float deltaX(limitV - std::abs(limit.x));
 ////
 ////				m_deltaAngles.x = m_deltaAngles.x + (float) __fsel(deltaX, 0.0f, deltaX * (float) __fsel(limit.x, 1.0f, -1.0f));
 ////			}
@@ -449,7 +448,7 @@
 ////			{
 ////				limit.z = atan2_tpl(-localDir.x, localDir.y) + m_deltaAngles.z;
 ////
-////				const float deltaZ(limitH - fabs(limit.z));
+////				const float deltaZ(limitH - std::abs(limit.z));
 ////
 ////				m_deltaAngles.z = m_deltaAngles.z + (float) __fsel(deltaZ, 0.0f, deltaZ * (float) __fsel(limit.z, 1.0f, -1.0f));
 ////			}

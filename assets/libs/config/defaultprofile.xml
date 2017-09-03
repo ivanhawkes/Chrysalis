@@ -60,10 +60,6 @@
 		<action name="mouse_rotateyaw" keyboard="maxis_x" />
 		<action name="mouse_rotatepitch" keyboard="maxis_y" />
 
-		<action name="hmd_rotateyaw" keyboard="HMD_Yaw" />
-		<action name="hmd_rotatepitch" keyboard="HMD_Pitch" />
-		<action name="hmd_rotateroll" keyboard="HMD_Roll" />
-
 		<action name="xi_movex" xboxpad="xi_thumblx" ps3pad="pad_sticklx" onHold="1" retriggerable="1"/>
 		<action name="xi_movey" xboxpad="xi_thumbly" ps3pad="pad_stickly" onHold="1" retriggerable="1"/>
 
@@ -111,19 +107,6 @@
 		</action>
 	</actionmap>
 
-	<!--CAMERA SPECIFIC ACTIONS - TODO: MOVE OTHER CAMERA STUFF OVER FROM PLAYER TO HERE -->
-	<actionmap name="camera">
-		<action name="tpv_zoom_in" onPress="1" keyboard="mwheel_up" />
-		<action name="tpv_zoom_out" onPress="1" keyboard="mwheel_down" />
-
-		<action name="camera_shift_up" onPress="1" onRelease="1" keyboard="pgup"/>
-		<action name="camera_shift_down" onPress="1" onRelease="1" keyboard="pgdn"/>
-		<action name="camera_shift_left" onPress="1" onRelease="1" keyboard="left"/>
-		<action name="camera_shift_right" onPress="1" onRelease="1" keyboard="right"/>
-		<action name="camera_shift_forward" onPress="1" onRelease="1" keyboard="up"/>
-		<action name="camera_shift_backward" onPress="1" onRelease="1" keyboard="down"/>
-	</actionmap>
-
 	<!--PLAYER INSPECTING ITEMS-->
 	<!-- Inspect places the character in "inspect mode" which is cancelled by any movement key or an escape key. 
 		 Normal character movement should be disabled in this mode, but we will need camera rotations and zooms. -->
@@ -131,5 +114,17 @@
 		<action name="inspect_start" onPress="1" onRelease="1" keyboard="j"/>
 		<action name="inspect" onPress="1" onRelease="1" keyboard="k"/>
 		<action name="inspect_end" onPress="1" onRelease="1" keyboard="l"/>
+	</actionmap>
+
+	<!--CAMERA SPECIFIC ACTIONS - TODO: MOVE OTHER CAMERA STUFF OVER FROM PLAYER TO HERE -->
+	<actionmap name="camera">
+		<action name="tpv_zoom_in" onPress="1" keyboard="mwheel_up" />
+		<action name="tpv_zoom_out" onPress="1" keyboard="mwheel_down" />
+		<action name="camera_shift_up" onPress="1" onRelease="1" keyboard="pgup"/>
+		<action name="camera_shift_down" onPress="1" onRelease="1" keyboard="pgdn"/>
+		<action name="camera_shift_left" onPress="1" onRelease="1" keyboard="left"/>
+		<action name="camera_shift_right" onPress="1" onRelease="1" keyboard="right"/>
+		<action name="camera_shift_forward" onPress="1" onRelease="1" keyboard="up"/>
+		<action name="camera_shift_backward" onPress="1" onRelease="1" keyboard="down"/>
 	</actionmap>
 </profile>

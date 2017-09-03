@@ -7,11 +7,11 @@ struct IItemParamsNode;
 
 namespace Chrysalis
 {
-class CCharacterComponent;
-class CCharacterStateSwimWaterTestProxy;
+class IActorComponent;
+class CActorStateSwimWaterTestProxy;
 
 
-class CCharacterStateSwim
+class CActorStateSwim
 {
 public:
 	static void SetParamsFromXml(const IItemParamsNode* pParams)
@@ -20,16 +20,16 @@ public:
 		GetSwimParams().SetParamsFromXml(pParams);
 	}
 
-	CCharacterStateSwim();
+	CActorStateSwim();
 
-	void OnEnter(CCharacterComponent& Character);
-	bool OnPrePhysicsUpdate(CCharacterComponent& Character, const SActorMovementRequest& movementRequest, float frameTime);
-	void OnUpdate(CCharacterComponent& Character, float frameTime);
-	void OnExit(CCharacterComponent& Character);
+	void OnEnter(IActorComponent& actorComponent);
+	bool OnPrePhysicsUpdate(IActorComponent& actorComponent, const SActorMovementRequest& movementRequest, float frameTime);
+	void OnUpdate(IActorComponent& actorComponent, float frameTime);
+	void OnExit(IActorComponent& actorComponent);
 
-	static void UpdateSoundListener(CCharacterComponent &Character);
+	static void UpdateSoundListener(IActorComponent& actorComponent);
 
-	bool DetectJump(CCharacterComponent& Character, const SActorMovementRequest& movementRequest, float frameTime, float* pVerticalSpeedModifier) const;
+	bool DetectJump(IActorComponent& actorComponent, const SActorMovementRequest& movementRequest, float frameTime, float* pVerticalSpeedModifier) const;
 
 private:
 	Vec3 m_gravity;
@@ -70,7 +70,7 @@ private:
 	static CSwimmingParams& GetSwimParams() { return s_swimParams; }
 
 	// DO NOT IMPLEMENT!
-	CCharacterStateSwim(const CCharacterStateSwim&);
-	CCharacterStateSwim& operator=(const CCharacterStateSwim&);
+	CActorStateSwim(const CActorStateSwim&);
+	CActorStateSwim& operator=(const CActorStateSwim&);
 };
 }

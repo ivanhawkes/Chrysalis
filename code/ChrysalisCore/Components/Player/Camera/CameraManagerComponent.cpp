@@ -5,7 +5,7 @@
 #include "ExamineCameraComponent.h"
 #include "FirstPersonCameraComponent.h"
 #include <Actor/Character/Character.h>
-#include <Components/Player/Player.h>
+#include "Components/Player/PlayerComponent.h"
 #include <Utility/StringConversions.h>
 #include <Console/CVars.h>
 
@@ -23,7 +23,7 @@ void CCameraManagerComponent::ReflectType(Schematyc::CTypeDesc<CCameraManagerCom
 	desc.SetEditorCategory("Hidden");
 	desc.SetLabel("Camera Manager");
 	desc.SetDescription("No description.");
-	desc.SetIcon("icons:General/Camera.ico");
+	desc.SetIcon("icons:ObjectTypes/light.ico");
 	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform, IEntityComponent::EFlags::Socket, IEntityComponent::EFlags::Attach, IEntityComponent::EFlags::ClientOnly });
 }
 
@@ -184,11 +184,11 @@ void CCameraManagerComponent::ToggleThirdPerson()
 {
 	g_cvars.m_cameraManagerIsThirdPerson = !g_cvars.m_cameraManagerIsThirdPerson;
 
-	// Notify the local actor that they should change view mode.
-	if (auto pCharacter = CPlayerComponent::GetLocalCharacter())
+	// Notify the local actor that they should change view mode. This gives them a chance to change their model / etc
+	// if needed. 
+	if (auto pActorComponent = CPlayerComponent::GetLocalActor())
 	{
-		//pCharacter->OnToggleThirdPerson(g_cvars.m_cameraManagerIsThirdPerson);
-		pCharacter->OnToggleThirdPerson();
+		pActorComponent->OnToggleThirdPerson();
 	}
 }
 
@@ -209,7 +209,7 @@ Vec3 CCameraManagerComponent::GetViewOffset()
 }
 
 
-bool CCameraManagerComponent::OnActionCameraShiftUp(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+bool CCameraManagerComponent::OnActionCameraShiftUp(int activationMode, float value)
 {
 	if (activationMode & (eAAM_OnPress | eAAM_OnHold))
 		m_interactiveViewOffset += Vec3(0.0f, 0.0f, adjustmentAmount);
@@ -218,7 +218,7 @@ bool CCameraManagerComponent::OnActionCameraShiftUp(EntityId entityId, const Act
 }
 
 
-bool CCameraManagerComponent::OnActionCameraShiftDown(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+bool CCameraManagerComponent::OnActionCameraShiftDown(int activationMode, float value)
 {
 	if (activationMode & (eAAM_OnPress | eAAM_OnHold))
 		m_interactiveViewOffset += Vec3(0.0f, 0.0f, -adjustmentAmount);
@@ -227,7 +227,7 @@ bool CCameraManagerComponent::OnActionCameraShiftDown(EntityId entityId, const A
 }
 
 
-bool CCameraManagerComponent::OnActionCameraShiftLeft(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+bool CCameraManagerComponent::OnActionCameraShiftLeft(int activationMode, float value)
 {
 	if (activationMode & (eAAM_OnPress | eAAM_OnHold))
 		m_interactiveViewOffset += Vec3(-adjustmentAmount, 0.0f, 0.0f);
@@ -236,7 +236,7 @@ bool CCameraManagerComponent::OnActionCameraShiftLeft(EntityId entityId, const A
 }
 
 
-bool CCameraManagerComponent::OnActionCameraShiftRight(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+bool CCameraManagerComponent::OnActionCameraShiftRight(int activationMode, float value)
 {
 	if (activationMode & (eAAM_OnPress | eAAM_OnHold))
 		m_interactiveViewOffset += Vec3(adjustmentAmount, 0.0f, 0.0f);
@@ -245,7 +245,7 @@ bool CCameraManagerComponent::OnActionCameraShiftRight(EntityId entityId, const 
 }
 
 
-bool CCameraManagerComponent::OnActionCameraShiftForward(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+bool CCameraManagerComponent::OnActionCameraShiftForward(int activationMode, float value)
 {
 	if (activationMode & (eAAM_OnPress | eAAM_OnHold))
 		m_interactiveViewOffset += Vec3(0.0f, adjustmentAmount, 0.0f);
@@ -254,7 +254,7 @@ bool CCameraManagerComponent::OnActionCameraShiftForward(EntityId entityId, cons
 }
 
 
-bool CCameraManagerComponent::OnActionCameraShiftBackward(EntityId entityId, const ActionId& actionId, int activationMode, float value)
+bool CCameraManagerComponent::OnActionCameraShiftBackward(int activationMode, float value)
 {
 	if (activationMode & (eAAM_OnPress | eAAM_OnHold))
 		m_interactiveViewOffset += Vec3(0.0f, -adjustmentAmount, 0.0f);
