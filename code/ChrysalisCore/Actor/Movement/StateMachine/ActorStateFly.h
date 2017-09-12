@@ -2,8 +2,7 @@
 
 namespace Chrysalis
 {
-class IActorComponent;
-struct SActorMovementRequest;
+class CActorControllerComponent;
 
 
 class CActorStateFly
@@ -11,15 +10,15 @@ class CActorStateFly
 public:
 	CActorStateFly();
 
-	void OnEnter(IActorComponent& actorComponent);
-	bool OnPrePhysicsUpdate(IActorComponent& actorComponent, const SActorMovementRequest& movementRequest, float frameTime);
-	void OnExit(IActorComponent& actorComponent);
+	void OnEnter(CActorControllerComponent& actorControllerComponent);
+	bool OnPrePhysicsUpdate(CActorControllerComponent& actorControllerComponent, float frameTime);
+	void OnExit(CActorControllerComponent& actorControllerComponent);
 
 private:
 
 	uint8 m_flyMode;
 	float m_flyModeDisplayTime;
-	void ProcessFlyMode(IActorComponent& actorComponent, const SActorMovementRequest& movementRequest);
+	void ProcessFlyMode(CActorControllerComponent& actorControllerComponent);
 
 };
 }

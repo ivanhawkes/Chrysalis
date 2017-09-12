@@ -1,12 +1,9 @@
 #pragma once
 
-#include <Actor/Actor.h>
-#include <Actor/Character/Movement/CharacterRotation.h>
-#include <StateMachine/StateMachine.h>
-
 
 namespace Chrysalis
 {
+class CActorComponent;
 class CCharacterAttributesComponent;
 
 /**
@@ -25,11 +22,8 @@ protected:
 	// IEntityComponent
 	void Initialize() override;
 	void ProcessEvent(SEntityEvent& event) override;
-	uint64 GetEventMask() const { return BIT64(ENTITY_EVENT_UPDATE) | BIT64(ENTITY_EVENT_PREPHYSICSUPDATE); }
+	uint64 GetEventMask() const { return BIT64(ENTITY_EVENT_UPDATE); }
 	// ~IEntityComponent
-
-	/** Pre physics update. */
-	void PrePhysicsUpdate();
 
 public:
 	CCharacterComponent() {}

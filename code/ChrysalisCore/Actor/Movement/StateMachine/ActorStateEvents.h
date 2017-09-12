@@ -1,16 +1,11 @@
 #pragma once
 
-#include <StateMachine/StateMachine.h>
-#include <Actor/ActorState.h>
 #include <IActionMapManager.h>
+#include <StateMachine/StateMachine.h>
 
 
 namespace Chrysalis
 {
-class CActorComponent;
-class CMelee;
-
-
 enum EActorStateEvent
 {
 	///< Pre-physics handling.
@@ -106,7 +101,6 @@ enum EActorStateEvent
 	f(eActorStateFlags_InteractiveAction) \
 	f(eActorStateFlags_OnLadder)
 
-
 AUTOENUM_BUILDFLAGS_WITHZERO(eActorStateFlags, eActorStateFlags_None);
 
 
@@ -124,10 +118,9 @@ enum EActorStates
 struct SActorPrePhysicsData
 {
 	const float m_frameTime;
-	const SActorMovementRequest m_movement;
 
-	SActorPrePhysicsData(float frameTime, const SActorMovementRequest& movementRequest)
-		: m_frameTime(frameTime), m_movement(movementRequest)
+	SActorPrePhysicsData(float frameTime)
+		: m_frameTime(frameTime)
 	{}
 
 private:
@@ -297,8 +290,7 @@ struct SStateEventActorInput : public SStateEvent
 struct SStateEventStanceChanged : public SStateEvent
 {
 	SStateEventStanceChanged(const int targetStance)
-		:
-		SStateEvent(ACTOR_EVENT_STANCE_CHANGED)
+		: SStateEvent(ACTOR_EVENT_STANCE_CHANGED)
 	{
 		AddData(targetStance);
 	}
@@ -400,77 +392,4 @@ struct SStateEventLadderPosition : public SStateEvent
 
 	float GetHeightFrac() const { return GetData(0).GetFloat(); }
 };
-
-
-//struct SStateEventButtonMashingSequence : public SStateEvent
-//{
-//	enum Type
-//	{
-//		SystemX = 0,
-//	};
-//
-//	struct Params
-//	{
-//		EntityId targetLocationId;
-//		EntityId lookAtTargetId;
-//		float beamingTime;
-//
-//		// While the Character is struggling to escape from the boss, he will push 
-//		// himself back a certain distance (depending on the progression of
-//		// the button-mashing) (>= 0.0f) (in meters).
-//		float strugglingMovementDistance;
-//
-//		// The speed with which the Character will move along the 'struggling
-//		// line' (>= 0.0f) (in meters / second).
-//		float strugglingMovementSpeed;
-//	};
-//
-//	struct CallBacks
-//	{
-//		Functor1<const float&>	onSequenceStart;
-//		Functor1<const float&>  onSequenceUpdate;
-//		Functor1<const bool&>   onSequenceEnd;
-//	};
-//
-//	explicit SStateEventButtonMashingSequence(const Type sequenceType, const Params& params, const CallBacks& callbacks)
-//		: SStateEvent(ACTOR_EVENT_BUTTONMASHING_SEQUENCE)
-//	{
-//		AddData((int) sequenceType);
-//		AddData((const void*) &params);
-//		AddData((const void*) &callbacks);
-//	}
-//
-//	ILINE const Type GetEnemyType() const { return static_cast<Type>(GetData(0).GetInt()); }
-//	ILINE const Params& GetParams() const { return *static_cast<const Params*>(GetData(1).GetPtr()); }
-//	ILINE const CallBacks& GetCallBacks() const { return *static_cast<const CallBacks*>(GetData(2).GetPtr()); }
-//};
-
-
-
-//struct SStateEventSlideKick : public SStateEvent
-//{
-//	SStateEventSlideKick(CMelee* pMelee)
-//		:
-//		SStateEvent(ACTOR_EVENT_SLIDE_KICK)
-//	{
-//		AddData(pMelee);
-//	}
-//
-//	CMelee* GetMelee() const { return (CMelee*) GetData(1).GetPtr(); }
-//};
-//
-//
-
-
-//struct SStateEventCoopAnim : public SStateEvent
-//{
-//	explicit SStateEventCoopAnim(EntityId targetID)
-//		:
-//		SStateEvent(ACTOR_EVENT_COOP_ANIMATION_FINISHED)
-//	{
-//		AddData(static_cast<int>(targetID));
-//	}
-//
-//	ILINE EntityId GetTargetEntityId() const { return static_cast<EntityId> (GetData(0).GetInt()); }
-//};
 }

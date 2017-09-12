@@ -1,12 +1,10 @@
 #pragma once
 
-class IActorComponent;
+class CActorControllerComponent;
 
 
 namespace Chrysalis
 {
-struct SActorMovementRequest;
-
 class CActorStateDead
 {
 	enum EAICorpseUpdateStatus
@@ -25,14 +23,14 @@ public:
 	CActorStateDead();
 	~CActorStateDead();
 
-	void OnEnter(IActorComponent& actorComponent);
-	void OnLeave(IActorComponent& actorComponent);
-	void OnPrePhysicsUpdate(IActorComponent& actorComponent, const SActorMovementRequest& movementRequest, float frameTime);
-	void OnUpdate(IActorComponent& actorComponent, const CActorStateDead::UpdateCtx& updateCtx);
+	void OnEnter(CActorControllerComponent& actorControllerComponent);
+	void OnLeave(CActorControllerComponent& actorControllerComponent);
+	void OnPrePhysicsUpdate(CActorControllerComponent& actorControllerComponent, float frameTime);
+	void OnUpdate(CActorControllerComponent& actorControllerComponent, const CActorStateDead::UpdateCtx& updateCtx);
 	void Serialize(TSerialize& serializer);
 
 protected:
-	void UpdateAICorpseStatus(IActorComponent& actorComponent, const CActorStateDead::UpdateCtx& updateCtx);
+	void UpdateAICorpseStatus(CActorControllerComponent& actorControllerComponent, const CActorStateDead::UpdateCtx& updateCtx);
 
 private:
 	float m_swapToCorpseTimeout;

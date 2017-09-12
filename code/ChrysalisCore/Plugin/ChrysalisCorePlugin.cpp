@@ -19,7 +19,8 @@
 #include "DynamicResponseSystem/ActionUnlock.h"
 #include "ObjectID/ObjectIdMasterFactory.h"
 #include "Actor/Character/CharacterAttributesComponent.h"
-#include "Actor/Actor.h"
+#include "Actor/ActorComponent.h"
+#include "Actor/ActorControllerComponent.h"
 #include "Actor/Character/Character.h"
 #include "Actor/Mount/Mount.h"
 #include "Actor/Pet/Pet.h"
@@ -109,6 +110,10 @@ void CChrysalisCorePlugin::RegisterComponents(Schematyc::IEnvRegistrar& registra
 			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CActorComponent));
 			Chrysalis::CActorComponent::Register(componentScope);
 		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CActorControllerComponent));
+			Chrysalis::CActorControllerComponent::Register(componentScope);
+		}		
 		{
 			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CCharacterComponent));
 			Chrysalis::CCharacterComponent::Register(componentScope);

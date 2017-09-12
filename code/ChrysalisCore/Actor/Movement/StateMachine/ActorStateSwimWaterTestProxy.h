@@ -5,7 +5,7 @@
 
 namespace Chrysalis
 {
-class IActorComponent;
+class CActorControllerComponent;
 
 
 class CActorStateSwimWaterTestProxy
@@ -23,13 +23,13 @@ public:
 
 	void Reset(bool bCancelRays);
 
-	void OnEnterWater(const IActorComponent& actorComponent);
-	void OnExitWater(const IActorComponent& actorComponent);
+	void OnEnterWater(const CActorControllerComponent& actorControllerComponent);
+	void OnExitWater(const CActorControllerComponent& actorControllerComponent);
 
-	void PreUpdateNotSwimming(const IActorComponent& actorComponent, const float frameTime);
-	void PreUpdateSwimming(const IActorComponent& actorComponent, const float frameTime);
-	void Update(const IActorComponent& actorComponent, const float frameTime);
-	void ForceUpdateBottomLevel(const IActorComponent& actorComponent);
+	void PreUpdateNotSwimming(const CActorControllerComponent& actorControllerComponent, const float frameTime);
+	void PreUpdateSwimming(const CActorControllerComponent& actorControllerComponent, const float frameTime);
+	void Update(const CActorControllerComponent& actorControllerComponent, const float frameTime);
+	void ForceUpdateBottomLevel(const CActorControllerComponent& actorControllerComponent);
 
 	ILINE bool ShouldSwim() const { return m_shouldSwim; }
 	ILINE bool IsHeadUnderWater() const { return m_headUnderwater; }
@@ -49,22 +49,22 @@ public:
 
 private:
 	void UpdateWaterLevel(const Vec3& worldReferencePos, const Vec3& CharacterWorldPos, IPhysicalEntity* piPhysEntity);
-	void UpdateOutOfWater(const IActorComponent& actorComponent, const float frameTime);
-	void UpdateInWater(const IActorComponent& actorComponent, const float frameTime);
+	void UpdateOutOfWater(const CActorControllerComponent& actorControllerComponent, const float frameTime);
+	void UpdateInWater(const CActorControllerComponent& actorControllerComponent, const float frameTime);
 	void UpdateSubmergedFraction(const float referenceHeight, const float CharacterHeight, const float waterLevel);
 
-	static Vec3 GetLocalReferencePosition(const IActorComponent& actorComponent);
+	static Vec3 GetLocalReferencePosition(const CActorControllerComponent& actorControllerComponent);
 	bool ShouldSwim(const float referenceHeight) const;
 
 	// Deferred raycast functions.
 	void OnRayCastBottomLevelDataReceived(const QueuedRayID& rayID, const RayCastResult& result);
 	ILINE bool IsWaitingForBottomLevelResults() const { return (m_bottomLevelRayID != 0); }
-	void RayTestBottomLevel(const IActorComponent& actorComponent, const Vec3& referencePosition, float maxRelevantDepth);
+	void RayTestBottomLevel(const CActorControllerComponent& actorControllerComponent, const Vec3& referencePosition, float maxRelevantDepth);
 	void CancelPendingRays();
 
 	// Debug
 #if !defined(_RELEASE)
-	void DebugDraw(const IActorComponent& actorComponent, const Vec3& referencePosition);
+	void DebugDraw(const CActorControllerComponent& actorControllerComponent, const Vec3& referencePosition);
 #endif
 
 	EProxyInternalState m_internalState;

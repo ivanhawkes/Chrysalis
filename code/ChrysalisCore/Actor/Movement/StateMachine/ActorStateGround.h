@@ -2,9 +2,8 @@
 
 namespace Chrysalis
 {
-class IActorComponent;
+class CActorControllerComponent;
 class CCharacterMovementAction;
-struct SActorMovementRequest;
 
 
 class CActorStateGround
@@ -12,15 +11,15 @@ class CActorStateGround
 public:
 	CActorStateGround();
 
-	void OnEnter(IActorComponent& actorComponent);
-	void OnPrePhysicsUpdate(IActorComponent& actorComponent, const SActorMovementRequest& movementRequest, float frameTime, const bool isHeavyWeapon, const bool isLocalPlayer);
-	void OnUpdate(IActorComponent& actorComponent, float frameTime);
-	void OnExit(IActorComponent& actorComponent);
+	void OnEnter(CActorControllerComponent& actorControllerComponent);
+	void OnPrePhysicsUpdate(CActorControllerComponent& actorControllerComponent, float frameTime, const bool isHeavyWeapon, const bool isLocalPlayer);
+	void OnUpdate(CActorControllerComponent& actorControllerComponent, float frameTime);
+	void OnExit(CActorControllerComponent& actorControllerComponent);
 
 private:
 	bool m_inertiaIsZero;
 
-	//void ProcessAlignToTarget (const CAutoAimManager& autoAimManager, IActorComponent& actorComponent, const IActor* pTarget);
-	bool CheckForVaultTrigger(IActorComponent & Character, float frameTime);
+	//void ProcessAlignToTarget (const CAutoAimManager& autoAimManager, CActorControllerComponent& actorControllerComponent, const IActor* pTarget);
+	bool CheckForVaultTrigger(CActorControllerComponent & Character, float frameTime);
 };
 }

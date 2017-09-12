@@ -6,7 +6,7 @@
 #include <Actor/Character/Character.h>
 #include "Camera/CameraManagerComponent.h"
 #include <Components/Player/Input/PlayerInputComponent.h>
-#include <Actor/Actor.h>
+#include <Actor/ActorComponent.h>
 
 
 namespace Chrysalis

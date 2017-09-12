@@ -3,6 +3,7 @@
 #include "PlayerInputComponent.h"
 #include <CryMath/Cry_Math.h>
 #include "Components/Player/PlayerComponent.h"
+#include <Actor/ActorComponent.h>
 #include <Actor/Character/Character.h>
 #include "../Camera/CameraManagerComponent.h"
 #include "../Camera/ICameraComponent.h"

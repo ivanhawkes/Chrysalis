@@ -45,6 +45,9 @@
             "value": "assets/ui/default/uiactions"
         }
     ],
+    "console_commands": [
+        { "name": "map", "value": "test_all" }
+    ],
     "content": {
         "assets": [
             "assets"

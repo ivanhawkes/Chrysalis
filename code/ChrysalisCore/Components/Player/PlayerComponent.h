@@ -141,12 +141,25 @@ public:
 
 
 	/**
-	Gets local player, if there is one for this client.	It is possible there is no local player.
+	Query if this instance is the local player. The local player is the client who is local to the machine the game
+	is running on.
+	
+	\return True if local player, false if not.
+	**/
+	ILINE bool IsLocalPlayer()
+	{
+		return (gEnv->pGameFramework->GetClientActorId() == GetEntityId());
+	}
 
+
+	/**
+	Gets local player, if there is one for this client.	It is possible there is no local player. The local player is
+	the client who is local to the machine the game is running on.
+	
 	Convenience function.
-
-	\return	null if it fails, else the local player.
-	*/
+	
+	\return null if it fails, else the local player.
+	**/
 	ILINE static CPlayerComponent* GetLocalPlayer()
 	{
 		auto actorId = gEnv->pGameFramework->GetClientActorId();

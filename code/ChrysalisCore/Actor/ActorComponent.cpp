@@ -1,12 +1,11 @@
 #include <StdAfx.h>
 
-#include "Actor.h"
+#include "ActorComponent.h"
 #include <CryMath/Cry_Math.h>
 #include <CryCore/Assert/CryAssert.h>
 #include <ICryMannequin.h>
 #include <IAnimatedCharacter.h>
 #include <IGameObject.h>
-#include <IItemSystem.h>
 #include <Actor/Animation/ActorAnimation.h>
 #include <Actor/Animation/Actions/ActorAnimationActionAiming.h>
 #include <Actor/Animation/Actions/ActorAnimationActionAimPose.h>
@@ -16,8 +15,9 @@
 #include <Actor/Animation/Actions/ActorAnimationActionLocomotion.h>
 #include <Actor/Animation/Actions/ActorAnimationActionLooking.h>
 #include <Actor/Animation/Actions/ActorAnimationActionLookPose.h>
-#include <Actor/Movement/ActorMovementController.h>
-#include <Actor/ActorPhysics.h>
+#include <Actor/Movement/StateMachine/ActorStateEvents.h>
+#include <Actor/Movement/StateMachine/ActorStateUtility.h>
+#include <Actor/ActorControllerComponent.h>
 #include <Components/Player/Input/IPlayerInputComponent.h>
 #include "Components/Player/PlayerComponent.h"
 #include <Components/Player/Camera/ICameraComponent.h>
@@ -31,10 +31,6 @@
 
 namespace Chrysalis
 {
-// Definition of the state machine that controls character movement.
-DEFINE_STATE_MACHINE(IActorComponent, Movement);
-
-
 void IActorComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
 {
 }
@@ -85,12 +81,6 @@ CActorComponent::~CActorComponent()
 	//	if (gEnv->bServer)
 	//		m_pInventory->Destroy();
 	//}
-
-	// Release the movement state machine.
-	//MovementHSMRelease();
-
-	// We're over worrying about rotation.
-	//SAFE_DELETE(m_characterRotation);
 }
 
 
@@ -109,6 +99,9 @@ void CActorComponent::Initialize()
 
 	// Equipment management.
 	m_pEquipmentComponent = pEntity->GetOrCreateComponent<CEquipmentComponent>();
+
+	// Contoller.
+	m_pActorControllerComponent = pEntity->GetOrCreateComponent<CActorControllerComponent>();
 
 	// Give the actor a DRS proxy, since it will probably need one.
 	m_pDrsComponent = crycomponent_cast<IEntityDynamicResponseComponent*> (pEntity->CreateProxy(ENTITY_PROXY_DYNAMICRESPONSE));
@@ -137,12 +130,9 @@ void CActorComponent::Initialize()
 	m_pSnaplockComponent->AddSnaplock(ISnaplock(SLT_ACTOR_LEFTFOOT, false));
 	m_pSnaplockComponent->AddSnaplock(ISnaplock(SLT_ACTOR_RIGHTFOOT, false));
 
-	// Initialise the movement state machine.
-	//MovementHSMInit();
-
 	// Default is for a character to be controlled by AI.
 	//	m_isAIControlled = true;
-	m_isAIControlled = false;
+	//m_isAIControlled = false;
 
 	// Tells this instance to trigger areas.
 	pEntity->AddFlags(ENTITY_FLAG_TRIGGER_AREAS);
@@ -154,9 +144,6 @@ void CActorComponent::Initialize()
 		pEntity->AddFlags(ENTITY_FLAG_TRIGGER_AREAS | ENTITY_FLAG_LOCAL_PLAYER);
 		gEnv->pLog->LogAlways("CActorComponent::HandleEvent(): Entity \"%s\" became the local character!", pEntity->GetName());
 	}
-
-	// Resolve the animation tags.
-	m_rotateTagId = m_pAdvancedAnimationComponent->GetTagId("Rotate");
 
 	// Reset the entity.
 	OnResetState();
@@ -187,141 +174,9 @@ void CActorComponent::ProcessEvent(SEntityEvent& event)
 }
 
 
-// TODO: CRITICAL: HACK: BROKEN: !!
-
-//void CActorComponent::FullSerialize(TSerialize ser)
-//{
-//	// Serialise the movement state machine.
-//	MovementHSMSerialize(ser);
-//}
-
-
 void CActorComponent::Update(SEntityUpdateContext* pCtx)
 {
 	const float frameTime = pCtx->fFrameTime;
-
-	UpdateMovementRequest(frameTime);
-	UpdateLookDirectionRequest(frameTime);
-	UpdateAnimation(frameTime);
-
-	// Update the movement state machine.
-	// TODO: CRITICAL: HACK: BROKEN: how do we get the ctx now?
-	//MovementHSMUpdate(ctx, updateSlot);
-}
-
-
-void CActorComponent::UpdateMovementRequest(float frameTime)
-{
-	// Default is for them to not request movement.
-	m_movementRequest = ZERO;
-
-	// Don't handle input if we are in air.
-	if (!m_pCharacterControllerComponent->IsOnGround())
-	{
-		m_movingDuration = 0.0f;
-		return;
-	}
-
-	// If there's a player controlling us, we can query them for inputs and camera and apply that to our movement.
-	if (m_pPlayer)
-	{
-		auto* pPlayerInput = m_pPlayer->GetPlayerInput();
-
-		// The request needs to take into account both the direction of the camera and the direction of the movement i.e.
-		// left is alway left relative to the camera.
-		// TODO: What will it take to make this use AddVelocity instead? The values don't seem to match with what I'd
-		// expect to input to it. 
-		float moveSpeed = GetMovementBaseSpeed(pPlayerInput->GetMovementDirectionFlags());
-		if (moveSpeed > FLT_EPSILON)
-		{
-			m_movingDuration += frameTime;
-			m_movementRequest = pPlayerInput->GetMovement(m_pPlayer->GetCamera()->GetRotation()) * moveSpeed;
-			SetVelocity(m_movementRequest);
-		}
-	}
-}
-
-
-void CActorComponent::UpdateLookDirectionRequest(float frameTime)
-{
-	const float angularVelocityMax = g_PI / 1.0f; // Radians / sec
-	const float catchupSpeed = g_PI2 / 0.25f; // Full rotations / second.
-
-	// If there's a player controlling us, we can query them for inputs and camera and apply that to our rotation.
-	if (m_pPlayer)
-	{
-		auto* pPlayerInput = m_pPlayer->GetPlayerInput();
-
-		// Only allow the character to rotate in first person, and third person if they are moving.
-		if ((!m_pPlayer->IsThirdPerson()) || (m_pPlayer->IsThirdPerson() && m_movementRequest.len() > FLT_EPSILON))
-		{
-			// Take the direction they are facing as a target.
-			Ang3 facingDir;
-			if (m_pPlayer->IsThirdPerson())
-				facingDir = CCamera::CreateAnglesYPR(m_movementRequest);
-			else
-				facingDir = CCamera::CreateAnglesYPR(Matrix33(m_lookOrientation));
-
-			// Use their last orientation as their present direction.
-			// NOTE: I tried it with GetEntity()->GetWorldTM() but that caused crazy jitter issues.
-			Ang3 ypr = CCamera::CreateAnglesYPR(Matrix33(m_lookOrientation));
-
-			// We add in some extra rotation to 'catch up' to the direction they are being moved. This will perform a gradual
-			// turn on the actor over several frames. 
-			float rotationDelta { 0.0f };
-			if (std::abs(facingDir.x - ypr.x) > std::abs(ypr.x - facingDir.x))
-				rotationDelta = ypr.x - facingDir.x;
-			else
-				rotationDelta = facingDir.x - ypr.x;
-
-			//float catchUp = rotationDelta / catchupSpeed * frameTime;
-			float catchUp = std::min(rotationDelta * frameTime, catchupSpeed * frameTime);
-
-			// Update angular velocity metrics.
-			//m_yawAngularVelocity = CLAMP(pPlayerInput->GetMouseYawDelta() + catchUp, -angularVelocityMax * frameTime, angularVelocityMax * frameTime);
-			m_yawAngularVelocity = pPlayerInput->GetMouseYawDelta() + catchUp;
-			//CryWatch("m_yawAngularVelocity = %0.2f", m_yawAngularVelocity / frameTime);
-
-			// Yaw.
-			ypr.x += m_yawAngularVelocity;
-
-			// Roll (zero it).
-			ypr.z = 0;
-
-			// Update the preferred direction we face.
-			m_lookOrientation = Quat(CCamera::CreateOrientationYPR(ypr));
-		}
-	}
-}
-
-
-void CActorComponent::UpdateAnimation(float frameTime)
-{
-	if (m_pPlayer)
-	{
-		const float angularVelocityMin = 0.174f; // Radians / sec
-
-		// Update tags and motion parameters used for turning
-		const bool isTurning = std::abs(m_yawAngularVelocity) > angularVelocityMin;
-		m_pAdvancedAnimationComponent->SetTagWithId(m_rotateTagId, isTurning);
-		if (isTurning)
-		{
-			// Expect the turning motion to take approximately one second.
-			// TODO: Get to work on making this happen more like Blade and Soul.
-			const float turnDuration = 1.0f;
-			m_pAdvancedAnimationComponent->SetMotionParameter(eMotionParamID_TurnAngle, m_yawAngularVelocity * turnDuration);
-		}
-
-		// Update entity rotation as the player turns. We only want to affect Z-axis rotation, zero pitch and roll.
-		// TODO: is there a case where we want to avoid zeroing out pitch and roll?
-		Ang3 ypr = CCamera::CreateAnglesYPR(Matrix33(m_lookOrientation));
-		ypr.y = 0;
-		ypr.z = 0;
-		const Quat correctedOrientation = Quat(CCamera::CreateOrientationYPR(ypr));
-
-		// Send updated transform to the entity, only orientation changes.
-		GetEntity()->SetPosRotScale(GetEntity()->GetWorldPos(), correctedOrientation, Vec3(1, 1, 1));
-	}
 }
 
 
@@ -482,6 +337,8 @@ void CActorComponent::OnDeath(IActor* pActor, bool bIsGod)
 
 void CActorComponent::OnRevive(IActor* pActor, bool bIsGod)
 {
+	Revive();
+	m_pActorControllerComponent->OnRevive();
 }
 
 
@@ -509,10 +366,6 @@ void CActorComponent::OnItemDropped(IActor* pActor, EntityId itemId)
 {}
 
 
-void CActorComponent::OnStanceChanged(IActor* pActor, EStance stance)
-{}
-
-
 void CActorComponent::OnSprintStaminaChanged(IActor* pActor, float newStamina)
 {}
 
@@ -535,8 +388,8 @@ EntityId CActorComponent::GetCurrentItemId(bool includeVehicle) const
 
 IItem* CActorComponent::GetCurrentItem(bool includeVehicle) const
 {
-	if (EntityId itemId = GetCurrentItemId(includeVehicle))
-		return gEnv->pGameFramework->GetIItemSystem()->GetItem(itemId);
+	//if (EntityId itemId = GetCurrentItemId(includeVehicle))
+	//	return gEnv->pGameFramework->GetIItemSystem()->GetItem(itemId);
 
 	return nullptr;
 }
@@ -553,7 +406,7 @@ void CActorComponent::OnPlayerAttach(CPlayerComponent& player)
 	m_pPlayer = &player;
 
 	// Default assumption is we now control the character.
-	m_isAIControlled = false;
+	//m_isAIControlled = false;
 
 	// We should reset the animations.
 	OnResetState();
@@ -569,13 +422,26 @@ void CActorComponent::OnPlayerDetach()
 	// #TODO: We can remove the entity awareness component if that's desirable.
 
 	// #TODO: handle transitioning this character back into the loving hands of the AI.
-	m_isAIControlled = true;
+	//m_isAIControlled = true;
 }
 
 
-// ***
-// *** Life-cycle
-// ***
+const bool CActorComponent::IsPlayer() const
+{
+	if (m_pPlayer)
+		return m_pPlayer->IsLocalPlayer();
+
+	return false;
+}
+
+
+const bool CActorComponent::IsClient() const
+{
+	if (m_pPlayer)
+		return m_pPlayer->IsLocalPlayer();
+
+	return false;
+}
 
 
 void CActorComponent::OnToggleThirdPerson()
@@ -614,15 +480,9 @@ void CActorComponent::OnResetState()
 		pActionController->Queue(*locomotionAction);
 
 		// HACK: quick way to get some debug info out. Need to filter it to only one entity to prevent overlays.
-		//if (strcmp(GetEntity()->GetName(), "Hero") == 0)
-		//	pActionController->SetFlag(AC_DebugDraw, true);
+		if (strcmp(GetEntity()->GetName(), "Hero") == 0)
+			pActionController->SetFlag(AC_DebugDraw, true);
 	}
-
-	//// Reset the HSM for movement.
-	//MovementHSMReset();
-
-	//// Select which HSM to use for our actor's movement. This relies on it's AI status being correctly set first.
-	//SelectMovementHierarchy();
 
 	// Mannequin should also be reset.
 	//ResetMannequin();
@@ -648,7 +508,7 @@ void CActorComponent::OnResetState()
 //		//	animContext.state.SetGroup(g_actorMannequinParams.tagGroupIDs.playMode, gEnv->bMultiplayer ? g_actorMannequinParams.tagIDs.MP : g_actorMannequinParams.tagIDs.SP);
 //		//	animContext.state.Set(g_actorMannequinParams.tagIDs.FP, !IsThirdPerson());
 //
-//		//	SetStanceTag(GetStance(), animContext.state);
+//		//	SetStanceTag(m_pCharacterControllerComponent->GetStance(), animContext.state);
 //
 //		//	// Install persistent AimPose action
 //		//	m_pActionController->Queue(*new CPlayerBackgroundAction(EActorActionPriority::eAAP_Movement, g_actorMannequinParams.fragmentIDs.AimPose));
@@ -705,13 +565,6 @@ void CActorComponent::Kill()
 void CActorComponent::Revive(EReasonForRevive reasonForRevive)
 {
 	// #TODO: A *LOT* of code needs to be added here to handle reviving.
-
-	//// Reset the HSM for character movement.
-	//MovementHSMReset();
-
-	//// Select which HSM to use for our character's movement. This relies on it's AI status being
-	//// correctly set first.
-	//SelectMovementHierarchy();
 
 	// Mannequin should be reset.
 	//ResetMannequin();
@@ -905,224 +758,4 @@ void CActorComponent::OnActionInteractionEnd()
 {
 	CryLogAlways("Player stopped interacting with things.");
 }
-
-
-// TODO: So wrong in every way. Need some more state checking before deciding which stance to move to when exiting
-// crouching, though this is a pretty decent default. Needs checks to ensure you can't crouch while swimming / falling /
-// etc - maybe put this into the class itself? 
-
-void CActorComponent::OnActionCrouchToggle()
-{
-	if (GetStance() == EActorStance::eAS_Crouching)
-	{
-		SetStance(EActorStance::eAS_Standing);
-	}
-	else
-	{
-		SetStance(EActorStance::eAS_Crouching);
-	}
-}
-
-
-void CActorComponent::OnActionCrawlToggle()
-{
-	if (GetStance() == EActorStance::eAS_Crawling)
-	{
-		SetStance(EActorStance::eAS_Standing);
-	}
-	else
-	{
-		SetStance(EActorStance::eAS_Crawling);
-	}
-}
-
-
-void CActorComponent::OnActionKneelToggle()
-{
-	if (GetStance() == EActorStance::eAS_Kneeling)
-	{
-		SetStance(EActorStance::eAS_Standing);
-	}
-	else
-	{
-		SetStance(EActorStance::eAS_Kneeling);
-	}
-}
-
-
-void CActorComponent::OnActionSitToggle()
-{
-	if (GetStance() == EActorStance::eAS_SittingFloor)
-	{
-		SetStance(EActorStance::eAS_Standing);
-	}
-	else
-	{
-		SetStance(EActorStance::eAS_SittingFloor);
-	}
-}
-
-
-float CActorComponent::GetMovementBaseSpeed(TInputFlags movementDirectionFlags) const
-{
-	const static float walkBaseSpeed { 2.1f };
-	const static float jogBaseSpeed { 4.2f };
-	const static float runBaseSpeed { 6.3f };
-	const static float crawlBaseSpeed { 1.2f };
-	const static float crouchBaseSpeed { 1.2f };
-	float baseSpeed { 0.0f };
-	float dirScale { 1.0f };
-
-	switch (GetStance())
-	{
-		case EActorStance::eAS_Standing:
-			// Work out a base for walking, jogging or sprinting.
-			if (IsSprinting())
-			{
-				baseSpeed = runBaseSpeed;
-			}
-			else
-			{
-				if (IsJogging())
-					baseSpeed = jogBaseSpeed;
-				else
-					baseSpeed = walkBaseSpeed;
-			}
-			break;
-
-		case EActorStance::eAS_Crawling:
-			baseSpeed = crawlBaseSpeed;
-			break;
-
-		case EActorStance::eAS_Crouching:
-			baseSpeed = crouchBaseSpeed;
-			break;
-
-		case EActorStance::eAS_Swimming:
-			baseSpeed = walkBaseSpeed;
-			break;
-
-		case EActorStance::eAS_Flying:
-			baseSpeed = jogBaseSpeed;
-			break;
-
-		case EActorStance::eAS_Spellcasting:
-			baseSpeed = walkBaseSpeed;
-			break;
-
-		default:
-			// Don't let them control movement.
-			baseSpeed = 0.0f;
-			break;
-	}
-
-	// Scale it based on their movement direction.
-	switch (movementDirectionFlags)
-	{
-		case (TInputFlags)EInputFlag::Forward:
-			dirScale = 1.0f;
-			break;
-
-		case ((TInputFlags)EInputFlag::Forward | (TInputFlags)EInputFlag::Right):
-			dirScale = 0.9f;
-			break;
-
-		case ((TInputFlags)EInputFlag::Forward | (TInputFlags)EInputFlag::Left):
-			dirScale = 0.9f;
-			break;
-
-		case (TInputFlags)EInputFlag::Right:
-			dirScale = 0.85f;
-			break;
-
-		case (TInputFlags)EInputFlag::Left:
-			dirScale = 0.85f;
-			break;
-
-		case (TInputFlags)EInputFlag::Backward:
-			dirScale = 0.71f;
-			break;
-
-		case ((TInputFlags)EInputFlag::Backward | (TInputFlags)EInputFlag::Right):
-			dirScale = 0.71f;
-			break;
-
-		case ((TInputFlags)EInputFlag::Backward | (TInputFlags)EInputFlag::Left):
-			dirScale = 0.71f;
-			break;
-
-		default:
-			dirScale = 0.0f;
-			break;
-	}
-
-	return baseSpeed * dirScale;
-}
-
-
-//// ***
-//// *** Hierarchical State Machine Support
-//// ***
-//
-//
-//void CCharacterComponent::SelectMovementHierarchy()
-//{
-//	// Force the state machine in the proper hierarchy
-//	//if (IsAIControlled ())
-//	//{
-//	//	CRY_ASSERT (!IsPlayer ());
-//
-//	//	StateMachineHandleEventMovement (ACTOR_EVENT_ENTRY_AI);
-//	//}
-//	//else
-//	//{
-//	//	StateMachineHandleEventMovement (ACTOR_EVENT_ENTRY_PLAYER);
-//	//}
-//
-//	// #HACK: set it to always be player for now.
-//	// #TODO: NEED THIS!!!
-//	StateMachineHandleEventMovement(ACTOR_EVENT_ENTRY);
-//}
-//
-//
-//void CCharacterComponent::MovementHSMRelease()
-//{
-//	StateMachineReleaseMovement();
-//}
-//
-//
-//void CCharacterComponent::MovementHSMInit()
-//{
-//	StateMachineInitMovement();
-//}
-//
-//
-//void CCharacterComponent::MovementHSMSerialize(TSerialize ser)
-//{
-//	StateMachineSerializeMovement(SStateEventSerialize(ser));
-//}
-//
-//
-//void CCharacterComponent::MovementHSMUpdate(SEntityUpdateContext& ctx, int updateSlot)
-//{
-//	//#ifdef STATE_DEBUG
-//	//	const bool shouldDebug = (s_StateMachineDebugEntityID == GetEntityId ());
-//	//#else
-//	//	const bool shouldDebug = false;
-//	//#endif
-//	const bool shouldDebug = false;
-//	//const bool shouldDebug = true;
-//
-//	StateMachineUpdateMovement(ctx.fFrameTime, shouldDebug);
-//
-//	// Pass the update into the movement state machine.
-//	// #TODO: make this happen.
-//	StateMachineHandleEventMovement(SStateEventUpdate(ctx.fFrameTime));
-//}
-//
-//
-//void CCharacterComponent::MovementHSMReset()
-//{
-//	StateMachineResetMovement();
-//}
 }

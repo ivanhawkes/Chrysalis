@@ -1,7 +1,7 @@
 #include <StdAfx.h>
 
 #include "ActorStateSwim.h"
-#include <Actor/Actor.h>
+#include <Actor/ActorControllerComponent.h>
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
 #include "ActorStateEvents.h"
 #include "ActorStateJump.h"
@@ -56,23 +56,23 @@ CActorStateSwim::CActorStateSwim()
 {}
 
 
-bool CActorStateSwim::OnPrePhysicsUpdate(IActorComponent& actorComponent, const SActorMovementRequest& movementRequest, float frameTime)
+bool CActorStateSwim::OnPrePhysicsUpdate(CActorControllerComponent& actorControllerComponent, float frameTime)
 {
-	/*	const CActorStateSwimWaterTestProxy& waterProxy = actorComponent.m_stateSwimWaterTestProxy;
+	/*	const CActorStateSwimWaterTestProxy& waterProxy = actorControllerComponent.m_stateSwimWaterTestProxy;
 
 		CActorStateUtility::PhySetFly (Character);
 
-		const SActorStats& stats = actorComponent.m_actorState;
+		const SActorStats& stats = actorControllerComponent.m_actorState;
 
 		#ifdef STATE_DEBUG
 		const bool debug = (g_pGameCVars->cl_debugSwimming != 0);
 		#endif
 
-		const Vec3 entityPos = actorComponent.GetEntity ()->GetWorldPos ();
-		const Quat baseQuat = actorComponent.GetBaseQuat ();
+		const Vec3 entityPos = actorControllerComponent.GetEntity ()->GetWorldPos ();
+		const Quat baseQuat = actorControllerComponent.GetBaseQuat ();
 		const Vec3 vRight (baseQuat.GetColumn0 ());
 
-		Vec3 velocity = actorComponent.GetActorPhysics()->velocity;
+		Vec3 velocity = actorControllerComponent.GetActorPhysics()->velocity;
 
 		// Underwater timer, sounds update and surface wave speed.
 		if (waterProxy.IsHeadUnderWater ())
@@ -80,22 +80,22 @@ bool CActorStateSwim::OnPrePhysicsUpdate(IActorComponent& actorComponent, const 
 		m_headUnderWaterTimer += frameTime;
 		if (m_headUnderWaterTimer <= -0.0f && !m_onSurface)
 		{
-		actorComponent.PlaySound (CCharacterComponent::ESound_DiveIn, true, "speed", velocity.len ());
+		actorControllerComponent.PlaySound (CActorControllerComponent::ESound_DiveIn, true, "speed", velocity.len ());
 		m_headUnderWaterTimer = 0.0f;
 		}
 
-		actorComponent.PlaySound (CCharacterComponent::ESound_Underwater, true);
+		actorControllerComponent.PlaySound (CActorControllerComponent::ESound_Underwater, true);
 		}
 		else
 		{
 		m_headUnderWaterTimer -= frameTime;
 		if (m_headUnderWaterTimer >= 0.0f && (waterProxy.IsHeadComingOutOfWater () || m_onSurface))
 		{
-		actorComponent.PlaySound (CCharacterComponent::ESound_DiveOut, true, "speed", velocity.len ());
+		actorControllerComponent.PlaySound (CActorControllerComponent::ESound_DiveOut, true, "speed", velocity.len ());
 		m_headUnderWaterTimer = 0.0f;
 		}
 
-		actorComponent.PlaySound (CCharacterComponent::ESound_Underwater, false);
+		actorControllerComponent.PlaySound (CActorControllerComponent::ESound_Underwater, false);
 		}
 		m_headUnderWaterTimer = clamp_tpl (m_headUnderWaterTimer, -0.2f, 0.2f);
 
@@ -122,14 +122,14 @@ bool CActorStateSwim::OnPrePhysicsUpdate(IActorComponent& actorComponent, const 
 		Vec3 desiredLocalNormalizedVelocity (ZERO);
 		Vec3 desiredLocalVelocity (ZERO);
 
-		const Quat viewQuat = actorComponent.GetViewQuat ();
+		const Quat viewQuat = actorControllerComponent.GetViewQuat ();
 
-		const float backwardMultiplier = (float) __fsel (movementRequest.desiredVelocity.y, 1.0f, g_pGameCVars->pl_swimBackSpeedMul);
-		desiredLocalNormalizedVelocity.x = movementRequest.desiredVelocity.x * g_pGameCVars->pl_swimSideSpeedMul;
-		desiredLocalNormalizedVelocity.y = movementRequest.desiredVelocity.y * backwardMultiplier;
+		const float backwardMultiplier = (float) __fsel (actorControllerComponent.GetVelocity().y, 1.0f, g_pGameCVars->pl_swimBackSpeedMul);
+		desiredLocalNormalizedVelocity.x = actorControllerComponent.GetVelocity().x * g_pGameCVars->pl_swimSideSpeedMul;
+		desiredLocalNormalizedVelocity.y = actorControllerComponent.GetVelocity().y * backwardMultiplier;
 
 		float sprintMultiplier = 1.0f;
-		if ((actorComponent.IsSprinting ()) && !actorComponent.IsCinematicFlagActive (SActorStats::eCinematicFlag_RestrictMovement))
+		if ((actorControllerComponent.IsSprinting ()) && !actorControllerComponent.IsCinematicFlagActive (SActorStats::eCinematicFlag_RestrictMovement))
 		{
 		sprintMultiplier = GetSwimParams ().m_swimSprintSpeedMul;
 
@@ -138,7 +138,7 @@ bool CActorStateSwim::OnPrePhysicsUpdate(IActorComponent& actorComponent, const 
 		sprintMultiplier *= LERP (1.0f, GetSwimParams ().m_swimUpSprintSpeedMul, upFraction);
 		}
 
-		const float baseSpeed = actorComponent.GetStanceMaxSpeed (STANCE_SWIM);
+		const float baseSpeed = actorControllerComponent.GetStanceMaxSpeed (STANCE_SWIM);
 		desiredLocalVelocity.x = desiredLocalNormalizedVelocity.x * sprintMultiplier * baseSpeed;
 		desiredLocalVelocity.y = desiredLocalNormalizedVelocity.y * sprintMultiplier * baseSpeed;
 		desiredLocalVelocity.z = desiredLocalNormalizedVelocity.z * g_pGameCVars->pl_swimVertSpeedMul * baseSpeed;
@@ -227,7 +227,7 @@ bool CActorStateSwim::OnPrePhysicsUpdate(IActorComponent& actorComponent, const 
 		m_onSurface = false;
 		}
 
-		// Calculate and apply surface movement to the actorComponent.
+		// Calculate and apply surface movement to the actorControllerComponent.
 		float speedDelta = 0.0f;
 		if (m_onSurface)
 		{
@@ -248,8 +248,8 @@ bool CActorStateSwim::OnPrePhysicsUpdate(IActorComponent& actorComponent, const 
 		}
 
 		// Set request type and velocity
-		actorComponent.GetMoveRequest ().type = eCMT_Fly;
-		actorComponent.GetMoveRequest ().velocity = velocity;
+		actorControllerComponent.GetMoveRequest ().type = eCMT_Fly;
+		actorControllerComponent.GetMoveRequest ().velocity = velocity;
 
 		#ifdef STATE_DEBUG
 		// DEBUG VELOCITY
@@ -268,11 +268,11 @@ bool CActorStateSwim::OnPrePhysicsUpdate(IActorComponent& actorComponent, const 
 }
 
 
-void CActorStateSwim::OnEnter(IActorComponent& actorComponent)
+void CActorStateSwim::OnEnter(CActorControllerComponent& actorControllerComponent)
 {
-	/*actorComponent.m_stateSwimWaterTestProxy.OnEnterWater (Character);
+	/*actorControllerComponent.m_stateSwimWaterTestProxy.OnEnterWater (Character);
 
-	IPhysicalEntity* pPhysEnt = actorComponent.GetEntity ()->GetPhysics ();
+	IPhysicalEntity* pPhysEnt = actorControllerComponent.GetEntity ()->GetPhysics ();
 	if (pPhysEnt != NULL)
 	{
 	// get current gravity before setting to zero.
@@ -284,26 +284,26 @@ void CActorStateSwim::OnEnter(IActorComponent& actorComponent)
 	CActorStateUtility::PhySetFly (Character);
 	}
 
-	m_lastWaterLevel = actorComponent.m_stateSwimWaterTestProxy.GetWaterLevel ();
-	m_lastWaterLevelTime = actorComponent.m_stateSwimWaterTestProxy.GetWaterLevelTimeUpdated ();
+	m_lastWaterLevel = actorControllerComponent.m_stateSwimWaterTestProxy.GetWaterLevel ();
+	m_lastWaterLevelTime = actorControllerComponent.m_stateSwimWaterTestProxy.GetWaterLevelTimeUpdated ();
 
-	actorComponent.GetActorState()->durationInAir = 0.0f;
+	actorControllerComponent.durationInAir = 0.0f;
 
-	if (actorComponent.IsClient ())
+	if (actorControllerComponent.IsClient ())
 	{
 	ICameraMode::AnimationSettings animationSettings;
 	animationSettings.positionFactor = 1.0f;
 	animationSettings.rotationFactor = GetSwimParams ().m_stateSwim_animCameraFactor;
 
-	actorComponent.GetCharacterCamera ()->SetCameraModeWithAnimationBlendFactors (eCameraMode_PartialAnimationControlled, animationSettings, "Entering swim state");
-	actorComponent.SendMusicLogicEvent (eMUSICLOGICEVENT_CHARACTER_SWIM_ENTER);
+	actorControllerComponent.GetCharacterCamera ()->SetCameraModeWithAnimationBlendFactors (eCameraMode_PartialAnimationControlled, animationSettings, "Entering swim state");
+	actorControllerComponent.SendMusicLogicEvent (eMUSICLOGICEVENT_CHARACTER_SWIM_ENTER);
 
-	if (!actorComponent.IsCinematicFlagActive (SActorStats::eCinematicFlag_HolsterWeapon))
-	actorComponent.HolsterItem (true);
+	if (!actorControllerComponent.IsCinematicFlagActive (SActorStats::eCinematicFlag_HolsterWeapon))
+	actorControllerComponent.HolsterItem (true);
 
 	if (gEnv->bMultiCharacter)	// any left hand holding in SP?
 	{
-	actorComponent.HideLeftHandObject (true);
+	actorControllerComponent.HideLeftHandObject (true);
 	}
 	}
 
@@ -312,36 +312,36 @@ void CActorStateSwim::OnEnter(IActorComponent& actorComponent)
 }
 
 
-void CActorStateSwim::OnExit(IActorComponent& actorComponent)
+void CActorStateSwim::OnExit(CActorControllerComponent& actorControllerComponent)
 {
-	/*actorComponent.m_stateSwimWaterTestProxy.OnExitWater (Character);
-	actorComponent.m_actorPhysics.groundNormal = Vec3 (0, 0, 1);
+	/*actorControllerComponent.m_stateSwimWaterTestProxy.OnExitWater (Character);
+	actorControllerComponent.m_actorPhysics.groundNormal = Vec3 (0, 0, 1);
 
-	if (actorComponent.IsClient ())
+	if (actorControllerComponent.IsClient ())
 	{
-	actorComponent.GetCharacterCamera ()->SetCameraMode (eCameraMode_Default, "Leaving swim state");
+	actorControllerComponent.GetCharacterCamera ()->SetCameraMode (eCameraMode_Default, "Leaving swim state");
 
 	// Unselect underwater weapon here.
-	actorComponent.SendMusicLogicEvent (eMUSICLOGICEVENT_CHARACTER_SWIM_LEAVE);
-	if (!actorComponent.IsCinematicFlagActive (SActorStats::eCinematicFlag_HolsterWeapon))
+	actorControllerComponent.SendMusicLogicEvent (eMUSICLOGICEVENT_CHARACTER_SWIM_LEAVE);
+	if (!actorControllerComponent.IsCinematicFlagActive (SActorStats::eCinematicFlag_HolsterWeapon))
 	{
-	actorComponent.HolsterItem (false);
+	actorControllerComponent.HolsterItem (false);
 	}
 
 	// Any left hand holding in SP?
 	if (gEnv->bMultiCharacter)
 	{
-	actorComponent.HideLeftHandObject (false);
+	actorControllerComponent.HideLeftHandObject (false);
 	}
 
-	actorComponent.PlaySound (CCharacterComponent::ESound_Underwater, false);
+	actorControllerComponent.PlaySound (CActorControllerComponent::ESound_Underwater, false);
 
 	UpdateSoundListener (Character);
 
-	StopEnduranceSound (actorComponent.GetEntityId ());
+	StopEnduranceSound (actorControllerComponent.GetEntityId ());
 	}
 
-	IPhysicalEntity* pPhysEnt = actorComponent.GetEntity ()->GetPhysics ();
+	IPhysicalEntity* pPhysEnt = actorControllerComponent.GetEntity ()->GetPhysics ();
 	if (pPhysEnt != NULL)
 	{
 	CActorStateUtility::PhySetNoFly (Character, m_gravity);
@@ -353,22 +353,22 @@ void CActorStateSwim::OnExit(IActorComponent& actorComponent)
 }
 
 
-void CActorStateSwim::OnUpdate(IActorComponent& actorComponent, float frameTime)
+void CActorStateSwim::OnUpdate(CActorControllerComponent& actorControllerComponent, float frameTime)
 {
 	// Swim animation not playing after cut-scene due to "NoWeapon" not being equipped as it hasn't been loaded into the inventory yet.
 	// This function is called until "NoWeapon" is equipped.
-	/*if (actorComponent.IsClient ())
+	/*if (actorControllerComponent.IsClient ())
 	{
 	const float breathingInterval = 5.0f;
-	actorComponent.m_pCharacterTypeComponent->UpdateSwimming (frameTime, breathingInterval);
+	actorControllerComponent.m_pCharacterTypeComponent->UpdateSwimming (frameTime, breathingInterval);
 	}*/
 }
 
 
-bool CActorStateSwim::DetectJump(IActorComponent& actorComponent, const SActorMovementRequest& movementRequest, float frameTime, float* pVerticalSpeedModifier) const
+bool CActorStateSwim::DetectJump(CActorControllerComponent& actorControllerComponent, float frameTime, float* pVerticalSpeedModifier) const
 {
 	/*const float minInWaterTime = 0.35f;
-	const CActorStateSwimWaterTestProxy& waterProxy = actorComponent.m_stateSwimWaterTestProxy;
+	const CActorStateSwimWaterTestProxy& waterProxy = actorControllerComponent.m_stateSwimWaterTestProxy;
 	const bool allowJump = waterProxy.GetSwimmingTimer () > minInWaterTime;
 
 	if (allowJump)
@@ -376,7 +376,7 @@ bool CActorStateSwim::DetectJump(IActorComponent& actorComponent, const SActorMo
 	// we broke the surface at a velocity enough to dolphin jump.
 	if (!m_onSurface && (waterProxy.GetRelativeWaterLevel () > -GetSwimParams ().m_swimDolphinJumpDepth))
 	{
-	const float velZ = actorComponent.GetActorPhysics()->velocity.z;
+	const float velZ = actorControllerComponent.GetActorPhysics()->velocity.z;
 
 	if ((velZ > GetSwimParams ().m_swimDolphinJumpThresholdSpeed))
 	{
@@ -395,7 +395,7 @@ bool CActorStateSwim::DetectJump(IActorComponent& actorComponent, const SActorMo
 }
 
 
-void CActorStateSwim::UpdateSoundListener(IActorComponent& actorComponent)
+void CActorStateSwim::UpdateSoundListener(CActorControllerComponent& actorControllerComponent)
 {
 	REINST("needs verification! check SDK version of the code later on...ILH");
 }

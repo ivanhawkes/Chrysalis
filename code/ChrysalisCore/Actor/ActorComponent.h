@@ -2,33 +2,23 @@
 
 #include <IAnimatedCharacter.h>
 #include <Actor/Fate.h>
-#include <Actor/ActorState.h>
-#include <Actor/ActorPhysics.h>
-#include <Actor/ActorStance.h>
-#include <Actor/IActorEventListener.h>
 #include <CryAISystem/IAgent.h>
 #include "Snaplocks/Snaplock.h"
 #include "DefaultComponents/Geometry/AdvancedAnimationComponent.h"
 #include "DefaultComponents/Physics/CharacterControllerComponent.h"
 #include <Components/Player/Input/IPlayerInputComponent.h>
-#include <StateMachine/StateMachine.h>
-//#include <Actor/Character/Movement/CharacterRotation.h>
-
-class IActionController;
-struct SAnimationContext;
-struct SCharacterMoveRequest;
+#include <Actor/ActorControllerComponent.h>
 
 
 namespace Chrysalis
 {
 class CPlayerComponent;
-class CActorMovementController;
+class CActorControllerComponent;
 class CEntityAwarenessComponent;
 class CSnaplockComponent;
 class CInventoryComponent;
 class CEquipmentComponent;
-struct IInventory;
-struct SActorMovementRequest;
+struct IItem;
 
 
 /** Define a set of snaplock types that will be used by character entities e.g. equipment slots **/
@@ -69,6 +59,121 @@ enum EActorClassType
 };
 
 
+struct IActorEventListener
+{
+	enum ESpecialMove
+	{
+		eSM_Jump = 0,
+		eSM_SpeedSprint,
+	};
+
+	IActorEventListener() {}
+	virtual ~IActorEventListener() {}
+
+
+	/**
+	Executes the special move action. Special moves are defined in an enum.
+
+	\param [in,out]	pActor If non-null, the actor.
+	\param	move		   The move.
+	**/
+
+	// #TODO: Since there are just two special moves, consider making them full events instead.
+	virtual void OnSpecialMove(IActor* pActor, IActorEventListener::ESpecialMove move) = 0;
+
+
+	/**
+	The actor has died.
+
+	\param [in,out]	pActor If non-null, the actor.
+	\param	bIsGod		   true if this instance is god.
+	**/
+	virtual void OnDeath(IActor* pActor, bool bIsGod) = 0;
+
+
+	/**
+	The actor has been revived.
+
+	\param [in,out]	pActor If non-null, the actor.
+	\param	bIsGod		   true if this instance is god.
+	**/
+	virtual void OnRevive(IActor* pActor, bool bIsGod) = 0;
+
+
+	/**
+	The actor has entered a vehicle.
+
+	\param [in,out]	pActor	    If non-null, the actor.
+	\param	strVehicleClassName Name of the vehicle class.
+	\param	strSeatName		    Name of the seat.
+	\param	bThirdPerson	    true if we are in third person.
+	**/
+	virtual void OnEnterVehicle(IActor* pActor, const char* strVehicleClassName, const char* strSeatName, bool bThirdPerson) = 0;
+
+
+	/**
+	The actor has exited a vehicle.
+
+	\param [in,out]	pActor If non-null, the actor.
+	**/
+	virtual void OnExitVehicle(IActor* pActor) = 0;
+
+
+	/**
+	The actor's health has changed.
+
+	\param [in,out]	pActor If non-null, the actor.
+	\param	newHealth	   The new health.
+	**/
+	virtual void OnHealthChanged(IActor* pActor, float newHealth) = 0;
+
+
+	/**
+	The actor has picked up an item.
+
+	\param [in,out]	pActor If non-null, the actor.
+	\param	itemId		   Identifier for the item.
+	**/
+	virtual void OnItemPickedUp(IActor* pActor, EntityId itemId) = 0;
+
+
+	/**
+	The actor has used an item.
+
+	\param [in,out]	pActor If non-null, the actor.
+	\param	itemId		   Identifier for the item.
+	**/
+	virtual void OnItemUsed(IActor* pActor, EntityId itemId) = 0;
+
+
+	/**
+	The actor has dropped an item.
+
+	\param [in,out]	pActor If non-null, the actor.
+	\param	itemId		   Identifier for the item.
+	**/
+	virtual void OnItemDropped(IActor* pActor, EntityId itemId) = 0;
+
+
+	/**
+	The actor has toggled between third person and first person view modes.
+
+	\param [in,out]	pActor If non-null, the actor.
+	\param	bThirdPerson   true to third person.
+	**/
+	virtual void OnToggleThirdPerson() {};
+
+
+	/**
+	The actor's sprint stamina has changed.
+
+	\param [in,out]	pActor If non-null, the actor.
+	\param	newStamina	   The new stamina.
+	**/
+	virtual void OnSprintStaminaChanged(IActor* pActor, float newStamina) = 0;
+};
+
+
 /**
 A very simple base class for all actors. This is replacing the old CryTek interface.
 
@@ -79,9 +184,6 @@ class IActorComponent
 {
 protected:
 	friend CChrysalisCorePlugin;
-
-	// Declaration of the state machine that controls character movement.
-	DECLARE_STATE_MACHINE(IActorComponent, Movement);
 
 	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
 
@@ -97,17 +199,30 @@ public:
 		return id;
 	}
 
-	// TODO: CRITICAL: HACK: BROKEN: !!
-	// Make this actually work.
-	const bool IsPlayer() const { return true; };
 
-	// TODO: CRITICAL: HACK: BROKEN: !!
-	// Make this actually work.
-	const bool IsClient() const { return true; };
+	/**	Is this actor being controller by the local player?
+	TODO: We might not need this and IsClient, look at removing one or naming them better. */
+	virtual const bool IsPlayer() const = 0;
 
-	// TODO: CRITICAL: HACK: BROKEN: !!
-	// Make this actually work.
-	const virtual Vec3 GetLocalEyePos() const { return { 0.0f, 0.0f, 1.82f }; };
+	/**	Is this actor being controller by the local player? */
+	virtual const bool IsClient() const = 0;
+
+	/** Get's the player controlling this actor, if there is one. This may return nullptr. */
+	virtual CPlayerComponent* GetPlayer() const = 0;
+
+	/**
+	Gets this instance's local-space eye position (for a human, this is typically Vec3 (0, 0, 1.76f)).
+
+	The code will first attempt to return a "#camera" helper if there is one. If only one eye is available (left_eye,
+	right_eye) then that is used as the local position. In the case of two eyes, the position is the average of the two
+	eyes.
+
+	Position is calculated each time using the attachment manager, so it will be better to cache the results if you need
+	to call this a few times in an update.
+
+	\return This instance's local-space eye position.
+	**/
+	virtual const Vec3 GetLocalEyePos() const { return { 0.0f, 0.0f, 1.82f }; };
 
 	virtual Vec3 GetLocalLeftHandPos() const { return Vec3(ZERO); };
 
@@ -180,21 +295,12 @@ public:
 	/** Is the actor currently jogging?  */
 	virtual bool IsJogging() const = 0;
 
-	/**
-	Return a base movement speed for this actor, given the direction (local to character) in which they are moving.
-	This allows for slower speeds when moving backwards or sideways. It doesn't take into account slope or terrain.
-
-	\param	movementDirectionFlags The movement state flags.
-
-	\return The movement base speed.
-	**/
-	virtual float GetMovementBaseSpeed(TInputFlags movementDirectionFlags) const = 0;
-
 	/** Kill the character. */
 	virtual void Kill() = 0;
 
 	enum EReasonForRevive
 	{
+		RFR_None,
 		RFR_FromInit,
 		RFR_StartSpectating,
 		RFR_Spawn,
@@ -206,7 +312,7 @@ public:
 
 	\param	reasonForRevive	the reason for revive.
 	*/
-	virtual void Revive(EReasonForRevive reasonForRevive = RFR_Spawn) = 0;
+	virtual void Revive(EReasonForRevive reasonForRevive = RFR_None) = 0;
 
 
 	/**
@@ -226,49 +332,6 @@ public:
 	virtual void OnPlayerDetach() = 0;
 
 
-	/**
-	Query if this object is controlled by AI. This doesn't imply that there is no player for this actor, simply
-	that they are under AI control at present.
-
-	\return true if AI controlled, false if not.
-	**/
-	virtual bool IsAIControlled() const = 0;
-
-	/** A cut-scene has been triggered for this character. */
-	virtual void OnBeginCutScene() = 0;
-
-
-	/** A cut-scene has finished playing or been cancelled for this character. */
-	virtual void OnEndCutScene() = 0;
-
-
-	/**
-	Gets actor state.
-
-	\return null if it fails, else the actor statistics.
-	**/
-	virtual SActorState* GetActorState() = 0;
-
-
-	/**
-	Gets actor state.
-
-	\return	null if it fails, else the actor statistics.
-	*/
-	virtual const SActorState* GetActorState() const = 0;
-
-	/**
-	Provides access to our movement request object.
-
-	This is used extensively by the movement state machine to store state as it's calculated / updated. Some states will
-	make changes to the move request object e.g. flying and ladders. Most changes are enacted by the ground movement
-	state, as you would generally expect. It's final state will be fed into the FinalizeMovementRequest function to pass
-	the requested movement into the animation system.
-
-	\return The move request.
-	**/
-	virtual SCharacterMoveRequest& GetMoveRequest() = 0;
-
 	/** Executes the toggle third person action. */
 	virtual void OnToggleThirdPerson() = 0;
 };
@@ -285,6 +348,7 @@ class CActorComponent
 {
 protected:
 	friend CChrysalisCorePlugin;
+
 	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
 
 	// IEntityComponent
@@ -296,7 +360,7 @@ protected:
 	virtual void Update(SEntityUpdateContext* pCtx);
 
 public:
-	CActorComponent() {/*m_characterRotation = new CMountRotation(*this);*/ };
+	CActorComponent() {};
 	virtual ~CActorComponent();
 
 	static void ReflectType(Schematyc::CTypeDesc<CActorComponent>& desc);
@@ -399,15 +463,6 @@ public:
 
 
 	/**
-	The actor has changed stance.
-
-	\param [in,out]	pActor If non-null, the actor.
-	\param	stance		   The stance.
-	**/
-	void OnStanceChanged(IActor* pActor, EStance stance) override;
-
-
-	/**
 	The actor's sprint stamina has changed.
 
 	\param [in,out]	pActor If non-null, the actor.
@@ -424,40 +479,18 @@ private:
 
 public:
 
-	/**
-	Gets actor state.
-
-	\return	null if it fails, else the actor statistics.
-	*/
-	SActorState* GetActorState() override { return &m_actorState; };
-
-
-	/**
-	Gets actor state.
-
-	\return	null if it fails, else the actor statistics.
-	*/
-	const SActorState* GetActorState() const override { return &m_actorState; };
-
-
-	/**
-	Provides access to our movement request object.
-
-	This is used extensively by the movement state machine to store state as it's calculated / updated. Some states will
-	make changes to the move request object e.g. flying and ladders. Most changes are enacted by the ground movement
-	state, as you would generally expect. It's final state will be fed into the FinalizeMovementRequest function to pass
-	the requested movement into the animation system.
-
-	\return The move request.
-	**/
-	SCharacterMoveRequest& GetMoveRequest() override { return m_moveRequest; }
-
-
-	// Provide a way to access the character controller functions indirectly.
-	virtual void AddVelocity(const Vec3& velocity) { m_pCharacterControllerComponent->AddVelocity(velocity); }
-	virtual void SetVelocity(const Vec3& velocity) { m_pCharacterControllerComponent->SetVelocity(velocity); }
+	/** Provide a means for them to query the move velocity and direction. */
 	const Vec3& GetVelocity() const { return m_pCharacterControllerComponent->GetVelocity(); }
 	Vec3 GetMoveDirection() const { return m_pCharacterControllerComponent->GetMoveDirection(); }
+
+	/**	Is this actor being controller by the local player? */
+	const bool IsPlayer() const override;
+
+	/**	Is this actor being controller by the local player? */
+	const bool IsClient() const override;
+
+	/** Get's the player controlling this actor, if there is one. This may return nullptr. */
+	CPlayerComponent* GetPlayer() const override { return m_pPlayer; };
 
 	void OnToggleThirdPerson() override;
 
@@ -467,6 +500,10 @@ public:
 	\return	The fate.
 	*/
 	const CFate& GetFate() { return m_fate; }
+
+	// TODO: Convenience functions, for now - think about removing them.
+	EActorStance GetStance() const { return m_pActorControllerComponent->GetStance(); }
+	EActorPosture GetPosture() const { return m_pActorControllerComponent->GetPosture(); }
 
 protected:
 	Cry::DefaultComponents::CAdvancedAnimationComponent* m_pAdvancedAnimationComponent { nullptr };
@@ -478,10 +515,6 @@ protected:
 	/** Called to indicate the entity must reset itself. This is often done during PostInit() and
 	additionally by the editor when you both enter and leave game mode. */
 	virtual void OnResetState();
-
-	virtual void UpdateMovementRequest(float frameTime);
-	virtual void UpdateLookDirectionRequest(float frameTime);
-	virtual void UpdateAnimation(float frameTime);
 
 private:
 	/** An component which is used to discover entities near the actor. */
@@ -496,36 +529,14 @@ private:
 	/** Manage their equipment. */
 	CEquipmentComponent* m_pEquipmentComponent { nullptr };
 
+	/** Manage their equipment. */
+	CActorControllerComponent* m_pActorControllerComponent { nullptr };
+
 	/**	A dynamic response proxy. **/
 	IEntityDynamicResponseComponent* m_pDrsComponent;
 
-	TagID m_rotateTagId;
-
-	/*** A vector representing the direction and distance the player has requested this actor to move. */
-	Vec3 m_movementRequest { ZERO };
-	
-	/** The direction the actor should be facing (pelvis) based on their movement inputs. */
-	Quat m_lookOrientation { IDENTITY };
-
-	/**	The yaw angular velocity - a measure of how quickly the actor is turning. **/
-	float m_yawAngularVelocity { 0.0f };
-
-	/** The continuous amount of time the actor has been receiving movement requests (seconds). */
-	float m_movingDuration { 0.0f };
-
 	/** If a player is controlling this character, this pointer will be valid. */
 	CPlayerComponent* m_pPlayer { nullptr };
-
-	/** The current state for a character. This is shared by a lot of the state machine code. */
-	SActorState m_actorState;
-
-	/** The move request keeps track of how we wish to move this character based on input, state machine, and movement controllers. */
-	// TODO: CRITICAL: HACK: BROKEN: !!
-	// This isn't being updated yet, so it will always return a default movement request.
-	SCharacterMoveRequest m_moveRequest {};
-
-	/** A class that assists in working out animated character rotation. */
-	//CMountRotation* m_characterRotation;
 
 	/** The pre-determined fate for this actor. */
 	CFate m_fate;
@@ -536,29 +547,8 @@ private:
 	// ***
 
 public:
-	bool IsAIControlled() const override { return m_isAIControlled; };
 	void OnPlayerAttach(CPlayerComponent& player) override;
 	void OnPlayerDetach() override;
-
-private:
-	/** true if this object is controlled by an AI. */
-	bool m_isAIControlled;
-
-
-	// ***
-	// *** Stances
-	// ***
-
-public:
-	EActorStance GetStance() const { return m_actorStance.GetStance(); }
-	void SetStance(EActorStance stance) { m_actorStance.SetStance(stance); }
-	EActorPosture GetPosture() const { return m_actorStance.GetPosture(); }
-	void SetPosture(EActorPosture posture) { m_actorStance.SetPosture(posture); }
-
-private:
-
-	// Track and manage the stance the actor is in.
-	CActorStance m_actorStance;
 
 
 	// ***
@@ -578,51 +568,6 @@ public:
 	void Revive(EReasonForRevive reasonForRevive = RFR_Spawn) override;
 
 
-	//	// ***
-	//	// *** Hierarchical State Machine Support - this allows us to abstract the HSM away from the base
-	//	// *** actor class - giving the flexibility to use different state machines for different
-	//	// *** derived classes e.g. mounts
-	//	// ***
-	//
-	//public:
-	//
-	//	/**
-	//	Select movement hierarchy for our HSM.
-	//	*/
-	//	virtual void SelectMovementHierarchy() = 0;
-	//
-	//	/** Release the HSM. */
-	//	// #TODO: Why does this need an empty implementation? If fails to build if I don't provide one.
-	//	virtual void MovementHSMRelease() {};
-	//
-	//	/** Init the HSM. */
-	//	virtual void MovementHSMInit() = 0;
-	//
-	//	/** Serialize the HSM. */
-	//	virtual void MovementHSMSerialize(TSerialize ser) = 0;
-	//
-	//	/** Update the HSM. */
-	//	virtual void MovementHSMUpdate(SEntityUpdateContext& ctx, int updateSlot) = 0;
-	//
-	//	/** Reset the HSM. */
-	//	virtual void MovementHSMReset() = 0;
-
-
-		// ***
-		// *** Cut-scenes
-		// ***
-		// *** While cut-scenes are played for the local player, the requests are likely to also be made on behalf
-		// *** of characters. In such cases, we pass along the request to the attached player if there is one.
-		// ***
-
-public:
-	/** A cut-scene has been triggered for this character. */
-	void OnBeginCutScene() override {};
-
-	/** A cut-scene has finished playing or been cancelled for this character. */
-	void OnEndCutScene() override {};
-
-
 	// ***
 	// *** Handle interactions with other entities.
 	// *** TODO: This code feels a little loose, like it's API needs to be better defined.
@@ -640,27 +585,19 @@ public:
 	void OnActionInteractionStart() override;
 	void OnActionInteraction() override;
 	void OnActionInteractionEnd() override;
-	void OnActionCrouchToggle() override;
-	void OnActionCrawlToggle() override;
-	void OnActionKneelToggle() override;
-	void OnActionSitToggle() override;
-	void OnActionJogToggle() override { m_isJogging = !m_isJogging; };
-	void OnActionSprintStart() override { m_isSprinting = true; };
-	void OnActionSprintStop() override { m_isSprinting = false; };
-	bool IsSprinting() const override { return m_isSprinting; }
-	bool IsJogging() const override { return m_isJogging; }
-	float GetMovementBaseSpeed(TInputFlags movementDirectionFlags) const override;
+	void OnActionCrouchToggle() override { m_pActorControllerComponent->OnActionCrouchToggle(); };
+	void OnActionCrawlToggle() override { m_pActorControllerComponent->OnActionCrawlToggle(); };
+	void OnActionKneelToggle() override { m_pActorControllerComponent->OnActionKneelToggle(); };
+	void OnActionSitToggle() override { m_pActorControllerComponent->OnActionSitToggle(); };
+	void OnActionJogToggle() override { m_pActorControllerComponent->OnActionJogToggle(); };
+	void OnActionSprintStart() override { m_pActorControllerComponent->OnActionSprintStart(); };
+	void OnActionSprintStop() override { m_pActorControllerComponent->OnActionSprintStop(); };
+	bool IsSprinting() const override { return m_pActorControllerComponent->IsSprinting(); };
+	bool IsJogging() const override { return m_pActorControllerComponent->IsJogging(); };
 
 private:
 	/** If we are interacting with an entity, it is this entity. */
 	EntityId m_interactionEntityId { INVALID_ENTITYID };
-
-	/** The actor is sprinting. */
-	bool m_isSprinting { false };
-
-	/** The actor is jogging. */
-	bool m_isJogging { false };
-
 
 	// ***
 	// *** Item System.
@@ -679,24 +616,7 @@ private:
 	**/
 	IItem* GetCurrentItem(bool includeVehicle = false) const;
 
-
-	// ***
-	// *** PREVIOUSLY REQUIRED TO BE IMPLEMENTED FOR IACTOR. THESE DEFINITIONS ARE STILL REQUIRED, BUT COULD NOW BE REFACTORED.
-	// ***
-
 public:
-	/**
-	Gets this instance's local-space eye position (for a human, this is typically Vec3 (0, 0, 1.76f)).
-
-	The code will first attempt to return a "#camera" helper if there is one. If only one eye is available (left_eye,
-	right_eye) then that is used as the local position. In the case of two eyes, the position is the average of the two
-	eyes.
-
-	Position is calculated each time using the attachment manager, so it will be better to cache the results if you need
-	to call this a few times in an update.
-
-	\return This instance's local-space eye position.
-	**/
 	const Vec3 GetLocalEyePos() const override;
 
 	Vec3 GetLocalLeftHandPos() const override;
@@ -713,9 +633,8 @@ public:
 
 	\return Null if it fails, else the actor.
 	**/
-	// TODO: CRITICAL: HACK: BROKEN: !! It's almost certain that this is not the desired functionality. Will this work
-	// with inhereited classes? 
-	static CActorComponent* GetActor(EntityId entityId) {
+	static CActorComponent* GetActor(EntityId entityId)
+	{
 		auto pActor = gEnv->pEntitySystem->GetEntity(entityId);
 		if (pActor)
 			return pActor->GetComponent<CActorComponent>();

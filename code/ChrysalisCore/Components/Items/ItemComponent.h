@@ -2,7 +2,7 @@
 
 #include <Item/Parameters/ItemBaseParameter.h>
 #include <Entities/EntityEffects.h>
-#include <Actor/Actor.h>
+#include <Actor/ActorComponent.h>
 
 
 namespace Chrysalis

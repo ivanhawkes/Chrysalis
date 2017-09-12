@@ -2,7 +2,7 @@
 
 #include "FlashlightComponent.h"
 #include <GameXmlParamReader.h>
-#include <Actor/Actor.h>
+#include <Actor/ActorComponent.h>
 #include <Components/Interaction/EntityInteractionComponent.h>
 #include <Components/Interaction/ItemInteractionComponent.h>
 #include <Components/Snaplocks/SnaplockComponent.h>

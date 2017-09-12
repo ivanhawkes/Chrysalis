@@ -59,6 +59,8 @@ public:
 	/** Executes the deactivate action. */
 	void OnDeactivate() override;
 
+	/** Is the view defined by this camera in first person? */
+	bool IsViewFirstPerson() const override { return true; };
 
 	// ***
 	// *** CExamineRPGCamera

@@ -4,10 +4,6 @@
 
 namespace Chrysalis
 {
-// Definition of the state machine that controls character movement.
-//DEFINE_STATE_MACHINE(CMountComponent, Movement);
-
-
 void CMountComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
 {
 }
@@ -49,67 +45,11 @@ void CMountComponent::ProcessEvent(SEntityEvent& event)
 
 		case ENTITY_EVENT_UPDATE:
 			break;
-
-		case ENTITY_EVENT_PREPHYSICSUPDATE:
-			PrePhysicsUpdate();
-			break;
 	}
-}
-
-
-void CMountComponent::PrePhysicsUpdate()
-{
-	// TODO: HACK: Copy and update the function from CMountComponent when time allows. This is strictly for test purposes
-	// for now. 
 }
 
 
 void CMountComponent::OnResetState()
 {
 }
-
-
-//// ***
-//// *** Hierarchical State Machine Support
-//// ***
-//
-//
-//void CMountComponent::SelectMovementHierarchy()
-//{
-//	//StateMachineHandleEventMovement(ACTOR_EVENT_ENTRY);
-//}
-//
-//
-//void CMountComponent::MovementHSMRelease()
-//{
-//	//StateMachineReleaseMovement();
-//}
-//
-//
-//void CMountComponent::MovementHSMInit()
-//{
-//	//StateMachineInitMovement();
-//}
-//
-//
-//void CMountComponent::MovementHSMSerialize(TSerialize ser)
-//{
-//	//StateMachineSerializeMovement(SStateEventSerialize(ser));
-//}
-//
-//
-//void CMountComponent::MovementHSMUpdate(SEntityUpdateContext& ctx, int updateSlot)
-//{
-//	//StateMachineUpdateMovement(ctx.fFrameTime, false);
-//
-//	// Pass the update into the movement state machine.
-//	// TODO: make this happen.
-//	//StateMachineHandleEventMovement(SStateEventUpdate(ctx.fFrameTime));
-//}
-//
-//
-//void CMountComponent::MovementHSMReset()
-//{
-//	//StateMachineResetMovement();
-//}
 }

@@ -5,7 +5,7 @@
 #include <Components/Player/Input/IPlayerInputComponent.h>
 #include <Utility/StringConversions.h>
 #include <Console/CVars.h>
-#include <Actor/Actor.h>
+#include <Actor/ActorComponent.h>
 
 
 namespace Chrysalis
@@ -254,7 +254,11 @@ void CActionRPGCameraComponent::OnDeactivate()
 void CActionRPGCameraComponent::ResetCamera()
 {
 	// Zoom can default to it's mid-point.
-	m_lastZoomGoal = m_zoomGoal = m_zoom = (g_cvars.m_actionRPGCameraZoomMax + g_cvars.m_actionRPGCameraZoomMin) / 2;
+//	m_lastZoomGoal = m_zoomGoal = m_zoom = (g_cvars.m_actionRPGCameraZoomMax + g_cvars.m_actionRPGCameraZoomMin) / 2;
+
+	// Default is for zoom level to be as close as possible to fully zoomed in. When toggling from first to third
+	// person camera, this gives the least amount of jerking. 
+	m_lastZoomGoal = m_zoomGoal = m_zoom = g_cvars.m_actionRPGCameraZoomMin;
 
 	// Pitch and yaw can default to their mid-points.
 	m_viewPitch = (DEG2RAD(g_cvars.m_actionRPGCameraPitchMax) + DEG2RAD(g_cvars.m_actionRPGCameraPitchMin)) / 2;

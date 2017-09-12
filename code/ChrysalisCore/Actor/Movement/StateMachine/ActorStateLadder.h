@@ -1,16 +1,17 @@
 #pragma once
 
 #include <Utility/AutoEnum.h>
-#include <Actor/Actor.h>
+#include <Actor/ActorComponent.h>
 #include <Actor/Movement/StateMachine/ActorStateEvents.h>
 
 
-struct SActorMovementRequest;
 class SmartScriptTable;
 
 namespace Chrysalis
 {
 class CPlayerComponent;
+class CActorControllerComponent;
+class CLadderAction;
 
 
 #define ladderAnimTypeList(func)             \
@@ -24,10 +25,6 @@ class CPlayerComponent;
 	func(kLadderAnimType_downLeftFoot)         \
 	func(kLadderAnimType_downRightFoot)        \
 	func(kLadderAnimType_midAirGrab)           \
-
-class IActorComponent;
-class CLadderAction;
-
 
 typedef TBitfield TCancelButtonBitfield;
 
@@ -55,17 +52,17 @@ class CActorStateLadder : IPlayerInputCancelHandler
 public:
 	CActorStateLadder();
 
-	bool OnPrePhysicsUpdate(IActorComponent& actorComponent, const SActorMovementRequest& movementRequest, float frameTime);
-	void OnExit(IActorComponent& actorComponent);
+	bool OnPrePhysicsUpdate(CActorControllerComponent& actorControllerComponent, float frameTime);
+	void OnExit(CActorControllerComponent& actorControllerComponent);
 
-	void OnUseLadder(IActorComponent& actorComponent, IEntity* pLadder);
-	void LeaveLadder(IActorComponent& actorComponent, ELadderLeaveLocation leaveLocation);
-	void SetHeightFrac(IActorComponent& actorComponent, float heightFrac);
-	void InformLadderAnimEnter(IActorComponent& actorComponent, CLadderAction* thisAction);
-	void InformLadderAnimIsDone(IActorComponent& actorComponent, CLadderAction* thisAction);
+	void OnUseLadder(CActorControllerComponent& actorControllerComponent, IEntity* pLadder);
+	void LeaveLadder(CActorControllerComponent& actorControllerComponent, ELadderLeaveLocation leaveLocation);
+	void SetHeightFrac(CActorControllerComponent& actorControllerComponent, float heightFrac);
+	void InformLadderAnimEnter(CActorControllerComponent& actorControllerComponent, CLadderAction* thisAction);
+	void InformLadderAnimIsDone(CActorControllerComponent& actorControllerComponent, CLadderAction* thisAction);
 	EntityId GetLadderId() { return m_ladderEntityId; };
 
-	static bool IsUsableLadder(IActorComponent& actorComponent, IEntity* pLadder, const SmartScriptTable& ladderProperties);
+	static bool IsUsableLadder(CActorControllerComponent& actorControllerComponent, IEntity* pLadder, const SmartScriptTable& ladderProperties);
 
 	AUTOENUM_BUILDENUMWITHTYPE_WITHNUM(ELadderAnimType, ladderAnimTypeList, kLadderAnimType_num);
 
@@ -88,11 +85,11 @@ private:
 	CLadderAction * m_mostRecentlyEnteredAction;
 
 	void SetClientCharacterOnLadder(IEntity * pLadder, bool onOff);
-	void QueueLadderAction(IActorComponent& actorComponent, CLadderAction * action);
+	void QueueLadderAction(CActorControllerComponent& actorControllerComponent, CLadderAction * action);
 	void SetMostRecentlyEnteredAction(CLadderAction * thisAction);
 	void InterruptCurrentAnimation();
 
-	static void SendLadderFlowgraphEvent(IActorComponent& actorComponent, IEntity * pLadderEntity, const char * eventName);
+	static void SendLadderFlowgraphEvent(CActorControllerComponent& actorControllerComponent, IEntity * pLadderEntity, const char * eventName);
 
 	// ICharacterInputCancelHandler
 	DEFINE_CANCEL_HANDLER_NAME("CPlayerStateLadder")

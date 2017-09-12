@@ -22,13 +22,11 @@ add_sources("ChrysalisCore_uber.cpp"
 add_sources("Actor_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Actor"
-		"Actor/Actor.cpp"
-		"Actor/Actor.h"
-		"Actor/ActorPhysics.h"
-		"Actor/ActorStance.h"
-		"Actor/ActorState.h"
+		"Actor/ActorComponent.cpp"
+		"Actor/ActorControllerComponent.cpp"
+		"Actor/ActorComponent.h"
+		"Actor/ActorControllerComponent.h"
 		"Actor/Fate.h"
-		"Actor/IActorEventListener.h"
 )
 add_sources("Animation_uber.cpp"
     PROJECTS Chrysalis
@@ -68,14 +66,6 @@ add_sources("Character_uber.cpp"
 		"Actor/Character/CharacterAttributes.h"
 		"Actor/Character/CharacterAttributesComponent.h"
 )
-add_sources("Movement_uber.cpp"
-    PROJECTS Chrysalis
-    SOURCE_GROUP "Actor\\\\Character\\\\Movement"
-		"Actor/Character/Movement/CharacterMovementController.cpp"
-		"Actor/Character/Movement/CharacterRotation.cpp"
-		"Actor/Character/Movement/CharacterMovementController.h"
-		"Actor/Character/Movement/CharacterRotation.h"
-)
 add_sources("Inventory_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Actor\\\\Inventory"
@@ -91,8 +81,6 @@ add_sources("Mount_uber.cpp"
 add_sources("Movement_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Actor\\\\Movement"
-		"Actor/Movement/ActorMovementController.cpp"
-		"Actor/Movement/ActorMovementController.h"
 )
 add_sources("StateMachine_uber.cpp"
     PROJECTS Chrysalis

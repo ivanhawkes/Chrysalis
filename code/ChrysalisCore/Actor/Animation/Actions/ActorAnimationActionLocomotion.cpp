@@ -18,6 +18,7 @@ namespace Chrysalis
 	x( Standing )  /* Stance. */ \
 	x( Crouching ) \
 	x( Crawling ) \
+	x( Prone ) \
 	x( Falling ) \
 	x( Landing ) \
 	x( Swimming ) \
@@ -133,6 +134,10 @@ IAction::EStatus CActorAnimationActionLocomotion::Update(float timePassed)
 		{
 			case EActorStance::eAS_Crawling:
 				GetContext().state.Set(m_locomotionParams->tagIDs.Crawling, true);
+				break;
+
+			case EActorStance::eAS_Prone:
+				GetContext().state.Set(m_locomotionParams->tagIDs.Prone, true);
 				break;
 
 			case EActorStance::eAS_Crouching:

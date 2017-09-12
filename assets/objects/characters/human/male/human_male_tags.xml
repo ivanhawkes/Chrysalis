@@ -22,6 +22,7 @@
       <Tag name="Standing" priority="3"/>
       <Tag name="Crouching" priority="3"/>
       <Tag name="Crawling" priority="3"/>
+      <Tag name="Prone" priority="3"/>
       <Tag name="Falling" priority="3"/>
       <Tag name="Landing" priority="3"/>
       <Tag name="Swimming" priority="3"/>
@@ -113,5 +114,6 @@
       <Tag name="Zest" priority="2"/>
     </Group>
     <Tag name="ScopeSlave" priority="4"/>
+    <Tag name="Rotate"/>
   </Tags>
 </TagDefinition>

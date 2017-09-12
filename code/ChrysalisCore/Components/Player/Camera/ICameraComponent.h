@@ -143,10 +143,10 @@ public:
 	Gets a vector representing a point at which the camera is presently aiming. This will involve a ray-cast
 	operation in the forward direction using camera space. Since it's primary use will be for weapon targeting it should
 	cast a reasonable distance and hit living creatures, terrain, and physical entities.
-
+	
 	\param	pRayCastingEntity	The entity from which we are ray-casting. We need this to exclude it's physics from the
 								ray-cast.
-
+	
 	\return The aim target.
 	**/
 	const Vec3 GetAimTarget(const IEntity* pRayCastingEntity) const;
@@ -162,6 +162,14 @@ public:
 
 	/** Called by an active camera during it's update to update the camera view. */
 	virtual void UpdateView();
+
+	/**
+	Is the view defined by this camera in first person? This will be true whenever the view is from the actor's /
+	player's point of view or eyes.
+	
+	\return True if view first person, false if not.
+	**/
+	virtual bool IsViewFirstPerson() const = 0;
 
 protected:
 	/** The camera matrix. **/

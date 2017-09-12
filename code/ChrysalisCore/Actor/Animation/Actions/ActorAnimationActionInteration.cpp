@@ -1,7 +1,7 @@
 #include <StdAfx.h>
 
 #include "ActorAnimationActionInteration.h"
-#include <Actor/Actor.h>
+#include <Actor/ActorComponent.h>
 
 
 namespace Chrysalis

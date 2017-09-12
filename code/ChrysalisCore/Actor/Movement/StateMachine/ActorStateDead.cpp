@@ -1,9 +1,8 @@
 #include <StdAfx.h>
 
 #include "ActorStateDead.h"
-#include <Actor/Actor.h>
-/*#include "IActorEventListener.h"
-#include "HitDeathReactions.h"
+#include <Actor/ActorControllerComponent.h>
+/*#include "HitDeathReactions.h"
 #include "GameRules.h"
 #include "GameCodeCoverage/GameCodeCoverageTracker.h"
 #include "Audio/Announcer.h"
@@ -24,38 +23,38 @@ CActorStateDead::~CActorStateDead()
 {}
 
 
-void CActorStateDead::OnEnter(IActorComponent& actorComponent)
+void CActorStateDead::OnEnter(CActorControllerComponent& actorControllerComponent)
 {
-	/*	actorComponent.StopLoopingSounds ();
-		actorComponent.SetDeathTimer ();
+	/*	actorControllerComponent.StopLoopingSounds ();
+		actorControllerComponent.SetDeathTimer ();
 
-		if (actorComponent.m_pPickAndThrowProxy)
+		if (actorControllerComponent.m_pPickAndThrowProxy)
 		{
-		actorComponent.m_pPickAndThrowProxy->Unphysicalize ();
+		actorControllerComponent.m_pPickAndThrowProxy->Unphysicalize ();
 		}
 
-		const bool bIsClient = actorComponent.IsClient ();
+		const bool bIsClient = actorControllerComponent.IsClient ();
 
 		if (gEnv->bMultiCharacter)
 		{
 		if (bIsClient)
-		CAudioSignalCharacter::JustPlay ("CharacterDeath_MP_Marine", actorComponent.GetEntityId ());
+		CAudioSignalCharacter::JustPlay ("CharacterDeath_MP_Marine", actorControllerComponent.GetEntityId ());
 		}
 
 		CGameRules* pGameRules = gEnv->pGameFramework->GetGameRules ();
 
 		if (bIsClient)
 		{
-		actorComponent.SetClientSoundmood (IActorComponent::ESoundmood_Dead);
+		actorControllerComponent.SetClientSoundmood (CActorControllerComponent::ESoundmood_Dead);
 
 		const bool dropHeavyWeapon = true;
-		actorComponent.SetBackToNormalWeapon (dropHeavyWeapon);
+		actorControllerComponent.SetBackToNormalWeapon (dropHeavyWeapon);
 
 		bool  itemIsUsed = false;
 		bool  itemIsDroppable = false;
-		if (!gEnv->bMultiCharacter || (pGameRules->GetCurrentItemForActorWithStatus (&actorComponent, &itemIsUsed, &itemIsDroppable) && !itemIsDroppable))
+		if (!gEnv->bMultiCharacter || (pGameRules->GetCurrentItemForActorWithStatus (&actorControllerComponent, &itemIsUsed, &itemIsDroppable) && !itemIsDroppable))
 		{
-		actorComponent.HolsterItem (true);
+		actorControllerComponent.HolsterItem (true);
 		}
 
 		CCCPOINT (ActorState_LocalCharacterDied);
@@ -66,73 +65,73 @@ void CActorStateDead::OnEnter(IActorComponent& actorComponent)
 		}
 
 		// Report normal death.
-		if (!actorComponent.m_CharacterEventListeners.empty ())
+		if (!actorControllerComponent.m_CharacterEventListeners.empty ())
 		{
-		IActorComponent::TCharacterEventListeners::const_iterator iter = actorComponent.m_CharacterEventListeners.begin ();
-		IActorComponent::TCharacterEventListeners::const_iterator cur;
-		while (iter != actorComponent.m_CharacterEventListeners.end ())
+		CActorControllerComponent::TCharacterEventListeners::const_iterator iter = actorControllerComponent.m_CharacterEventListeners.begin ();
+		CActorControllerComponent::TCharacterEventListeners::const_iterator cur;
+		while (iter != actorControllerComponent.m_CharacterEventListeners.end ())
 		{
 		cur = iter;
 		++iter;
-		(*cur)->OnDeath (&actorComponent, false);
+		(*cur)->OnDeath (&actorControllerComponent, false);
 		}
 		}
 
-		pGameRules->OnActorDeath (&actorComponent);
-		if (!gEnv->bMultiCharacter && actorComponent.IsClient ())
+		pGameRules->OnActorDeath (&actorControllerComponent);
+		if (!gEnv->bMultiCharacter && actorControllerComponent.IsClient ())
 		{
-			gEnv->pGameFramework->GetIGameplayRecorder ()->Event (actorComponent.GetEntity (), eGE_Death);
+			gEnv->pGameFramework->GetIGameplayRecorder ()->Event (actorControllerComponent.GetEntity (), eGE_Death);
 		}
 
-		actorComponent.SendMusicLogicEvent (eMUSICLOGICEVENT_CHARACTER_KILLED);
+		actorControllerComponent.SendMusicLogicEvent (eMUSICLOGICEVENT_CHARACTER_KILLED);
 
 		m_swapToCorpseTimeout = g_pGameCVars->g_aiCorpses_DelayTimeToSwap;
 		m_corpseUpdateStatus = eCorpseStatus_WaitingForSwap;*/
 }
 
 
-void CActorStateDead::OnLeave(IActorComponent& actorComponent)
+void CActorStateDead::OnLeave(CActorControllerComponent& actorControllerComponent)
 {
-	//actorComponent.GetEntity ()->KillTimer (RECYCLE_AI_ACTOR_TIMER_ID);
+	//actorControllerComponent.GetEntity ()->KillTimer (RECYCLE_AI_ACTOR_TIMER_ID);
 }
 
 
-void CActorStateDead::OnPrePhysicsUpdate(IActorComponent& actorComponent, const SActorMovementRequest& movementRequest, float frameTime)
+void CActorStateDead::OnPrePhysicsUpdate(CActorControllerComponent& actorControllerComponent, float frameTime)
 {
-	//// No-one has any idea why this is needed but without the actorComponent animation doesn't execute correctly.
-	//if (actorComponent.IsClient())
+	//// No-one has any idea why this is needed but without the actorControllerComponent animation doesn't execute correctly.
+	//if (actorControllerComponent.IsClient())
 	//{
 	//	// STAP must be updated here to ensure that the most recent values are there for the animation processing pass.
-	//	/*const Vec3 cameraPositionForTorso = actorComponent.GetFPCameraPosition (false);
-	//	actorComponent.UpdateFPIKTorso (frameTime, actorComponent.GetCurrentItem (), cameraPositionForTorso);*/
+	//	/*const Vec3 cameraPositionForTorso = actorControllerComponent.GetFPCameraPosition (false);
+	//	actorControllerComponent.UpdateFPIKTorso (frameTime, actorControllerComponent.GetCurrentItem (), cameraPositionForTorso);*/
 	//}
 }
 
 
-void CActorStateDead::OnUpdate(IActorComponent& actorComponent, const CActorStateDead::UpdateCtx& updateCtx)
+void CActorStateDead::OnUpdate(CActorControllerComponent& actorControllerComponent, const CActorStateDead::UpdateCtx& updateCtx)
 {
-	/*if (actorComponent.m_pHitDeathReactions)
+	/*if (actorControllerComponent.m_pHitDeathReactions)
 	{
-	actorComponent.m_pHitDeathReactions->Update (updateCtx.frameTime);
+	actorControllerComponent.m_pHitDeathReactions->Update (updateCtx.frameTime);
 	}
 
-	if (actorComponent.IsClient ())
+	if (actorControllerComponent.IsClient ())
 	{
-	// Need to create this even when actorComponent is dead, otherwise spectators don't see tank turrets rotate etc until they spawn in.
-	actorComponent.UpdateClient (updateCtx.frameTime);
+	// Need to create this even when actorControllerComponent is dead, otherwise spectators don't see tank turrets rotate etc until they spawn in.
+	actorControllerComponent.UpdateClient (updateCtx.frameTime);
 	}
 	else if (!gEnv->bMultiCharacter)
 	{
-	UpdateAICorpseStatus (actorComponent, updateCtx);
+	UpdateAICorpseStatus (actorControllerComponent, updateCtx);
 	}
 
-	if (actorComponent.GetImpulseHander ())
+	if (actorControllerComponent.GetImpulseHander ())
 	{
-	actorComponent.GetImpulseHander ()->UpdateDeath (updateCtx.frameTime);
+	actorControllerComponent.GetImpulseHander ()->UpdateDeath (updateCtx.frameTime);
 	}
 
-	actorComponent.UpdateBodyDestruction (updateCtx.frameTime);
-	actorComponent.GetDamageEffectController ().UpdateEffects (updateCtx.frameTime);*/
+	actorControllerComponent.UpdateBodyDestruction (updateCtx.frameTime);
+	actorControllerComponent.GetDamageEffectController ().UpdateEffects (updateCtx.frameTime);*/
 }
 
 
@@ -150,7 +149,7 @@ void CActorStateDead::Serialize(TSerialize& serializer)
 }
 
 
-void CActorStateDead::UpdateAICorpseStatus(IActorComponent& actorComponent, const CActorStateDead::UpdateCtx& updateCtx)
+void CActorStateDead::UpdateAICorpseStatus(CActorControllerComponent& actorControllerComponent, const CActorStateDead::UpdateCtx& updateCtx)
 {
 	/*	const EAICorpseUpdateStatus updateStatus = m_corpseUpdateStatus;
 
@@ -162,20 +161,20 @@ void CActorStateDead::UpdateAICorpseStatus(IActorComponent& actorComponent, cons
 		const	bool removeCorpse = (newForcedRemovalTimeOut < 0.0f);
 		if (removeCorpse)
 		{
-		if (!actorComponent.GetEntity ()->IsHidden ())
+		if (!actorControllerComponent.GetEntity ()->IsHidden ())
 		{
 		CAICorpseManager* pAICorpseManager = CAICorpseManager::GetInstance ();
 		if (pAICorpseManager != NULL)
 		{
 		CAICorpseManager::SCorpseParameters corpseParams;
-		corpseParams.priority = CAICorpseManager::GetPriorityForClass (actorComponent.GetEntity ()->GetClass ());
-		pAICorpseManager->SpawnAICorpseFromEntity (*actorComponent.GetEntity (), corpseParams);
+		corpseParams.priority = CAICorpseManager::GetPriorityForClass (actorControllerComponent.GetEntity ()->GetClass ());
+		pAICorpseManager->SpawnAICorpseFromEntity (*actorControllerComponent.GetEntity (), corpseParams);
 		}
 
 		// Hide after spawning the corpse to make sure it is properly recreated
-		actorComponent.GetEntity ()->Hide (true);
+		actorControllerComponent.GetEntity ()->Hide (true);
 
-		IAnimatedCharacter *pAnimatedCharacter = actorComponent.GetAnimatedCharacter ();
+		IAnimatedCharacter *pAnimatedCharacter = actorControllerComponent.GetAnimatedCharacter ();
 		if (pAnimatedCharacter)
 		{
 		pAnimatedCharacter->UpdateCharacterPtrs ();
@@ -183,7 +182,7 @@ void CActorStateDead::UpdateAICorpseStatus(IActorComponent& actorComponent, cons
 		}
 
 		// Schedule recycling (doing during update might end in a crash)
-		actorComponent.GetEntity ()->SetTimer (RECYCLE_AI_ACTOR_TIMER_ID, 1000);
+		actorControllerComponent.GetEntity ()->SetTimer (RECYCLE_AI_ACTOR_TIMER_ID, 1000);
 
 		m_corpseUpdateStatus = eCorpseStatus_SwapDone;
 		}

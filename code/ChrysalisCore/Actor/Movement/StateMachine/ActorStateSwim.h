@@ -2,12 +2,11 @@
 
 #include <CryEntitySystem/IEntity.h>
 
-struct SActorMovementRequest;
 struct IItemParamsNode;
 
 namespace Chrysalis
 {
-class IActorComponent;
+class CActorControllerComponent;
 class CActorStateSwimWaterTestProxy;
 
 
@@ -22,14 +21,14 @@ public:
 
 	CActorStateSwim();
 
-	void OnEnter(IActorComponent& actorComponent);
-	bool OnPrePhysicsUpdate(IActorComponent& actorComponent, const SActorMovementRequest& movementRequest, float frameTime);
-	void OnUpdate(IActorComponent& actorComponent, float frameTime);
-	void OnExit(IActorComponent& actorComponent);
+	void OnEnter(CActorControllerComponent& actorControllerComponent);
+	bool OnPrePhysicsUpdate(CActorControllerComponent& actorControllerComponent, float frameTime);
+	void OnUpdate(CActorControllerComponent& actorControllerComponent, float frameTime);
+	void OnExit(CActorControllerComponent& actorControllerComponent);
 
-	static void UpdateSoundListener(IActorComponent& actorComponent);
+	static void UpdateSoundListener(CActorControllerComponent& actorControllerComponent);
 
-	bool DetectJump(IActorComponent& actorComponent, const SActorMovementRequest& movementRequest, float frameTime, float* pVerticalSpeedModifier) const;
+	bool DetectJump(CActorControllerComponent& actorControllerComponent, float frameTime, float* pVerticalSpeedModifier) const;
 
 private:
 	Vec3 m_gravity;

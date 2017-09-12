@@ -1,7 +1,7 @@
 #include <StdAfx.h>
 
 #include "ActorStateGround.h"
-#include <Actor/Actor.h>
+#include <Actor/ActorControllerComponent.h>
 #include "ActorStateJump.h"
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
 /*#include "GameCodeCoverage/GameCodeCoverageTracker.h"
@@ -15,44 +15,44 @@ CActorStateGround::CActorStateGround()
 {}
 
 
-void CActorStateGround::OnEnter(IActorComponent& actorComponent)
+void CActorStateGround::OnEnter(CActorControllerComponent& actorControllerComponent)
 {
-	actorComponent.GetActorState()->durationInAir = 0.0f;
+	actorControllerComponent.durationInAir = 0.0f;
 
 	// Ensure inertia is set!
-	CActorStateUtility::RestorePhysics(actorComponent);
+	CActorStateUtility::RestorePhysics(actorControllerComponent);
 }
 
 
-void CActorStateGround::OnPrePhysicsUpdate(IActorComponent& actorComponent, const SActorMovementRequest& movementRequest, float frameTime, const bool isHeavyWeapon, const bool isLocalPlayer)
+void CActorStateGround::OnPrePhysicsUpdate(CActorControllerComponent& actorControllerComponent,	float frameTime, const bool isHeavyWeapon, const bool isLocalPlayer)
 {
-	/*const Matrix34A baseMtx = Matrix34A(actorComponent.GetBaseQuat());
+	/*const Matrix34A baseMtx = Matrix34A(actorControllerComponent.GetBaseQuat());
 	Matrix34A baseMtxZ(baseMtx * Matrix33::CreateScale(Vec3Constants<float>::fVec3_OneZ));
 	baseMtxZ.SetTranslation(Vec3Constants<float>::fVec3_Zero);
 
 	const CAutoAimManager& autoAimManager = gEnv->pGameFramework->GetAutoAimManager();
 	const EntityId closeCombatTargetId = autoAimManager.GetCloseCombatSnapTarget();
-	const IActor* pCloseCombatTarget = isLocalPlayer && closeCombatTargetId && actorComponent.IsClient() ? CActorComponent::GetActor(closeCombatTargetId) : NULL;
+	const IActor* pCloseCombatTarget = isLocalPlayer && closeCombatTargetId && actorControllerComponent.IsClient() ? CActorComponent::GetActor(closeCombatTargetId) : NULL;
 
 	// This is to restore inertia if the ProcessAlignToTarget set it previously.
 	if (m_inertiaIsZero)
 	{
-		CActorStateUtility::RestorePhysics(actorComponent);
+		CActorStateUtility::RestorePhysics(actorControllerComponent);
 
 		m_inertiaIsZero = false;
 	}
 
 	// Process movement.
-	const bool isRemote = isLocalPlayer && !actorComponent.IsClient();
+	const bool isRemote = isLocalPlayer && !actorControllerComponent.IsClient();
 
 	Vec3 move(ZERO);
-	CActorStateUtility::CalculateGroundOrJumpMovement(actorComponent, movementRequest, isHeavyWeapon, move);
-	actorComponent.GetMoveRequest().type = eCMT_Normal;
+	CActorStateUtility::CalculateGroundOrJumpMovement(actorControllerComponent, isHeavyWeapon, move);
+	actorControllerComponent.GetMoveRequest().type = eCMT_Normal;
 
 	// Apply movement.
 	Vec3 desiredVel(ZERO);
-	Vec3 entityPos = actorComponent.GetEntity()->GetWorldPos();
-	Vec3 entityRight(actorComponent.GetBaseQuat().GetColumn0());
+	Vec3 entityPos = actorControllerComponent.GetEntity()->GetWorldPos();
+	Vec3 entityRight(actorControllerComponent.GetBaseQuat().GetColumn0());
 
 	hwvec3 xmDesiredVel = HWV3Zero();
 
@@ -67,16 +67,16 @@ void CActorStateGround::OnPrePhysicsUpdate(IActorComponent& actorComponent, cons
 	bool debugJumping = (g_pGameCVars->pl_debug_jumping != 0);
 #endif
 
-	const SActorStats& stats = *actorComponent.GetActorState();
+	const SActorStats& stats = *actorControllerComponent.GetActorState();
 
 	{
 		xmDesiredVel = xmMove;
 
-		Vec3 groundNormal = actorComponent.GetActorPhysics()->groundNormal;
+		Vec3 groundNormal = actorControllerComponent.GetActorPhysics()->groundNormal;
 
 		if (!gEnv->bMultiCharacter)
 		{
-			if (actorComponent.IsAIControlled())
+			if (actorControllerComponent.IsAIControlled())
 				fGroundNormalZ = SIMDFLoadFloat(square(groundNormal.z));
 			else
 				fGroundNormalZ = SIMDFLoadFloat(groundNormal.z);
@@ -97,7 +97,7 @@ void CActorStateGround::OnPrePhysicsUpdate(IActorComponent& actorComponent, cons
 				float normalDotMove = groundNormal.Dot(moveDir);
 				//Apply speed multiplier based on moving up/down hill and hill steepness
 				float multiplier = normalDotMove < 0.f ? g_pGameCVars->pl_movement.mp_slope_speed_multiplier_uphill : g_pGameCVars->pl_movement.mp_slope_speed_multiplier_downhill;
-				fGroundNormalZ = SIMDFLoadFloat(1.f - (1.f - actorComponent.GetActorPhysics()->groundNormal.z) * multiplier);
+				fGroundNormalZ = SIMDFLoadFloat(1.f - (1.f - actorControllerComponent.GetActorPhysics()->groundNormal.z) * multiplier);
 			}
 			else
 			{
@@ -107,7 +107,7 @@ void CActorStateGround::OnPrePhysicsUpdate(IActorComponent& actorComponent, cons
 
 		const float depthHi = g_pGameCVars->cl_shallowWaterDepthHi;
 		const float depthLo = g_pGameCVars->cl_shallowWaterDepthLo;
-		const float relativeBottomDepth = actorComponent.m_stateSwimWaterTestProxy.GetRelativeBottomDepth();
+		const float relativeBottomDepth = actorControllerComponent.m_stateSwimWaterTestProxy.GetRelativeBottomDepth();
 
 		if (relativeBottomDepth > depthLo)
 		{ // Shallow water speed slowdown
@@ -143,7 +143,7 @@ void CActorStateGround::OnPrePhysicsUpdate(IActorComponent& actorComponent, cons
 
 	if (isLocalPlayer)
 	{
-		Vec3 modifiedSlopeNormal = actorComponent.GetActorPhysics()->groundNormal;
+		Vec3 modifiedSlopeNormal = actorControllerComponent.GetActorPhysics()->groundNormal;
 		float h = Vec2(modifiedSlopeNormal.x, modifiedSlopeNormal.y).GetLength(); // #TODO: OPT: sqrt(x*x+y*y)
 		float v = modifiedSlopeNormal.z;
 		float slopeAngleCur = RAD2DEG(atan2_tpl(h, v));
@@ -191,8 +191,8 @@ void CActorStateGround::OnPrePhysicsUpdate(IActorComponent& actorComponent, cons
 #ifdef STATE_DEBUG
 		if (debugJumping)
 		{
-			actorComponent.DebugGraph_AddValue("GroundSlope", slopeAngleCur);
-			actorComponent.DebugGraph_AddValue("GroundSlopeMod", slopeAngleMod);
+			actorControllerComponent.DebugGraph_AddValue("GroundSlope", slopeAngleCur);
+			actorControllerComponent.DebugGraph_AddValue("GroundSlopeMod", slopeAngleMod);
 		}
 #endif
 	}
@@ -202,21 +202,21 @@ void CActorStateGround::OnPrePhysicsUpdate(IActorComponent& actorComponent, cons
 	const float fVelocityMultiplier = (float) __fsel(fNewSpeed - 22.0f, __fres(fNewSpeed + FLT_EPSILON) * 22.0f, 1.0f);
 
 	// #TODO: Maybe we should tell physics about this new velocity ? Or maybe SActorStats::velocity ? (stephenn).
-	actorComponent.GetMoveRequest().velocity = newVelocity * (stats.flashBangStunMult * fVelocityMultiplier);
+	actorControllerComponent.GetMoveRequest().velocity = newVelocity * (stats.flashBangStunMult * fVelocityMultiplier);
 
 #ifdef STATE_DEBUG
 	if (g_pGameCVars->pl_debug_movement > 0)
 	{
 		const char* filter = g_pGameCVars->pl_debug_filter->GetString();
-		const char* name = actorComponent.GetEntity()->GetName();
+		const char* name = actorControllerComponent.GetEntity()->GetName();
 		if ((strcmp(filter, "0") == 0) || (strcmp(filter, name) == 0))
 		{
 			float white [] = { 1.0f, 1.0f, 1.0f, 1.0f };
-			IRenderAuxText::Draw2dLabel(20, 450, 2.0f, white, false, "Speed: %.3f m/s", actorComponent.GetMoveRequest().velocity.len());
+			IRenderAuxText::Draw2dLabel(20, 450, 2.0f, white, false, "Speed: %.3f m/s", actorControllerComponent.GetMoveRequest().velocity.len());
 
 			if (g_pGameCVars->pl_debug_movement > 1)
 			{
-				IRenderAuxText::Draw2dLabel(35, 470, 1.8f, white, false, "Stance Speed: %.3f m/s - (%sSprinting)", actorComponent.GetStanceMaxSpeed(actorComponent.GetStance()), actorComponent.IsSprinting() ? "" : "Not ");
+				IRenderAuxText::Draw2dLabel(35, 470, 1.8f, white, false, "Stance Speed: %.3f m/s - (%sSprinting)", actorControllerComponent.GetStanceMaxSpeed(actorControllerComponent.GetStance()), actorControllerComponent.IsSprinting() ? "" : "Not ");
 			}
 		}
 	}
@@ -224,23 +224,23 @@ void CActorStateGround::OnPrePhysicsUpdate(IActorComponent& actorComponent, cons
 
 	if (isLocalPlayer)
 	{
-		CheckForVaultTrigger(actorComponent, frameTime);
+		CheckForVaultTrigger(actorControllerComponent, frameTime);
 	}*/
 }
 
 
-bool CActorStateGround::CheckForVaultTrigger(IActorComponent & actorComponent, float frameTime)
+bool CActorStateGround::CheckForVaultTrigger(CActorControllerComponent & actorControllerComponent, float frameTime)
 {
 	/*const int enableVaultFromStandingCVar = g_pGameCVars->pl_ledgeClamber.enableVaultFromStanding;
-	const bool doCheck = (enableVaultFromStandingCVar == 3) || ((enableVaultFromStandingCVar > 0) && actorComponent.m_jumpButtonIsPressed);
+	const bool doCheck = (enableVaultFromStandingCVar == 3) || ((enableVaultFromStandingCVar > 0) && actorControllerComponent.m_jumpButtonIsPressed);
 
 	if (doCheck)
 	{
 		SLedgeTransitionData ledgeTransition(LedgeId::invalid_id);
-		const float zPos = actorComponent.GetEntity()->GetWorldPos().z;
+		const float zPos = actorControllerComponent.GetEntity()->GetWorldPos().z;
 		const bool ignoreMovement = (enableVaultFromStandingCVar == 2);
 
-		if (CActorStateLedge::TryLedgeGrab(actorComponent, zPos, zPos, true, &ledgeTransition, ignoreMovement) && ledgeTransition.m_ledgeTransition != SLedgeTransitionData::eOLT_None)
+		if (CActorStateLedge::TryLedgeGrab(actorControllerComponent, zPos, zPos, true, &ledgeTransition, ignoreMovement) && ledgeTransition.m_ledgeTransition != SLedgeTransitionData::eOLT_None)
 		{
 			CRY_ASSERT(LedgeId(ledgeTransition.m_nearestGrabbableLedgeId).IsValid());
 			const SLedgeInfo ledgeInfo = gEnv->pGameFramework->GetLedgeManager()->GetLedgeById(LedgeId(ledgeTransition.m_nearestGrabbableLedgeId));
@@ -256,18 +256,18 @@ bool CActorStateGround::CheckForVaultTrigger(IActorComponent & actorComponent, f
 					const char * transitionName = s_ledgeTransitionNames [ledgeTransition.m_ledgeTransition];
 
 					IEntity* pEntity = gEnv->pEntitySystem->GetEntity(ledgeInfo.GetEntityId());
-					CryWatch("[LEDGEGRAB] $5%s nearest ledge: %s%s%s%s, transition=%s", actorComponent.GetEntity()->GetEntityTextDescription(), pEntity ? pEntity->GetEntityTextDescription() : "none", ledgeInfo.AreFlagsSet(kLedgeFlag_isThin) ? " THIN" : "", ledgeInfo.AreFlagsSet(kLedgeFlag_isWindow) ? " WINDOW" : "", ledgeInfo.AreFlagsSet(kLedgeFlag_endCrouched) ? " ENDCROUCHED" : "", transitionName);
+					CryWatch("[LEDGEGRAB] $5%s nearest ledge: %s%s%s%s, transition=%s", actorControllerComponent.GetEntity()->GetEntityTextDescription(), pEntity ? pEntity->GetEntityTextDescription() : "none", ledgeInfo.AreFlagsSet(kLedgeFlag_isThin) ? " THIN" : "", ledgeInfo.AreFlagsSet(kLedgeFlag_isWindow) ? " WINDOW" : "", ledgeInfo.AreFlagsSet(kLedgeFlag_endCrouched) ? " ENDCROUCHED" : "", transitionName);
 				}
 
 #endif
 
-				if (actorComponent.m_jumpButtonIsPressed || enableVaultFromStandingCVar == 3)
+				if (actorControllerComponent.m_jumpButtonIsPressed || enableVaultFromStandingCVar == 3)
 				{
 					ledgeTransition.m_comingFromOnGround = true;
-					ledgeTransition.m_comingFromSprint = actorComponent.IsSprinting();
+					ledgeTransition.m_comingFromSprint = actorControllerComponent.IsSprinting();
 
 					SStateEventLedge ledgeEvent(ledgeTransition);
-					actorComponent.StateMachineHandleEventMovement(ledgeEvent);
+					actorControllerComponent.StateMachineHandleEventMovement(ledgeEvent);
 					return true;
 				}
 				else
@@ -315,10 +315,10 @@ bool CActorStateGround::CheckForVaultTrigger(IActorComponent & actorComponent, f
 }
 
 
-void CActorStateGround::OnUpdate(IActorComponent& actorComponent, float frameTime)
+void CActorStateGround::OnUpdate(CActorControllerComponent& actorControllerComponent, float frameTime)
 {}
 
 
-void CActorStateGround::OnExit(IActorComponent& actorComponent)
+void CActorStateGround::OnExit(CActorControllerComponent& actorControllerComponent)
 {}
 }

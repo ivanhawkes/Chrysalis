@@ -1,10 +1,9 @@
 #include <StdAfx.h>
 
 #include "ActorStateSwimWaterTestProxy.h"
-#include <Actor/Actor.h>
+#include <Actor/ActorControllerComponent.h>
 #include <CryAction.h>
 #include <CryActionPhysicQueues.h>
-/*#include "CharacterRotation.h"*/
 
 
 namespace Chrysalis
@@ -59,12 +58,12 @@ void CActorStateSwimWaterTestProxy::Reset(bool bCancelRays)
 }
 
 
-void CActorStateSwimWaterTestProxy::OnEnterWater(const IActorComponent& actorComponent)
+void CActorStateSwimWaterTestProxy::OnEnterWater(const CActorControllerComponent& actorControllerComponent)
 {
 	// Force refresh water level (needed for serialization, when state is forced when loading a saved game).
-	const Matrix34& CharacterWorldTM = actorComponent.GetEntity()->GetWorldTM();
+	const Matrix34& CharacterWorldTM = actorControllerComponent.GetEntity()->GetWorldTM();
 	const Vec3 CharacterWorldPos = CharacterWorldTM.GetTranslation();
-	const Vec3 localReferencePos = GetLocalReferencePosition(actorComponent);
+	const Vec3 localReferencePos = GetLocalReferencePosition(actorControllerComponent);
 	const Vec3 worldReferencePos = CharacterWorldPos + (Quat(CharacterWorldTM) * localReferencePos);
 
 	m_waterLevel = gEnv->p3DEngine->GetWaterLevel(&worldReferencePos);
@@ -75,13 +74,13 @@ void CActorStateSwimWaterTestProxy::OnEnterWater(const IActorComponent& actorCom
 }
 
 
-void CActorStateSwimWaterTestProxy::OnExitWater(const IActorComponent& actorComponent)
+void CActorStateSwimWaterTestProxy::OnExitWater(const CActorControllerComponent& actorControllerComponent)
 {
 	Reset(true);
 }
 
 
-void CActorStateSwimWaterTestProxy::Update(const IActorComponent& actorComponent, const float frameTime)
+void CActorStateSwimWaterTestProxy::Update(const CActorControllerComponent& actorControllerComponent, const float frameTime)
 {
 	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
 
@@ -101,21 +100,21 @@ void CActorStateSwimWaterTestProxy::Update(const IActorComponent& actorComponent
 			{
 				Reset(true);
 			}
-			UpdateOutOfWater(actorComponent, frameTime);
+			UpdateOutOfWater(actorControllerComponent, frameTime);
 			newSwimmingTimer = m_swimmingTimer - frameTime;
 			break;
 		}
 
 		case eProxyInternalState_PartiallySubmerged:
 		{
-			UpdateInWater(actorComponent, frameTime);
+			UpdateInWater(actorControllerComponent, frameTime);
 			newSwimmingTimer = m_swimmingTimer - frameTime;
 			break;
 		}
 
 		case eProxyInternalState_Swimming:
 		{
-			UpdateInWater(actorComponent, frameTime);
+			UpdateInWater(actorControllerComponent, frameTime);
 			newSwimmingTimer = m_swimmingTimer + frameTime;
 			break;
 		}
@@ -125,16 +124,16 @@ void CActorStateSwimWaterTestProxy::Update(const IActorComponent& actorComponent
 }
 
 
-void CActorStateSwimWaterTestProxy::ForceUpdateBottomLevel(const IActorComponent& actorComponent)
+void CActorStateSwimWaterTestProxy::ForceUpdateBottomLevel(const CActorControllerComponent& actorControllerComponent)
 {
 	if (!IsWaitingForBottomLevelResults())
 	{
-		RayTestBottomLevel(actorComponent, actorComponent.GetEntity()->GetWorldPos(), CActorStateSwimWaterTestProxy::GetRayLength());
+		RayTestBottomLevel(actorControllerComponent, actorControllerComponent.GetEntity()->GetWorldPos(), CActorStateSwimWaterTestProxy::GetRayLength());
 	}
 }
 
 
-void CActorStateSwimWaterTestProxy::PreUpdateNotSwimming(const IActorComponent& actorComponent, const float frameTime)
+void CActorStateSwimWaterTestProxy::PreUpdateNotSwimming(const CActorControllerComponent& actorControllerComponent, const float frameTime)
 {
 	const float submergedThreshold = 0.25f;
 	m_lastInternalState = m_internalState;
@@ -142,22 +141,22 @@ void CActorStateSwimWaterTestProxy::PreUpdateNotSwimming(const IActorComponent& 
 }
 
 
-void CActorStateSwimWaterTestProxy::PreUpdateSwimming(const IActorComponent& actorComponent, const float frameTime)
+void CActorStateSwimWaterTestProxy::PreUpdateSwimming(const CActorControllerComponent& actorControllerComponent, const float frameTime)
 {
 	m_lastInternalState = m_internalState;
 	m_internalState = eProxyInternalState_Swimming;
 }
 
 
-void CActorStateSwimWaterTestProxy::UpdateOutOfWater(const IActorComponent& actorComponent, const float frameTime)
+void CActorStateSwimWaterTestProxy::UpdateOutOfWater(const CActorControllerComponent& actorControllerComponent, const float frameTime)
 {
 	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
 
 	// Out of water, only query water level to figure out if Character / AI is in contact with a water volume.
-	const Matrix34& CharacterWorldTM = actorComponent.GetEntity()->GetWorldTM();
+	const Matrix34& CharacterWorldTM = actorControllerComponent.GetEntity()->GetWorldTM();
 	const Vec3 CharacterWorldPos = CharacterWorldTM.GetTranslation();
 
-	const Vec3 localReferencePos = GetLocalReferencePosition(actorComponent);
+	const Vec3 localReferencePos = GetLocalReferencePosition(actorControllerComponent);
 
 	// Note: Try to tune value and set to higher value possible which works well.
 	const bool lastCheckFarAwayEnough = ((m_lastWaterLevelCheckPosition - CharacterWorldPos).len2() >= sqr(0.6f));
@@ -166,7 +165,7 @@ void CActorStateSwimWaterTestProxy::UpdateOutOfWater(const IActorComponent& acto
 	if (lastCheckFarAwayEnough)
 	{
 		const Vec3 worldReferencePos = CharacterWorldPos + (Quat(CharacterWorldTM) * localReferencePos);
-		IPhysicalEntity* piPhysEntity = actorComponent.GetEntity()->GetPhysics();
+		IPhysicalEntity* piPhysEntity = actorControllerComponent.GetEntity()->GetPhysics();
 
 		UpdateWaterLevel(worldReferencePos, CharacterWorldPos, piPhysEntity);
 	}
@@ -176,14 +175,14 @@ void CActorStateSwimWaterTestProxy::UpdateOutOfWater(const IActorComponent& acto
 }
 
 
-void CActorStateSwimWaterTestProxy::UpdateInWater(const IActorComponent& actorComponent, const float frameTime)
+void CActorStateSwimWaterTestProxy::UpdateInWater(const CActorControllerComponent& actorControllerComponent, const float frameTime)
 {
 	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
 
-	const Matrix34& CharacterWorldTM = actorComponent.GetEntity()->GetWorldTM();
+	const Matrix34& CharacterWorldTM = actorControllerComponent.GetEntity()->GetWorldTM();
 	const Vec3 CharacterWorldPos = CharacterWorldTM.GetTranslation();
 
-	const Vec3 localReferencePos = GetLocalReferencePosition(actorComponent);
+	const Vec3 localReferencePos = GetLocalReferencePosition(actorControllerComponent);
 	const Vec3 worldReferencePos = CharacterWorldPos + (Quat(CharacterWorldTM) * localReferencePos);
 
 	const bool shouldUpdate =
@@ -193,9 +192,9 @@ void CActorStateSwimWaterTestProxy::UpdateInWater(const IActorComponent& actorCo
 
 	if (shouldUpdate && !IsWaitingForBottomLevelResults())
 	{
-		RayTestBottomLevel(actorComponent, worldReferencePos, s_rayLength);
+		RayTestBottomLevel(actorControllerComponent, worldReferencePos, s_rayLength);
 
-		IPhysicalEntity* piPhysEntity = actorComponent.GetEntity()->GetPhysics();
+		IPhysicalEntity* piPhysEntity = actorControllerComponent.GetEntity()->GetPhysics();
 
 		UpdateWaterLevel(worldReferencePos, CharacterWorldPos, piPhysEntity);
 
@@ -214,7 +213,7 @@ void CActorStateSwimWaterTestProxy::UpdateInWater(const IActorComponent& actorCo
 
 	m_relativeBottomLevel = (m_bottomLevel > BOTTOM_LEVEL_UNKNOWN) ? m_waterLevel - m_bottomLevel : 0.0f;
 
-	const float localHeadZ = actorComponent.GetLocalEyePos().z + 0.2f;
+	const float localHeadZ = actorControllerComponent.GetLocalEyePos().z + 0.2f;
 	const float worldHeadZ = CharacterWorldPos.z + localHeadZ;
 
 	const bool headWasUnderWater = m_headUnderwater;
@@ -233,7 +232,7 @@ void CActorStateSwimWaterTestProxy::UpdateInWater(const IActorComponent& actorCo
 		m_shouldSwim = ShouldSwim(max(localReferencePos.z, 1.3f)) && (m_swimmingTimer < -0.5f);
 	}
 #ifdef STATE_DEBUG
-	DebugDraw(actorComponent, worldReferencePos);
+	DebugDraw(actorControllerComponent, worldReferencePos);
 #endif
 }
 
@@ -271,22 +270,22 @@ bool CActorStateSwimWaterTestProxy::ShouldSwim(const float referenceHeight) cons
 }
 
 
-Vec3 CActorStateSwimWaterTestProxy::GetLocalReferencePosition(const IActorComponent& actorComponent)
+Vec3 CActorStateSwimWaterTestProxy::GetLocalReferencePosition(const CActorControllerComponent& actorControllerComponent)
 {
 	/*const float CAMERA_SURFACE_OFFSET = -0.2f;
 
 	Vec3 localReferencePos = ZERO;
-	if (!actorComponent.IsThirdPerson ())
+	if (!actorControllerComponent.IsThirdPerson ())
 	{
 	// We get a smoother experience in FP if we work relative to the camera
-	localReferencePos = actorComponent.GetFPCameraPosition (false);
+	localReferencePos = actorControllerComponent.GetFPCameraPosition (false);
 	localReferencePos.z += CAMERA_SURFACE_OFFSET;
 	}
-	else if (actorComponent.HasBoneID (BONE_SPINE3))
+	else if (actorControllerComponent.HasBoneID (BONE_SPINE3))
 	{
 	localReferencePos.x = 0.0f;
 	localReferencePos.y = 0.0f;
-	localReferencePos.z = actorComponent.GetBoneTransform (BONE_SPINE3).t.z;
+	localReferencePos.z = actorControllerComponent.GetBoneTransform (BONE_SPINE3).t.z;
 
 	#if !defined(_RELEASE)
 	bool bLocalRefPosValid = localReferencePos.IsValid ();
@@ -321,7 +320,7 @@ void CActorStateSwimWaterTestProxy::OnRayCastBottomLevelDataReceived(const Queue
 }
 
 
-void CActorStateSwimWaterTestProxy::RayTestBottomLevel(const IActorComponent& actorComponent, const Vec3& referencePosition, float maxRelevantDepth)
+void CActorStateSwimWaterTestProxy::RayTestBottomLevel(const CActorControllerComponent& actorControllerComponent, const Vec3& referencePosition, float maxRelevantDepth)
 {
 	/*	FUNCTION_PROFILER (gEnv->pSystem, PROFILE_GAME);
 
@@ -339,7 +338,7 @@ void CActorStateSwimWaterTestProxy::RayTestBottomLevel(const IActorComponent& ac
 		CRY_ASSERT (m_bottomLevelRayID == 0);
 
 		m_bottomLevelRayID = CCryAction::GetCryAction()->GetPhysicQueues().GetRayCaster().Queue (
-		actorComponent.IsClient () ? RayCastRequest::HighPriority : RayCastRequest::MediumPriority,
+		actorControllerComponent.IsClient () ? RayCastRequest::HighPriority : RayCastRequest::MediumPriority,
 		RayCastRequest (referencePosition + Vec3 (0, 0, padding), Vec3 (0, 0, -rayLength),
 		entityFlags,
 		rayFlags,
@@ -368,17 +367,17 @@ void CActorStateSwimWaterTestProxy::UpdateWaterLevel(const Vec3& worldReferenceP
 
 
 #ifdef STATE_DEBUG
-void CActorStateSwimWaterTestProxy::DebugDraw(const IActorComponent& actorComponent, const Vec3& referencePosition)
+void CActorStateSwimWaterTestProxy::DebugDraw(const CActorControllerComponent& actorControllerComponent, const Vec3& referencePosition)
 {
 	// DEBUG RENDERING
-	/*const SActorStats& stats = *actorComponent.GetActorState ();
+	/*const SActorStats& stats = *actorControllerComponent.GetActorState ();
 	const bool debugSwimming = (g_pGameCVars->cl_debugSwimming != 0);
 
 	if (debugSwimming && (m_actorWaterLevel > -10.0f) && (m_actorWaterLevel < 10.0f))
 	{
 	const Vec3 surfacePosition (referencePosition.x, referencePosition.y, m_waterLevel);
 
-	const Vec3 vRight (actorComponent.GetBaseQuat ().GetColumn0 ());
+	const Vec3 vRight (actorControllerComponent.GetBaseQuat ().GetColumn0 ());
 
 	const static ColorF referenceColor (1, 1, 1, 1);
 	const static ColorF surfaceColor1 (0, 0.5f, 1, 1);

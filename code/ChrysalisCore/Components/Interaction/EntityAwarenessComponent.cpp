@@ -6,7 +6,7 @@
 #include <IMovementController.h>
 #include "Components/Player/PlayerComponent.h"
 #include <Actor/Character/Character.h>
-#include <Actor/Actor.h>
+#include <Actor/ActorComponent.h>
 #include <Components/Player/Camera/ICameraComponent.h>
 #include <Components/Interaction/EntityInteractionComponent.h>
 #include <Console/CVars.h>
