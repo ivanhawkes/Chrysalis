@@ -1,5 +1,5 @@
 <cryasset>
- <AssetMetadata version="0" type="Texture" guid="{FF19B0F0-18D2-FD2F-3C36-0DBA0C09CDBD}" source="chloe_top_diff.tif">
+ <AssetMetadata version="0" type="Texture" guid="ff19b0f0-18d2-fd2f-3c36-0dba0c09cdbd" source="chloe_top_diff.tif">
   <Files>
    <File path="chloe_top_diff.dds"/>
   </Files>

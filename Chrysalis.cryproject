@@ -1,6 +1,10 @@
 {
     "console_variables": [
         {
+            "name": "camera_manager_default_camera",
+            "value": "1"
+        },
+        {
             "name": "entity_awareness_Debug",
             "value": "8"
         },
@@ -35,6 +39,10 @@
         {
             "name": "s_AudioImplName",
             "value": "CryAudioImplWwise"
+        },
+        {
+            "name": "ca_useIMG_AIM",
+            "value": "0"
         },
         {
             "name": "ed_usedevmanager",

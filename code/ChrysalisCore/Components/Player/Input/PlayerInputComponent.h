@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IPlayerInputComponent.h"
+#include "PlayerInputComponent.h"
 #include <IActionMapManager.h>
 #include "Components/Player/PlayerComponent.h"
 #include <DefaultComponents/Input/InputComponent.h>
@@ -11,8 +11,51 @@ namespace Chrysalis
 class CPlayerComponent;
 class CCameraManagerComponent;
 
+enum class EInputFlagType
+{
+	Hold = 0,
+	Toggle
+};
+
+typedef uint8 TInputFlags;
+
+enum class EInputFlag
+	: TInputFlags
+{
+	None = 0,
+	Left = 1 << 0,
+	Right = 1 << 1,
+	Forward = 1 << 2,
+	Backward = 1 << 3
+};
+
+
+// HACK: This should be generically useful and so should get moved to a utility file.
+template<typename T>
+struct TListener
+{
+	void AddEventListener(T* pListener)
+	{
+		assert(pListener);
+		if (pListener)
+			stl::push_back_unique(m_ListenersList, pListener);
+	}
+
+	void RemoveEventListener(T* pListener)
+	{
+		assert(pListener);
+		m_ListenersList.remove(pListener);
+	}
+
+	std::list<T*> GetListeners() { return m_ListenersList; }
+
+private:
+	std::list<T*> m_ListenersList;
+};
+
+
 class CPlayerInputComponent
-	: public IPlayerInputComponent
+	: public IEntityComponent
 {
 protected:
 	friend CChrysalisCorePlugin;
@@ -28,7 +71,7 @@ protected:
 
 public:
 	CPlayerInputComponent() {}
-	virtual ~CPlayerInputComponent();
+	virtual ~CPlayerInputComponent() {};
 
 	static void ReflectType(Schematyc::CTypeDesc<CPlayerInputComponent>& desc);
 
@@ -38,35 +81,96 @@ public:
 		return id;
 	}
 
-	// ***
-	// ***  IPlayerInputComponent
-	// ***
 
-public:
+	/**
+	Given the current input state, calculate a vector that represents the direction the player wishes their character
+	to move. The vector is normalised. Movement will only be affected along the X and Y axis, since we are not presently
+	processing Z input (up). This should be sufficient for most RPG style games.
+	
+	\param	baseRotation	The vector will be calculated using this rotation as a base and then applying the input
+							requests relative to this direction.
+	
+	\return The calculated movement direction.
+	**/
+	Vec3 GetMovement(const Quat& baseRotation);
 
-	virtual void ResetMovementState();
-	virtual void ResetActionState();
 
-	Vec3 GetMovement(const Quat& baseRotation) override;
-	Ang3 GetRotationDelta() override { return Ang3(m_lastPitchDelta, 0.0f, m_lastYawDelta); }
-	float GetPitchDelta() override { return m_lastPitchDelta; }
-	float GetYawDelta() override { return m_lastYawDelta; };
+	/**
+	Given the current input state, calculate an angular vector that represents the rotation the player has requested
+	using the mouse / xbox controller / etc.
+	
+	This is typically used to rotate the character and the camera.
+	
+	\return The rotation.
+	**/
+	Ang3 GetRotationDelta() { return Ang3(m_lastPitchDelta, 0.0f, m_lastYawDelta); }
 
-	// Separate values for delta from each device. Useful when some values need inversion based on circumstances.
-	float GetMousePitchDelta() override { return m_lastMousePitchDelta; }
-	float GetMouseYawDelta() override { return m_lastMouseYawDelta; };
-	float GetXiPitchDelta() override { return m_lastXiPitchDelta; }
-	float GetXiYawDelta() override { return m_lastXiYawDelta; };
-	float GetZoomDelta() override { return m_lastZoomDelta; };
 
-	/** Provides access to the raw input movement directions as a set of flags for forward, backward, left and right.
-	See EmovementDirectionFlags for the relevant flags. */
+	/**
+	Gets the combined pitch delta from all devices.
+	
+	\return The pitch delta.
+	**/
+	float GetPitchDelta() { return m_lastPitchDelta; }
+
+
+	/**
+	Gets the combined yaw delta from all devices.
+	
+	\return The yaw delta.
+	**/
+	float GetYawDelta() { return m_lastYawDelta; };
+
+
+	/**
+	Gets the pitch delta from the mouse.
+	
+	\return The pitch delta.
+	**/
+	float GetMousePitchDelta() { return m_lastMousePitchDelta; }
+
+
+	/**
+	Gets the yaw delta from the mouse.
+	
+	\return The yaw delta.
+	**/
+	float GetMouseYawDelta() { return m_lastMouseYawDelta; };
+
+
+	/**
+	Gets the pitch delta from the XBOX controller.
+	
+	\return The pitch delta.
+	**/
+	float GetXiPitchDelta() { return m_lastXiPitchDelta; }
+
+
+	/**
+	Gets the yaw delta from the XBOX controller.
+	
+	\return The yaw delta.
+	**/
+	float GetXiYawDelta() { return m_lastXiYawDelta; };
+
+
+	/**
+	Provides access to the raw input movement directions as a set of flags for forward, backward, left and right. See
+	EmovementDirectionFlags for the relevant flags.
+	
+	\return The movement direction flags.
+	**/
 	TInputFlags GetMovementDirectionFlags() const { return m_inputFlags; };
 
-	Vec3 GetHeadMovement(const Quat& baseRotation) override { return Vec3(0.0f, 0.0f, 0.0f); }
-	Ang3 GetHeadRotationDelta() override { return Ang3(0.0f, 0.0f, 0.0f); }
-	float GetHeadPitchDelta() override { return 0.0f; }
-	float GetHeadYawDelta() override { return 0.0f; }
+
+	/** Listen for 'special' keys and be notified when they are input e.g. ESC, Examine. */
+	struct IInputSpecialListener
+	{
+		virtual ~IInputSpecialListener() {};
+
+		virtual void OnInputSpecialEsc() = 0;
+		virtual void OnInputSpecialExamine() = 0;
+	};
 
 
 	/**
@@ -74,12 +178,7 @@ public:
 
 	\return The special listener.
 	**/
-	TListener<IInputSpecialListener> GetSpecialListener() override { return m_listenersSpecial; }
-
-
-	// ***
-	// ***  CPlayerInputComponent
-	// ***
+	TListener<IInputSpecialListener> GetSpecialListener() { return m_listenersSpecial; }
 
 protected:
 	void OnActionEscape(int activationMode, float value);
@@ -142,14 +241,6 @@ protected:
 	**/
 	void OnNumpad(int activationMode, int buttonId);
 
-	/**	Camera debug actions. **/
-	void OnActionCameraShiftUp(int activationMode, float value);
-	void OnActionCameraShiftDown(int activationMode, float value);
-	void OnActionCameraShiftLeft(int activationMode, float value);
-	void OnActionCameraShiftRight(int activationMode, float value);
-	void OnActionCameraShiftForward(int activationMode, float value);
-	void OnActionCameraShiftBackward(int activationMode, float value);
-
 	void OnActionInspectStart(int activationMode, float value);
 	void OnActionInspect(int activationMode, float value);
 	void OnActionInspectEnd(int activationMode, float value);
@@ -162,21 +253,16 @@ protected:
 
 
 private:
-
 	/** Registers the action maps and starts to listen for action map events. */
 	void RegisterActionMaps();
 
 	void HandleInputFlagChange(TInputFlags flags, int activationMode, EInputFlagType type = EInputFlagType::Hold);
 
 	/** The input component */
-	Cry::DefaultComponents::CInputComponent* m_pInputComponent = nullptr;
+	Cry::DefaultComponents::CInputComponent* m_pInputComponent { nullptr };
 
 	/** The movement mask. */
 	TInputFlags m_inputFlags { (TInputFlags) EInputFlag::None };
-
-	/** Drop incoming actions if this is false. Prevents actions arriving after we start to shut down from being serviced. */
-	// TODO: this was to fix a bug in cryaction, and can probably be removed now.
-	bool m_allowActions { false };
 
 	/**
 	Should we invert the Y axis for mouse camera movements? This is preferred by some players, particularly those
@@ -236,12 +322,6 @@ private:
 	mouse movements and XBox controllers, making it easier to perform precise movements in only one axis.
 	*/
 	float m_xiYawFilter { 0.0001f };
-
-	/**	Zoom delta. A value that indicates how much they wish to zoom in (negative values) or out (positive values). **/
-	float m_zoomDelta { 0.0f };
-
-	/**	Last zoom delta. **/
-	float m_lastZoomDelta { 0.0f };
 
 	/** Listeners for special keystrokes. */
 	TListener<IInputSpecialListener> m_listenersSpecial;

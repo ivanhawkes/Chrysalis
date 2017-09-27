@@ -18,7 +18,6 @@
 #include <Actor/Movement/StateMachine/ActorStateEvents.h>
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
 #include <Actor/ActorControllerComponent.h>
-#include <Components/Player/Input/IPlayerInputComponent.h>
 #include "Components/Player/PlayerComponent.h"
 #include <Components/Player/Camera/ICameraComponent.h>
 #include <Components/Interaction/EntityAwarenessComponent.h>
@@ -322,6 +321,17 @@ Vec3 CActorComponent::GetLocalRightHandPos() const
 }
 
 
+bool CActorComponent::IsViewFirstPerson() const
+{
+	// The view is always considered third person, unless the local player is controlling this actor, and their view is
+	// set to a first person view. 
+	if (m_pPlayer && m_pPlayer->IsLocalPlayer())
+		return m_pPlayer->GetCamera()->IsViewFirstPerson();
+
+	return false;
+}
+
+
 // ***
 // *** IActorEventListener
 // ***
@@ -444,7 +454,7 @@ const bool CActorComponent::IsClient() const
 }
 
 
-void CActorComponent::OnToggleThirdPerson()
+void CActorComponent::OnToggleFirstPerson()
 {
 	// We might need to switch character models or scopes.
 	OnResetState();
@@ -457,15 +467,15 @@ void CActorComponent::OnResetState()
 
 	// Select a character definition based on first / third person mode. Hard coding the default scope isn't a great
 	// idea, but it's good enough for now. 
-	if (IsThirdPerson())
-	{
-		m_pAdvancedAnimationComponent->SetCharacterFile(m_geometryThirdPerson.value);
-		m_pAdvancedAnimationComponent->SetDefaultScopeContextName("Char3P");
-	}
-	else
+	if (IsViewFirstPerson())
 	{
 		m_pAdvancedAnimationComponent->SetCharacterFile(m_geometryFirstPerson.value);
 		m_pAdvancedAnimationComponent->SetDefaultScopeContextName("Char1P");
+	}
+	else
+	{
+		m_pAdvancedAnimationComponent->SetCharacterFile(m_geometryThirdPerson.value);
+		m_pAdvancedAnimationComponent->SetDefaultScopeContextName("Char3P");
 	}
 
 	// You need to reset the character after changing the animation properties.
@@ -480,8 +490,8 @@ void CActorComponent::OnResetState()
 		pActionController->Queue(*locomotionAction);
 
 		// HACK: quick way to get some debug info out. Need to filter it to only one entity to prevent overlays.
-		if (strcmp(GetEntity()->GetName(), "Hero") == 0)
-			pActionController->SetFlag(AC_DebugDraw, true);
+		//if (strcmp(GetEntity()->GetName(), "Hero") == 0)
+		//	pActionController->SetFlag(AC_DebugDraw, true);
 	}
 
 	// Mannequin should also be reset.
@@ -506,7 +516,7 @@ void CActorComponent::OnResetState()
 //		//	SAnimationContext &animContext = m_pActionController->GetContext();
 //		//	animContext.state.Set(g_actorMannequinParams.tagIDs.localClient, IsClient());
 //		//	animContext.state.SetGroup(g_actorMannequinParams.tagGroupIDs.playMode, gEnv->bMultiplayer ? g_actorMannequinParams.tagIDs.MP : g_actorMannequinParams.tagIDs.SP);
-//		//	animContext.state.Set(g_actorMannequinParams.tagIDs.FP, !IsThirdPerson());
+//		//	animContext.state.Set(g_actorMannequinParams.tagIDs.FP, IsViewFirstPerson());
 //
 //		//	SetStanceTag(m_pCharacterControllerComponent->GetStance(), animContext.state);
 //

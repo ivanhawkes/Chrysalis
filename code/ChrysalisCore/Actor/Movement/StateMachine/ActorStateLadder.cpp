@@ -316,8 +316,6 @@ void CActorStateLadder::OnUseLadder(CActorControllerComponent& actorControllerCo
 	CRY_ASSERT (actorControllerComponent.IsOnLadder ());
 	actorControllerComponent.UpdateVisibility ();
 
-	m_CharacterIsThirdPerson = actorControllerComponent.IsThirdPerson ();
-
 	if (actorControllerComponent.IsClient ())
 	{
 	actorControllerComponent.GetCharacterInput ()->AddInputCancelHandler (this);
@@ -530,7 +528,7 @@ void CActorStateLadder::OnExit(CActorControllerComponent& actorControllerCompone
 	bool ladderUseThirdPerson = false;
 	EntityScripts::GetEntityProperty (pLadder, "Camera", "bUseThirdPersonCamera", ladderUseThirdPerson);
 
-	if (ladderUseThirdPerson && !m_CharacterIsThirdPerson)
+	if (ladderUseThirdPerson && actorControllerComponent.IsViewFirstPerson())
 	{
 	actorControllerComponent.SetThirdPerson (false);
 	}

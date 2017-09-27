@@ -3,7 +3,7 @@
 #include "PlayerComponent.h"
 #include <Components/Items/ItemComponent.h>
 #include <Item/Weapon/Weapon.h>
-#include <Actor/Character/Character.h>
+#include <Actor/Character/CharacterComponent.h>
 #include "Camera/CameraManagerComponent.h"
 #include <Components/Player/Input/PlayerInputComponent.h>
 #include <Actor/ActorComponent.h>
@@ -36,6 +36,8 @@ void CPlayerComponent::Initialize()
 {
 	const auto pEntity = GetEntity();
 
+	CryLogAlways("The player Id is %d - should be 30583.", GetEntityId());
+
 	// Create a camera manager for this player. We do this early, since character attachment code needs to make calls
 	// to a functioning camera.
 	m_pCameraManager = pEntity->CreateComponent<CCameraManagerComponent>();
@@ -67,22 +69,9 @@ void CPlayerComponent::ProcessEvent(SEntityEvent& event)
 }
 
 
-bool CPlayerComponent::IsThirdPerson() const
+bool CPlayerComponent::IsViewFirstPerson() const
 {
-	return m_pCameraManager->IsThirdPerson();
-}
-
-
-void CPlayerComponent::OnToggleThirdPerson()
-{
-	// Track first / third person for each actor.
-	m_pCameraManager->ToggleThirdPerson();
-
-	// If we switched view modes, we may need to load a new animation context.
-	if (auto pActorComponent = GetLocalActor())
-	{
-		pActorComponent->OnToggleThirdPerson();
-	}
+	return m_pCameraManager->GetCamera()->IsViewFirstPerson();
 }
 
 
@@ -99,11 +88,6 @@ void CPlayerComponent::AttachToCharacter(EntityId characterId)
 
 			// Inform the camera system we are now watching a different entity.
 			m_pCameraManager->AttachToEntity(m_cameraTargetId);
-
-			// Flip the camera between FP / TP if needed.
-			// TODO: Needed or not?
-			//if (pActorComponent->IsThirdPerson() != IsThirdPerson())
-			//	OnToggleThirdPerson();
 		}
 	}
 }
@@ -167,6 +151,17 @@ void CPlayerComponent::Revive()
 	{
 		pActorComponent->Revive();
 	}
+}
+
+
+void CPlayerComponent::NetworkClientConnect()
+{
+	// We want to make it simple to attach to the default entity 'hero' when entering a game as the local player. This
+	// behaviour isn't strictly correct, but it's good enough for now.
+	if (IsLocalPlayer())
+		AttachToHero();
+
+	Revive();
 }
 
 

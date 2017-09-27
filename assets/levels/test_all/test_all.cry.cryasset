@@ -1,4 +1,4 @@
-<AssetMetadata version="0" type="Level" guid="6a24092c-8178-7499-9d2e-527f90fbbe97" source="">
+<AssetMetadata version="0" type="Level" guid="6a24092c-8178-7499-9d2e-527f90fbbe97">
  <Files>
   <File path="test_all.cry"/>
  </Files>
@@ -101,4 +101,5 @@
   <Path>objects/characters/human/male/textures/human_male_diff.dds</Path>
   <Path>objects/characters/human/male/textures/human_male_spec.dds</Path>
  </Dependencies>
+ <Details />
 </AssetMetadata>

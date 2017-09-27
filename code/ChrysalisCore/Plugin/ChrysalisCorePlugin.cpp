@@ -21,7 +21,7 @@
 #include "Actor/Character/CharacterAttributesComponent.h"
 #include "Actor/ActorComponent.h"
 #include "Actor/ActorControllerComponent.h"
-#include "Actor/Character/Character.h"
+#include <Actor/Character/CharacterComponent.h>
 #include "Actor/Mount/Mount.h"
 #include "Actor/Pet/Pet.h"
 #include "Components/Items/ItemComponent.h"
@@ -113,7 +113,7 @@ void CChrysalisCorePlugin::RegisterComponents(Schematyc::IEnvRegistrar& registra
 		{
 			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CActorControllerComponent));
 			Chrysalis::CActorControllerComponent::Register(componentScope);
-		}		
+		}
 		{
 			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CCharacterComponent));
 			Chrysalis::CCharacterComponent::Register(componentScope);
@@ -244,7 +244,7 @@ void CChrysalisCorePlugin::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UI
 			{
 				// Call all static callback registered with the CRY_STATIC_AUTO_REGISTER_WITH_PARAM
 				Detail::CStaticAutoRegistrar<Schematyc::IEnvRegistrar&>::InvokeStaticCallbacks(registrar);
-				
+
 				// Register our components.
 				RegisterComponents(registrar);
 			};
@@ -297,12 +297,14 @@ void CChrysalisCorePlugin::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UI
 		break;
 
 		case ESYSTEM_EVENT_LEVEL_LOAD_END:
-		{
-			auto pPlayer = CPlayerComponent::GetLocalPlayer();
-			if (pPlayer)
-				pPlayer->AttachToHero();
-		}
-		break;
+			// In the editor, we wait until now before attempting to connect to the local player. This is to ensure all the
+			// entities are already loaded and initialised. It works differently in game mode. 
+			if (gEnv->IsEditor())
+			{
+				if (auto pPlayer = CPlayerComponent::GetLocalPlayer())
+					pPlayer->NetworkClientConnect();
+			}
+			break;
 	}
 }
 
@@ -315,8 +317,29 @@ bool CChrysalisCorePlugin::OnClientConnectionReceived(int channelId, bool bIsRes
 	spawnParams.sName = "Player";
 	spawnParams.nFlags |= ENTITY_FLAG_NEVER_NETWORK_STATIC;
 
-	// Set local player details
-	if (m_players.size() == 0 && !gEnv->IsDedicated())
+	// Determine if this channel is the local player channel. The first player to connect is considered the local
+	// player, and this will rollover to new maps when they are loaded. 
+	bool isLocal { false };
+	if (!gEnv->IsDedicated())
+	{
+		if (m_players.size() == 0)
+		{
+			// We're the first channel to connect, we must be the local player.
+			isLocal = true;
+		}
+		else
+		{
+			// If the Id we previously assigned the channel matches the LOCAL_PLAYER_ENTITY_ID, then we know this channel is
+			// the local player. 
+			const auto player = m_players.find(channelId);
+			if ((player != m_players.end()) && (player->second == LOCAL_PLAYER_ENTITY_ID))
+				isLocal = true;
+		}
+	}
+
+	// If this is the local player, then it needs to be tagged and given the local player Id in order for calls to
+	// CPlayerComponent::GetLocalPlayer() to work.
+	if (isLocal)
 	{
 		spawnParams.id = LOCAL_PLAYER_ENTITY_ID;
 		spawnParams.nFlags |= ENTITY_FLAG_LOCAL_PLAYER;
@@ -342,17 +365,12 @@ bool CChrysalisCorePlugin::OnClientConnectionReceived(int channelId, bool bIsRes
 
 bool CChrysalisCorePlugin::OnClientReadyForGameplay(int channelId, bool bIsReset)
 {
-	// Revive players when the network reports that the client is connected and ready for gameplay
-	auto it = m_players.find(channelId);
-	if (it != m_players.end())
+	// In game mode, we can attempt to connect to the local player at this point. This is because all the entities
+	// should already be loaded and initialised by now. It works differently in the editor. 
+	if (!gEnv->IsEditor())
 	{
-		if (IEntity* pPlayerEntity = gEnv->pEntitySystem->GetEntity(it->second))
-		{
-			if (CPlayerComponent* pPlayer = pPlayerEntity->GetComponent<CPlayerComponent>())
-			{
-				pPlayer->Revive();
-			}
-		}
+		if (auto pPlayer = CPlayerComponent::GetLocalPlayer())
+			pPlayer->NetworkClientConnect();
 	}
 
 	return true;

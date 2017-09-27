@@ -105,7 +105,7 @@ void CActorControllerComponent::PrePhysicsUpdate()
 	//	//			// NOTE: outputting this info here is 'was happened last frame' not 'what was decided this frame' as it occurs before the prePhysicsEvent is dispatched
 	//	//			// also IsOnGround and IsInAir can possibly both be false e.g. - if you're swimming
 	//	//			// May be able to remove this log now the new HSM debugging is in if it offers the same/improved functionality
-	//	//			CryWatch("%s stance=%s flyMode=%d %s %s%s%s%s", GetEntity()->GetEntityTextDescription(), GetStanceName(GetStance()), m_actorState.flyMode, IsOnGround() ? "ON-GROUND" : "IN-AIR", IsThirdPerson() ? "THIRD-PERSON" : "FIRST-PERSON", IsDead() ? "DEAD" : "ALIVE", m_actorState.isScoped ? " SCOPED" : "", m_actorState.isInBlendRagdoll ? " FALLNPLAY" : "");
+	//	//			CryWatch("%s stance=%s flyMode=%d %s %s%s%s%s", GetEntity()->GetEntityTextDescription(), GetStanceName(GetStance()), m_actorState.flyMode, IsOnGround() ? "ON-GROUND" : "IN-AIR", IsViewFirstPerson() ? "FIRST-PERSON" : "THIRD-PERSON", IsDead() ? "DEAD" : "ALIVE", m_actorState.isScoped ? " SCOPED" : "", m_actorState.isInBlendRagdoll ? " FALLNPLAY" : "");
 	//	//		}
 	//	//#endif
 
@@ -250,17 +250,18 @@ const float CActorControllerComponent::GetLowerBodyRotation(TInputFlags movement
 			break;
 
 		case ((TInputFlags)EInputFlag::Backward | (TInputFlags)EInputFlag::Right):
-			//relativeDirection = 45.0f;
-			relativeDirection = 0.0f;
+			relativeDirection = 45.0f;
+			//relativeDirection = 0.0f;
 			break;
 
 		case (TInputFlags)EInputFlag::Backward:
+			//relativeDirection = 180.0f;
 			relativeDirection = 0.0f;
 			break;
 
 		case ((TInputFlags)EInputFlag::Backward | (TInputFlags)EInputFlag::Left):
-			//relativeDirection = -45.0f;
-			relativeDirection = 0.0f;
+			relativeDirection = -45.0f;
+			//relativeDirection = 0.0f;
 			break;
 
 		case (TInputFlags)EInputFlag::Left:
@@ -317,7 +318,7 @@ void CActorControllerComponent::UpdateLookDirectionRequest(float frameTime)
 {
 	/** The angular velocity maximum (Full rotations / second). */
 	const float angularVelocityMax = g_PI2 * 1.5f;
-	
+
 	/** The catchup speed (Full rotations / second). */
 	const float catchupSpeed = g_PI2 * 1.2f;
 
@@ -327,14 +328,24 @@ void CActorControllerComponent::UpdateLookDirectionRequest(float frameTime)
 		auto* pPlayerInput = pPlayer->GetPlayerInput();
 
 		// Only allow the character to rotate in first person, and third person if they are moving.
-		if ((!pPlayer->IsThirdPerson()) || (pPlayer->IsThirdPerson() && m_movementRequest.len() > FLT_EPSILON))
+		if ((pPlayer->IsViewFirstPerson()) || (!pPlayer->IsViewFirstPerson() && m_movementRequest.len() > FLT_EPSILON))
 		{
-			// Take the direction they are facing as a target.
 			Ang3 facingDir;
-			if (pPlayer->IsThirdPerson())
-				facingDir = CCamera::CreateAnglesYPR(m_movementRequest);
-			else
+			if (pPlayer->IsViewFirstPerson())
 				facingDir = CCamera::CreateAnglesYPR(Matrix33(m_lookOrientation));
+			else
+				facingDir = CCamera::CreateAnglesYPR(m_movementRequest);
+
+			// Take the direction they are facing as a target.
+			//const Vec3 lowerBodyDir = CCamera::CreateViewdir(Ang3(DEG2RAD(GetLowerBodyRotation(pPlayerInput->GetMovementDirectionFlags())), 0.0f, 0.0f));
+			//CryWatch("lowerBodyDir = %f, %f, %f", lowerBodyDir.x, lowerBodyDir.y, lowerBodyDir.z);
+			//m_movementRequest = pPlayer->GetCamera()->GetRotation() * lowerBodyDir * moveSpeed;
+			//if (pPlayer->IsThirdPerson())
+			//	facingDir = CCamera::CreateAnglesYPR(m_movementRequest);
+			//else
+			//	facingDir = CCamera::CreateAnglesYPR(Matrix33(m_lookOrientation) * lowerBodyDir);
+
+			//facingDir = m_movementRequest * pPlayer->GetCamera()->GetRotation() * lowerBodyDir;// FORWARD_DIRECTION;
 
 			// Use their last orientation as their present direction.
 			// NOTE: I tried it with GetEntity()->GetWorldTM() but that caused crazy jitter issues.

@@ -1,5 +1,5 @@
 <cryasset>
- <AssetMetadata version="0" type="Xml" guid="{AD340BA2-733C-B6C5-B35A-6FD8F85C5B04}">
+ <AssetMetadata version="0" type="Xml" guid="ad340ba2-733c-b6c5-b35a-6fd8f85c5b04">
   <Files>
    <File path="SkeletonList.xml"/>
   </Files>

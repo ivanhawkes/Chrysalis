@@ -1,5 +1,5 @@
 <cryasset>
- <AssetMetadata version="0" type="Texture" guid="{C2A09013-E878-596D-1819-A8953E96DAB1}" source="macbeth.tif">
+ <AssetMetadata version="0" type="Texture" guid="c2a09013-e878-596d-1819-a8953e96dab1" source="macbeth.tif">
   <Files>
    <File path="macbeth.dds"/>
   </Files>

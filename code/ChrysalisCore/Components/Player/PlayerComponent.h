@@ -17,11 +17,11 @@ At present, entering game mode without being attached to an existing character e
 namespace Chrysalis
 {
 struct ICameraComponent;
-struct IPlayerInputComponent;
 class CCameraManagerComponent;
 class IActorComponent;
 class CActorComponent;
 class CCharacterComponent;
+class CPlayerInputComponent;
 
 
 /** Defines the player class. Used to provide the player a way to control a character / puppet in the game. */
@@ -64,11 +64,7 @@ public:
 
 	\return True if third person, false if not.
 	**/
-	bool IsThirdPerson() const;
-
-
-	/** The player has toggled between third person and first person view modes. */
-	void OnToggleThirdPerson();
+	bool IsViewFirstPerson() const;
 
 
 	/**
@@ -89,7 +85,7 @@ public:
 
 	\return	null if it fails, else the player input.
 	*/
-	IPlayerInputComponent* GetPlayerInput() const { return m_pPlayerInput; }
+	CPlayerInputComponent* GetPlayerInput() const { return m_pPlayerInput; }
 
 
 	/**
@@ -143,7 +139,7 @@ public:
 	/**
 	Query if this instance is the local player. The local player is the client who is local to the machine the game
 	is running on.
-	
+
 	\return True if local player, false if not.
 	**/
 	ILINE bool IsLocalPlayer()
@@ -155,19 +151,18 @@ public:
 	/**
 	Gets local player, if there is one for this client.	It is possible there is no local player. The local player is
 	the client who is local to the machine the game is running on.
-	
+
 	Convenience function.
-	
+
 	\return null if it fails, else the local player.
 	**/
 	ILINE static CPlayerComponent* GetLocalPlayer()
 	{
 		auto actorId = gEnv->pGameFramework->GetClientActorId();
 		auto pActor = gEnv->pEntitySystem->GetEntity(actorId);
-		if (pActor)
-			return pActor->GetComponent<CPlayerComponent>();
+		CRY_ASSERT_MESSAGE(pActor, "The local actor Id %d did not return an entity.", actorId);
 
-		return nullptr;
+		return pActor->GetComponent<CPlayerComponent>();
 	}
 
 
@@ -220,6 +215,9 @@ public:
 	/** Revives the atatched character, if there is one. */
 	void Revive();
 
+	/** A network client has connected to the player. */
+	void NetworkClientConnect();
+
 private:
 	void SetAllowCharacterMovement(bool val) { m_allowCharacterMovement = val; }
 	void SetAllowCharacterRotation(bool val) { m_allowCharacterRotation = val; }
@@ -241,7 +239,7 @@ private:
 
 	/** The player input handler. The player is responsible for ensuring the correct character entity / UI gets the input
 	as appropriate. */
-	IPlayerInputComponent* m_pPlayerInput { nullptr };
+	CPlayerInputComponent* m_pPlayerInput { nullptr };
 
 	/** Is the player allowed to move their character? */
 	bool m_allowCharacterMovement { true };

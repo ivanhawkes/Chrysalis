@@ -2,7 +2,7 @@
 
 #include "FirstPersonCameraComponent.h"
 #include "Components/Player/PlayerComponent.h"
-#include <Components/Player/Input/IPlayerInputComponent.h>
+#include <Components/Player/Input/PlayerInputComponent.h>
 #include <Console/CVars.h>
 
 
@@ -61,13 +61,6 @@ void CFirstPersonCameraComponent::Update()
 
 	if (pPlayerInput)
 	{
-		// If the player changes the camera zoom, we will toggle to the third person view.
-		if (m_pCameraManager)
-		{
-			if ((pPlayerInput->GetZoomDelta() > FLT_EPSILON) && (!m_pCameraManager->IsThirdPerson()))
-				m_pCameraManager->ToggleThirdPerson();
-		}
-
 		// Resolve the entity.
 		if (auto pEntity = gEnv->pEntitySystem->GetEntity(m_targetEntityID))
 		{
@@ -91,7 +84,7 @@ void CFirstPersonCameraComponent::Update()
 			// We will use the rotation of the entity as a base, and apply pitch based on our own reckoning.
 			const Vec3 position = pEntity->GetPos() + localEyePosition;
 			const Quat rotation = pEntity->GetRotation() * Quat(Ang3(m_viewPitch, 0.0f, 0.0f));
-			newCameraMatrix = Matrix34::Create(Vec3(1.0f), rotation, position);
+			newCameraMatrix = Matrix34::Create(Vec3(1.0f), rotation, position + rotation * m_pCameraManager->GetViewOffset());
 
 #if defined(_DEBUG)
 			if (g_cvars.m_firstPersonCameraDebug)
@@ -124,5 +117,11 @@ void CFirstPersonCameraComponent::OnDeactivate()
 {
 	m_EventMask &= ~BIT64(ENTITY_EVENT_UPDATE);
 	GetEntity()->UpdateComponentEventMask(this);
+}
+
+
+void CFirstPersonCameraComponent::ResetCamera()
+{
+	m_viewPitch = (DEG2RAD(g_cvars.m_firstPersonCameraPitchMax) + DEG2RAD(g_cvars.m_firstPersonCameraPitchMin)) / 2;
 }
 }

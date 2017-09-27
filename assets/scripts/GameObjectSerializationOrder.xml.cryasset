@@ -1,4 +1,4 @@
-<AssetMetadata version="0" type="Xml" guid="{52B24902-DB54-68BE-8307-2A2DBE17FCD3}">
+<AssetMetadata version="0" type="Xml" guid="52b24902-db54-68be-8307-2a2dbe17fcd3">
  <Files>
   <File path="GameObjectSerializationOrder.xml"/>
  </Files>

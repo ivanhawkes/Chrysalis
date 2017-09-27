@@ -71,7 +71,6 @@ public:
 #endif
 
 private:
-	bool m_CharacterIsThirdPerson;
 	EntityId m_ladderEntityId;
 	Vec3 m_ladderBottom;
 	float m_offsetFromAnimToRung;

@@ -1,5 +1,5 @@
 <cryasset>
- <AssetMetadata version="0" type="MeshAnimation" guid="{2D1B8773-7BEF-9D43-AED2-A9F05FE27AE9}" source="SlideVertical.dae.zip">
+ <AssetMetadata version="0" type="MeshAnimation" guid="2d1b8773-7bef-9d43-aed2-a9f05fe27ae9" source="SlideVertical.dae.zip">
   <Files>
    <File path="slidevertical_default.anm"/>
   </Files>

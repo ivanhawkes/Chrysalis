@@ -1,5 +1,5 @@
 <cryasset>
- <AssetMetadata version="0" type="Texture" guid="{D07CD8C5-0E93-34DF-44F0-6403A33978D7}" source="zone_system.tif">
+ <AssetMetadata version="0" type="Texture" guid="d07cd8c5-0e93-34df-44f0-6403a33978d7" source="zone_system.tif">
   <Files>
    <File path="zone_system.dds"/>
   </Files>

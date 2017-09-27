@@ -6,7 +6,7 @@
 #include "Snaplocks/Snaplock.h"
 #include "DefaultComponents/Geometry/AdvancedAnimationComponent.h"
 #include "DefaultComponents/Physics/CharacterControllerComponent.h"
-#include <Components/Player/Input/IPlayerInputComponent.h>
+#include <Components/Player/Input/PlayerInputComponent.h>
 #include <Actor/ActorControllerComponent.h>
 
 
@@ -153,15 +153,6 @@ struct IActorEventListener
 	\param	itemId		   Identifier for the item.
 	**/
 	virtual void OnItemDropped(IActor* pActor, EntityId itemId) = 0;
-
-
-	/**
-	The actor has toggled between third person and first person view modes.
-
-	\param [in,out]	pActor If non-null, the actor.
-	\param	bThirdPerson   true to third person.
-	**/
-	virtual void OnToggleThirdPerson() {};
 
 
 	/**
@@ -332,8 +323,8 @@ public:
 	virtual void OnPlayerDetach() = 0;
 
 
-	/** Executes the toggle third person action. */
-	virtual void OnToggleThirdPerson() = 0;
+	/** The actor has toggled between third person and first person view modes. */
+	virtual void OnToggleFirstPerson() = 0;
 };
 DECLARE_SHARED_POINTERS(IActor);
 
@@ -470,15 +461,7 @@ public:
 	**/
 	void OnSprintStaminaChanged(IActor* pActor, float newStamina) override;
 
-private:
-	bool m_isThirdPerson { false };
-
-	// ***
-	// *** CActorComponent
-	// ***
-
 public:
-
 	/** Provide a means for them to query the move velocity and direction. */
 	const Vec3& GetVelocity() const { return m_pCharacterControllerComponent->GetVelocity(); }
 	Vec3 GetMoveDirection() const { return m_pCharacterControllerComponent->GetMoveDirection(); }
@@ -492,7 +475,8 @@ public:
 	/** Get's the player controlling this actor, if there is one. This may return nullptr. */
 	CPlayerComponent* GetPlayer() const override { return m_pPlayer; };
 
-	void OnToggleThirdPerson() override;
+	/** The actor has toggled between third person and first person view modes. */
+	void OnToggleFirstPerson() override;
 
 	/**
 	Gets the actors's pre-determined fate.
@@ -541,7 +525,7 @@ private:
 	/** The pre-determined fate for this actor. */
 	CFate m_fate;
 
-
+	
 	// ***
 	// *** AI / Player Control
 	// ***
@@ -623,7 +607,13 @@ public:
 
 	Vec3 GetLocalRightHandPos() const override;
 
-	virtual bool IsThirdPerson() const { return m_isThirdPerson; }
+
+	/**
+	Query if this instance is in first person view.
+	
+	\return True if this instance is controlled by the local player in a first person perspective, false for all other cases.
+	**/
+	virtual bool IsViewFirstPerson() const;
 
 
 	/**

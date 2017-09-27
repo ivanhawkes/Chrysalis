@@ -4,7 +4,7 @@
 #include <CrySystem/ISystem.h>
 #include "Components/Player/PlayerComponent.h"
 #include <Actor/Animation/Actions/ActorAnimationActionEmote.h>
-#include <Actor/Character/Character.h>
+#include <Actor/Character/CharacterComponent.h>
 #include <ObjectID/ObjectId.h>
 #include <ObjectID/ObjectIdMasterFactory.h>
 #include <Plugin/ChrysalisCorePlugin.h>
@@ -35,8 +35,8 @@ void CCVars::RegisterVariables()
 	REGISTER_CVAR2("ladder_logVerbosity", &m_ladder_logVerbosity, 0, VF_CHEAT, "Ladder logging.");
 
 	// Camera manager
-	REGISTER_CVAR2("camera_manager_is_third_person", &m_cameraManagerIsThirdPerson, 0, VF_CHEAT, "Is the player camera in first person or third person mode? 0 = first person, any else third person.");
 	m_cameraManagerDebugViewOffset = REGISTER_STRING("camera_manager_debug_view_offset", "0, 0, 0", VF_CHEAT, "A translation vector which is applied after the camera is initially positioned.");
+	REGISTER_CVAR2("camera_manager_default_camera", &m_cameraManagerDefaultCamera, 1, VF_CHEAT, "Default camera mode. 0 - FP, 1 - ActionRPG");
 
 	// Action RPG Camera
 	REGISTER_CVAR2("camera_actionrpg_Debug", &m_actionRPGCameraDebug, 0, VF_CHEAT, "Allow debug display.");

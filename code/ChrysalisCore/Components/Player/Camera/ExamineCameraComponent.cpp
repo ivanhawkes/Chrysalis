@@ -2,8 +2,8 @@
 
 #include "ExamineCameraComponent.h"
 #include "Components/Player/PlayerComponent.h"
-#include <Components/Player/Input/IPlayerInputComponent.h>
-#include <Actor/Character/Character.h>
+#include <Components/Player/Input/PlayerInputComponent.h>
+#include <Actor/Character/CharacterComponent.h>
 #include <Components/Interaction/EntityAwarenessComponent.h>
 #include <Console/CVars.h>
 
@@ -64,7 +64,7 @@ void CExamineCameraComponent::Update()
 		if (m_pCameraManager)
 		{
 			// If we zoom, then cancel this camera mode.
-			if (pPlayerInput->GetZoomDelta() != 0.0f)
+			if (m_pCameraManager->GetZoomDelta() != 0.0f)
 				m_pCameraManager->SetCameraMode(ECameraMode::eCameraMode_FirstPerson, "Zoomed out of examine mode");
 		}
 

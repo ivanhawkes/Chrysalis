@@ -92,6 +92,35 @@ You will not be able to enter game mode to test a level without at least one cha
 
 I will sort out something more convenient in time, as I get close to making a release of this code.
 
+# Known Issues
+
+* Loading the test_all map in game mode may not work until after you have loaded it in the Sandbox and exported the level.
+* Animations may not work correctly until after they have been loaded once in the Sandbox. They need to be compressed by the engine.
+* You may need to generate all the metadata again, particularly if you find that some assets are not loading, like the character definitions or the animations. If so, right click on Chrysalis.cryproject in the Windows Explorer and choose 'Generate / Repair metadata'.
+* Some warnings / errors on loading a level - safe to ignore
+* Switching models between first and third person modes doesn't presently work.
+* Interaction with entities is not working yet.
+* Keybinds are hard-coded and will remain so until a replacement for the keybind XML file is available.
+* Actor animations do not have any transitions as yet, and so rotations will look bad for a while.
+* Crouch animations are from the Motus Mobililty Basic / Pro pack, and as such I cannot distribute them. I have built a blendspace for movement while crouching, but it won't be functional unless you buy the appropriate pack of animations and import them into the project. Place them in the assets/objects/characters/human/male/animations/crouch/ folder, making sure to follow the general naming conventions.
+* The CryCamera asserts the first time you switch from first person view to third person view. It can be safely ignored for now.
+* Motus character does not have a physics proxy body yet. That will need to be added at some time to allow detection of hits to body parts.
+
+# Key Binds
+
+* WASD
+* mouse wheel to zoom in and out on the ActionRPG camera
+* left click to interact - code is in flux so it may do weird random things - beware, it's buggy so it can get locked up as well
+* F - interact - same as left mostly
+* C - crouch
+* H - crawl - no animations yet
+* V - kneel - no animations yet
+* B - sit - no animations yet
+* F M X - use, drop and toss items
+* 0 - 9 - action bar keys - these will activate actions for interactive items. There is no UI yet to show which things will happen if you press these keys...just try hitting 1-4 and see if anything happens.
+* J K L - inspection start, inspect, and inspection end. May not currently work.
+* PageUp, PageDn, Left, Right, Up, Down - to help debug the camera, these offset the camera by a small amount with each press.
+
 # Contact
 
 If you want to contact me, you can often find me on the CRYENGINE community Slack channel under the name 'Ivan Hawkes'.
@@ -99,3 +128,5 @@ If you want to contact me, you can often find me on the CRYENGINE community Slac
 [https://crycommunity.slack.com](https://crycommunity.slack.com)
 
 You can contact me directly by emailing ivan.hawkes@gmail.com
+
+If you have any questions about the code, please take the time to try and find the answer within the code before contacting me for help. General questions about C++ or CRYENGINE should be directed to Google, Slack, the CRYENGINE Forums or online discussions groups for that topic.

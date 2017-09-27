@@ -3,8 +3,8 @@
 #include "ItemInteractionComponent.h"
 #include <Components/Interaction/EntityInteractionComponent.h>
 #include "Components/Player/PlayerComponent.h"
-#include <Components/Player/Input/IPlayerInputComponent.h>
-#include <Actor/Character/Character.h>
+#include <Components/Player/Input/PlayerInputComponent.h>
+#include <Actor/Character/CharacterComponent.h>
 
 
 namespace Chrysalis
@@ -252,7 +252,7 @@ void CItemInteractionComponent::OnPickingUpUpdate(const float frameTime)
 	// Allow them to rotate the item in their hands.
 	if (auto pPlayerInput = CPlayerComponent::GetLocalPlayer()->GetPlayerInput())
 	{
-		const auto rotation = Quat(Ang3(pPlayerInput->GetHeadPitchDelta(), 0.0f, pPlayerInput->GetYawDelta()));
+		const auto rotation = Quat(Ang3(0.0f, 0.0f, pPlayerInput->GetYawDelta()));
 		pEntity->SetRotation(pEntity->GetRotation() * rotation);
 	}
 }

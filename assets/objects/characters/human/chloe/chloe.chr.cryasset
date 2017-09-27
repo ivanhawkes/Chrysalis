@@ -1,5 +1,5 @@
 <cryasset>
- <AssetMetadata version="0" type="Skeleton" guid="{54C02BC9-D39C-09B1-EED7-456A879ADFA1}" source="Chloe Import Test.fbx">
+ <AssetMetadata version="0" type="Skeleton" guid="54c02bc9-d39c-09b1-eed7-456a879adfa1" source="Chloe Import Test.fbx">
   <Files>
    <File path="chloe.chr"/>
   </Files>

@@ -35,9 +35,6 @@ public:
 		return id;
 	}
 
-	void Update();
-
-
 	// ***
 	// *** ICameraComponent
 	// ***
@@ -58,7 +55,7 @@ public:
 	void OnDeactivate() override;
 
 	/** Is the view defined by this camera in first person? */
-	bool IsViewFirstPerson() const override { return false; };
+	bool IsViewFirstPerson() const override { return m_isFirstPerson; };
 
 
 	// ***
@@ -93,6 +90,14 @@ public:
 	bool CollisionDetection(const Vec3& Goal, Vec3& CameraPosition);
 
 private:
+
+	void Update();
+	void UpdateZoom();
+	void UpdateFirstPerson();
+	void UpdateThirdPerson();
+
+	/**	Toggle between the first and third person camera modes, if either is selected. */
+	void ToggleFirstPerson();
 
 	/** If our entity has a camera manager, we store a pointer to it here. **/
 	CCameraManagerComponent* m_pCameraManager { nullptr };
@@ -137,7 +142,7 @@ private:
 	/**
 	Determine the level of zoom on the third person camera. Sensible values are from 0.0f up to 100.0f, although it
 	is capable of zooming beyond that.
-	*/
+	**/
 	float m_zoom;
 
 	/** A delta value (degrees) to apply to the camera's initial calculated pitch. */
@@ -148,5 +153,8 @@ private:
 
 	/** Provides a way to avoid updates when they are not required. **/
 	uint64 m_EventMask { 0L };
+
+	/** Is the camera view in first person mode? **/
+	bool m_isFirstPerson { true };
 };
 }

@@ -1,6 +1,6 @@
 #include <StdAfx.h>
 
-#include "Character.h"
+#include "CharacterComponent.h"
 #include <Actor/ActorComponent.h>
 #include <Actor/Movement/StateMachine/ActorStateEvents.h>
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>

@@ -4,7 +4,7 @@
 #include "ActionRPGCameraComponent.h"
 #include "ExamineCameraComponent.h"
 #include "FirstPersonCameraComponent.h"
-#include <Actor/Character/Character.h>
+#include <Actor/Character/CharacterComponent.h>
 #include "Components/Player/PlayerComponent.h"
 #include <Utility/StringConversions.h>
 #include <Console/CVars.h>
@@ -41,6 +41,10 @@ void CCameraManagerComponent::Initialize()
 	// Query for the player that owns this extension.
 	m_pPlayer = pEntity->GetComponent<CPlayerComponent>();
 
+	// #HACK: #TODO: Is this right? We only want to register action maps on the local client.
+	if (GetEntityId() == gEnv->pGameFramework->GetClientActorId())
+		RegisterActionMaps();
+
 	// First person camera.
 	m_cameraModes [ECameraMode::eCameraMode_FirstPerson] = pEntity->CreateComponent<CFirstPersonCameraComponent>();
 
@@ -50,14 +54,8 @@ void CCameraManagerComponent::Initialize()
 	// Examine entity camera.
 	m_cameraModes [ECameraMode::eCameraMode_Examine] = pEntity->CreateComponent<CExamineCameraComponent>();
 
-	// #TODO: make a special one for HMD	
-	//m_cameraModes [ECameraMode::eCameraMode_FirstPersonHmd] = pEntity->CreateComponent<CActionRPGCameraComponent>();
-
-	// Select the initial camera based on their cvar setting for third person.
-	if (g_cvars.m_cameraManagerIsThirdPerson)
-		SetCameraMode(ECameraMode::eCameraMode_ActionRpg, "Initial selection of camera.");
-	else
-		SetCameraMode(ECameraMode::eCameraMode_FirstPerson, "Initial selection of camera.");
+	// Select the initial camera based on their cvar setting.
+	SetCameraMode((ECameraMode) g_cvars.m_cameraManagerDefaultCamera, "Initial selection of camera.");
 }
 
 
@@ -74,24 +72,9 @@ void CCameraManagerComponent::ProcessEvent(SEntityEvent& event)
 
 void CCameraManagerComponent::Update()
 {
-	if (m_cameraModes [m_cameraMode])
-	{
-		// They might have toggled first / third person mode. If so, we will need to swap cameras now.
-		switch (m_cameraMode)
-		{
-			case ECameraMode::eCameraMode_FirstPerson:
-			case ECameraMode::eCameraMode_FirstPersonHmd:
-				if (g_cvars.m_cameraManagerIsThirdPerson)
-					SetCameraMode(ECameraMode::eCameraMode_ActionRpg, "ToggleThirdPerson(true)");
-				break;
-
-			case ECameraMode::eCameraMode_ActionRpg:
-				// #TODO: Handle HMD displays gracefully.
-				if (!g_cvars.m_cameraManagerIsThirdPerson)
-					SetCameraMode(ECameraMode::eCameraMode_FirstPerson, "ToggleThirdPerson(false)");
-				break;
-		}
-	}
+	// Handle zoom level changes, result is stored for query by cameras on Update.
+	m_lastZoomDelta = m_zoomDelta;
+	m_zoomDelta = 0.0f;
 }
 
 
@@ -136,18 +119,6 @@ void CCameraManagerComponent::SetCameraMode(ECameraMode mode, const char* reason
 		// Set the new mode.
 		m_cameraMode = mode;
 
-		// Forced changes to mode here should toggle third person if appropriate.
-		switch (m_cameraMode)
-		{
-			case ECameraMode::eCameraMode_ActionRpg:
-				g_cvars.m_cameraManagerIsThirdPerson = true;
-				break;
-
-			default:
-				g_cvars.m_cameraManagerIsThirdPerson = false;
-				break;
-		}
-
 		// Debug.
 		CryLogAlways("SetCameraMode from %d to %d, reason - %s", m_lastCameraMode, m_cameraMode, reason);
 	}
@@ -174,22 +145,9 @@ ICameraComponent* CCameraManagerComponent::GetCamera() const
 }
 
 
-bool CCameraManagerComponent::IsThirdPerson() const
+bool CCameraManagerComponent::IsViewFirstPerson() const
 {
-	return g_cvars.m_cameraManagerIsThirdPerson != 0;
-}
-
-
-void CCameraManagerComponent::ToggleThirdPerson()
-{
-	g_cvars.m_cameraManagerIsThirdPerson = !g_cvars.m_cameraManagerIsThirdPerson;
-
-	// Notify the local actor that they should change view mode. This gives them a chance to change their model / etc
-	// if needed. 
-	if (auto pActorComponent = CPlayerComponent::GetLocalActor())
-	{
-		pActorComponent->OnToggleThirdPerson();
-	}
+	return GetCamera()->IsViewFirstPerson();
 }
 
 
@@ -200,6 +158,33 @@ CCameraManagerComponent::CCameraManagerComponent()
 
 	// Start with a known clean state.
 	memset(m_cameraModes, 0, sizeof(m_cameraModes));
+}
+
+
+void CCameraManagerComponent::RegisterActionMaps()
+{
+	// Get the input component, wraps access to action mapping so we can easily get callbacks when inputs are triggered.
+	m_pInputComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CInputComponent>();
+
+	// Zoom handlers.
+	m_pInputComponent->RegisterAction("camera", "tpv_zoom_in", [this](int activationMode, float value) { m_zoomDelta -= 1.0f; });
+	m_pInputComponent->BindAction("camera", "tpv_zoom_in", eAID_KeyboardMouse, EKeyId::eKI_MouseWheelUp);
+	m_pInputComponent->RegisterAction("camera", "tpv_zoom_out", [this](int activationMode, float value) { m_zoomDelta += 1.0f; });
+	m_pInputComponent->BindAction("camera", "tpv_zoom_out", eAID_KeyboardMouse, EKeyId::eKI_MouseWheelDown);
+
+	// Camera movements.
+	m_pInputComponent->RegisterAction("camera", "camera_shift_up", [this](int activationMode, float value) { OnActionCameraShiftUp(activationMode, value); });
+	m_pInputComponent->BindAction("camera", "camera_shift_up", eAID_KeyboardMouse, EKeyId::eKI_PgUp);
+	m_pInputComponent->RegisterAction("camera", "camera_shift_down", [this](int activationMode, float value) { OnActionCameraShiftDown(activationMode, value); });
+	m_pInputComponent->BindAction("camera", "camera_shift_down", eAID_KeyboardMouse, EKeyId::eKI_PgDn);
+	m_pInputComponent->RegisterAction("camera", "camera_shift_left", [this](int activationMode, float value) { OnActionCameraShiftLeft(activationMode, value); });
+	m_pInputComponent->BindAction("camera", "camera_shift_left", eAID_KeyboardMouse, EKeyId::eKI_Left);
+	m_pInputComponent->RegisterAction("camera", "camera_shift_right", [this](int activationMode, float value) { OnActionCameraShiftRight(activationMode, value); });
+	m_pInputComponent->BindAction("camera", "camera_shift_right", eAID_KeyboardMouse, EKeyId::eKI_Right);
+	m_pInputComponent->RegisterAction("camera", "camera_shift_forward", [this](int activationMode, float value) { OnActionCameraShiftForward(activationMode, value); });
+	m_pInputComponent->BindAction("camera", "camera_shift_forward", eAID_KeyboardMouse, EKeyId::eKI_Up);
+	m_pInputComponent->RegisterAction("camera", "camera_shift_backward", [this](int activationMode, float value) { OnActionCameraShiftBackward(activationMode, value); });
+	m_pInputComponent->BindAction("camera", "camera_shift_backward", eAID_KeyboardMouse, EKeyId::eKI_Down);
 }
 
 

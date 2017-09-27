@@ -275,7 +275,7 @@ Vec3 CActorStateSwimWaterTestProxy::GetLocalReferencePosition(const CActorContro
 	/*const float CAMERA_SURFACE_OFFSET = -0.2f;
 
 	Vec3 localReferencePos = ZERO;
-	if (!actorControllerComponent.IsThirdPerson ())
+	if (actorControllerComponent.IsViewFirstPerson())
 	{
 	// We get a smoother experience in FP if we work relative to the camera
 	localReferencePos = actorControllerComponent.GetFPCameraPosition (false);

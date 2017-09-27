@@ -1,5 +1,5 @@
 <cryasset>
- <AssetMetadata version="0" type="Texture" guid="{21D70135-506A-34E4-1965-B3F333D4A19E}" source="shield_scutum_spec.tif">
+ <AssetMetadata version="0" type="Texture" guid="21d70135-506a-34e4-1965-b3f333d4a19e" source="shield_scutum_spec.tif">
   <Files>
    <File path="shield_scutum_spec.dds"/>
   </Files>

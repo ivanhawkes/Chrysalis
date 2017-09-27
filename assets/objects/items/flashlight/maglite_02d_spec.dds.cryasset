@@ -1,5 +1,5 @@
 <cryasset>
- <AssetMetadata version="0" type="Texture" guid="{7D855DA9-50C8-1AFA-A1BD-5C958407A959}" source="maglite_02d_spec.tif">
+ <AssetMetadata version="0" type="Texture" guid="7d855da9-50c8-1afa-a1bd-5c958407a959" source="maglite_02d_spec.tif">
   <Files>
    <File path="maglite_02d_spec.dds"/>
   </Files>

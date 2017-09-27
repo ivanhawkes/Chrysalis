@@ -19,7 +19,6 @@ enum ECameraMode
 	eCameraMode_FirstPerson = 0,
 	eCameraMode_ActionRpg,
 	eCameraMode_Examine,
-	eCameraMode_FirstPersonHmd,
 	eCameraMode_Last
 };
 
@@ -157,7 +156,7 @@ public:
 	/** Executes the deactivate action. */
 	virtual void OnDeactivate() = 0;
 
-	virtual CCamera& GetCamera() { return m_camera; }
+	CCamera& GetCamera() { return m_camera; }
 	const CCamera& GetCamera() const { return m_camera; }
 
 	/** Called by an active camera during it's update to update the camera view. */

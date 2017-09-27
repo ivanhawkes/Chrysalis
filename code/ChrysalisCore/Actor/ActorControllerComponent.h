@@ -1,7 +1,7 @@
 #pragma once
 
 #include <StateMachine/StateMachine.h>
-#include "Components/Player/Input/IPlayerInputComponent.h"
+#include "Components/Player/Input/PlayerInputComponent.h"
 #include "DefaultComponents/Geometry/AdvancedAnimationComponent.h"
 #include "DefaultComponents/Physics/CharacterControllerComponent.h"
 

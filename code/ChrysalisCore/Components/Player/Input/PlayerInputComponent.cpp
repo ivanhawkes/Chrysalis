@@ -4,7 +4,7 @@
 #include <CryMath/Cry_Math.h>
 #include "Components/Player/PlayerComponent.h"
 #include <Actor/ActorComponent.h>
-#include <Actor/Character/Character.h>
+#include <Actor/Character/CharacterComponent.h>
 #include "../Camera/CameraManagerComponent.h"
 #include "../Camera/ICameraComponent.h"
 #include <Console/CVars.h>
@@ -59,131 +59,8 @@ void CPlayerInputComponent::ProcessEvent(SEntityEvent& event)
 }
 
 
-/**
-NOTE: By accumulating the deltas in the post update, we get consistent values back during pre-physics and update,
-which is where most the work is done. There is zero chance of errors due to drift in values from one update / pre-
-physics to another. The downside is we have a definite lag of one frame for all input - and for VR this might be
-killer. Ideally we would have a component system able to prioritise objects before others - and this would be given a
-high priority.
-
-#TODO: Re-write when the above is available.
-**/
-void CPlayerInputComponent::Update()
-{
-	static float frameTime = gEnv->pTimer->GetFrameTime();
-
-	// We can just add up all the acculmated requests to find out how much pitch / yaw is being requested.
-	// It's also a good time to filter out any small movement requests to stabilise the camera / etc.
-	m_lastPitchDelta = m_mousePitchDelta + m_xiPitchDelta;
-	if (std::abs(m_lastPitchDelta) < m_pitchFilter)
-		m_lastPitchDelta = 0.0f;
-	m_lastYawDelta = m_mouseYawDelta + m_xiYawDelta;
-	if (std::abs(m_lastYawDelta) < m_yawFilter)
-		m_lastYawDelta = 0.0f;
-
-	// Track the last values for mouse and xbox inputs. They're filtered individually for low level noise.
-	m_lastMousePitchDelta = std::abs(m_mousePitchDelta) >= m_pitchFilter ? m_mousePitchDelta : 0.0f;
-	m_lastMouseYawDelta = std::abs(m_mouseYawDelta) >= m_yawFilter ? m_mouseYawDelta : 0.0f;
-	m_lastXiPitchDelta = std::abs(m_xiPitchDelta) >= m_pitchFilter ? m_xiPitchDelta : 0.0f;
-	m_lastXiYawDelta = std::abs(m_xiYawDelta) >= m_yawFilter ? m_xiYawDelta : 0.0f;
-
-	// Circle of life!
-	m_mousePitchDelta = m_mouseYawDelta = 0.0f;
-
-	// Handle zoom level changes, result is stored for query by cameras on Update.
-	m_lastZoomDelta = m_zoomDelta;
-	m_zoomDelta = 0.0f;
-}
-
-
-// ***
-// ***  IPlayerInputComponent
-// ***
-
-
-void CPlayerInputComponent::ResetMovementState()
-{
-	m_inputFlags = (TInputFlags)EInputFlag::None;
-}
-
-
-void CPlayerInputComponent::ResetActionState()
-{
-}
-
-
-Vec3 CPlayerInputComponent::GetMovement(const Quat& baseRotation)
-{
-	bool allowMovement = true;
-	Quat quatRelativeDirection;
-	Vec3 vecMovement = Vec3(ZERO);
-
-	// Take the mask and turn it into a vector to indicate the direction we need to pan independent of the
-	// present camera direction.
-	switch (m_inputFlags)
-	{
-		case (TInputFlags)EInputFlag::Forward:
-			quatRelativeDirection = Quat::CreateIdentity();
-			break;
-
-		case ((TInputFlags)EInputFlag::Forward | (TInputFlags)EInputFlag::Right):
-			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(45.0f));
-			break;
-
-		case (TInputFlags)EInputFlag::Right:
-			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(90.0f));
-			break;
-
-		case ((TInputFlags)EInputFlag::Backward | (TInputFlags)EInputFlag::Right):
-			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(135.0f));
-			break;
-
-		case (TInputFlags)EInputFlag::Backward:
-			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(180.0f));
-			break;
-
-		case ((TInputFlags)EInputFlag::Backward | (TInputFlags)EInputFlag::Left):
-			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(225.0f));
-			break;
-
-		case (TInputFlags)EInputFlag::Left:
-			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(270.0f));
-			break;
-
-		case ((TInputFlags)EInputFlag::Forward | (TInputFlags)EInputFlag::Left):
-			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(315.0f));
-			break;
-
-		default:
-			quatRelativeDirection = Quat::CreateIdentity();
-			allowMovement = false;
-			break;
-	}
-
-	// Create a vector based on key direction. This is computed in local space for the base rotation.
-	if (allowMovement)
-		vecMovement = Vec3(baseRotation.GetFwdX(), baseRotation.GetFwdY(), 0.0f).GetNormalized() * quatRelativeDirection;
-
-	return vecMovement;
-}
-
-
-// ***
-// *** CPlayerInputComponent
-// ***
-
-CPlayerInputComponent::~CPlayerInputComponent()
-{
-	// Clean up our action map usage.
-	m_allowActions = false;
-}
-
-
 void CPlayerInputComponent::RegisterActionMaps()
 {
-	// Populate the action handler callbacks so that we get action map events.
-	m_allowActions = true;
-
 	// Get the input component, wraps access to action mapping so we can easily get callbacks when inputs are triggered.
 	m_pInputComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CInputComponent>();
 
@@ -320,26 +197,95 @@ void CPlayerInputComponent::RegisterActionMaps()
 	m_pInputComponent->BindAction("player", "inspect", eAID_KeyboardMouse, EKeyId::eKI_K);
 	m_pInputComponent->RegisterAction("player", "inspect_end", [this](int activationMode, float value) { OnActionInspectEnd(activationMode, value); });
 	m_pInputComponent->BindAction("player", "inspect_end", eAID_KeyboardMouse, EKeyId::eKI_L);
+}
 
-	// Zoom handlers.
-	m_pInputComponent->RegisterAction("camera", "tpv_zoom_in", [this](int activationMode, float value) { m_zoomDelta -= 1.0f; });
-	m_pInputComponent->BindAction("camera", "tpv_zoom_in", eAID_KeyboardMouse, EKeyId::eKI_MouseWheelUp);
-	m_pInputComponent->RegisterAction("camera", "tpv_zoom_out", [this](int activationMode, float value) { m_zoomDelta += 1.0f; });
-	m_pInputComponent->BindAction("camera", "tpv_zoom_out", eAID_KeyboardMouse, EKeyId::eKI_MouseWheelDown);
 
-	// Camera movements.
-	m_pInputComponent->RegisterAction("camera", "camera_shift_up", [this](int activationMode, float value) { OnActionCameraShiftUp(activationMode, value); });
-	m_pInputComponent->BindAction("camera", "camera_shift_up", eAID_KeyboardMouse, EKeyId::eKI_PgUp);
-	m_pInputComponent->RegisterAction("camera", "camera_shift_down", [this](int activationMode, float value) { OnActionCameraShiftDown(activationMode, value); });
-	m_pInputComponent->BindAction("camera", "camera_shift_down", eAID_KeyboardMouse, EKeyId::eKI_Down);
-	m_pInputComponent->RegisterAction("camera", "camera_shift_left", [this](int activationMode, float value) { OnActionCameraShiftLeft(activationMode, value); });
-	m_pInputComponent->BindAction("camera", "camera_shift_left", eAID_KeyboardMouse, EKeyId::eKI_Left);
-	m_pInputComponent->RegisterAction("camera", "camera_shift_right", [this](int activationMode, float value) { OnActionCameraShiftRight(activationMode, value); });
-	m_pInputComponent->BindAction("camera", "camera_shift_right", eAID_KeyboardMouse, EKeyId::eKI_Right);
-	m_pInputComponent->RegisterAction("camera", "camera_shift_forward", [this](int activationMode, float value) { OnActionCameraShiftForward(activationMode, value); });
-	m_pInputComponent->BindAction("camera", "camera_shift_forward", eAID_KeyboardMouse, EKeyId::eKI_Up);
-	m_pInputComponent->RegisterAction("camera", "camera_shift_backward", [this](int activationMode, float value) { OnActionCameraShiftBackward(activationMode, value); });
-	m_pInputComponent->BindAction("camera", "camera_shift_backward", eAID_KeyboardMouse, EKeyId::eKI_Down);
+/**
+NOTE: By accumulating the deltas in the post update, we get consistent values back during pre-physics and update,
+which is where most the work is done. There is zero chance of errors due to drift in values from one update / pre-
+physics to another. The downside is we have a definite lag of one frame for all input - and for VR this might be
+killer. Ideally we would have a component system able to prioritise objects before others - and this would be given a
+high priority.
+
+#TODO: Re-write when the above is available.
+**/
+void CPlayerInputComponent::Update()
+{
+	static float frameTime = gEnv->pTimer->GetFrameTime();
+
+	// We can just add up all the acculmated requests to find out how much pitch / yaw is being requested.
+	// It's also a good time to filter out any small movement requests to stabilise the camera / etc.
+	m_lastPitchDelta = m_mousePitchDelta + m_xiPitchDelta;
+	if (std::abs(m_lastPitchDelta) < m_pitchFilter)
+		m_lastPitchDelta = 0.0f;
+	m_lastYawDelta = m_mouseYawDelta + m_xiYawDelta;
+	if (std::abs(m_lastYawDelta) < m_yawFilter)
+		m_lastYawDelta = 0.0f;
+
+	// Track the last values for mouse and xbox inputs. They're filtered individually for low level noise.
+	m_lastMousePitchDelta = std::abs(m_mousePitchDelta) >= m_pitchFilter ? m_mousePitchDelta : 0.0f;
+	m_lastMouseYawDelta = std::abs(m_mouseYawDelta) >= m_yawFilter ? m_mouseYawDelta : 0.0f;
+	m_lastXiPitchDelta = std::abs(m_xiPitchDelta) >= m_pitchFilter ? m_xiPitchDelta : 0.0f;
+	m_lastXiYawDelta = std::abs(m_xiYawDelta) >= m_yawFilter ? m_xiYawDelta : 0.0f;
+
+	// Circle of life!
+	m_mousePitchDelta = m_mouseYawDelta = 0.0f;
+}
+
+
+Vec3 CPlayerInputComponent::GetMovement(const Quat& baseRotation)
+{
+	bool allowMovement = true;
+	Quat quatRelativeDirection;
+	Vec3 vecMovement = Vec3(ZERO);
+
+	// Take the mask and turn it into a vector to indicate the direction we need to pan independent of the present
+	// camera direction. 
+	switch (m_inputFlags)
+	{
+		case (TInputFlags)EInputFlag::Forward:
+			quatRelativeDirection = Quat::CreateIdentity();
+			break;
+
+		case ((TInputFlags)EInputFlag::Forward | (TInputFlags)EInputFlag::Right):
+			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(45.0f));
+			break;
+
+		case (TInputFlags)EInputFlag::Right:
+			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(90.0f));
+			break;
+
+		case ((TInputFlags)EInputFlag::Backward | (TInputFlags)EInputFlag::Right):
+			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(135.0f));
+			break;
+
+		case (TInputFlags)EInputFlag::Backward:
+			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(180.0f));
+			break;
+
+		case ((TInputFlags)EInputFlag::Backward | (TInputFlags)EInputFlag::Left):
+			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(225.0f));
+			break;
+
+		case (TInputFlags)EInputFlag::Left:
+			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(270.0f));
+			break;
+
+		case ((TInputFlags)EInputFlag::Forward | (TInputFlags)EInputFlag::Left):
+			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(315.0f));
+			break;
+
+		default:
+			quatRelativeDirection = Quat::CreateIdentity();
+			allowMovement = false;
+			break;
+	}
+
+	// Create a vector based on key direction. This is computed in local space for the base rotation.
+	if (allowMovement)
+		vecMovement = Vec3(baseRotation.GetFwdX(), baseRotation.GetFwdY(), 0.0f).GetNormalized() * quatRelativeDirection;
+
+	return vecMovement;
 }
 
 
@@ -594,41 +540,5 @@ void CPlayerInputComponent::OnActionInteraction(int activationMode, float value)
 			IF_ACTOR_DO(OnActionInteractionEnd);
 		break;
 	}
-}
-
-
-void CPlayerInputComponent::OnActionCameraShiftUp(int activationMode, float value)
-{
-	m_pCameraManager->OnActionCameraShiftUp(activationMode, value);
-}
-
-
-void CPlayerInputComponent::OnActionCameraShiftDown(int activationMode, float value)
-{
-	m_pCameraManager->OnActionCameraShiftDown(activationMode, value);
-}
-
-
-void CPlayerInputComponent::OnActionCameraShiftLeft(int activationMode, float value)
-{
-	m_pCameraManager->OnActionCameraShiftLeft(activationMode, value);
-}
-
-
-void CPlayerInputComponent::OnActionCameraShiftRight(int activationMode, float value)
-{
-	m_pCameraManager->OnActionCameraShiftRight(activationMode, value);
-}
-
-
-void CPlayerInputComponent::OnActionCameraShiftForward(int activationMode, float value)
-{
-	m_pCameraManager->OnActionCameraShiftForward(activationMode, value);
-}
-
-
-void CPlayerInputComponent::OnActionCameraShiftBackward(int activationMode, float value)
-{
-	m_pCameraManager->OnActionCameraShiftBackward(activationMode, value);
 }
 }

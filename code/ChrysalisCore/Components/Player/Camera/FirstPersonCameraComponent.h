@@ -65,7 +65,7 @@ public:
 	// ***
 
 public:
-	virtual void ResetCamera() { m_viewPitch = (DEG2RAD(g_cvars.m_firstPersonCameraPitchMax) + DEG2RAD(g_cvars.m_firstPersonCameraPitchMin)) / 2; }
+	virtual void ResetCamera();
 
 
 private:

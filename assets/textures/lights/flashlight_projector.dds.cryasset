@@ -1,5 +1,5 @@
 <cryasset>
- <AssetMetadata version="0" type="Texture" guid="{2CCD3352-A0C8-326A-716D-B263C56F4E45}" source="flashlight_projector.tif">
+ <AssetMetadata version="0" type="Texture" guid="2ccd3352-a0c8-326a-716d-b263c56f4e45" source="flashlight_projector.tif">
   <Files>
    <File path="flashlight_projector.dds"/>
    <File path="flashlight_projector.dds.1"/>

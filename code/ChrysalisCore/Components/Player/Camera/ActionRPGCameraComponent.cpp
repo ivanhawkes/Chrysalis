@@ -2,7 +2,7 @@
 
 #include "ActionRPGCameraComponent.h"
 #include "Components/Player/PlayerComponent.h"
-#include <Components/Player/Input/IPlayerInputComponent.h>
+#include <Components/Player/Input/PlayerInputComponent.h>
 #include <Utility/StringConversions.h>
 #include <Console/CVars.h>
 #include <Actor/ActorComponent.h>
@@ -72,23 +72,107 @@ void CActionRPGCameraComponent::OnShutDown()
 
 void CActionRPGCameraComponent::Update()
 {
+	UpdateZoom();
+
+	// Do whichever update is appropriate for the current view.
+	if (IsViewFirstPerson())
+		UpdateFirstPerson();
+	else
+		UpdateThirdPerson();
+}
+
+
+void CActionRPGCameraComponent::UpdateZoom()
+{
+	// If the player zoomed all the way in, switch to the first person camera.
+	float tempZoomGoal = m_lastZoomGoal + m_pCameraManager->GetZoomDelta() * g_cvars.m_actionRPGCameraZoomStep;
+
+	// Calculate the new zoom goal after asking the player input for zoom level deltas.
+	m_zoomGoal = clamp_tpl(tempZoomGoal, g_cvars.m_actionRPGCameraZoomMin, g_cvars.m_actionRPGCameraZoomMax);
+	m_lastZoomGoal = m_zoomGoal;
+
+	// Should the camera view change to first person? We're using the goal instead of the final result because stepping
+	// to the m_zoom may return a result that is fractionally higher than the actual minimum zoom, thus never switching
+	// to the first person view. 
+	if (m_zoomGoal <= g_cvars.m_actionRPGCameraZoomMin)
+	{
+		if (!IsViewFirstPerson())
+			ToggleFirstPerson();
+	}
+	else
+	{
+		if (IsViewFirstPerson())
+			ToggleFirstPerson();
+	}
+
+	// Interpolate towards the desired zoom position.
+	Interpolate(m_zoom, m_zoomGoal, g_cvars.m_actionRPGCameraZoomSpeed, gEnv->pTimer->GetFrameTime());
+}
+
+
+void CActionRPGCameraComponent::UpdateFirstPerson()
+{
+	auto pPlayer = CPlayerComponent::GetLocalPlayer();
+	auto pPlayerInput = pPlayer->GetPlayerInput();
+
+	// Default on failure is to return a cleanly constructed default matrix.
+	Matrix34 newCameraMatrix = Matrix34::Create(Vec3(1.0f), IDENTITY, ZERO);
+
+	if (pPlayerInput)
+	{
+		// Resolve the entity.
+		if (auto pEntity = gEnv->pEntitySystem->GetEntity(m_targetEntityID))
+		{
+			// It's possible there is no actor to query for eye position, in that case, return a safe default
+			// value for an average height person.
+			Vec3 localEyePosition { AverageEyePosition };
+
+			// If we are attached to an entity that is an actor we can use their eye position.
+			auto pActor = CActorComponent::GetActor(m_targetEntityID);
+			if (pActor)
+				localEyePosition = pActor->GetLocalEyePos();
+
+			// Apply the player input rotation for this frame, and limit the pitch / yaw movement according to the set max and min values.
+			if (pPlayer->IsCameraMovementAllowed())
+			{
+				m_viewPitch -= pPlayerInput->GetMousePitchDelta() - pPlayerInput->GetXiPitchDelta();
+				m_viewPitch = clamp_tpl(m_viewPitch, DEG2RAD(g_cvars.m_firstPersonCameraPitchMin), DEG2RAD(g_cvars.m_firstPersonCameraPitchMax));
+			}
+
+			// Pose is based on entity position and the eye position.
+			// We will use the rotation of the entity as a base, and apply pitch based on our own reckoning.
+			const Vec3 position = pEntity->GetPos() + localEyePosition;
+			const Quat rotation = pEntity->GetRotation() * Quat(Ang3(m_viewPitch, 0.0f, 0.0f));
+			newCameraMatrix = Matrix34::Create(Vec3(1.0f), rotation, position + rotation * m_pCameraManager->GetViewOffset());
+
+#if defined(_DEBUG)
+			if (g_cvars.m_firstPersonCameraDebug)
+			{
+				gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(position, 0.04f, ColorB(0, 0, 255, 255));
+			}
+#endif
+		}
+	}
+
+	// Store the new matrix for later.
+	m_cameraMatrix = newCameraMatrix;
+}
+
+
+void CActionRPGCameraComponent::UpdateThirdPerson()
+{
 	auto pEntity = gEnv->pEntitySystem->GetEntity(m_targetEntityID);
 	auto pPlayer = CPlayerComponent::GetLocalPlayer();
 	auto pPlayerInput = pPlayer->GetPlayerInput();
 
 	if (pPlayerInput)
 	{
-		// If the player zoomed all the way in, switch to the first person camera.
-		float tempZoomGoal = m_lastZoomGoal + pPlayerInput->GetZoomDelta() * g_cvars.m_actionRPGCameraZoomStep;
-		if (m_pCameraManager)
-		{
-			if ((tempZoomGoal < g_cvars.m_actionRPGCameraZoomMin) && (m_pCameraManager->IsThirdPerson()))
-				m_pCameraManager->ToggleThirdPerson();
-		}
+		//// If the player zoomed all the way in, switch to the first person camera.
+		//float tempZoomGoal = m_lastZoomGoal + m_pCameraManager->GetZoomDelta() * g_cvars.m_actionRPGCameraZoomStep;
 
-		// Calculate the new zoom goal after asking the player input for zoom level deltas.
-		m_zoomGoal = clamp_tpl(tempZoomGoal, g_cvars.m_actionRPGCameraZoomMin, g_cvars.m_actionRPGCameraZoomMax);
-		m_lastZoomGoal = m_zoomGoal;
+		//// Calculate the new zoom goal after asking the player input for zoom level deltas.
+		//m_zoomGoal = clamp_tpl(tempZoomGoal, g_cvars.m_actionRPGCameraZoomMin, g_cvars.m_actionRPGCameraZoomMax);
+		//m_lastZoomGoal = m_zoomGoal;
 
 		// Apply the player input rotation for this frame, and limit the pitch / yaw movement according to the set max and min values.
 		if (pPlayer->IsCameraMovementAllowed())
@@ -108,8 +192,8 @@ void CActionRPGCameraComponent::Update()
 		// running interpolation for the following frame. 
 		if ((pEntity) && (!gEnv->IsCutscenePlaying()))
 		{
-			// Interpolate towards the desired zoom position.
-			Interpolate(m_zoom, m_zoomGoal, g_cvars.m_actionRPGCameraZoomSpeed, gEnv->pTimer->GetFrameTime());
+			//// Interpolate towards the desired zoom position.
+			//Interpolate(m_zoom, m_zoomGoal, g_cvars.m_actionRPGCameraZoomSpeed, gEnv->pTimer->GetFrameTime());
 
 			// Get the entity we are targeting.
 			auto pTargetEntity = gEnv->pEntitySystem->GetEntity(m_targetEntityID);
@@ -184,7 +268,7 @@ void CActionRPGCameraComponent::Update()
 				m_vecLastPosition = vecViewPosition;
 
 				// Return the newly calculated pose.
-				m_cameraMatrix = Matrix34::Create(Vec3(1.0f), quatOrbitRotation, vecViewPosition);
+				m_cameraMatrix = Matrix34::Create(Vec3(1.0f), quatOrbitRotation, vecViewPosition + quatOrbitRotation * m_pCameraManager->GetViewOffset());
 
 				return;
 			}
@@ -196,6 +280,28 @@ void CActionRPGCameraComponent::Update()
 
 	// If we made it here, we will want to avoid interpolating, since the last frame result will be wrong in some way.
 	m_skipInterpolation = true;
+}
+
+
+void CActionRPGCameraComponent::ToggleFirstPerson()
+{
+	m_isFirstPerson = !m_isFirstPerson;
+
+	// FP pitch is inverse to TP pitch, so we just swap them and clamp them to stop the camera tilting wildly on camera
+	// changes. We clamp just in case the two ranges are different or asymetrical.
+	m_viewPitch = -m_viewPitch;
+	if (m_isFirstPerson)
+		m_viewPitch = clamp_tpl(m_viewPitch, DEG2RAD(g_cvars.m_firstPersonCameraPitchMin), DEG2RAD(g_cvars.m_firstPersonCameraPitchMax));
+	else
+		m_viewPitch = clamp_tpl(m_viewPitch, DEG2RAD(g_cvars.m_actionRPGCameraPitchMin), DEG2RAD(g_cvars.m_actionRPGCameraPitchMax));
+
+
+	// Notify the local actor that they should change view mode. This gives them a chance to change their model / etc
+	// if needed. 
+	if (auto pActorComponent = CPlayerComponent::GetLocalActor())
+	{
+		pActorComponent->OnToggleFirstPerson();
+	}
 }
 
 
@@ -234,8 +340,10 @@ void CActionRPGCameraComponent::OnActivate()
 {
 	m_EventMask |= BIT64(ENTITY_EVENT_UPDATE);
 	GetEntity()->UpdateComponentEventMask(this);
-	m_skipInterpolation = true;
 	ResetCamera();
+
+	// Avoid interpolation after activating the camera, there is no-where to interpolate from.
+	m_skipInterpolation = true;
 }
 
 

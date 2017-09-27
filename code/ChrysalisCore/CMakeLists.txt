@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.6.2)
-set(CRYENGINE_DIR "D:/CRYENGINE-5.4-PRE-RELEASE")
+set(CRYENGINE_DIR "D:/CRYENGINE/Crytek/CRYENGINE_5.4")
 set(TOOLS_CMAKE_DIR "${CRYENGINE_DIR}/Tools/CMake")
 
 set(PROJECT_BUILD 1)
@@ -59,12 +59,12 @@ add_sources("Actions_uber.cpp"
 add_sources("Character_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Actor\\\\Character"
-		"Actor/Character/Character.cpp"
 		"Actor/Character/CharacterAttributes.cpp"
 		"Actor/Character/CharacterAttributesComponent.cpp"
-		"Actor/Character/Character.h"
+		"Actor/Character/CharacterComponent.cpp"
 		"Actor/Character/CharacterAttributes.h"
 		"Actor/Character/CharacterAttributesComponent.h"
+		"Actor/Character/CharacterComponent.h"
 )
 add_sources("Inventory_uber.cpp"
     PROJECTS Chrysalis
@@ -220,7 +220,6 @@ add_sources("Input_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Player\\\\Input"
 		"Components/Player/Input/PlayerInputComponent.cpp"
-		"Components/Player/Input/IPlayerInputComponent.h"
 		"Components/Player/Input/PlayerInputComponent.h"
 )
 add_sources("Snaplocks_uber.cpp"
