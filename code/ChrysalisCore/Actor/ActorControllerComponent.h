@@ -304,7 +304,7 @@ private:
 	Cry::DefaultComponents::CAdvancedAnimationComponent* m_pAdvancedAnimationComponent { nullptr };
 	Cry::DefaultComponents::CCharacterControllerComponent* m_pCharacterControllerComponent { nullptr };
 
-	TagID m_rotateTagId;
+	TagID m_rotateTagId { TAG_ID_INVALID };
 
 	/** A vector representing the direction and distance the player has requested this actor to move. */
 	Vec3 m_movementRequest { ZERO };

@@ -40,7 +40,8 @@ void CActorControllerComponent::Initialize()
 	CRY_ASSERT_MESSAGE(m_pActorComponent, "The actor controller component must be paired with an actor component.");
 
 	// Resolve the animation tags.
-	m_rotateTagId = m_pAdvancedAnimationComponent->GetTagId("Rotate");
+	if (strlen (m_pAdvancedAnimationComponent->GetControllerDefinitionFile()) > 0)
+		m_rotateTagId = m_pAdvancedAnimationComponent->GetTagId("Rotate");
 
 	// Initialise the movement state machine.
 	MovementHSMInit();
@@ -394,7 +395,11 @@ void CActorControllerComponent::UpdateAnimation(float frameTime)
 
 		// Update tags and motion parameters used for turning
 		const bool isTurning = std::abs(m_yawAngularVelocity) > angularVelocityMin;
-		m_pAdvancedAnimationComponent->SetTagWithId(m_rotateTagId, isTurning);
+
+		// Set the tag, if it exists.
+		if (m_rotateTagId != TAG_ID_INVALID)
+			m_pAdvancedAnimationComponent->SetTagWithId(m_rotateTagId, isTurning);
+
 		if (isTurning)
 		{
 			// Expect the turning motion to take approximately one second.
