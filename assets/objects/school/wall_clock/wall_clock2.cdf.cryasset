@@ -1,0 +1,15 @@
+<AssetMetadata version="0" type="Character" guid="218af40a-9381-eb40-4715-7e9a30b0c44f">
+ <Files>
+  <File path="wall_clock2.cdf"/>
+ </Files>
+ <Details />
+ <Dependencies>
+  <Path>objects/characters/human/male/human_male.chr</Path>
+  <Path>materials/reference/zone_system.mtl</Path>
+  <Path>objects/school/wall_clock/wall_clock_body.cgf</Path>
+  <Path>objects/school/wall_clock/wall_clock_hours.cgf</Path>
+  <Path>objects/school/wall_clock/wall_clock_minutes.cgf</Path>
+  <Path>objects/school/wall_clock/wall_clock_seconds.cgf</Path>
+  <Path>materials/reference/zone_system.mtl</Path>
+ </Dependencies>
+</AssetMetadata>

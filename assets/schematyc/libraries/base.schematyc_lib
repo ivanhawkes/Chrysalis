@@ -1,0 +1,16 @@
+<CrySchematyc CryXmlVersion="2" version="105" guid="d3bac124-ffe8-4a35-bce7-96e62d02d266" scope="">
+ <root elementType="Module" guid="103cf5ba-cc7a-4f45-be68-f95278c0a2a6" name="base">
+  <extensions />
+  <children>
+   <element elementType="Enum" guid="a9483bdb-b366-4fc2-b6e8-c8394c5c1519" name="ToggleSwitch">
+    <constants>
+     <element element="On"/>
+     <element element="Off"/>
+    </constants>
+    <userDocumentation author="Ivan Hawkes" description="States for a toggle switch."/>
+    <extensions />
+    <children />
+   </element>
+  </children>
+ </root>
+</CrySchematyc>

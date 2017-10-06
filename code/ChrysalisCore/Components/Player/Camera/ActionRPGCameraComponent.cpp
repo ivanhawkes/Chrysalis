@@ -6,6 +6,7 @@
 #include <Utility/StringConversions.h>
 #include <Console/CVars.h>
 #include <Actor/ActorComponent.h>
+#include <CryGame/GameUtils.h>
 
 
 namespace Chrysalis
@@ -23,21 +24,6 @@ void CActionRPGCameraComponent::ReflectType(Schematyc::CTypeDesc<CActionRPGCamer
 	desc.SetDescription("An action RPG style of camera that orbits around a target.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
 	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform, IEntityComponent::EFlags::Socket, IEntityComponent::EFlags::Attach, IEntityComponent::EFlags::ClientOnly });
-}
-
-
-// #TODO: ILH I've dumped this here to get the code to compile again, but it really needs to be switched to whatever
-// the new function is. This was grabbed from the GameSDK in GameUtils.h
-ILINE void Interpolate(float& actual, float goal, float speed, float frameTime, float limit = 0)
-{
-	float delta(goal - actual);
-
-	if (limit > 0.001f)
-	{
-		delta = max(min(delta, limit), -limit);
-	}
-
-	actual += delta * min(frameTime * speed, 1.0f);
 }
 
 

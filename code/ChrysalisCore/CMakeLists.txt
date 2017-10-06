@@ -234,6 +234,12 @@ add_sources("Switchable_uber.cpp"
 		"Components/Switchable/SwitchComponent.cpp"
 		"Components/Switchable/SwitchComponent.h"
 )
+add_sources("TimePiece_uber.cpp"
+    PROJECTS Chrysalis
+    SOURCE_GROUP "Components\\\\TimePiece"
+		"Components/TimePiece/TimePieceComponent.cpp"
+		"Components/TimePiece/TimePieceComponent.h"
+)
 add_sources("Console_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Console"
@@ -371,6 +377,13 @@ add_sources("Plugin_uber.cpp"
     SOURCE_GROUP "Plugin"
 		"Plugin/ChrysalisCorePlugin.cpp"
 		"Plugin/ChrysalisCorePlugin.h"
+)
+add_sources("Schematyc_uber.cpp"
+    PROJECTS Chrysalis
+    SOURCE_GROUP "Schematyc"
+		"Schematyc/CoreEnv.cpp"
+		"Schematyc/General.cpp"
+		"Schematyc/CoreEnv.h"
 )
 add_sources("SharedParameters_uber.cpp"
     PROJECTS Chrysalis

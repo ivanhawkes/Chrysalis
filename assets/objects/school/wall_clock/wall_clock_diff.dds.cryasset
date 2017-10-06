@@ -1,0 +1,10 @@
+<AssetMetadata version="0" type="Texture" guid="5ee7c938-a909-eb37-22d1-5c774271430c" source="wall_clock_diff.tif">
+ <Files>
+  <File path="wall_clock_diff.dds"/>
+ </Files>
+ <Details>
+  <Detail name="width">256</Detail>
+  <Detail name="height">256</Detail>
+  <Detail name="mipCount">7</Detail>
+ </Details>
+</AssetMetadata>

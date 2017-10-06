@@ -46,6 +46,11 @@ Solutions/
 /user2/
 /user3/
 /user4/
+assets/user/
+assets/user1/
+assets/user2/
+assets/user3/
+assets/user4/
 
 # Assets we don't want to include for various reasons e.g. copyright
 assets/audio/

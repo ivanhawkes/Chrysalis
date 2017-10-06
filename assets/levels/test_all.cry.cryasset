@@ -1,0 +1,46 @@
+<AssetMetadata version="0" type="Level" guid="8725a29d-1f7e-6694-c05c-44b297f802c5" source="">
+ <Files>
+  <File path="test_all/test_all.cry"/>
+ </Files>
+ <Dependencies>
+  <Path>%engine%/engineassets/codecoverage/hit.dds</Path>
+  <Path>%engine%/engineassets/codecoverage/pbar.dds</Path>
+  <Path>%engine%/engineassets/codecoverage/unexpected.dds</Path>
+  <Path>%engine%/engineassets/icons/averagememoryusage.dds</Path>
+  <Path>%engine%/engineassets/icons/highmemoryusage.dds</Path>
+  <Path>%engine%/engineassets/icons/livepreview.dds</Path>
+  <Path>%engine%/engineassets/icons/lowmemoryusage.dds</Path>
+  <Path>%engine%/engineassets/materials/fog/fogvolumebox.mtl</Path>
+  <Path>%engine%/engineassets/materials/fog/fogvolumeellipsoid.mtl</Path>
+  <Path>%engine%/engineassets/materials/fog/oceaninto.mtl</Path>
+  <Path>%engine%/engineassets/materials/fog/oceanintolowspec.mtl</Path>
+  <Path>%engine%/engineassets/materials/fog/oceanoutof.mtl</Path>
+  <Path>%engine%/engineassets/materials/fog/oceanoutoflowspec.mtl</Path>
+  <Path>%engine%/engineassets/materials/water/wateroceanbottom.mtl</Path>
+  <Path>%engine%/engineassets/texturemsg/defaultnouvs.dds</Path>
+  <Path>%engine%/engineassets/texturemsg/defaultsolids.mtl</Path>
+  <Path>%engine%/engineassets/textures/defaults/16_12.dds</Path>
+  <Path>%engine%/engineassets/textures/defaults/16_34.dds</Path>
+  <Path>%engine%/engineassets/textures/defaults/16_5.dds</Path>
+  <Path>%engine%/engineassets/textures/defaults/16_grey.dds</Path>
+  <Path>engineassets/materials/material_terrain_default.mtl</Path>
+  <Path>engineassets/materials/sky/sky.mtl</Path>
+  <Path>engineassets/materials/water/ocean_default.mtl</Path>
+  <Path>engineassets/texturemsg/defaultsolids.mtl</Path>
+  <Path>engineassets/textures/grey.dds</Path>
+  <Path>engineassets/textures/white.dds</Path>
+  <Path>libs/environmentpresets/test_all.xml</Path>
+  <Path>materials/terrain/grass/grass_01.mtl</Path>
+  <Path>objects/characters/human/male/animations/idle/idle_3p.caf</Path>
+  <Path>objects/characters/human/male/human_male.cdf</Path>
+  <Path>objects/characters/human/male/human_male.mtl</Path>
+  <Path>objects/characters/human/male/human_male_controller_defs.xml</Path>
+  <Path>objects/characters/human/male/human_male_fragment_ids.xml</Path>
+  <Path>objects/characters/human/male/human_male_tags.xml</Path>
+  <Path>objects/items/flashlight/maglite_02d.cgf</Path>
+  <Path>objects/items/flashlight/maglite_02d.mtl</Path>
+  <Path>objects/school/wall_clock/wall_clock.cdf</Path>
+  <Path>objects/school/wall_clock/wall_clock_seconds.cgf</Path>
+  <Path>textures/lights/flashlight_projector.dds</Path>
+ </Dependencies>
+</AssetMetadata>

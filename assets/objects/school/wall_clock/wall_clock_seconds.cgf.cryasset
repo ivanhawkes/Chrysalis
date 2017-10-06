@@ -1,0 +1,11 @@
+<AssetMetadata version="0" type="Mesh" guid="7e5df96a-d868-383a-0812-fed885c09d0b">
+ <Files>
+  <File path="wall_clock_seconds.cgf"/>
+ </Files>
+ <Details>
+  <Detail name="materialCount">0</Detail>
+  <Detail name="triangleCount">68</Detail>
+  <Detail name="vertexCount">72</Detail>
+  <Detail name="16BitPrecision">false</Detail>
+ </Details>
+</AssetMetadata>

@@ -44,13 +44,14 @@
 #include "Entities/Flashlight/FlashlightComponent.h"
 #include "Entities/Interaction/DRSInteractionEntity.h"
 #include "Entities/SecurityPad/SecurityPadComponent.h"
-
 #include "Components/Player/Input/PlayerInputComponent.h"
 #include "Components/Snaplocks/SnaplockComponent.h"
 #include "Components/Player/Camera/CameraManagerComponent.h"
 #include "Components/Player/Camera/ActionRPGCameraComponent.h"
 #include "Components/Player/Camera/ExamineCameraComponent.h"
 #include "Components/Player/Camera/FirstPersonCameraComponent.h"
+#include "Components/TimePiece/TimePieceComponent.h"
+#include "Schematyc/CoreEnv.h"
 
 
 // Included only once per DLL module.
@@ -210,6 +211,10 @@ void CChrysalisCorePlugin::RegisterComponents(Schematyc::IEnvRegistrar& registra
 			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CSecurityPadComponent));
 			Chrysalis::CSecurityPadComponent::Register(componentScope);
 		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CTimePieceComponent));
+			Chrysalis::CTimePieceComponent::Register(componentScope);
+		}
 	}
 }
 
@@ -239,6 +244,12 @@ void CChrysalisCorePlugin::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UI
 	{
 		case ESYSTEM_EVENT_REGISTER_SCHEMATYC_ENV:
 		{
+			if (gEnv->pSchematyc)
+			{
+				gEnv->pSchematyc->GetEnvRegistry().RegisterPackage(
+					SCHEMATYC_MAKE_ENV_PACKAGE(g_coreEnvPackageGuid, "CoreEnv", "Chrysalis", "Core Schematyc environment", SCHEMATYC_DELEGATE(&RegisterCoreEnvPackage)));
+			}
+
 			// Register all components that belong to this plug-in
 			auto staticAutoRegisterLambda = [this](Schematyc::IEnvRegistrar& registrar)
 			{

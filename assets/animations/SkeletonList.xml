@@ -39,6 +39,7 @@
   <!-- Chrysalis -->
   <Skeleton name="chloe" file="objects/characters/human/chloe/chloe.chr"/>
   <Skeleton name="human_male" file="objects/characters/human/male/human_male.chr"/>
+  <Skeleton name="clock" file="objects/school/wall_clock/wall_clock.skel"/>
 
   <!-- Dark Vale -->
   <Skeleton name="FlashlightDrop" file="Objects/flashlightDrop/FlashlightNULL.chr"/>
