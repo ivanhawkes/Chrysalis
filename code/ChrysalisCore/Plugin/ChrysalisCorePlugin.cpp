@@ -51,6 +51,7 @@
 #include "Components/Player/Camera/ExamineCameraComponent.h"
 #include "Components/Player/Camera/FirstPersonCameraComponent.h"
 #include "Components/TimePiece/TimePieceComponent.h"
+#include "Components/Gauge/GaugeComponent.h"
 #include "Schematyc/CoreEnv.h"
 
 
@@ -214,6 +215,10 @@ void CChrysalisCorePlugin::RegisterComponents(Schematyc::IEnvRegistrar& registra
 		{
 			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CTimePieceComponent));
 			Chrysalis::CTimePieceComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CGaugeComponent));
+			Chrysalis::CGaugeComponent::Register(componentScope);
 		}
 	}
 }

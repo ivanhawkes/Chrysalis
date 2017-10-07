@@ -18,7 +18,7 @@
    <Object Type="EnvironmentProbe" Layer="Main" LayerGUID="374a523a-e30d-4fff-b284-10fcbf81d9a7" Id="3e966bc9-65ed-15cb-1906-2c579cc4c9fe" Name="EnvironmentProbe-1" Pos="65.486526,62.54652,34.985748" FloorNumber="-1" Rotate="0.99999177,0,0,0" ColorRGB="65535" cubemap_resolution="256" preview_cubemap="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="EnvironmentLight" HasEntity="1">
     <Properties />
     <Components>
-     <Component typeId="0d3d1840-d239-411e-8738-14c56cccee2c" guid="aeacb418-4d51-c3a5-fd0e-3995e33f66eb" CryXmlVersion="2" Active="true" IgnoreVisAreas="false" SortPriority="0" AttentuationFalloffMax="1" VolumetricFogOnly="false" AffectsVolumetricFog="true" AffectsOnlyThisArea="true" DiffuseMultiplier="1" SpecularMultiplier="1" ProjectionActive="false" ProjectionHeight="1" ProjectionLength="1" ProjectionWidth="1" Cubemap="">
+     <Component typeId="0d3d1840-d239-411e-8738-14c56cccee2c" guid="ffaac523-a7ab-08a7-deb7-74206bcd78db" CryXmlVersion="2" Active="true" IgnoreVisAreas="false" SortPriority="0" AttentuationFalloffMax="1" VolumetricFogOnly="false" AffectsVolumetricFog="true" AffectsOnlyThisArea="true" DiffuseMultiplier="1" SpecularMultiplier="1" ProjectionActive="false" ProjectionHeight="1" ProjectionLength="1" ProjectionWidth="1" Cubemap="">
       <BoxSize x="100" y="100" z="100"/>
       <Color r="1" g="1" b="1" a="1"/>
      </Component>
@@ -41,7 +41,7 @@
    <Object Type="EmptyEntity" Layer="Main" LayerGUID="374a523a-e30d-4fff-b284-10fcbf81d9a7" Id="b92b3388-7299-2cdf-38bb-c29c4318e1d3" Name="Entity-3" Pos="66,60.875,34.5" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Entity" HasEntity="1">
     <Properties />
     <Components>
-     <Component CryXmlVersion="2" TypeGUID="0a86908d-642f-4590-acef-484e8e39f31b" TypeName="Cry::DefaultComponents::CPointLightComponent" GUID="6c73c43d-0659-ae01-8150-d8549c1f04f0" Name="" UserAdded="true">
+     <Component CryXmlVersion="2" TypeGUID="0a86908d-642f-4590-acef-484e8e39f31b" TypeName="Cry::DefaultComponents::CPointLightComponent" GUID="2533565c-ed34-f55f-8cb9-09d53bbc8d1b" Name="" UserAdded="true">
       <Transform x="1" y="1" z="1">
        <translation>
         <element element="0"/>
@@ -62,7 +62,7 @@
      </Component>
     </Components>
    </Object>
-   <Object Type="Entity" Layer="Main" LayerGUID="374a523a-e30d-4fff-b284-10fcbf81d9a7" Id="732359ac-95d3-329d-1b96-d6210ce9cd51" Name="schematyc::entities::wall_clock-1" Pos="67,62.875,32.75" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="schematyc::schematyc::entities::wall_clock" ClassGUID="111a064c-4dd9-4071-a09f-47de194f5a5e" HasEntity="1">
+   <Object Type="Entity" Layer="Main" LayerGUID="374a523a-e30d-4fff-b284-10fcbf81d9a7" Id="732359ac-95d3-329d-1b96-d6210ce9cd51" Name="Clock" Pos="67,62.875,32.75" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="schematyc::schematyc::entities::wall_clock" ClassGUID="111a064c-4dd9-4071-a09f-47de194f5a5e" HasEntity="1">
     <Properties />
     <SchematycProperties CryXmlVersion="2">
      <components />
@@ -110,7 +110,7 @@
    <Object Type="EntityWithComponent" Layer="Main" LayerGUID="374a523a-e30d-4fff-b284-10fcbf81d9a7" Id="fa6af87d-9163-9f7a-fe5f-f544ea81e87b" Name="Hero" Pos="66.75,60.5,32" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Entity" HasEntity="1">
     <Properties />
     <Components>
-     <Component CryXmlVersion="2" TypeGUID="33e4a852-b605-4deb-881f-d3ec252a9edb" TypeName="Chrysalis::CCharacterComponent" GUID="e50b9221-e40f-ecb9-e5aa-30df0aac9a90" Name="" UserAdded="true">
+     <Component CryXmlVersion="2" TypeGUID="33e4a852-b605-4deb-881f-d3ec252a9edb" TypeName="Chrysalis::CCharacterComponent" GUID="8f6e609a-61bd-d687-7a1d-114ae8a1f12d" Name="" UserAdded="true">
       <Transform x="1" y="1" z="1">
        <translation>
         <element element="0"/>
@@ -122,7 +122,7 @@
       </Transform>
       <properties />
      </Component>
-     <Component CryXmlVersion="2" TypeGUID="d11a58f0-09b5-4685-b5ea-cfc04aeff2e7" TypeName="Chrysalis::CActorComponent" GUID="37eb9479-24ae-7543-72bd-79682cc72081" Name="" UserAdded="false">
+     <Component CryXmlVersion="2" TypeGUID="d11a58f0-09b5-4685-b5ea-cfc04aeff2e7" TypeName="Chrysalis::CActorComponent" GUID="345b27ad-005f-e100-90c3-a0a7b95d25a6" Name="" UserAdded="false">
       <Transform x="1" y="1" z="1">
        <translation>
         <element element="0"/>
@@ -134,7 +134,7 @@
       </Transform>
       <properties GeometryFirstPerson="objects/characters/human/male/human_male.cdf" GeometryThirdPerson="objects/characters/human/male/human_male.cdf"/>
      </Component>
-     <Component CryXmlVersion="2" TypeGUID="3cd5ddc5-ee15-437f-a997-79c2391537fe" TypeName="Cry::DefaultComponents::CAdvancedAnimationComponent" GUID="30750932-f58c-11d2-05c8-f810ab5866a5" Name="" UserAdded="false">
+     <Component CryXmlVersion="2" TypeGUID="3cd5ddc5-ee15-437f-a997-79c2391537fe" TypeName="Cry::DefaultComponents::CAdvancedAnimationComponent" GUID="097b032c-b05e-9a3a-34e6-ac9896c9ce45" Name="" UserAdded="false">
       <Transform x="1" y="1" z="1">
        <translation>
         <element element="0"/>
@@ -144,27 +144,18 @@
        <rotation x="0" y="-0" z="0"/>
        <scale />
       </Transform>
-      <properties Type="RenderAndCollider" Character="objects/characters/human/male/human_male.cdf" DatabasePath="objects/characters/human/male/human_male.adb" ControllerDefPath="objects/characters/human/male/human_male_controller_defs.xml" DefaultScope="Char1P" DefaultFragment="Idle" AnimDriven="false" GroundAlign="true">
+      <properties Type="RenderAndCollider" Character="objects/characters/human/male/human_male.cdf" DatabasePath="objects/characters/human/male/human_male.adb" ControllerDefPath="objects/characters/human/male/human_male_controller_defs.xml" DefaultScope="Char3P" DefaultFragment="Idle" AnimDriven="false" GroundAlign="true">
        <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
        <Physics Mass="10" Density="0"/>
       </properties>
      </Component>
-     <Component CryXmlVersion="2" TypeGUID="98183f31-a685-43cd-92a9-815274f0a81c" TypeName="Cry::DefaultComponents::CCharacterControllerComponent" GUID="c4169649-7057-e48d-bf08-fb4ba61aafdb" Name="" UserAdded="false">
-      <Transform x="1" y="1" z="1">
-       <translation>
-        <element element="0"/>
-        <element element="0"/>
-        <element element="0"/>
-       </translation>
-       <rotation x="0" y="-0" z="0"/>
-       <scale />
-      </Transform>
+     <Component CryXmlVersion="2" TypeGUID="98183f31-a685-43cd-92a9-815274f0a81c" TypeName="Cry::DefaultComponents::CCharacterControllerComponent" GUID="e0b51ed3-3b44-b61a-c600-e0260cae2305" Name="" UserAdded="false">
       <properties Networked="false">
        <Physics Mass="80" Radius="0.44999999" Height="0.935" Capsule="true" SendCollisionSignal="false"/>
        <Movement AirControl="0" AirResistance="0.2" Inertia="8" InertiaAcc="8" MaxClimb="0.87266463" MaxJump="0.87266463" MinSlide="1.2217305" MinFall="1.3962634" MaxGroundVelocity="16"/>
       </properties>
      </Component>
-     <Component CryXmlVersion="2" TypeGUID="d9cd9be7-f17f-4331-bebf-e0ed9567d1de" TypeName="Chrysalis::CInventoryComponent" GUID="bd2abc60-1ce9-0e56-bf92-a33b80a84875" Name="" UserAdded="false">
+     <Component CryXmlVersion="2" TypeGUID="d9cd9be7-f17f-4331-bebf-e0ed9567d1de" TypeName="Chrysalis::CInventoryComponent" GUID="99baf36c-5277-5435-acdb-c3026afe6148" Name="" UserAdded="false">
       <Transform x="1" y="1" z="1">
        <translation>
         <element element="0"/>
@@ -176,7 +167,7 @@
       </Transform>
       <properties />
      </Component>
-     <Component CryXmlVersion="2" TypeGUID="e288ab46-cc70-46c4-8264-6d4e8f0d832c" TypeName="Chrysalis::CEquipmentComponent" GUID="f41bd22d-0e32-b86f-5a61-553c260b14da" Name="" UserAdded="false">
+     <Component CryXmlVersion="2" TypeGUID="e288ab46-cc70-46c4-8264-6d4e8f0d832c" TypeName="Chrysalis::CEquipmentComponent" GUID="a841f9b1-e8ff-29da-7602-cadd51057f41" Name="" UserAdded="false">
       <Transform x="1" y="1" z="1">
        <translation>
         <element element="0"/>
@@ -188,7 +179,7 @@
       </Transform>
       <properties />
      </Component>
-     <Component CryXmlVersion="2" TypeGUID="b36ceff9-e9be-4ebb-8ae5-fc0fb8f49357" TypeName="Chrysalis::CActorControllerComponent" GUID="7a5140c6-6fc6-f403-3da1-d8cbd22b6d54" Name="" UserAdded="false">
+     <Component CryXmlVersion="2" TypeGUID="b36ceff9-e9be-4ebb-8ae5-fc0fb8f49357" TypeName="Chrysalis::CActorControllerComponent" GUID="bfdda49e-d753-cb57-a83d-570b5388be09" Name="" UserAdded="false">
       <Transform x="1" y="1" z="1">
        <translation>
         <element element="0"/>
@@ -200,7 +191,7 @@
       </Transform>
       <properties />
      </Component>
-     <Component CryXmlVersion="2" TypeGUID="dd951bc3-3eb4-478f-8414-f9a5a5cb3437" TypeName="Chrysalis::CEntityAwarenessComponent" GUID="759f457a-91dd-f215-13aa-e6346fb803ea" Name="" UserAdded="false">
+     <Component CryXmlVersion="2" TypeGUID="dd951bc3-3eb4-478f-8414-f9a5a5cb3437" TypeName="Chrysalis::CEntityAwarenessComponent" GUID="9c4aab91-dbac-638d-a1d8-15c1f5230022" Name="" UserAdded="false">
       <Transform x="1" y="1" z="1">
        <translation>
         <element element="0"/>
@@ -212,7 +203,7 @@
       </Transform>
       <properties />
      </Component>
-     <Component CryXmlVersion="2" TypeGUID="a3c41456-80f1-4e0d-9b46-62685f2aee4a" TypeName="Chrysalis::CSnaplockComponent" GUID="b81f5432-4536-16fe-8919-aa6edc21db4e" Name="" UserAdded="false">
+     <Component CryXmlVersion="2" TypeGUID="a3c41456-80f1-4e0d-9b46-62685f2aee4a" TypeName="Chrysalis::CSnaplockComponent" GUID="f307e69d-c09b-a32e-28f7-6ca46ab5ac40" Name="" UserAdded="false">
       <Transform x="1" y="1" z="1">
        <translation>
         <element element="0"/>
@@ -224,7 +215,7 @@
       </Transform>
       <properties />
      </Component>
-     <Component CryXmlVersion="2" TypeGUID="9a65029f-3d2d-4754-9a7a-c9aaaed49c3d" TypeName="Chrysalis::CCharacterAttributesComponent" GUID="c982f4bb-bd6c-12db-f2fe-4d86a4a136f2" Name="" UserAdded="false">
+     <Component CryXmlVersion="2" TypeGUID="9a65029f-3d2d-4754-9a7a-c9aaaed49c3d" TypeName="Chrysalis::CCharacterAttributesComponent" GUID="87c8b303-00e9-c941-b64a-10d84dc06d10" Name="" UserAdded="false">
       <Transform x="1" y="1" z="1">
        <translation>
         <element element="0"/>
@@ -237,6 +228,13 @@
       <properties />
      </Component>
     </Components>
+   </Object>
+   <Object Type="Entity" Layer="Main" LayerGUID="374a523a-e30d-4fff-b284-10fcbf81d9a7" Id="1b88320f-d71d-aaf5-9f20-92f5c33e02cb" Name="Gauge" Pos="65.25,62.75,32.75" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="schematyc::schematyc::entities::gauge" ClassGUID="7924f60b-a78c-4dc5-90ee-490b31a3e9d9" HasEntity="1">
+    <Properties />
+    <SchematycProperties CryXmlVersion="2">
+     <components />
+     <variables />
+    </SchematycProperties>
    </Object>
    <Object Type="Designer" Layer="Main" LayerGUID="374a523a-e30d-4fff-b284-10fcbf81d9a7" Id="e6ba42d6-9af9-be9b-e714-4f4419dbc152" Name="Designer2" Pos="63,62,32" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="16777215" Material="EngineAssets/TextureMsg/DefaultSolids" RndFlags="1073741832" StaticObjFlags="0" ViewDistRatio="100">
     <Brush DesignerModeFlags="0" SubdivisionLevel="0" SubdivisionSmoothingGroup="0" MirrorPlaneNormal="0,0,0" MirrorPlaneDistance="0">
@@ -251,27 +249,6 @@
      <UVIslands />
     </Brush>
     <Mesh Version="2" BinaryData="AAAAAAAAAAAYAAAAGAAAACQAAAAYAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAPwAAAAAAAIA/AACAPwAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AAAAAAAAgD8AAIA/AAAAAAAAgD8AAIA/AACAPwAAgD8AAAAAAACAPwAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAgD8AAIA/AACAPwAAAAAAAIA/AACAPwAAAAAAAAAAAACAPwAAgD8AAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAgD8AAIA/AAAAAAAAgD8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAgL8AAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAAAAAAIA/AAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAgD8AAAAAAAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAIC/AAAAAAAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAPwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAACAvwAAAAAAAAAAAAAAAAAAgL8AAIC/AACAvwAAgL8AAAAAAAAAAAAAAAAAAAAAAACAvwAAgL8AAIC/AACAvwAAAAAAAIA/AAAAAAAAgD8AAIC/AAAAAAAAgL8AAAAAAAAAAAAAgD8AAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAAAACAPwAAgL8AAAAAAACAvwAAAAAAAAAAAACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AACAvwAAgD8AAIC/AAAAAAAAAQACAAAAAgADAAQABQAGAAQABgAHAAgACQAKAAgACgALAAwADQAOAAwADgAPABAAEQASABAAEgATABQAFQAWABQAFgAXAAAAAYAAAAGAAAAAAAGAAYAAAAGAAAABgAAAAAABgAGAAAABgAAAAYAAAAAAAYABgAAAAYAAAAGAAAAAAAGAAYABgAAAAAABgAAAAAABgAGAAYAAAAAAAYAAAAAAAYABgAGAAAAAAAGAAAAAAAGAAYABgAAAAAABgAAAAAABgAGAAAD/fwAAAYAAAAAAAYABgAAA/38AAAGAAAAAAAGAAYAAAP9/AAABgAAAAAABgAGAAAD/fwAAAYAAAAAAAYABgP9/AAAAAAGAAAAAAAGAAYD/fwAAAAABgAAAAAABgAGA/38AAAAAAYAAAAAAAYABgP9/AAAAAAGAAAAAAAGAAYD/fwAAAAABgAAAAYAAAAGA/38AAAAAAYAAAAGAAAABgP9/AAAAAAGAAAABgAAAAYD/fwAAAAABgAAAAYAAAAGAAYAAAAAA/38AAP9/AAD/fwGAAAAAAP9/AAD/fwAA/38BgAAAAAD/fwAA/38AAP9/AYAAAAAA/38AAP9/AAD/fwAAAD8AAAA/AAAAP9ezXT8AAAAAAAAAACQAAAAAAAAAGAAAAAAAAAAAAAAAABAAAA=="/>
-   </Object>
-   <Object Type="EntityWithComponent" Layer="Main" LayerGUID="374a523a-e30d-4fff-b284-10fcbf81d9a7" Id="b4b2ff1b-3e9f-c25e-b382-9c4bd28ca40d" Name="Clock" Pos="66.125,63.375,32.75" FloorNumber="-1" Rotate="1,0,0,0" ColorRGB="65535" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="Entity" HasEntity="1">
-    <Properties />
-    <Components>
-     <Component CryXmlVersion="2" TypeGUID="64f5cefc-3098-4166-8860-4c82deafea11" TypeName="Chrysalis::CTimePieceComponent" GUID="d031dfca-8ea0-e724-af08-908a1f3a4df9" Name="" UserAdded="true">
-      <Transform x="1" y="1" z="1">
-       <translation>
-        <element element="0"/>
-        <element element="0"/>
-        <element element="0"/>
-       </translation>
-       <rotation x="0" y="-0" z="0"/>
-       <scale />
-      </Transform>
-      <properties Type="RenderAndCollider" FilePath="objects/school/wall_clock/wall_clock.cdf">
-       <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
-       <Physics Mass="10" Density="0"/>
-       <Time Hours="0" Minutes="0" Seconds="0"/>
-      </properties>
-     </Component>
-    </Components>
    </Object>
    <Object Type="Designer" Layer="Main" LayerGUID="374a523a-e30d-4fff-b284-10fcbf81d9a7" Id="3afa3c1d-1366-d055-205e-012bb24e863e" Name="Designer2-4" Pos="68.125,61.511993,31.375" FloorNumber="-1" Rotate="0.99999708,0,0,0" ColorRGB="16777215" Material="EngineAssets/TextureMsg/DefaultSolids" RndFlags="1073741832" StaticObjFlags="0" ViewDistRatio="100">
     <Brush DesignerModeFlags="0" SubdivisionLevel="0" SubdivisionSmoothingGroup="0" MirrorPlaneNormal="0,0,0" MirrorPlaneDistance="0">

@@ -152,6 +152,12 @@ add_sources("Equipment_uber.cpp"
 		"Components/Equipment/EquipmentComponent.cpp"
 		"Components/Equipment/EquipmentComponent.h"
 )
+add_sources("Gauge_uber.cpp"
+    PROJECTS Chrysalis
+    SOURCE_GROUP "Components\\\\Gauge"
+		"Components/Gauge/GaugeComponent.cpp"
+		"Components/Gauge/GaugeComponent.h"
+)
 add_sources("Interaction_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Interaction"

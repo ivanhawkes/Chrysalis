@@ -32,15 +32,34 @@
   <Path>libs/environmentpresets/test_all.xml</Path>
   <Path>materials/terrain/grass/grass_01.mtl</Path>
   <Path>objects/characters/human/male/animations/idle/idle_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/jog_bck_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/jog_fwd_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/jogcross_bck_rgt_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/jogcross_fwd_lft_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/jogcross_fwd_rgt_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/jogstrafe_lft_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/jogstrafe_rgt_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/run_fwd_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/runcross_fwd_lft_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/runcross_fwd_rgt_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/runstrafe_lft_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/runstrafe_rgt_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/walk_bck_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/walk_fwd_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/walkcross_bck_rgt_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/walkcross_fwd_lft_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/walkcross_fwd_rgt_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/walkstrafe_lft_3p.caf</Path>
+  <Path>objects/characters/human/male/animations/locomotion/walkstrafe_rgt_3p.caf</Path>
   <Path>objects/characters/human/male/human_male.cdf</Path>
   <Path>objects/characters/human/male/human_male.mtl</Path>
   <Path>objects/characters/human/male/human_male_controller_defs.xml</Path>
   <Path>objects/characters/human/male/human_male_fragment_ids.xml</Path>
   <Path>objects/characters/human/male/human_male_tags.xml</Path>
+  <Path>objects/characters/human/male/textures/human_male_ddna.dds</Path>
   <Path>objects/items/flashlight/maglite_02d.cgf</Path>
   <Path>objects/items/flashlight/maglite_02d.mtl</Path>
   <Path>objects/school/wall_clock/wall_clock.cdf</Path>
-  <Path>objects/school/wall_clock/wall_clock_seconds.cgf</Path>
   <Path>textures/lights/flashlight_projector.dds</Path>
  </Dependencies>
 </AssetMetadata>
