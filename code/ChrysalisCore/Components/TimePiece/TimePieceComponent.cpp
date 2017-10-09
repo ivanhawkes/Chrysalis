@@ -54,8 +54,7 @@ void CTimePieceComponent::ReflectType(Schematyc::CTypeDesc<CTimePieceComponent>&
 	desc.AddMember(&CTimePieceComponent::m_physics, 'phys', "Physics", "Physics", "Physical properties for the object, only used if a simple physics or character controller is applied to the entity.", Cry::DefaultComponents::SPhysicsParameters());
 	
 	// Specific for time pieces.
-	desc.AddMember(&CTimePieceComponent::m_timeComponents, 'time', "Time", "Time", "Time components", CTimePieceComponent::STimeComponents());
-	desc.AddMember(&CTimePieceComponent::m_axis, 'axis', "Axis", "Axis", "Axis around which the hands will rotate", Vec3(0.0f, 1.0f, 0.0f));
+	desc.AddMember(&CTimePieceComponent::m_timePieceProperties, 'time', "Time", "Time", "Time components", CTimePieceComponent::STimePieceProperties());
 }
 
 
@@ -92,7 +91,7 @@ void CTimePieceComponent::ProcessEvent(SEntityEvent& event)
 
 void CTimePieceComponent::LoadFromDisk()
 {
-	if (m_filePath.value.size() > 0)
+	if (!m_filePath.value.IsEmpty())
 	{
 		m_pCachedCharacter = gEnv->pCharacterManager->CreateInstance(m_filePath.value);
 	}
@@ -117,8 +116,6 @@ void CTimePieceComponent::ResetObject()
 
 void CTimePieceComponent::Update(SEntityUpdateContext* pCtx)
 {
-	const float frameTime = pCtx->fFrameTime;
-
 	if (m_pCachedCharacter)
 	{
 		// If we can access the attachments, we can try and find the rotation for each hand.
@@ -130,8 +127,8 @@ void CTimePieceComponent::Update(SEntityUpdateContext* pCtx)
 			if (IAttachment* pHoursAttachment = pAttachmentManager->GetInterfaceByIndex(hoursIndex))
 			{
 				QuatT trans = pHoursAttachment->GetAttAbsoluteDefault();
-				const float radians = DEG2RAD(m_timeComponents.m_needle * 30.0f + m_timeComponents.m_minute / 2.0f);
-				trans.q = Quat::CreateRotationXYZ(m_axis * radians);
+				const float radians = DEG2RAD(m_timePieceProperties.hour * 30.0f + m_timePieceProperties.minute / 2.0f);
+				trans.q = Quat::CreateRotationXYZ(m_timePieceProperties.axis * radians);
 				pHoursAttachment->SetAttAbsoluteDefault(trans);
 			}
 
@@ -140,8 +137,8 @@ void CTimePieceComponent::Update(SEntityUpdateContext* pCtx)
 			if (IAttachment* pMinutesAttachment = pAttachmentManager->GetInterfaceByIndex(minutesIndex))
 			{
 				QuatT trans = pMinutesAttachment->GetAttAbsoluteDefault();
-				const float radians = DEG2RAD(m_timeComponents.m_minute * 6.0f);
-				trans.q = Quat::CreateRotationXYZ(m_axis * radians);
+				const float radians = DEG2RAD(m_timePieceProperties.minute * 6.0f);
+				trans.q = Quat::CreateRotationXYZ(m_timePieceProperties.axis * radians);
 				pMinutesAttachment->SetAttAbsoluteDefault(trans);
 			}
 
@@ -151,8 +148,8 @@ void CTimePieceComponent::Update(SEntityUpdateContext* pCtx)
 			if (IAttachment* pSecondsAttachment = pAttachmentManager->GetInterfaceByIndex(secondsIndex))
 			{
 				QuatT trans = pSecondsAttachment->GetAttAbsoluteDefault();
-				const float radians = DEG2RAD(m_timeComponents.m_second * 6.0f);
-				trans.q = Quat::CreateRotationXYZ(m_axis * radians);
+				const float radians = DEG2RAD(m_timePieceProperties.second * 6.0f);
+				trans.q = Quat::CreateRotationXYZ(m_timePieceProperties.axis * radians);
 				pSecondsAttachment->SetAttAbsoluteDefault(trans);
 			}
 		}

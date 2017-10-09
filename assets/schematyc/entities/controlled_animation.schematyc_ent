@@ -1,0 +1,131 @@
+<CrySchematyc CryXmlVersion="2" version="105" guid="979f459c-b667-462a-80ec-c301075069db" scope="">
+ <root elementType="Class" guid="1b4885c4-d1af-4cfc-aee9-d7637fab3fc0" name="controlled_animation">
+  <userDocumentation author="ivan" description=""/>
+  <extensions />
+  <children>
+   <element elementType="Constructor" guid="2f7dee3c-76a9-4177-8483-e7ce06e3d46f" name="ConstructionGraph">
+    <userDocumentation author="ivan" description=""/>
+    <extensions>
+     <Graph>
+      <pos x="378" y="46"/>
+      <nodes>
+       <element key="a69516df-d1bc-441d-933b-3b6b5eefd257" typeGUID="12bdfa06-ba95-4e48-bb2d-bb48a7080abc">
+        <value guid="a69516df-d1bc-441d-933b-3b6b5eefd257">
+         <pos x="0" y="0"/>
+        </value>
+       </element>
+       <element key="afe0b6cb-8834-47b4-93f4-23f8fb3fcfe1" typeGUID="1bcfd811-b8b7-4032-a90c-311dfa4454c6">
+        <value guid="afe0b6cb-8834-47b4-93f4-23f8fb3fcfe1" objectGUID="2bf3fedd-8f2d-41e5-9d51-1bd728634add">
+         <pos x="296" y="57"/>
+         <functionId domain="Env" guid="bab3bab6-6d26-47f2-8663-5bbffe88e066"/>
+         <inputs>
+          <element value="1">
+           <key type="UInt32" value="1936745828"/>
+          </element>
+         </inputs>
+        </value>
+       </element>
+      </nodes>
+      <links>
+       <element srcNodeGUID="a69516df-d1bc-441d-933b-3b6b5eefd257" dstNodeGUID="afe0b6cb-8834-47b4-93f4-23f8fb3fcfe1">
+        <srcOutputId type="Idx" value="0"/>
+        <dstInputId type="Idx" value="0"/>
+       </element>
+      </links>
+     </Graph>
+    </extensions>
+    <children />
+   </element>
+   <element elementType="SignalReceiver" guid="c70ad7a8-9280-4e20-9737-164009a9ab6d" name="SignalGraph" type="Universal" signalGUID="">
+    <userDocumentation author="ivan" description=""/>
+    <extensions>
+     <Graph>
+      <pos x="0" y="0"/>
+      <nodes>
+       <element key="4e1212ae-29a2-4070-846c-4f61e909961f" typeGUID="1bcfd811-b8b7-4032-a90c-311dfa4454c6">
+        <value guid="4e1212ae-29a2-4070-846c-4f61e909961f" objectGUID="2bf3fedd-8f2d-41e5-9d51-1bd728634add">
+         <pos x="276" y="102"/>
+         <functionId domain="Env" guid="479dd227-e758-487b-ab8c-30c6df4bddbf"/>
+         <inputs>
+          <element value="">
+           <key type="UInt32" value="1851878757"/>
+          </element>
+         </inputs>
+        </value>
+       </element>
+       <element key="1a38a868-230e-40c8-b026-a9ba93c6d4bb" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="1a38a868-230e-40c8-b026-a9ba93c6d4bb" objectGUID="">
+         <pos x="0" y="200"/>
+         <signalId domain="Env" guid="b2561caa-0753-458b-a91f-e8e38b0f0cdf"/>
+        </value>
+       </element>
+       <element key="41b70e30-f0a5-4414-9f49-06d389d8a250" typeGUID="1bcfd811-b8b7-4032-a90c-311dfa4454c6">
+        <value guid="41b70e30-f0a5-4414-9f49-06d389d8a250" objectGUID="2bf3fedd-8f2d-41e5-9d51-1bd728634add">
+         <pos x="621" y="164"/>
+         <functionId domain="Env" guid="a27a52cf-67a8-4abf-9bce-123dd83f4aaf"/>
+         <inputs>
+          <element value="5">
+           <key type="UInt32" value="1718772077"/>
+          </element>
+         </inputs>
+        </value>
+       </element>
+       <element key="587db6e9-b447-4d71-b047-39446ef66641" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="587db6e9-b447-4d71-b047-39446ef66641" objectGUID="">
+         <pos x="0" y="100"/>
+         <signalId domain="Env" guid="52ad5add-7781-429b-b4a9-0cb6c905e353"/>
+        </value>
+       </element>
+       <element key="2755b8cf-88cc-4d84-bfd3-b28eaf336a9d" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="2755b8cf-88cc-4d84-bfd3-b28eaf336a9d" objectGUID="">
+         <pos x="0" y="0"/>
+         <signalId domain="Env" guid="a9279137-7c66-491d-b9a0-8752c24c8979"/>
+        </value>
+       </element>
+      </nodes>
+      <links>
+       <element srcNodeGUID="2755b8cf-88cc-4d84-bfd3-b28eaf336a9d" dstNodeGUID="4e1212ae-29a2-4070-846c-4f61e909961f">
+        <srcOutputId type="Idx" value="0"/>
+        <dstInputId type="Idx" value="0"/>
+       </element>
+       <element srcNodeGUID="4e1212ae-29a2-4070-846c-4f61e909961f" dstNodeGUID="41b70e30-f0a5-4414-9f49-06d389d8a250">
+        <srcOutputId type="Idx" value="0"/>
+        <dstInputId type="Idx" value="0"/>
+       </element>
+      </links>
+     </Graph>
+    </extensions>
+    <children />
+   </element>
+   <element elementType="Base" guid="b68a47ad-2650-483e-b9b0-e7821400786e" name="Base [Entity]">
+    <classId domain="Env" guid="be845278-0dd2-409f-b8be-97895607c256"/>
+    <envClassProperties icon="%EDITOR%/objecticons/schematyc.bmp" bHideInEditor="false" bTriggerAreas="true"/>
+    <extensions />
+    <children>
+     <element elementType="ComponentInstance" guid="ddbd5797-b8d3-4c26-87aa-d95c9b7258e0" name="Entity" accessor="Private" typeGUID="e88093df-904f-4c52-af38-911e26777cdc">
+      <properties />
+      <extensions />
+      <children />
+     </element>
+     <element elementType="ComponentInstance" guid="2bf3fedd-8f2d-41e5-9d51-1bd728634add" name="Controlled Animation" accessor="Private" typeGUID="4902e792-bf53-40f3-b4c3-2fffcdadd71a">
+      <transform x="1" y="1" z="1">
+       <translation>
+        <element element="0"/>
+        <element element="0"/>
+        <element element="0"/>
+       </translation>
+       <rotation x="0" y="0" z="0"/>
+       <scale />
+      </transform>
+      <properties Type="RenderAndCollider" FilePath="objects/school/wall_clock/wall_clock.cdf" Animation="">
+       <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
+       <Physics Mass="3" Density="0"/>
+      </properties>
+      <extensions />
+      <children />
+     </element>
+    </children>
+   </element>
+  </children>
+ </root>
+</CrySchematyc>

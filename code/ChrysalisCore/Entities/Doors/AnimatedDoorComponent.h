@@ -11,7 +11,7 @@ namespace Chrysalis
 {
 class CLockableComponent;
 class CEntityInteractionComponent;
-class CControlledAnimationComponent;
+//class CControlledAnimationComponent;
 class CSimpleAnimationComponent;
 
 

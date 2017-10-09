@@ -58,6 +58,7 @@ assets/animations/FireDoor/
 assets/objects/FireDoor/
 assets/objects/items/compass/
 assets/animations/human/male/crouch/
+assets/dark-vale/
 
 # Keep out the generated files and folders.
 /assets/textures/cubemaps/

@@ -109,7 +109,7 @@ void CDynamicLightComponent::OnResetState()
 	SAFE_RELEASE(m_light.m_pLightImage);
 	SAFE_RELEASE(m_light.m_pLightDynTexSource);
 
-	if (m_projectorTexturePath.size() > 0)
+	if (!m_projectorTexturePath.IsEmpty())
 	{
 		const char* pExt = PathUtil::GetExt(m_projectorTexturePath);
 		if (!stricmp(pExt, "swf") || !stricmp(pExt, "gfx") || !stricmp(pExt, "usm") || !stricmp(pExt, "ui"))
@@ -129,7 +129,7 @@ void CDynamicLightComponent::OnResetState()
 		}
 	}
 
-	if (m_flareTexturePath.size() > 0)
+	if (!m_flareTexturePath.IsEmpty())
 	{
 		int nLensOpticsId;
 

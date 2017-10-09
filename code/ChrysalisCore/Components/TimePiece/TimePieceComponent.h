@@ -1,11 +1,8 @@
 #pragma once
 
 #include "Entities/Interaction/IEntityInteraction.h"
-#include <DefaultComponents/Geometry/AnimatedMeshComponent.h>
 #include <DefaultComponents/Geometry/BaseMeshComponent.h>
 
-
-class Cry::DefaultComponents::CAnimatedMeshComponent;
 
 namespace Chrysalis
 {
@@ -38,57 +35,58 @@ public:
 		return id;
 	}
 
-	struct STimeComponents
+	struct STimePieceProperties
 	{
-		inline bool operator==(const STimeComponents &rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
+		inline bool operator==(const STimePieceProperties &rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
 
-		Schematyc::Range<0, 24> m_needle = 0.0f;
-		Schematyc::Range<0, 60> m_minute = 0.0f;
-		Schematyc::Range<0, 60> m_second = 0.0f;
+		Vec3 axis { 0.0f, 1.0f, 0.0f };
+		Schematyc::Range<0, 24> hour = 0.0f;
+		Schematyc::Range<0, 60> minute = 0.0f;
+		Schematyc::Range<0, 60> second = 0.0f;
 	};
 
 	virtual void Update(SEntityUpdateContext* pCtx);
 
 	virtual void SetCharacterFile(const char* szPath) { m_filePath = szPath; };
-	const char* SetCharacterFile() const { return m_filePath.value.c_str(); }
+	const char* GetCharacterFile() const { return m_filePath.value.c_str(); }
 
-	// Loads character and mannequin data from disk
+	// Loads character and mannequin data from disk.
 	virtual void LoadFromDisk();
 
-	// Applies the character to the entity
+	// Applies the character to the entity.
 	virtual void ResetObject();
 
-	// Helper to allow exposing derived function to Schematyc
+	// Helper to allow exposing derived function to Schematyc.
 	virtual void SetMeshType(Cry::DefaultComponents::EMeshType type) { SetType(type); }
 
 	void SetHour(const float hour)
 	{
-		m_timeComponents.m_needle = hour;
+		m_timePieceProperties.hour = hour;
 	}
 
 	void SetMinute(const float minute)
 	{
-		m_timeComponents.m_minute = minute;
+		m_timePieceProperties.minute = minute;
 	}
 
 	void SetSecond(const float second)
 	{
-		m_timeComponents.m_second = second;
+		m_timePieceProperties.second = second;
 	}
 
 protected:
 	Schematyc::CharacterFileName m_filePath;
 	_smart_ptr<ICharacterInstance> m_pCachedCharacter = nullptr;
-	STimeComponents m_timeComponents;
-	Vec3 m_axis { 0.0f, 1.0f, 0.0f };
+	STimePieceProperties m_timePieceProperties;
 };
 
 
-static void ReflectType(Schematyc::CTypeDesc<CTimePieceComponent::STimeComponents>& desc)
+static void ReflectType(Schematyc::CTypeDesc<CTimePieceComponent::STimePieceProperties>& desc)
 {
 	desc.SetGUID("{C0D6D7AC-9D54-48AA-A9F9-DC85CF579632}"_cry_guid);
-	desc.AddMember(&CTimePieceComponent::STimeComponents::m_needle, 'hour', "Hours", "Hours", nullptr, 0.0f);
-	desc.AddMember(&CTimePieceComponent::STimeComponents::m_minute, 'mins', "Minutes", "Minutes", nullptr, 0.0f);
-	desc.AddMember(&CTimePieceComponent::STimeComponents::m_second, 'secs', "Seconds", "Seconds", nullptr, 0.0f);
+	desc.AddMember(&CTimePieceComponent::STimePieceProperties::axis, 'axis', "Axis", "Axis", "Axis around which the hands will rotate", Vec3(0.0f, 1.0f, 0.0f));
+	desc.AddMember(&CTimePieceComponent::STimePieceProperties::hour, 'hour', "Hours", "Hours", nullptr, 0.0f);
+	desc.AddMember(&CTimePieceComponent::STimePieceProperties::minute, 'mins', "Minutes", "Minutes", nullptr, 0.0f);
+	desc.AddMember(&CTimePieceComponent::STimePieceProperties::second, 'secs', "Seconds", "Seconds", nullptr, 0.0f);
 }
 }

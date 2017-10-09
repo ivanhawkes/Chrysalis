@@ -41,7 +41,6 @@ void CGaugeComponent::ReflectType(Schematyc::CTypeDesc<CGaugeComponent>& desc)
 	
 	// Specific for time pieces.
 	desc.AddMember(&CGaugeComponent::m_gaugeProperties, 'time', "Time", "Time", "Time components", CGaugeComponent::SGaugeProperties());
-	desc.AddMember(&CGaugeComponent::m_axis, 'axis', "Axis", "Axis", "Axis around which the hands will rotate", Vec3(0.0f, 1.0f, 0.0f));
 }
 
 
@@ -78,7 +77,7 @@ void CGaugeComponent::ProcessEvent(SEntityEvent& event)
 
 void CGaugeComponent::LoadFromDisk()
 {
-	if (m_filePath.value.size() > 0)
+	if (!m_filePath.value.IsEmpty())
 	{
 		m_pCachedCharacter = gEnv->pCharacterManager->CreateInstance(m_filePath.value);
 	}
@@ -103,8 +102,6 @@ void CGaugeComponent::ResetObject()
 
 void CGaugeComponent::Update(SEntityUpdateContext* pCtx)
 {
-	const float frameTime = pCtx->fFrameTime;
-
 	if (m_pCachedCharacter)
 	{
 		// If we can access the attachments, we can try and find the rotation for each hand.
@@ -116,8 +113,8 @@ void CGaugeComponent::Update(SEntityUpdateContext* pCtx)
 			if (IAttachment* pNeedleAttachment = pAttachmentManager->GetInterfaceByIndex(needleIndex))
 			{
 				QuatT trans = pNeedleAttachment->GetAttAbsoluteDefault();
-				const float radians = DEG2RAD(m_gaugeProperties.m_needle);
-				trans.q = Quat::CreateRotationXYZ(m_axis * radians);
+				const float radians = DEG2RAD(m_gaugeProperties.needleValue);
+				trans.q = Quat::CreateRotationXYZ(m_gaugeProperties.axis * radians);
 				pNeedleAttachment->SetAttAbsoluteDefault(trans);
 			}
 		}

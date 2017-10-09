@@ -18,7 +18,7 @@ void CItemInteractionComponent::ReflectType(Schematyc::CTypeDesc<CItemInteractio
 {
 	desc.SetGUID(CItemInteractionComponent::IID());
 	desc.SetEditorCategory("Interaction");
-	desc.SetLabel("Item Interaction Component");
+	desc.SetLabel("Item Interaction");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
 	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });

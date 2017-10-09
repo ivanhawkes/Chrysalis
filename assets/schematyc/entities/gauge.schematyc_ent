@@ -26,9 +26,15 @@
      <Graph>
       <pos x="371" y="198"/>
       <nodes>
+       <element key="17700a1b-1fef-427b-bae1-a35f7287a966" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="17700a1b-1fef-427b-bae1-a35f7287a966" objectGUID="">
+         <pos x="86" y="331"/>
+         <signalId domain="Script" guid="8ce2913d-664a-4c80-a9d6-a6e500412ca3"/>
+        </value>
+       </element>
        <element key="d5a24dbe-4bdf-4499-820d-3ebdbfdcb5a0" typeGUID="1bcfd811-b8b7-4032-a90c-311dfa4454c6">
         <value guid="d5a24dbe-4bdf-4499-820d-3ebdbfdcb5a0" objectGUID="fd7bb4f8-f526-4a2a-a79b-ab74f7343fe7">
-         <pos x="453" y="205"/>
+         <pos x="575" y="211"/>
          <functionId domain="Env" guid="0f48ec15-72ac-4067-bf10-65f789d31c0b"/>
          <inputs>
           <element value="0">
@@ -51,7 +57,7 @@
        </element>
        <element key="652b11ad-8667-48bc-8079-db728ba817fd" typeGUID="1bcfd811-b8b7-4032-a90c-311dfa4454c6">
         <value guid="652b11ad-8667-48bc-8079-db728ba817fd" objectGUID="">
-         <pos x="228" y="221"/>
+         <pos x="326" y="203"/>
          <functionId domain="Env" guid="a17b82b7-3b4a-440d-a4f1-082f3d9cf0f5"/>
          <inputs>
           <element value="90">
@@ -75,13 +81,13 @@
         <srcOutputId type="Idx" value="0"/>
         <dstInputId type="Idx" value="0"/>
        </element>
-       <element srcNodeGUID="20588cdb-3441-45cd-b7a5-c39bb2b5ab0f" dstNodeGUID="652b11ad-8667-48bc-8079-db728ba817fd">
-        <srcOutputId type="Idx" value="0"/>
-        <dstInputId type="Idx" value="0"/>
-       </element>
        <element srcNodeGUID="652b11ad-8667-48bc-8079-db728ba817fd" dstNodeGUID="d5a24dbe-4bdf-4499-820d-3ebdbfdcb5a0">
         <srcOutputId type="UInt32" value="7497075"/>
         <dstInputId type="UInt32" value="7562612"/>
+       </element>
+       <element srcNodeGUID="17700a1b-1fef-427b-bae1-a35f7287a966" dstNodeGUID="652b11ad-8667-48bc-8079-db728ba817fd">
+        <srcOutputId type="Idx" value="0"/>
+        <dstInputId type="Idx" value="0"/>
        </element>
       </links>
      </Graph>
@@ -113,9 +119,16 @@
     <properties Type="RenderAndCollider" FilePath="objects/school/wall_clock/wall_clock.cdf">
      <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
      <Physics Mass="0.30000001" Density="0"/>
-     <Time Needle="0"/>
-     <Axis x="0" y="1" z="0"/>
+     <Time Needle="0">
+      <Axis x="0" y="1" z="0"/>
+     </Time>
     </properties>
+    <extensions />
+    <children />
+   </element>
+   <element elementType="Timer" guid="8ce2913d-664a-4c80-a9d6-a6e500412ca3" name="Tick" units="Seconds" seconds="0.25">
+    <flags AutoStart="true" Repeat="true"/>
+    <userDocumentation author="ivan" description=""/>
     <extensions />
     <children />
    </element>

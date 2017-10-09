@@ -26,8 +26,8 @@ void CCompassComponent::Initialize()
 	// Get some geometry.
 	m_pGeometryComponent = GetEntity()->CreateComponent<Cry::DefaultComponents::CStaticMeshComponent>();
 
-	// Get a controllable animation component.
-	m_pControlledAnimationComponent = GetEntity()->CreateComponent<CControlledAnimationComponent>();
+	//// Get a controllable animation component.
+	//m_pControlledAnimationComponent = GetEntity()->CreateComponent<CControlledAnimationComponent>();
 
 	// We want to supply interaction verbs.
 	m_interactor = GetEntity()->GetOrCreateComponent<CEntityInteractionComponent>();

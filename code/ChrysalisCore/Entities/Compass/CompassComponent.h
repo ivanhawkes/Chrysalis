@@ -44,8 +44,8 @@ private:
 	/** Model for the geometry. */
 	Cry::DefaultComponents::CStaticMeshComponent* m_pGeometryComponent { nullptr };
 
-	/** Animation for the geometry. */
-	CControlledAnimationComponent* m_pControlledAnimationComponent { nullptr };
+	///** Animation for the geometry. */
+	//CControlledAnimationComponent* m_pControlledAnimationComponent { nullptr };
 
 	/** This entity should be interactive. */
 	CEntityInteractionComponent* m_interactor { nullptr };

@@ -1,11 +1,8 @@
 #pragma once
 
 #include "Entities/Interaction/IEntityInteraction.h"
-#include <DefaultComponents/Geometry/AnimatedMeshComponent.h>
 #include <DefaultComponents/Geometry/BaseMeshComponent.h>
 
-
-class Cry::DefaultComponents::CAnimatedMeshComponent;
 
 namespace Chrysalis
 {
@@ -42,39 +39,40 @@ public:
 	{
 		inline bool operator==(const SGaugeProperties &rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
 
-		Schematyc::Range<0, 360> m_needle = 0.0f;
+		Vec3 axis { 0.0f, 1.0f, 0.0f };
+		Schematyc::Range<0, 360> needleValue = 0.0f;
 	};
 
 	virtual void Update(SEntityUpdateContext* pCtx);
 
 	virtual void SetCharacterFile(const char* szPath) { m_filePath = szPath; };
-	const char* SetCharacterFile() const { return m_filePath.value.c_str(); }
+	const char* GetCharacterFile() const { return m_filePath.value.c_str(); }
 
-	// Loads character and mannequin data from disk
+	// Loads character and mannequin data from disk.
 	virtual void LoadFromDisk();
 
-	// Applies the character to the entity
+	// Applies the character to the entity.
 	virtual void ResetObject();
 
-	// Helper to allow exposing derived function to Schematyc
+	// Helper to allow exposing derived function to Schematyc.
 	virtual void SetMeshType(Cry::DefaultComponents::EMeshType type) { SetType(type); }
 
-	void SetNeedle(const float needle)
+	void SetNeedle(const float needleValue)
 	{
-		m_gaugeProperties.m_needle = needle;
+		m_gaugeProperties.needleValue = needleValue;
 	}
 
 protected:
 	Schematyc::CharacterFileName m_filePath;
 	_smart_ptr<ICharacterInstance> m_pCachedCharacter = nullptr;
 	SGaugeProperties m_gaugeProperties;
-	Vec3 m_axis { 0.0f, 1.0f, 0.0f };
 };
 
 
 static void ReflectType(Schematyc::CTypeDesc<CGaugeComponent::SGaugeProperties>& desc)
 {
 	desc.SetGUID("{FEE816B5-15F3-4A63-A74B-E6597B555C18}"_cry_guid);
-	desc.AddMember(&CGaugeComponent::SGaugeProperties::m_needle, 'need', "Needle", "Needle", nullptr, 0.0f);
+	desc.AddMember(&CGaugeComponent::SGaugeProperties::axis, 'axis', "Axis", "Axis", "Axis around which the hands will rotate", Vec3(0.0f, 1.0f, 0.0f));
+	desc.AddMember(&CGaugeComponent::SGaugeProperties::needleValue, 'need', "Needle", "Needle", nullptr, 0.0f);
 }
 }

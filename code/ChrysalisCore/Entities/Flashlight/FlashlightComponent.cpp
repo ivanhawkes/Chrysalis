@@ -20,7 +20,7 @@ void CFlashlightComponent::ReflectType(Schematyc::CTypeDesc<CFlashlightComponent
 {
 	desc.SetGUID(CFlashlightComponent::IID());
 	desc.SetEditorCategory("Items");
-	desc.SetLabel("Flashlight Component");
+	desc.SetLabel("Flashlight");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
 	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });

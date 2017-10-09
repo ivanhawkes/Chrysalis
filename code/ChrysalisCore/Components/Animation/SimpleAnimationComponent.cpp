@@ -16,7 +16,7 @@ void CSimpleAnimationComponent::ReflectType(Schematyc::CTypeDesc<CSimpleAnimatio
 {
 	desc.SetGUID(CSimpleAnimationComponent::IID());
 	desc.SetEditorCategory("Animation");
-	desc.SetLabel("Simple Animation Component");
+	desc.SetLabel("Simple Animation");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
 	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });

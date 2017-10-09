@@ -16,7 +16,7 @@ void CDRSInteractionComponent::ReflectType(Schematyc::CTypeDesc<CDRSInteractionC
 {
 	desc.SetGUID(CDRSInteractionComponent::IID());
 	desc.SetEditorCategory("Interaction");
-	desc.SetLabel("DRS Interaction Component");
+	desc.SetLabel("DRS Interaction");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
 	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
