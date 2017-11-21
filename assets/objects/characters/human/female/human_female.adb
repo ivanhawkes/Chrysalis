@@ -4,13 +4,13 @@
    <Fragment BlendOutDuration="0.2" Tags="Unaware">
     <AnimLayer>
      <Blend ExitTime="0" StartTime="0" Duration="0.2"/>
-     <Animation name="idle_3p" flags="Loop"/>
+     <Animation name="stand_relaxed_idle" flags="Loop"/>
     </AnimLayer>
    </Fragment>
    <Fragment BlendOutDuration="0.2" Tags="Alerted">
     <AnimLayer>
      <Blend ExitTime="0" StartTime="0" Duration="0.2"/>
-     <Animation name="idle_3p" flags="Loop"/>
+     <Animation name="stand_relaxed_idle" flags="Loop"/>
     </AnimLayer>
    </Fragment>
    <Fragment BlendOutDuration="0.2" Tags="Crouching">
@@ -28,7 +28,7 @@
    <Fragment BlendOutDuration="0.2" Tags="">
     <AnimLayer>
      <Blend ExitTime="0" StartTime="0" Duration="0.2"/>
-     <Animation name="idle_3p" flags="Loop"/>
+     <Animation name="stand_relaxed_idle" flags="Loop"/>
     </AnimLayer>
    </Fragment>
   </Idle>
@@ -56,7 +56,7 @@
    <Fragment BlendOutDuration="0.2" Tags="">
     <AnimLayer>
      <Blend ExitTime="0" StartTime="0" Duration="0.2"/>
-     <Animation name="steprotate_rgt_45_3p"/>
+     <Animation name="stand_relaxed_r_45"/>
     </AnimLayer>
    </Fragment>
   </Interaction>
@@ -70,13 +70,13 @@
    <Fragment BlendOutDuration="0.2" Tags="Apathy">
     <AnimLayer>
      <Blend ExitTime="0" StartTime="0" Duration="0.2"/>
-     <Animation name="walk_bck_3p"/>
+     <Animation name="crouch_l_135"/>
     </AnimLayer>
    </Fragment>
    <Fragment BlendOutDuration="0.2" Tags="">
     <AnimLayer>
      <Blend ExitTime="0" StartTime="0" Duration="0.2"/>
-     <Animation name="steprotate_lft_90_3p"/>
+     <Animation name="crouch_to_crouchwalk_b"/>
     </AnimLayer>
    </Fragment>
   </Emote>

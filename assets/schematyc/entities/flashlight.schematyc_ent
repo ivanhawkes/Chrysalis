@@ -115,14 +115,6 @@
         <srcOutputId type="GUID" value="49f3d24b-90b7-4d6c-ac8a-b52d373bc92c"/>
         <dstInputId type="Idx" value="0"/>
        </element>
-       <element srcNodeGUID="9368aac9-8ce9-481a-a137-e1cb93111e41" dstNodeGUID="0d0198bd-3394-41a2-b8a9-ea7d8d0134c0">
-        <srcOutputId type="GUID" value="6ae047fb-7bfb-4d99-811b-34934be6f4ec"/>
-        <dstInputId type="Idx" value="0"/>
-       </element>
-       <element srcNodeGUID="0d0198bd-3394-41a2-b8a9-ea7d8d0134c0" dstNodeGUID="9368aac9-8ce9-481a-a137-e1cb93111e41">
-        <srcOutputId type="GUID" value="c5711e6c-ceb3-4f9b-b45d-7c3f245bfb7a"/>
-        <dstInputId type="Idx" value="0"/>
-       </element>
       </links>
      </Graph>
     </extensions>
@@ -144,13 +136,25 @@
            </element>
            <element key="e8cb968b-471f-445d-a59a-63b7cc3627ce" typeGUID="bfcebe12-b479-4cd4-90e2-5ceab24ea12e">
                         <value guid="e8cb968b-471f-445d-a59a-63b7cc3627ce" signalGUID="49f3d24b-90b7-4d6c-ac8a-b52d373bc92c" target="Self">
-                          <pos x="555" y="335"/>
+                          <pos x="558" y="389"/>
                         </value>
            </element>
            <element key="ff48fb2c-f5ab-4610-a1e3-d9330f573ac0" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
                         <value guid="ff48fb2c-f5ab-4610-a1e3-d9330f573ac0" objectGUID="0b173289-2cf4-4335-8eac-9a2704f9cc27">
                           <pos x="-19" y="338"/>
                           <signalId domain="Env" guid="603771b5-6321-4113-82fb-b839f1be7f64"/>
+                        </value>
+           </element>
+           <element key="cbc9f0bb-68d1-473a-86dc-97eed30ce74a" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+                        <value guid="cbc9f0bb-68d1-473a-86dc-97eed30ce74a" objectGUID="60e70174-70be-42ce-a1a5-b26dd58af6b4">
+                          <pos x="34" y="472"/>
+                          <signalId domain="Env" guid="70c42cee-ed6b-437c-a18d-c9441bbb6c99"/>
+                        </value>
+           </element>
+           <element key="e0b9e765-d5b9-48a1-aea5-783d75ed931c" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+                        <value guid="e0b9e765-d5b9-48a1-aea5-783d75ed931c" objectGUID="">
+                          <pos x="320" y="506"/>
+                          <signalId domain="Script" guid="377c83a4-05d4-4518-84cf-5672f4933b9b"/>
                         </value>
            </element>
            <element key="2739ac4c-7daf-48d4-af88-da314f04986c" typeGUID="1d081133-e900-4244-add5-f0831d27b16f">
@@ -206,6 +210,14 @@
                         <srcOutputId type="UInt32" value="1633907822"/>
                         <dstInputId type="Idx" value="1"/>
            </element>
+           <element srcNodeGUID="cbc9f0bb-68d1-473a-86dc-97eed30ce74a" dstNodeGUID="e8cb968b-471f-445d-a59a-63b7cc3627ce">
+                        <srcOutputId type="Idx" value="0"/>
+                        <dstInputId type="Idx" value="0"/>
+           </element>
+           <element srcNodeGUID="e0b9e765-d5b9-48a1-aea5-783d75ed931c" dstNodeGUID="e8cb968b-471f-445d-a59a-63b7cc3627ce">
+                        <srcOutputId type="Idx" value="0"/>
+                        <dstInputId type="Idx" value="0"/>
+           </element>
           </links>
          </Graph>
         </extensions>
@@ -213,12 +225,6 @@
        </element>
        <element elementType="Signal" guid="49f3d24b-90b7-4d6c-ac8a-b52d373bc92c" name="SwitchOff">
         <inputs />
-        <userDocumentation author="ivan" description=""/>
-        <extensions />
-        <children />
-       </element>
-       <element elementType="Timer" guid="c5711e6c-ceb3-4f9b-b45d-7c3f245bfb7a" name="Timer Flip Off" units="Seconds" seconds="5">
-        <flags AutoStart="true" Repeat="true"/>
         <userDocumentation author="ivan" description=""/>
         <extensions />
         <children />
@@ -286,6 +292,12 @@
                           <signalId domain="Env" guid="a9279137-7c66-491d-b9a0-8752c24c8979"/>
                         </value>
            </element>
+           <element key="f0934e37-08ee-4adf-90ce-67e5ddd5bcee" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+                        <value guid="f0934e37-08ee-4adf-90ce-67e5ddd5bcee" objectGUID="60e70174-70be-42ce-a1a5-b26dd58af6b4">
+                          <pos x="79" y="491"/>
+                          <signalId domain="Env" guid="d250b16f-d529-4a79-9268-ffbfa4252a80"/>
+                        </value>
+           </element>
            <element key="4b0aaa7a-2d86-4c23-b9d1-13d9df5de632" typeGUID="1bcfd811-b8b7-4032-a90c-311dfa4454c6">
                         <value guid="4b0aaa7a-2d86-4c23-b9d1-13d9df5de632" objectGUID="0b173289-2cf4-4335-8eac-9a2704f9cc27">
                           <pos x="300" y="77"/>
@@ -312,6 +324,12 @@
                           </inputs>
                         </value>
            </element>
+           <element key="7d8505ec-0bc7-4f58-85db-97c4524198bc" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+                        <value guid="7d8505ec-0bc7-4f58-85db-97c4524198bc" objectGUID="">
+                          <pos x="333" y="552"/>
+                          <signalId domain="Script" guid="377c83a4-05d4-4518-84cf-5672f4933b9b"/>
+                        </value>
+           </element>
           </nodes>
           <links>
            <element srcNodeGUID="b145aca3-e79d-48ac-83e5-e8e361a486f9" dstNodeGUID="cdfb1930-5d42-474a-aa7f-fa296d9294fa">
@@ -334,6 +352,18 @@
                         <srcOutputId type="Idx" value="0"/>
                         <dstInputId type="Idx" value="0"/>
            </element>
+           <element srcNodeGUID="f0934e37-08ee-4adf-90ce-67e5ddd5bcee" dstNodeGUID="0859803c-8b08-467e-81f7-2d41434d3aab">
+                        <srcOutputId type="Idx" value="0"/>
+                        <dstInputId type="Idx" value="0"/>
+           </element>
+           <element srcNodeGUID="452bcc86-aee8-4e5b-b0e3-b3678ba70163" dstNodeGUID="0859803c-8b08-467e-81f7-2d41434d3aab">
+                        <srcOutputId type="Idx" value="0"/>
+                        <dstInputId type="Idx" value="0"/>
+           </element>
+           <element srcNodeGUID="7d8505ec-0bc7-4f58-85db-97c4524198bc" dstNodeGUID="0859803c-8b08-467e-81f7-2d41434d3aab">
+                        <srcOutputId type="Idx" value="0"/>
+                        <dstInputId type="Idx" value="0"/>
+           </element>
           </links>
          </Graph>
         </extensions>
@@ -341,12 +371,6 @@
        </element>
        <element elementType="Signal" guid="ee379cec-28cc-4318-8c00-582c40b155ad" name="SwitchOn">
         <inputs />
-        <userDocumentation author="ivan" description=""/>
-        <extensions />
-        <children />
-       </element>
-       <element elementType="Timer" guid="6ae047fb-7bfb-4d99-811b-34934be6f4ec" name="Timer Flip On" units="Seconds" seconds="3">
-        <flags AutoStart="true" Repeat="true"/>
         <userDocumentation author="ivan" description=""/>
         <extensions />
         <children />
@@ -359,7 +383,7 @@
     <transform x="1" y="1" z="1">
      <translation>
       <element element="0"/>
-      <element element="0.28"/>
+      <element element="0.25"/>
       <element element="0"/>
      </translation>
      <rotation x="0" y="0" z="0"/>
@@ -379,6 +403,21 @@
    </element>
    <element elementType="ComponentInstance" guid="0b173289-2cf4-4335-8eac-9a2704f9cc27" name="Input" accessor="Private" typeGUID="183e3c84-2e08-4506-95fa-b362f7e735e9">
     <properties />
+    <extensions />
+    <children />
+   </element>
+   <element elementType="ComponentInstance" guid="8d560b47-611c-400d-958d-389a0e0dd622" name="Rigidbody" accessor="Public" typeGUID="912c6ce8-56f7-4ffa-9134-f98d4e307bd6">
+    <properties Networked="false" EnabledByDefault="true" Type="Rigid" SendCollisionSignal="true"/>
+    <extensions />
+    <children />
+   </element>
+   <element elementType="ComponentInstance" guid="b2853a28-9ac5-4784-8456-32b37156459f" name="Entity Interaction" accessor="Private" typeGUID="86e63bfb-ca1e-4365-8ad5-cd208f2a7010">
+    <properties />
+    <extensions />
+    <children />
+   </element>
+   <element elementType="ComponentInstance" guid="60e70174-70be-42ce-a1a5-b26dd58af6b4" name="Interactive Switch" accessor="Private" typeGUID="fb9add5d-d384-4414-877d-d670a3fe94e4">
+    <properties IsEnabled="true" SwitchedOn="true" IsSingleUseOnly="false" SwitchVerb=""/>
     <extensions />
     <children />
    </element>

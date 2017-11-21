@@ -23,7 +23,7 @@ void CPlayerComponent::ReflectType(Schematyc::CTypeDesc<CPlayerComponent>& desc)
 	desc.SetLabel("Player");
 	desc.SetDescription("A local / remote player.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
 }
 
 

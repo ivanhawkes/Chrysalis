@@ -38,19 +38,19 @@ struct TListener
 	{
 		assert(pListener);
 		if (pListener)
-			stl::push_back_unique(m_ListenersList, pListener);
+			stl::push_back_unique(m_listenersList, pListener);
 	}
 
 	void RemoveEventListener(T* pListener)
 	{
 		assert(pListener);
-		m_ListenersList.remove(pListener);
+		m_listenersList.remove(pListener);
 	}
 
-	std::list<T*> GetListeners() { return m_ListenersList; }
+	std::list<T*> GetListeners() { return m_listenersList; }
 
 private:
-	std::list<T*> m_ListenersList;
+	std::list<T*> m_listenersList;
 };
 
 

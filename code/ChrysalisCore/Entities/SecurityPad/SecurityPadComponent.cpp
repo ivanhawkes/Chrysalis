@@ -19,14 +19,14 @@ void CSecurityPadComponent::ReflectType(Schematyc::CTypeDesc<CSecurityPadCompone
 	desc.SetLabel("Security Pad");
 	desc.SetDescription("Interactive security pad for controlling access to locked areas.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+	desc.SetComponentFlags({ IEntityComponent::EFlags::None });
 }
 
 
 void CSecurityPadComponent::Initialize()
 {
 	// Get some geometry.
-	m_pGeometryComponent = GetEntity()->CreateComponent<Cry::DefaultComponents::CStaticMeshComponent>();
+	m_pGeometryComponent = GetEntity()->GetOrCreateComponent<Cry::DefaultComponents::CStaticMeshComponent>();
 
 	// We want to supply interaction verbs.
 	m_interactor = GetEntity()->GetOrCreateComponent<CEntityInteractionComponent>();

@@ -19,6 +19,7 @@ class CSnaplockComponent;
 class CInventoryComponent;
 class CEquipmentComponent;
 struct IItem;
+struct IInteraction;
 
 
 /** Define a set of snaplock types that will be used by character entities e.g. equipment slots **/
@@ -582,6 +583,9 @@ public:
 private:
 	/** If we are interacting with an entity, it is this entity. */
 	EntityId m_interactionEntityId { INVALID_ENTITYID };
+
+	/** If we're interacting with something, this is the actual interaction. */
+	IInteraction* m_pInteraction { nullptr };
 
 	// ***
 	// *** Item System.

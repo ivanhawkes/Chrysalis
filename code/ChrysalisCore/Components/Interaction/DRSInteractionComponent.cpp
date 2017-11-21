@@ -19,7 +19,7 @@ void CDRSInteractionComponent::ReflectType(Schematyc::CTypeDesc<CDRSInteractionC
 	desc.SetLabel("DRS Interaction");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+	desc.SetComponentFlags({ IEntityComponent::EFlags::None });
 
 //	desc.AddMember(&CDRSInteractionComponent::m_drsResponse, 'resp', "DRSResponse", "DRSResponse", "Verb to pass into DRS e.g. interaction_play_audio.", "");
 //	desc.AddMember(&CDRSInteractionComponent::m_drsProperties, 'prop', "DRSProperties", "DRS Properties", "A list of properties to be passed to the DRS entity.", "");

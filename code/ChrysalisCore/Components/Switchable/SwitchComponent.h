@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Components/Interaction/EntityInteractionComponent.h>
-#include <DefaultComponents/Geometry/StaticMeshComponent.h>
+
 
 namespace Chrysalis
 {
@@ -25,7 +25,7 @@ public:
 
 	static CryGUID& IID()
 	{
-		static CryGUID id = "00000000-0000-0000-0000-000000000000"_cry_guid;
+		static CryGUID id = "{FB9ADD5D-D384-4414-877D-D670A3FE94E4}"_cry_guid;
 		return id;
 	}
 
@@ -33,25 +33,24 @@ public:
 	const string kSwitchOnVerb { "interaction_switch_on" };
 	const string kSwitchOffVerb { "interaction_switch_off" };
 
-	struct ISwitchListener
-	{
-		virtual ~ISwitchListener() {};
 
-		virtual void OnSwitchResetState() = 0;
+	struct SSwitchOnSignal
+	{
+		SSwitchOnSignal() = default;
 	};
 
-	void AddEventListener(ISwitchListener* pListener)
-	{
-		assert(pListener);
-		if (pListener)
-			stl::push_back_unique(m_ListenersList, pListener);
-	}
 
-	void RemoveEventListener(ISwitchListener* pListener)
+	struct SSwitchOffSignal
 	{
-		assert(pListener);
-		m_ListenersList.remove(pListener);
-	}
+		SSwitchOffSignal() = default;
+	};
+
+
+	struct SSwitchToggleSignal
+	{
+		SSwitchToggleSignal() = default;
+	};
+
 
 	// IInteractionSwitch
 	virtual void OnInteractionSwitchToggle() override;;
@@ -63,9 +62,6 @@ protected:
 	void InformAllLinkedEntities(string verb, bool isSwitchedOn);
 
 	virtual void OnResetState();
-
-	typedef std::list<ISwitchListener*> TListenersList;
-	TListenersList m_ListenersList;
 
 	/** True if this switch is able to be used. */
 	bool m_isEnabled { true };
@@ -81,19 +77,10 @@ protected:
 	CInteractionSwitchOnPtr m_switchOnPtr { nullptr };
 	CInteractionSwitchOffPtr m_switchOffPtr { nullptr };
 
-	/** Model for the geometry. */
-	Cry::DefaultComponents::CStaticMeshComponent* m_pGeometryComponent { nullptr };
-
 	/** This entity should be interactive. */
 	CEntityInteractionComponent* m_interactor { nullptr };
 
 	/** Send an alternative queue signal to DRS if the string is not empty. */
-	string m_queueSignal;
-
-	/** Send this verb when switching on, if the string in not empty. */
-	string m_switchOnVerb;
-
-	/** Send this verb when switching off, if the string in not empty. */
-	string m_switchOffVerb;
+	Schematyc::CSharedString m_queueSignal;
 };
 }

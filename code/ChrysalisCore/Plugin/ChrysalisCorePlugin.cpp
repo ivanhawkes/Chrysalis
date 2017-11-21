@@ -31,6 +31,7 @@
 #include "Components/Interaction/DRSInteractionComponent.h"
 #include "Components/Interaction/EntityAwarenessComponent.h"
 #include "Components/Interaction/EntityInteractionComponent.h"
+#include "Components/Interaction/InteractComponent.h"
 #include "Components/Interaction/ItemInteractionComponent.h"
 #include "Components/Inventory/InventoryComponent.h"
 #include "Components/Lights/DynamicLightComponent.h"
@@ -219,6 +220,10 @@ void CChrysalisCorePlugin::RegisterComponents(Schematyc::IEnvRegistrar& registra
 		{
 			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CGaugeComponent));
 			Chrysalis::CGaugeComponent::Register(componentScope);
+		}
+		{
+			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CInteractComponent));
+			Chrysalis::CInteractComponent::Register(componentScope);
 		}
 	}
 }

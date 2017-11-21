@@ -17,7 +17,7 @@ void CCharacterAttributesComponent::ReflectType(Schematyc::CTypeDesc<CCharacterA
 	desc.SetLabel("Character Attributes");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
 }
 
 

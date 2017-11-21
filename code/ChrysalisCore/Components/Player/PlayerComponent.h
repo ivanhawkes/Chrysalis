@@ -51,13 +51,73 @@ public:
 	}
 
 
-	enum class EPlayerInteractionMode
+	struct SInteractionState
 	{
-		eNoMode = 0,
-		eHandlingEntity,
-		eExamineZoom
+		enum class EInteractionMode
+		{
+			/** No special states apply. */
+			eNoMode,
+
+			/** The player is handling an item in their hands. */
+			eHandlingEntity,
+
+			/** The player is zoomed into an entity, examining / using it in some special way e.g. security pad, computer system. */
+			eExamineZoom
+		};
+
+
+		bool IsCharacterMovementAllowed() const { return m_allowCharacterMovement; }
+		bool IsCharacterRotationAllowed() const { return m_allowCharacterRotation; }
+		bool IsCameraMovementAllowed() const { return m_allowCameraMovement; }
+
+		void SetInteractionMode(EInteractionMode playerInteractionMode)
+		{
+			m_playerInteractionMode = playerInteractionMode;
+
+			switch (m_playerInteractionMode)
+			{
+				case EInteractionMode::eNoMode:
+					m_allowCharacterMovement = true;
+					m_allowCharacterRotation = true;
+					m_allowCameraMovement = true;
+					break;
+
+				case EInteractionMode::eHandlingEntity:
+					m_allowCharacterMovement = false;
+					m_allowCharacterRotation = false;
+					m_allowCameraMovement = false;
+					break;
+
+				case EInteractionMode::eExamineZoom:
+					m_allowCharacterMovement = false;
+					m_allowCharacterRotation = false;
+					m_allowCameraMovement = true;
+					break;
+			}
+		}
+
+	private:
+		EInteractionMode m_playerInteractionMode { EInteractionMode::eNoMode };
+
+		void SetAllowCharacterMovement(bool val) { m_allowCharacterMovement = val; }
+		void SetAllowCharacterRotation(bool val) { m_allowCharacterRotation = val; }
+		void SetAllowCameraMovement(bool val) { m_allowCameraMovement = val; }
+
+		/** Is the player allowed to move their character? */
+		bool m_allowCharacterMovement { true };
+
+		/** Is the player allowed to rotate their character? */
+		bool m_allowCharacterRotation { true };
+
+		/** Is the player allowed to move the camera? */
+		bool m_allowCameraMovement { true };
 	};
 
+
+	SInteractionState& GetinteractionState()
+	{
+		return m_playerInteractionState;
+	}
 
 	/**
 	Query if the attached character is in third person mode.
@@ -177,41 +237,6 @@ public:
 	static IActorComponent* GetLocalActor();
 
 
-	bool IsCharacterMovementAllowed() const { return m_allowCharacterMovement; }
-	bool IsCharacterRotationAllowed() const { return m_allowCharacterRotation; }
-	bool IsCameraMovementAllowed() const { return m_allowCameraMovement; }
-
-
-	/**
-	When true, the player is interacting with a useable entity.
-
-	\param	val True to value.
-	**/
-	void SetObjectInteractionMode(bool val)
-	{
-		m_playerInteractionMode = val ? EPlayerInteractionMode::eHandlingEntity : EPlayerInteractionMode::eNoMode;
-
-		//m_allowCharacterMovement = !val;
-		//m_allowCharacterRotation = !val;
-		//m_allowCameraMovement = !val;
-	}
-
-
-	/**
-	When true, the player is zoomed in and examining an entity. Movement requests should cancel this mode.
-
-	\param	val True to value.
-	**/
-	void SetExamineInteractionMode(bool val)
-	{
-		m_playerInteractionMode = val ? EPlayerInteractionMode::eExamineZoom : EPlayerInteractionMode::eNoMode;
-
-		//m_allowCharacterMovement = !val;
-		//m_allowCharacterRotation = !val;
-		//m_allowCameraMovement = !val;
-	}
-
-
 	/** Revives the atatched character, if there is one. */
 	void Revive();
 
@@ -219,12 +244,6 @@ public:
 	void NetworkClientConnect();
 
 private:
-	void SetAllowCharacterMovement(bool val) { m_allowCharacterMovement = val; }
-	void SetAllowCharacterRotation(bool val) { m_allowCharacterRotation = val; }
-	void SetAllowCameraMovement(bool val) { m_allowCameraMovement = val; }
-
-	EPlayerInteractionMode m_playerInteractionMode { EPlayerInteractionMode::eNoMode };
-
 	/** The camera that this instance uses. */
 	CCameraManagerComponent* m_pCameraManager { nullptr };
 
@@ -241,13 +260,7 @@ private:
 	as appropriate. */
 	CPlayerInputComponent* m_pPlayerInput { nullptr };
 
-	/** Is the player allowed to move their character? */
-	bool m_allowCharacterMovement { true };
-
-	/** Is the player allowed to rotate their character? */
-	bool m_allowCharacterRotation { true };
-
-	/** Is the player allowed to move the camera? */
-	bool m_allowCameraMovement { true };
+	/** Tracks interaction modes and allows you to query for conditions they impose e.g. no camera movement. */
+	SInteractionState m_playerInteractionState;
 };
 }

@@ -20,7 +20,7 @@ void CEntityInteractionComponent::ReflectType(Schematyc::CTypeDesc<CEntityIntera
 	desc.SetIcon("icons:ObjectTypes/light.ico");
 
 	// TODO: Do we need a transform for this? Likely not.
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
 }
 
 
@@ -134,33 +134,34 @@ IInteractionWeakPtr CEntityInteractionComponent::SelectInteractionVerb(string ve
 
 void CEntityInteractionComponent::ClearInteractionVerb()
 {
-	m_selectedInteraction = IInteractionPtr();
+	m_selectedInteraction = nullptr;
 }
 
 
 void CEntityInteractionComponent::OnInteractionStart()
 {
 	if (m_selectedInteraction)
-	{
 		m_selectedInteraction->OnInteractionStart();
-	}
+}
+
+
+void CEntityInteractionComponent::OnInteractionTick()
+{
+	if (m_selectedInteraction)
+		m_selectedInteraction->OnInteractionTick();
 }
 
 
 void CEntityInteractionComponent::OnInteractionComplete()
 {
 	if (m_selectedInteraction)
-	{
 		m_selectedInteraction->OnInteractionComplete();
-	}
 }
 
 
 void CEntityInteractionComponent::OnInteractionCancel()
 {
 	if (m_selectedInteraction)
-	{
 		m_selectedInteraction->OnInteractionCancel();
-	}
 }
 }

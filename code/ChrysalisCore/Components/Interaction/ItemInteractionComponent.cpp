@@ -21,7 +21,7 @@ void CItemInteractionComponent::ReflectType(Schematyc::CTypeDesc<CItemInteractio
 	desc.SetLabel("Item Interaction");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
 }
 
 
@@ -82,7 +82,7 @@ void CItemInteractionComponent::OnInteractionItemInspect()
 		// #TODO: Use a helper method instead of setting directly.
 		if (auto pPlayer = CPlayerComponent::GetLocalPlayer())
 		{
-			pPlayer->SetObjectInteractionMode(true);
+			pPlayer->GetinteractionState().SetInteractionMode(CPlayerComponent::SInteractionState::EInteractionMode::eHandlingEntity);
 		}
 	}
 }
@@ -110,7 +110,7 @@ void CItemInteractionComponent::OnInteractionItemPickup()
 		// #TODO: Use a helper method instead of setting directly.
 		if (auto pPlayer = CPlayerComponent::GetLocalPlayer())
 		{
-			pPlayer->SetObjectInteractionMode(true);
+			pPlayer->GetinteractionState().SetInteractionMode(CPlayerComponent::SInteractionState::EInteractionMode::eHandlingEntity);
 		}
 	}
 }
@@ -136,7 +136,7 @@ void CItemInteractionComponent::OnInteractionItemDrop()
 
 	if (auto pPlayer = CPlayerComponent::GetLocalPlayer())
 	{
-		pPlayer->SetObjectInteractionMode(false);
+		pPlayer->GetinteractionState().SetInteractionMode(CPlayerComponent::SInteractionState::EInteractionMode::eNoMode);
 	}
 }
 
@@ -163,7 +163,7 @@ void CItemInteractionComponent::OnInteractionItemToss()
 
 	if (auto pPlayer = CPlayerComponent::GetLocalPlayer())
 	{
-		pPlayer->SetObjectInteractionMode(false);
+		pPlayer->GetinteractionState().SetInteractionMode(CPlayerComponent::SInteractionState::EInteractionMode::eNoMode);
 	}
 }
 

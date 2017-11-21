@@ -38,6 +38,8 @@ public:
 	virtual void SetPlaybackSpeed(float multiplier) { m_animationParams.m_fPlaybackSpeed = multiplier; }
 	virtual void SetPlaybackWeight(float weight) { m_animationParams.m_fPlaybackWeight = weight; }
 	virtual void SetLayer(int layer) { m_animationParams.m_nLayerID = layer; }
+	
+	/** Seek to a random frame in the animation. Accepts values from 0.0f to 1.0f */
 	virtual void SeekFrame(float frameTime);
 
 	virtual void SetCharacterFile(const char* szPath);
@@ -59,7 +61,8 @@ protected:
 	virtual void Update(SEntityUpdateContext* pCtx);
 
 	CryCharAnimationParams m_animationParams;
-	Schematyc::CharacterFileName m_filePath;
+	//Schematyc::CharacterFileName m_filePath;
+	Schematyc::GeomFileName m_filePath;
 	Schematyc::LowLevelAnimationName m_defaultAnimation;
 	_smart_ptr<ICharacterInstance> m_pCachedCharacter = nullptr;
 	float m_frameTime;

@@ -7,8 +7,16 @@ namespace Chrysalis
 {
 struct IInteraction
 {
+	/** Called at the start of an interaction. */
 	virtual void OnInteractionStart() {};
+
+	/** Called each game frame an interaction is ongoing. */
+	virtual void OnInteractionTick() {};
+
+	/** Called when an interaction is completed normally. */
 	virtual void OnInteractionComplete() {};
+
+	/** Called if an interaction is cancelled early. */
 	virtual void OnInteractionCancel() {};
 
 	bool IsUseable() const { return true; };
@@ -67,7 +75,10 @@ DECLARE_SHARED_POINTERS(CInteractionExamine);
 
 struct IInteractionInteract
 {
-	virtual void OnInteractionInteract() = 0;
+	virtual void OnInteractionInteractStart() = 0;
+	virtual void OnInteractionInteractTick() = 0;
+	virtual void OnInteractionInteractComplete() = 0;
+	virtual void OnInteractionInteractCancel() = 0;
 };
 
 
@@ -82,7 +93,10 @@ public:
 	};
 
 	const string GetVerb() const override { return "interaction_interact"; };
-	void OnInteractionStart() override { m_subject->OnInteractionInteract(); };
+	void OnInteractionStart() override { m_subject->OnInteractionInteractStart(); };
+	void OnInteractionTick() override { m_subject->OnInteractionInteractTick(); };
+	void OnInteractionComplete() override { m_subject->OnInteractionInteractComplete(); };
+	void OnInteractionCancel() override { m_subject->OnInteractionInteractCancel(); };
 
 private:
 	IInteractionInteract* m_subject { nullptr };

@@ -14,7 +14,7 @@ void CDynamicLightComponent::ReflectType(Schematyc::CTypeDesc<CDynamicLightCompo
 {
 	desc.SetGUID(CDynamicLightComponent::IID());
 	desc.SetEditorCategory("Lights");
-	desc.SetLabel("Point Light");
+	desc.SetLabel("Dynamic Light");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
 	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
@@ -179,7 +179,7 @@ void CDynamicLightComponent::OnResetState()
 	m_slot = entity.LoadLight(1, &m_light);
 
 	// Notify listeners.
-	for (auto& pListener : m_ListenersList)
+	for (auto& pListener : m_listenersList)
 	{
 		pListener->OnDynamicLightResetState();
 	}

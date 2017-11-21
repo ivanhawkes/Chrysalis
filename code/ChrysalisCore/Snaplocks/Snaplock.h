@@ -40,7 +40,7 @@ struct ISnaplockType
 	}
 
 	/** Unique Id for this type of snaplock. */
-	const CryGUID& GetGuid() const { return m_typeId; }
+	const CryGUID& GetTypeId() const { return m_typeId; }
 	const string GetName() const { return m_typeName; }
 
 private:

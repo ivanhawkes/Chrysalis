@@ -24,7 +24,7 @@ void CCompassComponent::ReflectType(Schematyc::CTypeDesc<CCompassComponent>& des
 void CCompassComponent::Initialize()
 {
 	// Get some geometry.
-	m_pGeometryComponent = GetEntity()->CreateComponent<Cry::DefaultComponents::CStaticMeshComponent>();
+	m_pGeometryComponent = GetEntity()->GetOrCreateComponent<Cry::DefaultComponents::CStaticMeshComponent>();
 
 	//// Get a controllable animation component.
 	//m_pControlledAnimationComponent = GetEntity()->CreateComponent<CControlledAnimationComponent>();

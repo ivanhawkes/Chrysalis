@@ -1,0 +1,48 @@
+<Material MtlFlags="524544">
+ <SubMaterials>
+  <Material Name="skeleton_torso" MtlFlags="524416" Shader="Illum" GenMask="100000000" StringGenMask="%STAT_BRANCHING" SurfaceType="mat_torso" MatTemplate="" Diffuse="0,78823536,0" Specular="0,0,0" Emissive="0,0,0" Shininess="10" Opacity="1">
+   <Textures />
+   <PublicParams AmbientMultiplier="1"/>
+  </Material>
+  <Material Name="skeleton_head" MtlFlags="524416" Shader="Illum" GenMask="100000000" StringGenMask="%STAT_BRANCHING" SurfaceType="mat_head" MatTemplate="" Diffuse="0,98039224,0" Specular="0,0,0" Emissive="0,0,0" Shininess="10" Opacity="1">
+   <Textures />
+   <PublicParams AmbientMultiplier="1"/>
+  </Material>
+  <Material Name="skeleton_arm_left" MtlFlags="524416" Shader="Illum" GenMask="100000000" StringGenMask="%STAT_BRANCHING" SurfaceType="mat_arm_left" MatTemplate="" Diffuse="0,58823532,0" Specular="0,0,0" Emissive="0,0,0" Shininess="10" Opacity="1">
+   <Textures />
+   <PublicParams AmbientMultiplier="1"/>
+  </Material>
+  <Material Name="skeleton_arm_right" MtlFlags="524416" Shader="Illum" GenMask="100000000" StringGenMask="%STAT_BRANCHING" SurfaceType="mat_arm_right" MatTemplate="" Diffuse="0,47450984,0" Specular="0,0,0" Emissive="0,0,0" Shininess="10" Opacity="1">
+   <Textures />
+   <PublicParams AmbientMultiplier="1"/>
+  </Material>
+  <Material Name="skeleton_leg_left" MtlFlags="524416" Shader="Illum" GenMask="100000000" StringGenMask="%STAT_BRANCHING" SurfaceType="mat_leg_left" MatTemplate="" Diffuse="0,99215688,0" Specular="0,0,0" Emissive="0,0,0" Shininess="10" Opacity="1">
+   <Textures />
+   <PublicParams AmbientMultiplier="1"/>
+  </Material>
+  <Material Name="skeleton_leg_right" MtlFlags="524416" Shader="Illum" GenMask="100000000" StringGenMask="%STAT_BRANCHING" SurfaceType="mat_leg_right" MatTemplate="" Diffuse="0,14509805,0" Specular="0,0,0" Emissive="0,0,0" Shininess="10" Opacity="1">
+   <Textures />
+   <PublicParams AmbientMultiplier="1"/>
+  </Material>
+  <Material Name="skeleton_foot_left" MtlFlags="524416" Shader="Illum" GenMask="100000000" StringGenMask="%STAT_BRANCHING" SurfaceType="mat_foot_left" MatTemplate="" Diffuse="0,82745104,0" Specular="0,0,0" Emissive="0,0,0" Shininess="10" Opacity="1">
+   <Textures />
+   <PublicParams AmbientMultiplier="1"/>
+  </Material>
+  <Material Name="skeleton_foot_right" MtlFlags="524416" Shader="Illum" GenMask="100000000" StringGenMask="%STAT_BRANCHING" SurfaceType="mat_foot_right" MatTemplate="" Diffuse="0,58823532,0" Specular="0,0,0" Emissive="0,0,0" Shininess="10" Opacity="1">
+   <Textures />
+   <PublicParams AmbientMultiplier="1"/>
+  </Material>
+  <Material Name="skeleton_hand_left" MtlFlags="524416" Shader="Illum" GenMask="100000000" StringGenMask="%STAT_BRANCHING" SurfaceType="mat_hand_left" MatTemplate="" Diffuse="0,20000002,0" Specular="0,0,0" Emissive="0,0,0" Shininess="10" Opacity="1">
+   <Textures />
+   <PublicParams AmbientMultiplier="1"/>
+  </Material>
+  <Material Name="skeleton_hand_right" MtlFlags="524416" Shader="Illum" GenMask="100000000" StringGenMask="%STAT_BRANCHING" SurfaceType="mat_hand_right" MatTemplate="" Diffuse="0,15294118,0" Specular="0,0,0" Emissive="0,0,0" Shininess="10" Opacity="1">
+   <Textures />
+   <PublicParams AmbientMultiplier="1"/>
+  </Material>
+  <Material Name="no_draw" MtlFlags="525440" Shader="NoDraw" GenMask="0" StringGenMask="" SurfaceType="" MatTemplate="" Diffuse="0,21176472,0" Specular="0,0,0" Emissive="0,0,0" Shininess="10" Opacity="1">
+   <Textures />
+  </Material>
+ </SubMaterials>
+ <PublicParams AmbientMultiplier="1"/>
+</Material>

@@ -19,14 +19,14 @@ void CDRSInteractionEntity::ReflectType(Schematyc::CTypeDesc<CDRSInteractionEnti
 	desc.SetLabel("DRSInteractionEntity");
 	desc.SetDescription("Dynamic Reponse System interaction entity.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+	desc.SetComponentFlags({ IEntityComponent::EFlags::None });
 }
 
 
 void CDRSInteractionEntity::Initialize()
 {
-	GetEntity()->CreateComponent<CDRSInteractionComponent>();
-	GetEntity()->CreateComponent<Cry::DefaultComponents::CStaticMeshComponent>();
+	GetEntity()->GetOrCreateComponent<CDRSInteractionComponent>();
+	GetEntity()->GetOrCreateComponent<Cry::DefaultComponents::CStaticMeshComponent>();
 
 	// Reset the entity.
 	OnResetState();

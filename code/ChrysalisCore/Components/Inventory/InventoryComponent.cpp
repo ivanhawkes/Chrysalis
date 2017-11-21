@@ -1,6 +1,7 @@
 #include <StdAfx.h>
 
 #include "InventoryComponent.h"
+#include <Actor/ActorComponent.h>
 
 
 namespace Chrysalis
@@ -17,7 +18,10 @@ void CInventoryComponent::ReflectType(Schematyc::CTypeDesc<CInventoryComponent>&
 	desc.SetLabel("Inventory");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
+
+	// Mark the actor component as a hard requirement.
+	desc.AddComponentInteraction(SEntityComponentRequirements::EType::HardDependency, CActorComponent::IID());
 }
 
 

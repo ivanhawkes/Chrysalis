@@ -2,6 +2,7 @@
 
 #include <Entities/Interaction/IEntityInteraction.h>
 #include <DefaultComponents/Geometry/AnimatedMeshComponent.h>
+#include <DefaultComponents/Physics/RigidBodyComponent.h>
 
 
 class Cry::DefaultComponents::CAnimatedMeshComponent;
@@ -44,7 +45,10 @@ public:
 	}
 
 	// IInteractionInteract
-	void OnInteractionInteract() override;
+	void OnInteractionInteractStart() override;
+	void OnInteractionInteractTick() override { gEnv->pLog->LogAlways("OnInteractionInteractTick fired."); };
+	void OnInteractionInteractComplete() override { gEnv->pLog->LogAlways("OnInteractionInteractComplete fired."); };
+	void OnInteractionInteractCancel() override { gEnv->pLog->LogAlways("OnInteractionInteractCancel fired."); };
 	// ~IInteractionInteract
 
 	// IInteractionOpenable
@@ -67,6 +71,9 @@ private:
 	/** Model for the geometry. */
 	Cry::DefaultComponents::CAnimatedMeshComponent* m_pGeometryComponent { nullptr };
 
+	/** Needed for physics. */
+	Cry::DefaultComponents::CRigidBodyComponent* m_pRigidBodyComponent { nullptr };
+
 	/** Animation for the geometry. */
 	//CControlledAnimationComponent* m_pAnimationComponent { nullptr };
 	CSimpleAnimationComponent* m_pAnimationComponent { nullptr };
@@ -78,6 +85,6 @@ private:
 	CEntityInteractionComponent* m_interactor { nullptr };
 
 	/** Is the door open? */
-	bool m_IsOpen { false };
+	bool m_isOpen { false };
 };
 }

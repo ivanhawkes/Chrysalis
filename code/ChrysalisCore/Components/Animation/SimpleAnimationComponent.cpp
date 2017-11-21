@@ -49,7 +49,7 @@ void CSimpleAnimationComponent::OnResetState()
 		OnPlayAnimation();
 
 	// Notify listeners.
-	for (auto& pListener : m_ListenersList)
+	for (auto& pListener : m_listenersList)
 	{
 		pListener->OnSimpleAnimationResetState();
 	}

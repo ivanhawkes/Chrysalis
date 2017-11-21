@@ -20,7 +20,7 @@ void CFirstPersonCameraComponent::ReflectType(Schematyc::CTypeDesc<CFirstPersonC
 	desc.SetLabel("First Person Camera");
 	desc.SetDescription("A first person camera which attaches to a target.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform, IEntityComponent::EFlags::Socket, IEntityComponent::EFlags::Attach, IEntityComponent::EFlags::ClientOnly });
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Socket, IEntityComponent::EFlags::Attach, IEntityComponent::EFlags::ClientOnly });
 }
 
 
@@ -74,7 +74,7 @@ void CFirstPersonCameraComponent::Update()
 				localEyePosition = pActor->GetLocalEyePos();
 
 			// Apply the player input rotation for this frame, and limit the pitch / yaw movement according to the set max and min values.
-			if (pPlayer->IsCameraMovementAllowed())
+			if (pPlayer->GetinteractionState().IsCameraMovementAllowed())
 			{
 				m_viewPitch -= pPlayerInput->GetMousePitchDelta() - pPlayerInput->GetXiPitchDelta();
 				m_viewPitch = clamp_tpl(m_viewPitch, DEG2RAD(g_cvars.m_firstPersonCameraPitchMin), DEG2RAD(g_cvars.m_firstPersonCameraPitchMax));

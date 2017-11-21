@@ -16,7 +16,7 @@ void CKeyringComponent::ReflectType(Schematyc::CTypeDesc<CKeyringComponent>& des
 	desc.SetLabel("Keyring");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
 
 	desc.AddMember(&CKeyringComponent::m_bActive, 'actv', "Active", "Active", "Is this active?", true);
 	// TODO: CRITICAL: HACK: BROKEN: !!

@@ -49,14 +49,9 @@ public:
 	void ClearInteractionVerb();
 
 	void OnInteractionStart();
+	void OnInteractionTick();
 	void OnInteractionComplete();
 	void OnInteractionCancel();
-
-	struct SExternalCVars
-	{
-		int m_debug;
-	};
-	const SExternalCVars &GetCVars() const;
 
 private:
 	std::vector<IInteractionPtr> m_Interactions;

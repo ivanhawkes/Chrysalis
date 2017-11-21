@@ -23,7 +23,7 @@ void CActionRPGCameraComponent::ReflectType(Schematyc::CTypeDesc<CActionRPGCamer
 	desc.SetLabel("Action RPG Camera");
 	desc.SetDescription("An action RPG style of camera that orbits around a target.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform, IEntityComponent::EFlags::Socket, IEntityComponent::EFlags::Attach, IEntityComponent::EFlags::ClientOnly });
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Socket, IEntityComponent::EFlags::Attach, IEntityComponent::EFlags::ClientOnly });
 }
 
 
@@ -119,7 +119,7 @@ void CActionRPGCameraComponent::UpdateFirstPerson()
 				localEyePosition = pActor->GetLocalEyePos();
 
 			// Apply the player input rotation for this frame, and limit the pitch / yaw movement according to the set max and min values.
-			if (pPlayer->IsCameraMovementAllowed())
+			if (pPlayer->GetinteractionState().IsCameraMovementAllowed())
 			{
 				m_viewPitch -= pPlayerInput->GetMousePitchDelta() - pPlayerInput->GetXiPitchDelta();
 				m_viewPitch = clamp_tpl(m_viewPitch, DEG2RAD(g_cvars.m_firstPersonCameraPitchMin), DEG2RAD(g_cvars.m_firstPersonCameraPitchMax));
@@ -161,7 +161,7 @@ void CActionRPGCameraComponent::UpdateThirdPerson()
 		//m_lastZoomGoal = m_zoomGoal;
 
 		// Apply the player input rotation for this frame, and limit the pitch / yaw movement according to the set max and min values.
-		if (pPlayer->IsCameraMovementAllowed())
+		if (pPlayer->GetinteractionState().IsCameraMovementAllowed())
 		{
 			m_viewPitch += pPlayerInput->GetMousePitchDelta() + pPlayerInput->GetXiPitchDelta();
 			m_viewPitch = clamp_tpl(m_viewPitch, DEG2RAD(g_cvars.m_actionRPGCameraPitchMin), DEG2RAD(g_cvars.m_actionRPGCameraPitchMax));

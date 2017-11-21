@@ -28,7 +28,7 @@ void CPlayerInputComponent::ReflectType(Schematyc::CTypeDesc<CPlayerInputCompone
 	desc.SetLabel("Player Input");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::None });
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
 }
 
 

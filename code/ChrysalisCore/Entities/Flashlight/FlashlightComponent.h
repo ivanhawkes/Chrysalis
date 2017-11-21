@@ -9,6 +9,7 @@
 #include <Entities/Interaction/IEntityInteraction.h>
 #include <DefaultComponents/Geometry/StaticMeshComponent.h>
 #include <Components/Lights/DynamicLightComponent.h>
+#include <DefaultComponents/Physics/RigidBodyComponent.h>
 
 
 namespace Chrysalis
@@ -58,7 +59,10 @@ public:
 	// ~CDynamicLightComponent::IDynamicLightListener
 
 	// IInteractionInteract
-	void OnInteractionInteract() override { gEnv->pLog->LogAlways("OnInteractionInteract fired."); };
+	void OnInteractionInteractStart() override { gEnv->pLog->LogAlways("OnInteractionInteractStart fired."); };
+	void OnInteractionInteractTick() override { gEnv->pLog->LogAlways("OnInteractionInteractTick fired."); };
+	void OnInteractionInteractComplete() override { gEnv->pLog->LogAlways("OnInteractionInteractComplete fired."); };
+	void OnInteractionInteractCancel() override { gEnv->pLog->LogAlways("OnInteractionInteractCancel fired."); };
 	// ~IInteractionInteract
 
 	// IInteractionSwitch
@@ -100,6 +104,9 @@ private:
 
 	/** Model for the geometry. */
 	Cry::DefaultComponents::CStaticMeshComponent* m_pGeometryComponent { nullptr };
+
+	/** Needed for physics. */
+	Cry::DefaultComponents::CRigidBodyComponent* m_pRigidBodyComponent { nullptr };
 
 	/** Instanced flashlight parameters. */
 	CItemFlashlightParameter m_itemFlashlightParameter;

@@ -52,13 +52,13 @@ public:
 	{
 		assert(pListener);
 		if (pListener)
-			stl::push_back_unique(m_ListenersList, pListener);
+			stl::push_back_unique(m_listenersList, pListener);
 	}
 
 	void RemoveEventListener(ISimpleAnimationListener* pListener)
 	{
 		assert(pListener);
-		m_ListenersList.remove(pListener);
+		m_listenersList.remove(pListener);
 	}
 
 	/** It's critical to know which slot this animation will play on. **/
@@ -67,7 +67,7 @@ public:
 
 protected:
 	typedef std::list<ISimpleAnimationListener*> TListenersList;
-	TListenersList m_ListenersList;
+	TListenersList m_listenersList;
 
 	/** Model for the geometry. */
 	Cry::DefaultComponents::CStaticMeshComponent* m_pGeometryComponent { nullptr };

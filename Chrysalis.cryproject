@@ -1,4 +1,10 @@
 {
+    "console_commands": [
+        {
+            "name": "map",
+            "value": "test_all"
+        }
+    ],
     "console_variables": [
         {
             "name": "camera_manager_default_camera",
@@ -45,16 +51,25 @@
             "value": "0"
         },
         {
+            "name": "ca_useIMG_CAF",
+            "value": "0"
+        },
+        {
+            "name": "drs_dialogSubtitles",
+            "value": "1"
+        },
+        {
             "name": "ed_usedevmanager",
+            "value": "0"
+        },
+        {
+            "name": "component_awareness_debug",
             "value": "0"
         },
         {
             "name": "gfx_uiaction_folder",
             "value": "assets/ui/default/uiactions"
         }
-    ],
-    "console_commands": [
-        { "name": "map", "value": "test_all" }
     ],
     "content": {
         "assets": [
@@ -78,7 +93,7 @@
         "name": "Chrysalis"
     },
     "require": {
-        "engine": "engine-5.4",
+        "engine": "{2381931f-3f2e-493d-94cf-5a6d3541b2d3}",
         "plugins": [
             {
                 "path": "CryDefaultEntities",

@@ -5,7 +5,6 @@
  <Details />
  <Dependencies>
   <Path>objects/characters/human/female/human_female.chr</Path>
-  <Path>objects/characters/human/female/human_female.skin</Path>
   <Path>objects/characters/human/female/human_female.mtl</Path>
  </Dependencies>
 </AssetMetadata>

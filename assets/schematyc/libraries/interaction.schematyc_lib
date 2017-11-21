@@ -1,0 +1,13 @@
+<CrySchematyc CryXmlVersion="2" version="105" guid="542182a1-880e-4f73-b158-5915753d05a0" scope="">
+ <root elementType="Module" guid="f27d53b9-8136-4bb6-81db-b60b01937f58" name="interaction">
+  <extensions />
+  <children>
+   <element elementType="Signal" guid="377c83a4-05d4-4518-84cf-5672f4933b9b" name="Generic Interaction Start">
+    <inputs />
+    <userDocumentation author="ivan" description=""/>
+    <extensions />
+    <children />
+   </element>
+  </children>
+ </root>
+</CrySchematyc>

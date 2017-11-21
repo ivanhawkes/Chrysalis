@@ -21,7 +21,7 @@ void CContainerComponent::ReflectType(Schematyc::CTypeDesc<CContainerComponent>&
 	desc.SetLabel("Container");
 	desc.SetDescription("Chests, bags, etc.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
 }
 
 
@@ -30,13 +30,13 @@ void CContainerComponent::Initialize()
 	const auto pEntity = GetEntity();
 
 	// Get some geometry.
-	m_pGeometryComponent = pEntity->CreateComponent<Cry::DefaultComponents::CStaticMeshComponent>();
+	m_pGeometryComponent = pEntity->GetOrCreateComponent<Cry::DefaultComponents::CStaticMeshComponent>();
 
 	// Get a simple animation component.
-	m_pSimpleAnimationComponent = pEntity->CreateComponent<CSimpleAnimationComponent>();
+	m_pSimpleAnimationComponent = pEntity->GetOrCreateComponent<CSimpleAnimationComponent>();
 
 	// Allow locking.
-	m_lockableComponent = pEntity->CreateComponent<CLockableComponent>();
+	m_lockableComponent = pEntity->GetOrCreateComponent<CLockableComponent>();
 
 	// We want to supply interaction verbs.
 	m_interactor = pEntity->GetOrCreateComponent<CEntityInteractionComponent>();

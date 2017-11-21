@@ -1,0 +1,10 @@
+<MannequinPreview>
+ <controllerDef filename="objects/characters/human/female/human_female_controller_defs.xml"/>
+ <contexts>
+  <contextData name="Char1P" enabled="1" database="objects/characters/human/female/human_female.adb" context="Char1P" tags="Standing" model="objects/characters/human/female/human_female.cdf"/>
+  <contextData name="SlaveCharacter" database="objects/characters/human/female/human_female.adb" context="SlaveCharacter" tags="Standing+ScopeSlave" fragtags="ScopeSlave" model="objects/characters/human/female/human_female.cdf" startPosition="2,0,0"/>
+  <contextData name="SlaveObject" database="objects/characters/human/female/human_female.adb" context="SlaveObject" tags="Standing+ScopeSlave" fragtags="ScopeSlave" model="objects/characters/human/female/human_female.cdf" startPosition="0,2,0"/>
+  <contextData name="Char3P" database="objects/characters/human/female/human_female.adb" context="Char3P" tags="Standing" model="objects/characters/human/female/human_female.cdf"/>
+ </contexts>
+ <History StartTime="-4.3160208e+008" EndTime="-4.3160208e+008"/>
+</MannequinPreview>

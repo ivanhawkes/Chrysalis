@@ -50,7 +50,7 @@ void CControlledAnimationComponent::Register(Schematyc::CEnvRegistrationScope& c
 		pFunction->SetFlags(Schematyc::EEnvFunctionFlags::None);
 		pFunction->BindInput(1, 'fram', "Frame");
 		componentScope.Register(pFunction);
-	}	
+	}
 }
 
 
@@ -88,7 +88,8 @@ void CControlledAnimationComponent::Initialize()
 	ResetObject();
 
 	// Set the animation to require manual updating.
-	m_animationParams.m_nFlags = CA_MANUAL_UPDATE;
+	m_animationParams.m_fPlaybackSpeed = 0.f;
+	m_animationParams.m_nFlags = CA_MANUAL_UPDATE | CA_LOOP_ANIMATION;
 }
 
 
@@ -114,11 +115,6 @@ void CControlledAnimationComponent::ResetObject()
 	}
 
 	m_pEntity->SetCharacter(m_pCachedCharacter, GetOrMakeEntitySlotId(), false);
-
-	if (!m_defaultAnimation.value.IsEmpty())
-	{
-		PlayAnimation(m_defaultAnimation);
-	}
 }
 
 
@@ -154,11 +150,16 @@ void CControlledAnimationComponent::Update(SEntityUpdateContext* pCtx)
 
 void CControlledAnimationComponent::SeekFrame(float frameTime)
 {
+	// Hang on to this, we may want to lerp in future.
 	m_frameTime = frameTime;
 
 	if (ICharacterInstance* pCharacter = m_pEntity->GetCharacter(GetEntitySlotId()))
 	{
-		pCharacter->GetISkeletonAnim()->ManualSeekAnimationInFIFO(m_animationParams.m_nLayerID, 0, m_frameTime, true);
+		if (auto skeletonAnim = pCharacter->GetISkeletonAnim())
+		{
+			skeletonAnim->StartAnimation(PathUtil::GetFileName(m_defaultAnimation.value), m_animationParams);
+			skeletonAnim->ManualSeekAnimationInFIFO(m_animationParams.m_nLayerID, 0, m_frameTime, true);
+		}
 	}
 }
 
@@ -166,6 +167,10 @@ void CControlledAnimationComponent::SeekFrame(float frameTime)
 void CControlledAnimationComponent::SetCharacterFile(const char* szPath)
 {
 	m_filePath = szPath;
+
+	// Force a reload at this point.
+	LoadFromDisk();
+	ResetObject();
 }
 
 

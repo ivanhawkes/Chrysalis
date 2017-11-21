@@ -58,7 +58,7 @@ void CActorComponent::ReflectType(Schematyc::CTypeDesc<CActorComponent>& desc)
 	desc.SetLabel("Actor");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
 
 	desc.AddMember(&CActorComponent::m_geometryFirstPerson, 'geof', "GeometryFirstPerson", "First Person Geometry", "", "");
 	desc.AddMember(&CActorComponent::m_geometryThirdPerson, 'geot', "GeometryThirdPerson", "Third Person Geometry", "", "");
@@ -471,11 +471,19 @@ void CActorComponent::OnResetState()
 	{
 		m_pAdvancedAnimationComponent->SetCharacterFile(m_geometryFirstPerson.value);
 		m_pAdvancedAnimationComponent->SetDefaultScopeContextName("Char1P");
+		
+		// TODO: In order to switch the models out, we need to load and reset - but at present that is not removing the
+		// existing models. 
+		
+		//m_pAdvancedAnimationComponent->LoadFromDisk();
+		//m_pAdvancedAnimationComponent->ResetCharacter();
 	}
 	else
 	{
 		m_pAdvancedAnimationComponent->SetCharacterFile(m_geometryThirdPerson.value);
 		m_pAdvancedAnimationComponent->SetDefaultScopeContextName("Char3P");
+		//m_pAdvancedAnimationComponent->LoadFromDisk();
+		//m_pAdvancedAnimationComponent->ResetCharacter();
 	}
 
 	// You need to reset the character after changing the animation properties.
@@ -716,8 +724,6 @@ void CActorComponent::OnActionInspectEnd()
 
 void CActorComponent::OnActionInteractionStart()
 {
-	CryLogAlways("Player started interacting with things.");
-
 	if (m_pAwareness)
 	{
 		auto results = m_pAwareness->GetNearDotFiltered();
@@ -743,11 +749,21 @@ void CActorComponent::OnActionInteractionStart()
 				auto verbs = pInteractor->GetVerbs();
 				if (verbs.size() > 0)
 				{
+					// Display the verbs in a cheap manner.
+					CryLogAlways("VERBS");
+					int index { 1 };
+					for (auto& verb : verbs)
+					{
+						CryLogAlways("%d) %s", index, verb);
+						index++;
+					}
+
 					auto verb = verbs [0];
 
 					// #HACK: Another test - just calling the interaction directly instead.
-					auto pInteraction = pInteractor->GetInteraction(verb)._Get();
-					pInteraction->OnInteractionStart();
+					m_pInteraction = pInteractor->GetInteraction(verb)._Get();
+					CryLogAlways("Player started interacting with: %s", m_pInteraction->GetVerbUI());
+					m_pInteraction->OnInteractionStart();
 
 					// HACK: Doesn't belong here, test to see if we can queue an interaction action.
 					//auto action = new CActorAnimationActionInteraction();
@@ -761,11 +777,32 @@ void CActorComponent::OnActionInteractionStart()
 
 void CActorComponent::OnActionInteraction()
 {
+	if (m_pInteraction)
+	{
+		CryWatch("Interacting with: %s", m_pInteraction->GetVerbUI());
+		m_pInteraction->OnInteractionTick();
+	}
+	else
+	{
+		CryWatch("Interacting with nothing");
+	}
 }
 
 
 void CActorComponent::OnActionInteractionEnd()
 {
-	CryLogAlways("Player stopped interacting with things.");
+	if (m_pInteraction)
+	{
+		CryLogAlways("Player stopped interacting with: %s", m_pInteraction->GetVerbUI());
+		m_pInteraction->OnInteractionComplete();
+	}
+	else
+	{
+		CryLogAlways("Player stopped interacting with nothing");
+	}
+
+	// No longer valid.
+	m_pInteraction = nullptr;
+	m_interactionEntityId = INVALID_ENTITYID;
 }
 }

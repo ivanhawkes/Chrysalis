@@ -32,6 +32,8 @@ _WAF_/user_settings.options
 __pycache__/*
 /Backup/
 _tmp/
+*.fbm/
+*.bck/
 
 # Build files we can do without.
 *.ilk
@@ -85,3 +87,5 @@ build_scripts/client/
 assets/objects/characters/human/male/animations/crouch/
 *.ods#
 assets/animations/editor/
+assets_source/
+*.swatches

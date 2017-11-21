@@ -22,7 +22,7 @@ void CExamineCameraComponent::ReflectType(Schematyc::CTypeDesc<CExamineCameraCom
 	desc.SetLabel("Examine Camera");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform, IEntityComponent::EFlags::Socket, IEntityComponent::EFlags::Attach, IEntityComponent::EFlags::ClientOnly });
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Socket, IEntityComponent::EFlags::Attach, IEntityComponent::EFlags::ClientOnly });
 }
 
 
@@ -73,7 +73,7 @@ void CExamineCameraComponent::Update()
 		if (pEntity)
 		{
 			// Apply the player input rotation for this frame, and limit the pitch / yaw movement according to the set max and min values.
-			if (CPlayerComponent::GetLocalPlayer()->IsCameraMovementAllowed())
+			if (CPlayerComponent::GetLocalPlayer()->GetinteractionState().IsCameraMovementAllowed())
 			{
 				m_viewYaw -= pPlayerInput->GetMouseYawDelta() - pPlayerInput->GetXiYawDelta();
 				m_viewYaw = clamp_tpl(m_viewYaw, DEG2RAD(g_cvars.m_examineCameraYawMin), DEG2RAD(g_cvars.m_examineCameraYawMax));

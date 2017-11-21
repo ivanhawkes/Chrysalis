@@ -1,0 +1,10 @@
+<AssetMetadata version="0" type="Texture" guid="e12685f6-4e5b-65cc-6cc3-34809aeb1216" source="human_female_diff.tif">
+ <Files>
+  <File path="human_female_diff.dds"/>
+ </Files>
+ <Details>
+  <Detail name="width">2048</Detail>
+  <Detail name="height">2048</Detail>
+  <Detail name="mipCount">10</Detail>
+ </Details>
+</AssetMetadata>

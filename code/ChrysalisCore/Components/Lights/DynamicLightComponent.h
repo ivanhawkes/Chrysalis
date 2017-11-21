@@ -43,13 +43,13 @@ public:
 	{
 		assert(pListener);
 		if (pListener)
-			stl::push_back_unique(m_ListenersList, pListener);
+			stl::push_back_unique(m_listenersList, pListener);
 	}
 
 	void RemoveEventListener(IDynamicLightListener* pListener)
 	{
 		assert(pListener);
-		m_ListenersList.remove(pListener);
+		m_listenersList.remove(pListener);
 	}
 
 public:
@@ -71,7 +71,7 @@ public:
 
 private:
 	typedef std::list<IDynamicLightListener*> TListenersList;
-	TListenersList m_ListenersList;
+	TListenersList m_listenersList;
 
 	bool m_isActive { true };
 	int m_slot { -1 };

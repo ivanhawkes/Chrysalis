@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="f4875d31-6da1-14b6-51c1-25e712085280">
+ <Files>
+  <File path="human_female.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">MannequinPreview</Detail>
+ </Details>
+</AssetMetadata>

@@ -16,7 +16,7 @@ void CMountComponent::ReflectType(Schematyc::CTypeDesc<CMountComponent>& desc)
 	desc.SetLabel("Mount");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
 }
 
 

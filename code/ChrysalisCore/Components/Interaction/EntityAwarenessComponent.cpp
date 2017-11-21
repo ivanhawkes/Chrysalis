@@ -40,17 +40,17 @@ void CEntityAwarenessComponent::ReflectType(Schematyc::CTypeDesc<CEntityAwarenes
 	desc.SetIcon("icons:ObjectTypes/light.ico");
 
 	// TODO: Do we need a transform for this? Likely not.
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
+
+	// Mark the actor component as a hard requirement.
+	desc.AddComponentInteraction(SEntityComponentRequirements::EType::HardDependency, CActorComponent::IID());
 }
 
 
 void CEntityAwarenessComponent::Initialize()
 {
-	// This extension is only valid for actors.
-	// TODO: CRITICAL: HACK: BROKEN: !!
-	//m_pActor = CActorComponent::GetActor(GetEntityId());
-	//if (!m_pActor)
-	//	GameWarning("EntityAwareness extension only available for actors");
+	m_pActor = GetEntity()->GetComponent<CActorComponent>();
+	CRY_ASSERT_MESSAGE(m_pActor, "EntityAwareness component requires an actor component.");
 }
 
 
@@ -388,11 +388,14 @@ void CEntityAwarenessComponent::UpdateProximityQuery()
 #if defined(_DEBUG)
 		if (g_cvars.m_componentAwarenessDebug & eDB_ProximalEntities)
 		{
+			if (strcmp(pEntity->GetName(), "TestMe") == 0)
+				int a = 1;
+
 			// DEBUG: Highlight each entity within the range.
 			AABB bbox;
 			pEntity->GetWorldBounds(bbox);
 			bbox.Expand(Vec3(0.01f, 0.01f, 0.01f));
-			gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(bbox, true, ColorB(0, 64, 0), EBoundingBoxDrawStyle::eBBD_Faceted);
+			gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(bbox, true, ColorB(0, 64, 0), EBoundingBoxDrawStyle::eBBD_Extremes_Color_Encoded);
 		}
 #endif
 
@@ -450,7 +453,7 @@ void CEntityAwarenessComponent::UpdateNearQuery()
 			AABB bbox;
 			pEntity->GetWorldBounds(bbox);
 			bbox.Expand(Vec3(0.02f, 0.02f, 0.02f));
-			gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(bbox, true, ColorB(0, 196, 0), EBoundingBoxDrawStyle::eBBD_Faceted);
+			gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(bbox, true, ColorB(0, 196, 0), EBoundingBoxDrawStyle::eBBD_Extremes_Color_Encoded);
 		}
 #endif
 
@@ -558,7 +561,7 @@ const Entities& CEntityAwarenessComponent::GetNearDotFiltered(float minDot, floa
 			{
 				// DEBUG: Highlight the entity.
 				bbox.Expand(Vec3(0.03f, 0.03f, 0.03f));
-				gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(bbox, true, ColorB(0, 0, 64), EBoundingBoxDrawStyle::eBBD_Faceted);
+				gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(bbox, true, ColorB(0, 0, 64), EBoundingBoxDrawStyle::eBBD_Extremes_Color_Encoded);
 			}
 #endif
 
@@ -590,7 +593,7 @@ const Entities& CEntityAwarenessComponent::GetNearDotFiltered(float minDot, floa
 			AABB bbox;
 			pEntity->GetWorldBounds(bbox);
 			bbox.Expand(Vec3(0.04f, 0.04f, 0.04f));
-			gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(bbox, true, ColorB(192, 0, 0), EBoundingBoxDrawStyle::eBBD_Faceted);
+			gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(bbox, true, ColorB(192, 0, 0), EBoundingBoxDrawStyle::eBBD_Extremes_Color_Encoded);
 		}
 	}
 #endif

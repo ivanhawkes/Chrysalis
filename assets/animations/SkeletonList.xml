@@ -1,47 +1,6 @@
 <SkeletonList>
- <!-- Character -->
- <Skeleton name="skeleton_player_generic" file="objects/characters/human/generic/skeleton_player_generic.chr"/>
- <Skeleton name="head_nero" file="Objects/characters/human/heads/nero/nero_head_base.chr"/>
-
- <!-- Weapons -->
- <Skeleton name="pistol_fp" file="objects/weapons/pistol/pistol_fp_skel.chr"/>
- <Skeleton name="rifle_fp" file="objects/weapons/rifle/rifle_fp_skel.chr"/>
- <Skeleton name="shotgun" file="objects/weapons/shotgun/shotgun_fp_skel.chr"/>
- <Skeleton name="frag_grenade" file="Objects/weapons/frag_grenade/frag_grenade_fp_skel.chr"/>
- <Skeleton name="mounted_gun_fp" file="Objects/weapons/mounted_gun/mounted_gun_fp_skel.chr"/>
- <Skeleton name="c4" file="Objects/weapons/c4/c4.chr"/>
- <Skeleton name="turret" file="Objects/weapons/turret/turret.chr"/>
-
- <!-- Props -->
- <Skeleton name="te_elevator_doors" file="Objects/props/industrial/lifts/te_elevator/te_elevator_doors.chr"/>
-
- <!-- Boids -->
- <Skeleton name="alligator" file="objects/characters/animals/reptiles/alligator/alligator.chr"/>
- <Skeleton name="bald_eagle" file="objects/characters/animals/birds/bald_eagle/eagle.chr"/>
- <Skeleton name="bat" file="objects/characters/animals/bat/bat.chr"/>
- <Skeleton name="butterfly_fly" file="objects/characters/animals/insects/butterfly/butterfly_fly.chr"/>
- <Skeleton name="crow" file="objects/characters/animals/birds/crow/crow.chr"/>
- <Skeleton name="deer" file="objects/characters/animals/deer/deer.chr"/>
- <Skeleton name="pigeon_lf" file="objects/characters/animals/birds/pigeon/pigeon_lf.chr"/>
- <Skeleton name="rat" file="objects/characters/animals/rat/rat.chr"/>
- <Skeleton name="red_eared_slider_skel" file="objects/characters/animals/reptiles/turtle/red_eared_slider_skel.chr"/>
- <Skeleton name="rooster_skel" file="objects/characters/animals/birds/rooster/rooster_skel.chr"/>
- <Skeleton name="salamander" file="objects/characters/animals/amphibians/salamander/salamander.chr"/>
- <Skeleton name="seagull" file="objects/characters/animals/birds/seagull/seagull.chr"/>
- <Skeleton name="snake" file="objects/characters/animals/reptiles/snake/snake.chr"/>
- <Skeleton name="spider_wolf" file="objects/characters/animals/insects/spider/spider_wolf.chr"/>
- <Skeleton name="squirrel" file="objects/characters/animals/squirrel/squirrel.chr"/>
- <Skeleton name="toad_skel" file="objects/characters/animals/amphibians/toad/toad_skel.chr"/>
- <Skeleton name="trout_a" file="objects/characters/animals/fish/trout/trout_a.chr"/>
- <Skeleton name="trout_b" file="objects/characters/animals/fish/trout/trout_b.chr"/>
- <Skeleton name="trout_c" file="objects/characters/animals/fish/trout/trout_c.chr"/>
-
-  <!-- Chrysalis -->
-  <Skeleton name="chloe" file="objects/characters/human/chloe/chloe.chr"/>
-  <Skeleton name="human_male" file="objects/characters/human/male/human_male.chr"/>
-  <Skeleton name="clock" file="objects/school/wall_clock/wall_clock.skel"/>
-
-  <!-- Dark Vale -->
-  <Skeleton name="FlashlightDrop" file="Objects/flashlightDrop/FlashlightNULL.chr"/>
-
+ <Skeleton name="human_male" file="objects/characters/human/male/human_male.chr"/>
+ <Skeleton name="human_female" file="objects/characters/human/female/human_female.chr"/>
+ <Skeleton name="clock" file="objects/school/wall_clock/wall_clock.skel"/>
+ <Skeleton name="FlashlightDrop" file="Objects/flashlightDrop/FlashlightNULL.chr"/>
 </SkeletonList>

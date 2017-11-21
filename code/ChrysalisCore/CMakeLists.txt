@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.6.2)
-set(CRYENGINE_DIR "D:/CRYENGINE/Crytek/CRYENGINE_5.4")
+set(CRYENGINE_DIR "D:/CRYENGINE-SOURCE")
 set(TOOLS_CMAKE_DIR "${CRYENGINE_DIR}/Tools/CMake")
 
 set(PROJECT_BUILD 1)
@@ -164,10 +164,12 @@ add_sources("Interaction_uber.cpp"
 		"Components/Interaction/DRSInteractionComponent.cpp"
 		"Components/Interaction/EntityAwarenessComponent.cpp"
 		"Components/Interaction/EntityInteractionComponent.cpp"
+		"Components/Interaction/InteractComponent.cpp"
 		"Components/Interaction/ItemInteractionComponent.cpp"
 		"Components/Interaction/DRSInteractionComponent.h"
 		"Components/Interaction/EntityAwarenessComponent.h"
 		"Components/Interaction/EntityInteractionComponent.h"
+		"Components/Interaction/InteractComponent.h"
 		"Components/Interaction/ItemInteractionComponent.h"
 )
 add_sources("Inventory_uber.cpp"
@@ -289,16 +291,6 @@ add_sources("Doors_uber.cpp"
 		"Entities/Doors/AnimatedDoorComponent.cpp"
 		"Entities/Doors/AnimatedDoorComponent.h"
 )
-add_sources("Environment_uber.cpp"
-    PROJECTS Chrysalis
-    SOURCE_GROUP "Entities\\\\Environment"
-)
-add_sources("Water_uber.cpp"
-    PROJECTS Chrysalis
-    SOURCE_GROUP "Entities\\\\Environment\\\\Water"
-		"Entities/Environment/Water/WaterRipplesGenerator.cpp"
-		"Entities/Environment/Water/WaterRipplesGenerator.h"
-)
 add_sources("Flashlight_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Entities\\\\Flashlight"
@@ -309,6 +301,7 @@ add_sources("Interaction_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Entities\\\\Interaction"
 		"Entities/Interaction/DRSInteractionEntity.cpp"
+		"Entities/Interaction/IEntityInteraction.cpp"
 		"Entities/Interaction/DRSInteractionEntity.h"
 		"Entities/Interaction/IEntityInteraction.h"
 )

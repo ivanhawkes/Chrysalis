@@ -1,6 +1,6 @@
 <Material MtlFlags="524544" vertModifType="0">
  <SubMaterials>
-  <Material Name="body_SUB" MtlFlags="524416" Shader="Illum" GenMask="30400000" StringGenMask="%NORMAL_MAP%SPECULAR_MAP%SUBSURFACE_SCATTERING" SurfaceType="mat_flesh" MatTemplate="" Diffuse="1,1,1" Specular="0.065040998,0.065040998,0.065040998" Opacity="1" Shininess="255" vertModifType="0" LayerAct="1">
+  <Material Name="body_SUB" MtlFlags="524416" Shader="Illum" GenMask="C0400001" StringGenMask="%ALLOW_SILHOUETTE_POM%NORMAL_MAP%SPECULAR_MAP%SUBSURFACE_SCATTERING" SurfaceType="mat_flesh" MatTemplate="" Diffuse="1,1,1" Specular="0.065040998,0.065040998,0.065040998" Opacity="1" Shininess="255" vertModifType="0" LayerAct="1">
    <Textures>
     <Texture Map="Diffuse" File="./textures/human_male_diff.tif"/>
     <Texture Map="Bumpmap" File="./textures/human_male_ddna.tif"/>
