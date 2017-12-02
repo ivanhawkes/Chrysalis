@@ -2,17 +2,17 @@
  <SubMaterials>
   <Material Name="body_SUB" MtlFlags="524416" Shader="Illum" GenMask="C0400001" StringGenMask="%ALLOW_SILHOUETTE_POM%NORMAL_MAP%SPECULAR_MAP%SUBSURFACE_SCATTERING" SurfaceType="" MatTemplate="" Diffuse="1,1,1" Specular="0.065040998,0.065040998,0.065040998" Opacity="1" Shininess="255" vertModifType="0" LayerAct="1">
    <Textures>
-    <Texture Map="Diffuse" File="objects/characters/human/female/textures/human_female_diff.tif"/>
-    <Texture Map="Bumpmap" File="objects/characters/human/female/textures/human_female_ddna.tif"/>
-    <Texture Map="Specular" File="objects/characters/human/female/textures/human_female_spec.tif"/>
+    <Texture Map="Diffuse" File="./textures/human_female_diff.tif"/>
+    <Texture Map="Bumpmap" File="./textures/human_female_ddna.tif"/>
+    <Texture Map="Specular" File="./textures/human_female_spec.tif"/>
    </Textures>
    <PublicParams EmittanceMapGamma="1" SSSIndex="0"/>
   </Material>
   <Material Name="clothing_SUB" MtlFlags="524416" Shader="Illum" GenMask="C0400001" StringGenMask="%ALLOW_SILHOUETTE_POM%NORMAL_MAP%SPECULAR_MAP%SUBSURFACE_SCATTERING" SurfaceType="" MatTemplate="" Diffuse="1,1,1" Specular="0.065040998,0.065040998,0.065040998" Opacity="1" Shininess="255" vertModifType="0" LayerAct="1">
    <Textures>
-    <Texture Map="Diffuse" File="objects/characters/human/female/textures/human_female_diff.tif"/>
-    <Texture Map="Bumpmap" File="objects/characters/human/female/textures/human_female_ddna.tif"/>
-    <Texture Map="Specular" File="objects/characters/human/female/textures/human_female_spec.tif"/>
+    <Texture Map="Diffuse" File="./textures/human_female_diff.tif"/>
+    <Texture Map="Bumpmap" File="./textures/human_female_ddna.tif"/>
+    <Texture Map="Specular" File="./textures/human_female_spec.tif"/>
    </Textures>
    <PublicParams EmittanceMapGamma="1" SSSIndex="0"/>
   </Material>
