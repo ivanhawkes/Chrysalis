@@ -56,7 +56,7 @@
    <Fragment BlendOutDuration="0.2" Tags="">
     <AnimLayer>
      <Blend ExitTime="0" StartTime="0" Duration="0.2"/>
-     <Animation name="stand_relaxed_r_45"/>
+     <Animation name="picking_up_object"/>
     </AnimLayer>
    </Fragment>
   </Interaction>

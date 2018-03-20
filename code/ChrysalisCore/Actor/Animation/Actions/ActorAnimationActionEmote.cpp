@@ -39,7 +39,7 @@ void CActorAnimationActionEmote::Enter()
 {
 	CAnimationAction::Enter();
 
-	//m_rootScope->GetActionController().GetContext().state.Set(m_emoteTagId, true);
+	m_rootScope->GetActionController().GetContext().state.Set(m_emoteTagId, true);
 }
 
 
@@ -47,7 +47,7 @@ void CActorAnimationActionEmote::Exit()
 {
 	CAnimationAction::Exit();
 
-	//m_rootScope->GetActionController().GetContext().state.Set(m_emoteTagId, false);
+	m_rootScope->GetActionController().GetContext().state.Set(m_emoteTagId, false);
 }
 
 

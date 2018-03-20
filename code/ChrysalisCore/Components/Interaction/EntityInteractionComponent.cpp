@@ -19,7 +19,6 @@ void CEntityInteractionComponent::ReflectType(Schematyc::CTypeDesc<CEntityIntera
 	desc.SetDescription("Allow interaction with this entity.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
 
-	// TODO: Do we need a transform for this? Likely not.
 	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
 }
 
@@ -31,37 +30,6 @@ void CEntityInteractionComponent::ReflectType(Schematyc::CTypeDesc<CEntityIntera
 
 void CEntityInteractionComponent::Initialize()
 {
-}
-
-
-void CEntityInteractionComponent::ProcessEvent(SEntityEvent& event)
-{
-	switch (event.event)
-	{
-		case ENTITY_EVENT_UPDATE:
-			Update();
-			break;
-	}
-}
-
-
-void CEntityInteractionComponent::Update()
-{
-	// #TODO: Remove this if it's not actually needed.
-	const auto pEntity = GetEntity();
-	if (!pEntity)
-		return;
-
-	// NOTE: the thinking now is to just use the update on the extension instead.
-	//if (m_selectedInteraction)
-	//{
-	//	auto pPlayer = CPlayerComponent::GetLocalPlayer();
-	//	if (pPlayer)
-	//	{
-	//		auto pPlayerInput = pPlayer->GetPlayerInput();
-	//		m_selectedInteraction->OnUpdate(pPlayerInput->GetYawDelta(), pPlayerInput->GetPitchDelta());
-	//	}
-	//}
 }
 
 
@@ -113,6 +81,8 @@ IInteractionWeakPtr CEntityInteractionComponent::GetInteraction(string verb)
 		}
 	}
 
+	CryLogAlways("There's no interaction verb for %s", verb);
+
 	return std::weak_ptr<IInteraction>();
 }
 
@@ -138,30 +108,23 @@ void CEntityInteractionComponent::ClearInteractionVerb()
 }
 
 
-void CEntityInteractionComponent::OnInteractionStart()
+void CEntityInteractionComponent::OnInteractionStart(IActorComponent& actor)
 {
-	if (m_selectedInteraction)
-		m_selectedInteraction->OnInteractionStart();
+	CRY_ASSERT_MESSAGE(m_selectedInteraction, "Be sure to set an interaction before attempting to call it.");
+	m_selectedInteraction->OnInteractionStart(actor);
 }
 
 
-void CEntityInteractionComponent::OnInteractionTick()
+void CEntityInteractionComponent::OnInteractionTick(IActorComponent& actor)
 {
-	if (m_selectedInteraction)
-		m_selectedInteraction->OnInteractionTick();
+	CRY_ASSERT_MESSAGE(m_selectedInteraction, "Be sure to set an interaction before attempting to call it.");
+	m_selectedInteraction->OnInteractionTick(actor);
 }
 
 
-void CEntityInteractionComponent::OnInteractionComplete()
+void CEntityInteractionComponent::OnInteractionComplete(IActorComponent& actor)
 {
-	if (m_selectedInteraction)
-		m_selectedInteraction->OnInteractionComplete();
-}
-
-
-void CEntityInteractionComponent::OnInteractionCancel()
-{
-	if (m_selectedInteraction)
-		m_selectedInteraction->OnInteractionCancel();
+	CRY_ASSERT_MESSAGE(m_selectedInteraction, "Be sure to set an interaction before attempting to call it.");
+	m_selectedInteraction->OnInteractionComplete(actor);
 }
 }

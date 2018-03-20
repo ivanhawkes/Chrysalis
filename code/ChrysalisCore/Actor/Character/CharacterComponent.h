@@ -31,12 +31,6 @@ public:
 
 	static void ReflectType(Schematyc::CTypeDesc<CCharacterComponent>& desc);
 
-	static CryGUID& IID()
-	{
-		static CryGUID id = "{33E4A852-B605-4DEB-881F-D3EC252A9EDB}"_cry_guid;
-		return id;
-	}
-
 	/** Resets the character to an initial state. */
 	virtual void OnResetState();
 

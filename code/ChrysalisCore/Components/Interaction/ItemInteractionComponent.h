@@ -39,10 +39,10 @@ public:
 	}
 
 	// IInteractionItem
-	void OnInteractionItemInspect() override;;
-	void OnInteractionItemPickup() override;;
-	void OnInteractionItemDrop() override;;
-	void OnInteractionItemToss() override;;
+	void OnInteractionItemInspect(IActorComponent& actor) override;;
+	void OnInteractionItemPickup(IActorComponent& actor) override;;
+	void OnInteractionItemDrop(IActorComponent& actor) override;;
+	void OnInteractionItemToss(IActorComponent& actor) override;;
 	// ~IInteractionItem
 
 

@@ -35,7 +35,7 @@ void CEntityAwarenessComponent::ReflectType(Schematyc::CTypeDesc<CEntityAwarenes
 {
 	desc.SetGUID(CEntityAwarenessComponent::IID());
 	desc.SetEditorCategory("Entities");
-	desc.SetLabel("EntityAwareness");
+	desc.SetLabel("Entity Awareness");
 	desc.SetDescription("Allow an entity to become aware of other entities around it.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
 
@@ -269,9 +269,9 @@ void CEntityAwarenessComponent::OnRayCast(const ray_hit & rayHit)
 		string surfaceName = pSurfaceType->GetName();
 		auto surfaceTypeName = pSurfaceType->GetType();
 
-		CryWatch("SurfaceId: %d", surfaceId);
-		CryWatch("surfaceName: %s", surfaceName);
-		CryWatch("surfaceTypeName: %s", surfaceTypeName);
+		//CryWatch("SurfaceId: %d", surfaceId);
+		//CryWatch("surfaceName: %s", surfaceName);
+		//CryWatch("surfaceTypeName: %s", surfaceTypeName);
 	}
 
 #if defined(_DEBUG)

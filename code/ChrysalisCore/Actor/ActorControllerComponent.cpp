@@ -25,6 +25,9 @@ void CActorControllerComponent::ReflectType(Schematyc::CTypeDesc<CActorControlle
 
 	// Mark the actor component as a hard requirement.
 	desc.AddComponentInteraction(SEntityComponentRequirements::EType::HardDependency, CActorComponent::IID());
+
+	// Mark the advanced animation component as a hard requirement.
+	//desc.AddComponentInteraction(SEntityComponentRequirements::EType::HardDependency, "{3CD5DDC5-EE15-437F-A997-79C2391537FE}"_cry_guid);
 }
 
 
@@ -41,10 +44,6 @@ void CActorControllerComponent::Initialize()
 	// We need to know which actor component we are paired with. The actor controller class is pretty worthless without this.
 	m_pActorComponent = pEntity->GetOrCreateComponent<CActorComponent>();
 	CRY_ASSERT_MESSAGE(m_pActorComponent, "The actor controller component must be paired with an actor component.");
-
-	// Resolve the animation tags.
-	if (strlen (m_pAdvancedAnimationComponent->GetControllerDefinitionFile()) > 0)
-		m_rotateTagId = m_pAdvancedAnimationComponent->GetTagId("Rotate");
 
 	// Initialise the movement state machine.
 	MovementHSMInit();
@@ -320,10 +319,10 @@ void CActorControllerComponent::UpdateMovementRequest(float frameTime)
 
 void CActorControllerComponent::UpdateLookDirectionRequest(float frameTime)
 {
-	/** The angular velocity maximum (Full rotations / second). */
+	// The angular velocity maximum (Full rotations / second).
 	const float angularVelocityMax = g_PI2 * 1.5f;
 
-	/** The catchup speed (Full rotations / second). */
+	// The catchup speed (Full rotations / second).
 	const float catchupSpeed = g_PI2 * 1.2f;
 
 	// If there's a player controlling us, we can query them for inputs and camera and apply that to our rotation.
@@ -338,18 +337,7 @@ void CActorControllerComponent::UpdateLookDirectionRequest(float frameTime)
 			if (pPlayer->IsViewFirstPerson())
 				facingDir = CCamera::CreateAnglesYPR(Matrix33(m_lookOrientation));
 			else
-				facingDir = CCamera::CreateAnglesYPR(m_movementRequest);
-
-			// Take the direction they are facing as a target.
-			//const Vec3 lowerBodyDir = CCamera::CreateViewdir(Ang3(DEG2RAD(GetLowerBodyRotation(pPlayerInput->GetMovementDirectionFlags())), 0.0f, 0.0f));
-			//CryWatch("lowerBodyDir = %f, %f, %f", lowerBodyDir.x, lowerBodyDir.y, lowerBodyDir.z);
-			//m_movementRequest = pPlayer->GetCamera()->GetRotation() * lowerBodyDir * moveSpeed;
-			//if (pPlayer->IsThirdPerson())
-			//	facingDir = CCamera::CreateAnglesYPR(m_movementRequest);
-			//else
-			//	facingDir = CCamera::CreateAnglesYPR(Matrix33(m_lookOrientation) * lowerBodyDir);
-
-			//facingDir = m_movementRequest * pPlayer->GetCamera()->GetRotation() * lowerBodyDir;// FORWARD_DIRECTION;
+				facingDir = CCamera::CreateAnglesYPR(m_movementRequest.GetNormalizedFast());
 
 			// Use their last orientation as their present direction.
 			// NOTE: I tried it with GetEntity()->GetWorldTM() but that caused crazy jitter issues.
@@ -398,6 +386,11 @@ void CActorControllerComponent::UpdateAnimation(float frameTime)
 
 		// Update tags and motion parameters used for turning
 		const bool isTurning = std::abs(m_yawAngularVelocity) > angularVelocityMin;
+
+		// Resolve the animation tags.
+		// HACK: This should be done once on init or on entity changed events or similar. It fails hard if the init order is switched with CAdvancedAnimationComponent.
+		if ((m_rotateTagId == TAG_ID_INVALID) && (strlen(m_pAdvancedAnimationComponent->GetControllerDefinitionFile()) > 0))
+			m_rotateTagId = m_pAdvancedAnimationComponent->GetTagId("Rotate");
 
 		// Set the tag, if it exists.
 		if (m_rotateTagId != TAG_ID_INVALID)

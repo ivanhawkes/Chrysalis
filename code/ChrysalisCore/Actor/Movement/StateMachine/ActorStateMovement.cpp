@@ -55,13 +55,10 @@ private:
 	void StateSprintInput(CActorControllerComponent& actorControllerComponent, const SInputEventData& inputEvent);
 	void ProcessSprint(CActorControllerComponent& actorControllerComponent, const SActorPrePhysicsData& prePhysicsEvent);
 	void OnSpecialMove(CActorControllerComponent& actorControllerComponent, IActorEventListener::ESpecialMove specialMove);
-	bool IsActionControllerValid(CActorControllerComponent& actorControllerComponent) const;
 
 	void CreateWaterEffects();
 	void ReleaseWaterEffects();
 	void TriggerOutOfWaterEffectIfNeeded(const CActorControllerComponent& actorControllerComponent);
-
-	void UpdateCharacterStanceTag(CActorControllerComponent& actorControllerComponent);
 
 	CActorStateDead m_stateDead;
 	CActorStateFly m_stateFly;
@@ -104,10 +101,10 @@ const CActorStateMovement::TStateIndex CActorStateMovement::Root(CActorControlle
 		case STATE_EVENT_INIT:
 			//m_pWaterEffects = NULL;
 //			if (actorControllerComponent.IsClient())
-			{
-				CreateWaterEffects();
-			}
-			break;
+		{
+			CreateWaterEffects();
+		}
+		break;
 
 		case STATE_EVENT_RELEASE:
 			ReleaseWaterEffects();
@@ -881,19 +878,6 @@ void CActorStateMovement::OnSpecialMove(CActorControllerComponent& actorControll
 }
 
 
-bool CActorStateMovement::IsActionControllerValid(CActorControllerComponent& actorControllerComponent) const
-{
-	//IAnimatedCharacter* pAnimatedCharacter = actorControllerComponent.GetAnimatedCharacter();
-
-	//if (pAnimatedCharacter != NULL)
-	//{
-	//	return (pAnimatedCharacter->GetActionController() != NULL);
-	//}
-
-	return false;
-}
-
-
 void CActorStateMovement::TriggerOutOfWaterEffectIfNeeded(const CActorControllerComponent& actorControllerComponent)
 {
 	/*if (m_pWaterEffects != NULL)
@@ -925,20 +909,6 @@ void CActorStateMovement::ReleaseWaterEffects()
 	m_pWaterEffects->Release ();
 	delete m_pWaterEffects;
 	m_pWaterEffects = NULL;
-	}*/
-}
-
-
-void CActorStateMovement::UpdateCharacterStanceTag(CActorControllerComponent& actorControllerComponent)
-{
-	/*IAnimatedCharacter *pAnimatedCharacter = actorControllerComponent.GetAnimatedCharacter ();
-	if (pAnimatedCharacter)
-	{
-	IActionController *pActionController = pAnimatedCharacter->GetActionController ();
-	if (pActionController)
-	{
-	actorControllerComponent.SetStanceTag (actorControllerComponent.GetStance (), pActionController->GetContext ().state);
-	}
 	}*/
 }
 }

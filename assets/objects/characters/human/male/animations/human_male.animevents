@@ -1,2 +1,7 @@
 <anim_event_list>
+ <animation name="objects/characters/human/male/animations/interaction/picking_up_object.caf">
+  <event name="Deactivate" time="0.1" endTime="0.12" parameter="Bacon" bone="RightHandPinky1" offset="0,0,0" dir="0,0,0" model=""/>
+  <event name="audio_trigger" time="0.2" endTime="0.9" parameter="Play_l_global_sfx_bird_fly_off" bone="RightHand" offset="0,0,0" dir="0,0,0" model=""/>
+  <event name="Activate" time="0.80000001" endTime="0.95" parameter="23.4" bone="RightHand" offset="0,0,0" dir="0,0,0" model=""/>
+ </animation>
 </anim_event_list>

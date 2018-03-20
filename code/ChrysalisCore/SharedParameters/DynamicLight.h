@@ -10,8 +10,8 @@ struct SDynamicLight : public ISharedParams
 {
 	SHARED_PARAMS_BODY(SDynamicLight);
 
-	SDynamicLight() {};
-	virtual ~SDynamicLight() {};
+	SDynamicLight() = default;
+	virtual ~SDynamicLight() = default;
 
 	/** Resets this object to it's default state. */
 	virtual void Reset();

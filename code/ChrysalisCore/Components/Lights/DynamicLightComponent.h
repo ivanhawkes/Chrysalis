@@ -32,26 +32,6 @@ public:
 		eCastShadowsSpec_VeryHigh
 	};
 
-	struct IDynamicLightListener
-	{
-		virtual ~IDynamicLightListener() {};
-
-		virtual void OnDynamicLightResetState() = 0;
-	};
-
-	void AddEventListener(IDynamicLightListener* pListener)
-	{
-		assert(pListener);
-		if (pListener)
-			stl::push_back_unique(m_listenersList, pListener);
-	}
-
-	void RemoveEventListener(IDynamicLightListener* pListener)
-	{
-		assert(pListener);
-		m_listenersList.remove(pListener);
-	}
-
 public:
 	virtual void OnResetState();
 
@@ -70,9 +50,6 @@ public:
 	void SetLocalTM(Matrix34 localMatrix);
 
 private:
-	typedef std::list<IDynamicLightListener*> TListenersList;
-	TListenersList m_listenersList;
-
 	bool m_isActive { true };
 	int m_slot { -1 };
 	CDLight m_light;

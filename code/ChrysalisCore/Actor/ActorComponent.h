@@ -1,6 +1,5 @@
 #pragma once
 
-#include <IAnimatedCharacter.h>
 #include <Actor/Fate.h>
 #include <CryAISystem/IAgent.h>
 #include "Snaplocks/Snaplock.h"
@@ -8,6 +7,7 @@
 #include "DefaultComponents/Physics/CharacterControllerComponent.h"
 #include <Components/Player/Input/PlayerInputComponent.h>
 #include <Actor/ActorControllerComponent.h>
+#include <Entities/Interaction/IEntityInteraction.h>
 
 
 namespace Chrysalis
@@ -19,7 +19,6 @@ class CSnaplockComponent;
 class CInventoryComponent;
 class CEquipmentComponent;
 struct IItem;
-struct IInteraction;
 
 
 /** Define a set of snaplock types that will be used by character entities e.g. equipment slots **/
@@ -202,10 +201,12 @@ public:
 	/** Get's the player controlling this actor, if there is one. This may return nullptr. */
 	virtual CPlayerComponent* GetPlayer() const = 0;
 
+	virtual ICharacterInstance* GetCharacter() const = 0;
+
 	/**
 	Gets this instance's local-space eye position (for a human, this is typically Vec3 (0, 0, 1.76f)).
 
-	The code will first attempt to return a "#camera" helper if there is one. If only one eye is available (left_eye,
+	The code will first attempt to return a "Camera" helper if there is one. If only one eye is available (left_eye,
 	right_eye) then that is used as the local position. In the case of two eyes, the position is the average of the two
 	eyes.
 
@@ -255,7 +256,7 @@ public:
 	virtual void OnActionInteractionStart() = 0;
 
 	/** Received when the player has indicated the actor should try and interact with a nearby entity. */
-	virtual void OnActionInteraction() = 0;
+	virtual void OnActionInteractionTick() = 0;
 
 	/** Received when the player has indicated the actor should exit "interaction mode". */
 	virtual void OnActionInteractionEnd() = 0;
@@ -286,6 +287,30 @@ public:
 
 	/** Is the actor currently jogging?  */
 	virtual bool IsJogging() const = 0;
+
+	/**
+	Call this to place the actor into "interaction mode". This should be called by any section of code that wants to
+	trigger an interaction with the actor. This will lock out any other attempts to start an interaction until this one
+	has completed. Generally, you will want whatever process is kicked off by the 'OnActionInteractionStart' function to
+	make a call to this at the start of it's specific interaction.
+	**/
+	virtual void InteractionStart(IInteraction* pInteraction) = 0;
+
+	/** Received at intervals during an on-going interaction. */
+	virtual void InteractionTick(IInteraction* pInteraction) = 0;
+
+	/** Call this to remove the actor from "interaction mode". This will open the actor up to accepting interactions again. */
+	virtual void InteractionEnd(IInteraction* pInteraction) = 0;
+
+	/** Queue an action onto the animation queue. */
+	virtual void QueueAction(TAction<SAnimationContext>& pAction) = 0;
+
+	/**
+	Gets action controller.
+
+	\return Null if it fails, else the action controller.
+	**/
+	virtual IActionController* GetActionController() const = 0;
 
 	/** Kill the character. */
 	virtual void Kill() = 0;
@@ -486,9 +511,10 @@ public:
 	*/
 	const CFate& GetFate() { return m_fate; }
 
-	// TODO: Convenience functions, for now - think about removing them.
-	EActorStance GetStance() const { return m_pActorControllerComponent->GetStance(); }
-	EActorPosture GetPosture() const { return m_pActorControllerComponent->GetPosture(); }
+	/** Gives you access to the controller component for this actor. Use with caution. **/
+	CActorControllerComponent* GetControllerComponent() const { return m_pActorControllerComponent; }
+
+	ICharacterInstance* GetCharacter() const override;
 
 protected:
 	Cry::DefaultComponents::CAdvancedAnimationComponent* m_pAdvancedAnimationComponent { nullptr };
@@ -501,9 +527,11 @@ protected:
 	additionally by the editor when you both enter and leave game mode. */
 	virtual void OnResetState();
 
+	void ResetMannequin();
+
 private:
 	/** An component which is used to discover entities near the actor. */
-	CEntityAwarenessComponent* m_pAwareness { nullptr };
+	CEntityAwarenessComponent * m_pAwareness { nullptr };
 
 	/** A component that allows for management of snaplocks. */
 	CSnaplockComponent* m_pSnaplockComponent { nullptr };
@@ -514,7 +542,7 @@ private:
 	/** Manage their equipment. */
 	CEquipmentComponent* m_pEquipmentComponent { nullptr };
 
-	/** Manage their equipment. */
+	/** All control is handled through an actor controller. */
 	CActorControllerComponent* m_pActorControllerComponent { nullptr };
 
 	/**	A dynamic response proxy. **/
@@ -526,7 +554,7 @@ private:
 	/** The pre-determined fate for this actor. */
 	CFate m_fate;
 
-	
+
 	// ***
 	// *** AI / Player Control
 	// ***
@@ -568,7 +596,7 @@ public:
 	void OnActionInspect() override;
 	void OnActionInspectEnd() override;
 	void OnActionInteractionStart() override;
-	void OnActionInteraction() override;
+	void OnActionInteractionTick() override;
 	void OnActionInteractionEnd() override;
 	void OnActionCrouchToggle() override { m_pActorControllerComponent->OnActionCrouchToggle(); };
 	void OnActionCrawlToggle() override { m_pActorControllerComponent->OnActionCrawlToggle(); };
@@ -580,17 +608,76 @@ public:
 	bool IsSprinting() const override { return m_pActorControllerComponent->IsSprinting(); };
 	bool IsJogging() const override { return m_pActorControllerComponent->IsJogging(); };
 
+	/** Is the actor currently interacting with another entity? */
+	bool IsInteracting() const { return m_pInteraction != nullptr; }
+
+	/**
+	Call this to place the actor into "interaction mode". This should be called by any section of code that wants to
+	trigger an interaction with the actor. This will lock out any other attempts to start an interaction until this one
+	has completed. Generally, you will want whatever process is kicked off by the 'OnActionInteractionStart' function to
+	make a call to this at the start of it's specific interaction.
+	**/
+	void InteractionStart(IInteraction* pInteraction) override;
+
+	/** Received at intervals during an on-going interaction. */
+	void InteractionTick(IInteraction* pInteraction) override;
+
+	/** Call this to remove the actor from "interaction mode". This will open the actor up to accepting interactions again. */
+	void InteractionEnd(IInteraction* pInteraction) override;
+
 private:
 	/** If we are interacting with an entity, it is this entity. */
 	EntityId m_interactionEntityId { INVALID_ENTITYID };
 
 	/** If we're interacting with something, this is the actual interaction. */
-	IInteraction* m_pInteraction { nullptr };
+	IInteractionPtr m_pInteraction;
+
+	/** True when the actor is busy interaction with something, and shouldn't be allowed to start a new interaction until
+	the first is finished. */
+	bool isBusyInInteraction { false };
+
+	// ***
+	// *** Allow control of the actor's animations / fragments / etc.
+	// ***
+
+public:
+	void QueueAction(TAction<SAnimationContext>& pAction) override { m_pAdvancedAnimationComponent->QueueAction(pAction); };
+
+	virtual IActionController* GetActionController() const;
+
+	const SActorMannequinParams* GetMannequinParams() const { return m_actorMannequinParams; }
+
+
+	/**
+	Gets stance tag identifier. The returned TagID is useful for driving animation.
+
+	\param	actorStance The actor's stance.
+
+	\return The stance tag identifier.
+	**/
+	TagID GetStanceTagId(EActorStance actorStance);
+
+
+	/**
+	Gets posture tag identifier. The returned TagID is useful for driving animation.
+
+	\param	actorPosture The actor's posture.
+
+	\return The posture tag identifier.
+	**/
+	TagID GetPostureTagId(EActorPosture actorPosture);
+
+private:
+	const SActorMannequinParams* m_actorMannequinParams { nullptr };
+	class CProceduralContextAim* m_pProceduralContextAim { nullptr };
+	class CProceduralContextLook* m_pProceduralContextLook { nullptr };
+	IActionController* m_pActionController { nullptr };
 
 	// ***
 	// *** Item System.
 	// ***
 
+public:
 	EntityId GetCurrentItemId(bool includeVehicle) const;
 
 	/**
@@ -614,7 +701,7 @@ public:
 
 	/**
 	Query if this instance is in first person view.
-	
+
 	\return True if this instance is controlled by the local player in a first person perspective, false for all other cases.
 	**/
 	virtual bool IsViewFirstPerson() const;

@@ -32,10 +32,10 @@ public:
 	}
 
 	// IInteractionItem
-	void OnInteractionItemInspect() override { gEnv->pLog->LogAlways("OnInteractionItemInspect fired."); };
-	void OnInteractionItemPickup() override { gEnv->pLog->LogAlways("OnInteractionItemPickup fired."); };
-	void OnInteractionItemDrop() override { gEnv->pLog->LogAlways("OnInteractionItemDrop fired."); };
-	void OnInteractionItemToss() override { gEnv->pLog->LogAlways("OnInteractionItemToss fired."); };
+	void OnInteractionItemInspect(IActorComponent& actor) override { CryLogAlways("OnInteractionItemInspect fired."); };
+	void OnInteractionItemPickup(IActorComponent& actor) override { CryLogAlways("OnInteractionItemPickup fired."); };
+	void OnInteractionItemDrop(IActorComponent& actor) override { CryLogAlways("OnInteractionItemDrop fired."); };
+	void OnInteractionItemToss(IActorComponent& actor) override { CryLogAlways("OnInteractionItemToss fired."); };
 	// IInteractionItem
 
 	virtual void OnResetState() final;

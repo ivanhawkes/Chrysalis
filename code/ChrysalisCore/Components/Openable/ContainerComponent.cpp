@@ -22,6 +22,9 @@ void CContainerComponent::ReflectType(Schematyc::CTypeDesc<CContainerComponent>&
 	desc.SetDescription("Chests, bags, etc.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
 	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
+
+	// Mark the entity interaction component as a hard requirement.
+	desc.AddComponentInteraction(SEntityComponentRequirements::EType::HardDependency, CEntityInteractionComponent::IID());
 }
 
 

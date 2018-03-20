@@ -11,7 +11,7 @@ void CPetComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
 
 void CPetComponent::ReflectType(Schematyc::CTypeDesc<CPetComponent>& desc)
 {
-	desc.SetGUID(CPetComponent::IID());
+	desc.SetGUID("{03DCFDAE-6F31-41D3-9FF5-26F79BB04278}"_cry_guid);
 	desc.SetEditorCategory("Actors");
 	desc.SetLabel("Pet");
 	desc.SetDescription("No description.");

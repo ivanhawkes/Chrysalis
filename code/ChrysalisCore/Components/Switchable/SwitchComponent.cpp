@@ -1,32 +1,12 @@
 #include "StdAfx.h"
 
 #include "SwitchComponent.h"
+#include "Actor/ActorComponent.h"
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
 
 
 namespace Chrysalis
 {
-static void ReflectType(Schematyc::CTypeDesc<CSwitchComponent::SSwitchOnSignal>& desc)
-{
-	desc.SetGUID("{D250B16F-D529-4A79-9268-FFBFA4252A80}"_cry_guid);
-	desc.SetLabel("Switch On");
-}
-
-
-static void ReflectType(Schematyc::CTypeDesc<CSwitchComponent::SSwitchOffSignal>& desc)
-{
-	desc.SetGUID("{70C42CEE-ED6B-437C-A18D-C9441BBB6C99}"_cry_guid);
-	desc.SetLabel("Switch Off");
-}
-
-
-static void ReflectType(Schematyc::CTypeDesc<CSwitchComponent::SSwitchToggleSignal>& desc)
-{
-	desc.SetGUID("{71497D0B-6600-4862-B8E1-29016D92E606}"_cry_guid);	
-	desc.SetLabel("Switch Toggle");
-}
-
-
 void CSwitchComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
 {
 	componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CSwitchComponent::SSwitchOnSignal));
@@ -45,14 +25,19 @@ void CSwitchComponent::ReflectType(Schematyc::CTypeDesc<CSwitchComponent>& desc)
 	desc.SetComponentFlags({ IEntityComponent::EFlags::None });
 
 	desc.AddMember(&CSwitchComponent::m_isEnabled, 'isen', "IsEnabled", "IsEnabled", "Is this switch currently enabled.", true);
-	desc.AddMember(&CSwitchComponent::m_isSwitchedOn, 'ison', "SwitchedOn", "Switched On", "Is this switch currently switch on.", true);
 	desc.AddMember(&CSwitchComponent::m_isSingleUseOnly, 'issi', "IsSingleUseOnly", "Single Use Only", "Is this switch only able to be used once.", false);
 	desc.AddMember(&CSwitchComponent::m_queueSignal, 'alts', "SwitchVerb", "Switch Verb (Override)", "Send an alternative queue signal to DRS if the string is not empty. ('interaction_switch').", "");
+	desc.AddMember(&CSwitchComponent::m_isSwitchedOn, 'ison', "SwitchedOn", "Switched On", "Is this switch currently switch on.", true);
+
+	// Mark the entity interaction component as a hard requirement.
+	desc.AddComponentInteraction(SEntityComponentRequirements::EType::HardDependency, CEntityInteractionComponent::IID());
 }
 
 
 void CSwitchComponent::Initialize()
 {
+	//CInteractComponent::Initialize();
+
 	// We want to supply interaction verbs.
 	m_interactor = GetEntity()->GetOrCreateComponent<CEntityInteractionComponent>();
 	if (m_interactor)
@@ -77,28 +62,33 @@ void CSwitchComponent::OnResetState()
 }
 
 
-void CSwitchComponent::OnInteractionSwitchToggle()
+void CSwitchComponent::OnInteractionSwitchToggle(IInteraction& pInteraction, IActorComponent& actor)
 {
+	CInteractComponent::OnInteractionInteractStart(pInteraction, actor);
+	
 	if (m_isEnabled)
 	{
-		gEnv->pLog->LogAlways("SwitchToggle fired.");
+		CryLogAlways("SwitchToggle fired.");
 		if (m_isSwitchedOn)
-			OnInteractionSwitchOff();
+			OnInteractionSwitchOff(pInteraction, actor);
 		else
-			OnInteractionSwitchOn();
+			OnInteractionSwitchOn(pInteraction, actor);
 
 		// Push the signal out using schematyc.
-		if (auto const pSchematycObject = GetEntity()->GetSchematycObject())
-			pSchematycObject->ProcessSignal(SSwitchToggleSignal(), GetGUID());
+		//if (auto const pSchematycObject = GetEntity()->GetSchematycObject())
+		//	pSchematycObject->ProcessSignal(SSwitchToggleSignal(), GetGUID());
 	}
+
+	// Inform the actor we are finished with an interaction.
+	//actor.InteractionEnd(&pInteraction);
 }
 
 
-void CSwitchComponent::OnInteractionSwitchOn()
+void CSwitchComponent::OnInteractionSwitchOn(IInteraction& pInteraction, IActorComponent& actor)
 {
 	if (m_isEnabled)
 	{
-		gEnv->pLog->LogAlways("SwitchOn fired.");
+		CryLogAlways("SwitchOn fired.");
 		m_isSwitchedOn = true;
 		InformAllLinkedEntities(kSwitchOnVerb, true);
 
@@ -113,11 +103,11 @@ void CSwitchComponent::OnInteractionSwitchOn()
 }
 
 
-void CSwitchComponent::OnInteractionSwitchOff()
+void CSwitchComponent::OnInteractionSwitchOff(IInteraction& pInteraction, IActorComponent& actor)
 {
 	if (m_isEnabled)
 	{
-		gEnv->pLog->LogAlways("SwitchOff fired.");
+		CryLogAlways("SwitchOff fired.");
 		m_isSwitchedOn = false;
 		InformAllLinkedEntities(kSwitchOffVerb, true);
 
@@ -131,6 +121,8 @@ void CSwitchComponent::OnInteractionSwitchOff()
 	}
 }
 
+
+// TODO: FIX: Simplify this so it doesn't all need to be replicated in derived classes such as this one.
 
 void CSwitchComponent::InformAllLinkedEntities(string verb, bool isSwitchedOn)
 {

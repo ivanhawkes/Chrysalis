@@ -20,6 +20,9 @@ void CSecurityPadComponent::ReflectType(Schematyc::CTypeDesc<CSecurityPadCompone
 	desc.SetDescription("Interactive security pad for controlling access to locked areas.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
 	desc.SetComponentFlags({ IEntityComponent::EFlags::None });
+
+	// Mark the entity interaction component as a hard requirement.
+	desc.AddComponentInteraction(SEntityComponentRequirements::EType::HardDependency, CEntityInteractionComponent::IID());
 }
 
 
@@ -42,9 +45,9 @@ void CSecurityPadComponent::OnResetState()
 }
 
 
-void CSecurityPadComponent::OnInteractionExamineStart()
+void CSecurityPadComponent::OnInteractionExamineStart(IActorComponent& actor)
 {
-	gEnv->pLog->LogAlways("OnInteractionExamineStart fired.");
+	CryLogAlways("OnInteractionExamineStart fired.");
 
 	// Switch to the examine camera.
 	if (auto pPlayer = CPlayerComponent::GetLocalPlayer())
@@ -55,9 +58,9 @@ void CSecurityPadComponent::OnInteractionExamineStart()
 }
 
 
-void CSecurityPadComponent::OnInteractionExamineComplete()
+void CSecurityPadComponent::OnInteractionExamineComplete(IActorComponent& actor)
 {
-	gEnv->pLog->LogAlways("OnInteractionExamineComplete fired.");
+	CryLogAlways("OnInteractionExamineComplete fired.");
 
 	// Switch back to the previous camera.
 	if (auto pPlayer = CPlayerComponent::GetLocalPlayer())
@@ -65,12 +68,5 @@ void CSecurityPadComponent::OnInteractionExamineComplete()
 		auto pCameraManager = pPlayer->GetCameraManager();
 		pCameraManager->SetLastCameraMode();
 	}
-}
-
-
-void CSecurityPadComponent::OnInteractionExamineCancel()
-{
-	// Same result as completing.
-	OnInteractionExamineComplete();
 }
 }

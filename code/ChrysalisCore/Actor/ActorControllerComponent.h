@@ -1,15 +1,10 @@
 #pragma once
 
 #include <StateMachine/StateMachine.h>
+#include "Actor/Animation/ActorAnimation.h"
 #include "Components/Player/Input/PlayerInputComponent.h"
-#include "DefaultComponents/Geometry/AdvancedAnimationComponent.h"
 #include "DefaultComponents/Physics/CharacterControllerComponent.h"
-
-
-//#include <CryNetwork/ISerialize.h>
-//#include <CryMath/Cry_Vector3.h>
-//#include <CryCore/CryFlags.h>
-//#include <IGameObject.h>
+#include "DefaultComponents/Geometry/AdvancedAnimationComponent.h"
 
 
 namespace Chrysalis
@@ -63,56 +58,6 @@ struct SActorPhysics
 	int groundMaterialIdx;
 	EntityId groundColliderId;
 	*/
-};
-
-
-// ***
-// *** Character stances
-// ***
-
-
-/** All valid actor stances. */
-
-enum EActorStance
-{
-	eAS_Standing,
-	eAS_Crouching,
-	eAS_Crawling,
-	eAS_Prone,
-	eAS_Falling,
-	eAS_Landing,
-	eAS_Swimming,
-	eAS_Flying,
-	eAS_Spellcasting,
-	eAS_SittingChair,
-	eAS_SittingFloor,
-	eAS_Kneeling
-};
-
-
-/**
-The actor's posture extends the stance, giving more precise control over animating their state of mind. In
-general, these are applied to eAS_Standing, but some may also have application to sitting or other stances.
-**/
-enum EActorPosture
-{
-	// Alertness.
-	eAP_Unaware,
-	eAP_Distracted,
-	eAP_Suspicious,
-	eAP_Alerted,
-
-	// Daze / sap effect on them.
-	eAP_Dazed,
-
-	// Everyday postures.
-	eAP_Neutral,
-	eAP_Passive,
-	eAP_Aggressive,
-	eAP_Interested,
-	eAP_Bored,
-	eAP_Excited,
-	eAP_Depressed,
 };
 
 
@@ -272,6 +217,8 @@ public:
 
 	/** Duration the actor has been on the ground. May not be in use yet. */
 	float durationOnGround;
+
+	const CActorComponent* GetActor() { return m_pActorComponent; };
 
 private:
 	/** The actor component we are paired with. */

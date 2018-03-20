@@ -4,5 +4,4 @@
 
 namespace Chrysalis
 {
-SActorMannequinParams g_actorMannequinParams;
 }

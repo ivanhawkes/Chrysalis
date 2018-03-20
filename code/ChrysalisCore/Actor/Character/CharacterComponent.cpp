@@ -16,7 +16,7 @@ void CCharacterComponent::Register(Schematyc::CEnvRegistrationScope& componentSc
 
 void CCharacterComponent::ReflectType(Schematyc::CTypeDesc<CCharacterComponent>& desc)
 {
-	desc.SetGUID(CCharacterComponent::IID());
+	desc.SetGUID("{33E4A852-B605-4DEB-881F-D3EC252A9EDB}"_cry_guid);
 	desc.SetEditorCategory("Actors");
 	desc.SetLabel("Character");
 	desc.SetDescription("No description.");

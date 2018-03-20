@@ -1,0 +1,58 @@
+{
+  "content": {
+    "assets": [
+      "assets"
+    ],
+    "code": [
+      "code/ChrysalisSpells"
+    ],
+    "libs": [
+      {
+        "name": "ChrysalisCore",
+        "shared": {
+          "any": "",
+          "win_x64": "bin/win_x64/ChrysalisCore.dll",
+          "win_x86": ""
+        }
+      },
+      {
+        "name": "ChrysalisSpells",
+        "shared": {
+          "any": "",
+          "win_x64": "bin/win_x64/ChrysalisSpells.dll",
+          "win_x86": ""
+        }
+      }
+    ]
+  },
+  "info": {
+    "name": "ChrysalisSpells"
+  },
+  "require": {
+    "engine": "{2381931f-3f2e-493d-94cf-5a6d3541b2d3}",
+    "plugins": [
+      {
+        "path": "CryDefaultEntities",
+        "type": "EPluginType::Native"
+      },
+      {
+        "path": "CrySensorSystem",
+        "type": "EPluginType::Native"
+      },
+      {
+        "path": "CryPerceptionSystem",
+        "type": "EPluginType::Native"
+      },
+      {
+        "path": "bin/win_x64/ChrysalisCore.dll",
+        "type": "EPluginType::Native"
+      },
+      {
+        "path": "bin/win_x64/ChrysalisSpells.dll",
+        "type": "EPluginType::Native"
+      }
+    ]
+  },
+  "type": "",
+  "version": 1
+}

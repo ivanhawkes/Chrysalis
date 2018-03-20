@@ -27,8 +27,8 @@ private:
 class CActionSwitchInstance final : public DRS::IResponseActionInstance
 {
 public:
-	CActionSwitchInstance() {};
-	virtual ~CActionSwitchInstance() {};
+	CActionSwitchInstance() = default;
+	virtual ~CActionSwitchInstance() = default;
 
 	// IResponseActionInstance
 	virtual eCurrentState Update() override;

@@ -10,8 +10,8 @@ struct SFogVolume : public ISharedParams
 {
 	SHARED_PARAMS_BODY(SFogVolume);
 
-	SFogVolume() {};
-	virtual ~SFogVolume() {};
+	SFogVolume() = default;
+	virtual ~SFogVolume() = default;
 
 	/** Resets this object to it's default state. */
 	virtual void Reset();

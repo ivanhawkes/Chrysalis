@@ -275,38 +275,35 @@ void CActorStateJump::OnFullSerialize(TSerialize ser, CActorControllerComponent&
 
 void CActorStateJump::SetJumpState(CActorControllerComponent& actorControllerComponent, EJumpState jumpState)
 {
-	/*if (jumpState != m_jumpState)
-	{
-	CRY_ASSERT (m_jumpState >= JState_None && m_jumpState < EJumpState::_LAST);
-	const EJumpState previousJumpState = m_jumpState;
+	//if (jumpState != m_jumpState)
+	//{
+	//	CRY_ASSERT(m_jumpState >= JState_None && m_jumpState < EJumpState::_LAST);
+	//	const EJumpState previousJumpState = m_jumpState;
 
-	m_jumpState = jumpState;
+	//	m_jumpState = jumpState;
 
-	if (IActionController *actionController = actorControllerComponent.GetAnimatedCharacter ()->GetActionController ())
-	{
-	if (!m_jumpAction && !actorControllerComponent.IsAIControlled ())
-	{
-	FragmentID fragID = FRAGMENT_ID_INVALID;
-	switch (jumpState)
-	{
-	case JState_Jump:
-	fragID = CharacterMannequin.fragmentIDs.MotionJump;
-	break;
+	//	if (!m_jumpAction && !actorControllerComponent.IsAIControlled())
+	//	{
+	//		FragmentID fragID = FRAGMENT_ID_INVALID;
+	//		switch (jumpState)
+	//		{
+	//			case JState_Jump:
+	//				fragID = CharacterMannequin.fragmentIDs.MotionJump;
+	//				break;
 
-	case JState_Falling:
-	fragID = CharacterMannequin.fragmentIDs.MotionInAir;
-	break;
-	}
+	//			case JState_Falling:
+	//				fragID = CharacterMannequin.fragmentIDs.MotionInAir;
+	//				break;
+	//		}
 
-	if (fragID != FRAGMENT_ID_INVALID)
-	{
-	m_jumpAction = new CCharacterJump (fragID, EActorActionPriority::PP_CharacterAction);
-	m_jumpAction->AddRef ();
-	actionController->Queue (m_jumpAction);
-	}
-	}
-	}
-	}*/
+	//		if (fragID != FRAGMENT_ID_INVALID)
+	//		{
+	//			m_jumpAction = new CCharacterJump(fragID, EActorActionPriority::PP_CharacterAction);
+	//			m_jumpAction->AddRef();
+	//			actorControllerComponent.GetActor()->QueueAction(*m_jumpAction);
+	//		}
+	//	}
+	//}
 }
 
 
@@ -318,138 +315,138 @@ CActorStateJump::EJumpState CActorStateJump::GetJumpState() const
 
 void CActorStateJump::Landed(CActorControllerComponent& actorControllerComponent, const bool isHeavyWeapon, float fallSpeed)
 {
-//#ifdef STATE_DEBUG
-//	bool remoteControlled = false;
-//	IVehicle* pVehicle = actorControllerComponent.GetLinkedVehicle();
-//	if (pVehicle)
-//	{
-//		IVehicleSeat* pVehicleSeat = pVehicle->GetSeatForPassenger(actorControllerComponent.GetEntityId());
-//		if (pVehicleSeat && pVehicleSeat->IsRemoteControlled())
-//		{
-//			remoteControlled = true;
-//		}
-//	}
-//	CRY_ASSERT_MESSAGE(actorControllerComponent.GetLinkedEntity() == NULL || remoteControlled, "Cannot 'land' when you're linked to another entity!");
-//#endif
+	//#ifdef STATE_DEBUG
+	//	bool remoteControlled = false;
+	//	IVehicle* pVehicle = actorControllerComponent.GetLinkedVehicle();
+	//	if (pVehicle)
+	//	{
+	//		IVehicleSeat* pVehicleSeat = pVehicle->GetSeatForPassenger(actorControllerComponent.GetEntityId());
+	//		if (pVehicleSeat && pVehicleSeat->IsRemoteControlled())
+	//		{
+	//			remoteControlled = true;
+	//		}
+	//	}
+	//	CRY_ASSERT_MESSAGE(actorControllerComponent.GetLinkedEntity() == NULL || remoteControlled, "Cannot 'land' when you're linked to another entity!");
+	//#endif
 
-	/*const SActorStats& stats = actorControllerComponent.m_actorState;
+		/*const SActorStats& stats = actorControllerComponent.m_actorState;
 
-	Vec3 CharacterPosition = actorControllerComponent.GetEntity ()->GetWorldPos ();
-	IPhysicalEntity *phys = actorControllerComponent.GetEntity ()->GetPhysics ();
-	IMaterialEffects *mfx = gEnv->pGameFramework->GetIMaterialEffects ();
+		Vec3 CharacterPosition = actorControllerComponent.GetEntity ()->GetWorldPos ();
+		IPhysicalEntity *phys = actorControllerComponent.GetEntity ()->GetPhysics ();
+		IMaterialEffects *mfx = gEnv->pGameFramework->GetIMaterialEffects ();
 
-	const SActorPhysics& actorPhysics = actorControllerComponent.GetActorPhysics ();
-	int matID = actorPhysics.groundMaterialIdx != -1 ? actorPhysics.groundMaterialIdx : mfx->GetDefaultSurfaceIndex ();
+		const SActorPhysics& actorPhysics = actorControllerComponent.GetActorPhysics ();
+		int matID = actorPhysics.groundMaterialIdx != -1 ? actorPhysics.groundMaterialIdx : mfx->GetDefaultSurfaceIndex ();
 
-	const float fHeightofEntity = CharacterPosition.z;
-	const float worldWaterLevel = actorControllerComponent.m_stateSwimWaterTestProxy.GetWaterLevel ();
+		const float fHeightofEntity = CharacterPosition.z;
+		const float worldWaterLevel = actorControllerComponent.m_stateSwimWaterTestProxy.GetWaterLevel ();
 
-	TMFXEffectId effectId = mfx->GetEffectId ("bodyfall", matID);
-	if (effectId != InvalidEffectId)
-	{
-	SMFXRunTimeEffectParams params;
-	Vec3 direction = Vec3 (0, 0, 0);
-	if (IMovementController *pMV = actorControllerComponent.GetMovementController ())
-	{
-	SMovementState state;
-	pMV->GetMovementState (state);
-	direction = state.aimDirection;
-	}
-	params.pos = CharacterPosition + direction;
+		TMFXEffectId effectId = mfx->GetEffectId ("bodyfall", matID);
+		if (effectId != InvalidEffectId)
+		{
+		SMFXRunTimeEffectParams params;
+		Vec3 direction = Vec3 (0, 0, 0);
+		if (IMovementController *pMV = actorControllerComponent.GetMovementController ())
+		{
+		SMovementState state;
+		pMV->GetMovementState (state);
+		direction = state.aimDirection;
+		}
+		params.pos = CharacterPosition + direction;
 
-	float landFallParamVal = (float) __fsel (-(fallSpeed - 7.5f), 0.25f, 0.75f);
-	params.AddSoundParam ("landfall", landFallParamVal);
+		float landFallParamVal = (float) __fsel (-(fallSpeed - 7.5f), 0.25f, 0.75f);
+		params.AddSoundParam ("landfall", landFallParamVal);
 
-	const float speedParamVal = min (fabsf ((actorPhysics.velocity.z * 0.1f)), 1.0f);
-	params.AddSoundParam ("speed", speedParamVal);
+		const float speedParamVal = min (fabsf ((actorPhysics.velocity.z * 0.1f)), 1.0f);
+		params.AddSoundParam ("speed", speedParamVal);
 
-	params.soundScale = 1.0f;
+		params.soundScale = 1.0f;
 
-	mfx->ExecuteEffect (effectId, params);
-	}
+		mfx->ExecuteEffect (effectId, params);
+		}
 
-	bool heavyLanded = false;
+		bool heavyLanded = false;
 
-	IItem* pCurrentItem = actorControllerComponent.GetCurrentItem ();
-	CWeapon* pCurrentWeapon = pCurrentItem ? static_cast<CWeapon*>(pCurrentItem->GetIWeapon ()) : NULL;
+		IItem* pCurrentItem = actorControllerComponent.GetCurrentItem ();
+		CWeapon* pCurrentWeapon = pCurrentItem ? static_cast<CWeapon*>(pCurrentItem->GetIWeapon ()) : NULL;
 
-	if (fallSpeed > 0.0f && actorControllerComponent.IsCharacter ())
-	{
-	if (!gEnv->bMultiCharacter)
-	{
-	const float verticalSpeed = fabs (fallSpeed);
-	const float speedForHeavyLand = g_pGameCVars->pl_health.fallSpeed_HeavyLand;
-	if ((verticalSpeed >= speedForHeavyLand) && (actorControllerComponent.GetPickAndThrowEntity () == 0) && !actorControllerComponent.IsDead ())
-	{
-	if (!isHeavyWeapon)
-	{
-	if (pCurrentWeapon)
-	{
-	pCurrentWeapon->FumbleGrenade ();
-	pCurrentWeapon->CancelCharge ();
-	}
+		if (fallSpeed > 0.0f && actorControllerComponent.IsCharacter ())
+		{
+		if (!gEnv->bMultiCharacter)
+		{
+		const float verticalSpeed = fabs (fallSpeed);
+		const float speedForHeavyLand = g_pGameCVars->pl_health.fallSpeed_HeavyLand;
+		if ((verticalSpeed >= speedForHeavyLand) && (actorControllerComponent.GetPickAndThrowEntity () == 0) && !actorControllerComponent.IsDead ())
+		{
+		if (!isHeavyWeapon)
+		{
+		if (pCurrentWeapon)
+		{
+		pCurrentWeapon->FumbleGrenade ();
+		pCurrentWeapon->CancelCharge ();
+		}
 
-	actorControllerComponent.StartInteractiveActionByName ("HeavyLand", false);
-	}
-	heavyLanded = true;
-	}
-	}
-	}
+		actorControllerComponent.StartInteractiveActionByName ("HeavyLand", false);
+		}
+		heavyLanded = true;
+		}
+		}
+		}
 
-	if (actorControllerComponent.m_isClient)
-	{
-	if (fallSpeed > 0.0f)
-	{
-	const float fallIntensityMultiplier = stats.wasHit ? g_pGameCVars->pl_fall_intensity_hit_multiplier : g_pGameCVars->pl_fall_intensity_multiplier;
-	const float fallIntensityMax = g_pGameCVars->pl_fall_intensity_max;
-	const float fallTimeMultiplier = g_pGameCVars->pl_fall_time_multiplier;
-	const float fallTimeMax = g_pGameCVars->pl_fall_time_max;
-	const float zoomMultiCharacter = (pCurrentWeapon && pCurrentWeapon->IsZoomed ()) ? 0.2f : 1.0f;
-	const float direction = ((cry_rand () % 2) == 0) ? -1.0f : 1.0f;
-	const float intensity = clamp_tpl (fallIntensityMultiplier*fallSpeed*zoomMultiCharacter, 0.0f, fallIntensityMax);
-	const float shakeTime = clamp_tpl (fallTimeMultiplier*fallSpeed*zoomMultiCharacter, 0.0f, fallTimeMax);
-	const Vec3 rotation = Vec3 (-0.5f, 0.15f*direction, 0.05f*direction);
+		if (actorControllerComponent.m_isClient)
+		{
+		if (fallSpeed > 0.0f)
+		{
+		const float fallIntensityMultiplier = stats.wasHit ? g_pGameCVars->pl_fall_intensity_hit_multiplier : g_pGameCVars->pl_fall_intensity_multiplier;
+		const float fallIntensityMax = g_pGameCVars->pl_fall_intensity_max;
+		const float fallTimeMultiplier = g_pGameCVars->pl_fall_time_multiplier;
+		const float fallTimeMax = g_pGameCVars->pl_fall_time_max;
+		const float zoomMultiCharacter = (pCurrentWeapon && pCurrentWeapon->IsZoomed ()) ? 0.2f : 1.0f;
+		const float direction = ((cry_rand () % 2) == 0) ? -1.0f : 1.0f;
+		const float intensity = clamp_tpl (fallIntensityMultiplier*fallSpeed*zoomMultiCharacter, 0.0f, fallIntensityMax);
+		const float shakeTime = clamp_tpl (fallTimeMultiplier*fallSpeed*zoomMultiCharacter, 0.0f, fallTimeMax);
+		const Vec3 rotation = Vec3 (-0.5f, 0.15f*direction, 0.05f*direction);
 
-	if (CScreenEffects* pGameScreenEffects = gEnv->pGameFramework->GetScreenEffects ())
-	{
-	pGameScreenEffects->CamShake (rotation*intensity, Vec3 (0, 0, 0), shakeTime, shakeTime, 0.05f, CScreenEffects::eCS_GID_Character);
-	}
+		if (CScreenEffects* pGameScreenEffects = gEnv->pGameFramework->GetScreenEffects ())
+		{
+		pGameScreenEffects->CamShake (rotation*intensity, Vec3 (0, 0, 0), shakeTime, shakeTime, 0.05f, CScreenEffects::eCS_GID_Character);
+		}
 
-	IForceFeedbackSystem* pForceFeedback = gEnv->pGameFramework->GetIForceFeedbackSystem ();
-	CRY_ASSERT (pForceFeedback);
+		IForceFeedbackSystem* pForceFeedback = gEnv->pGameFramework->GetIForceFeedbackSystem ();
+		CRY_ASSERT (pForceFeedback);
 
-	ForceFeedbackFxId fxId = pForceFeedback->GetEffectIdByName ("landFF");
-	pForceFeedback->PlayForceFeedbackEffect (fxId, SForceFeedbackRuntimeParams (intensity, 0.0f));
+		ForceFeedbackFxId fxId = pForceFeedback->GetEffectIdByName ("landFF");
+		pForceFeedback->PlayForceFeedbackEffect (fxId, SForceFeedbackRuntimeParams (intensity, 0.0f));
 
-	if (fallSpeed > 7.0f)
-	{
-	actorControllerComponent.PlaySound (CActorControllerComponent::ESound_Fall_Drop);
-	}
+		if (fallSpeed > 7.0f)
+		{
+		actorControllerComponent.PlaySound (CActorControllerComponent::ESound_Fall_Drop);
+		}
 
-	CActorControllerComponent::ECharacterSounds CharacterSound = heavyLanded ? CActorControllerComponent::ESound_Gear_HeavyLand : CActorControllerComponent::ESound_Gear_Land;
-	actorControllerComponent.PlaySound (CharacterSound, true);
-	}
-	CCCPOINT (CharacterMovement_LocalCharacterLanded);
-	}
+		CActorControllerComponent::ECharacterSounds CharacterSound = heavyLanded ? CActorControllerComponent::ESound_Gear_HeavyLand : CActorControllerComponent::ESound_Gear_Land;
+		actorControllerComponent.PlaySound (CharacterSound, true);
+		}
+		CCCPOINT (CharacterMovement_LocalCharacterLanded);
+		}
 
-	if (gEnv->pAISystem)
-	{
-	// Notify AI
-	//If silent feet active, ignore here
-	const float noiseSupression = 0.0f;
-	const float fAISoundRadius = (g_pGameCVars->ai_perception.landed_baseRadius + (g_pGameCVars->ai_perception.landed_speedMultiplier * fallSpeed)) * (1.0f - noiseSupression);
-	SAIStimulus stim (AISTIM_SOUND, AISOUND_MOVEMENT_LOUD, actorControllerComponent.GetEntityId (), 0,
-	actorControllerComponent.GetEntity ()->GetWorldPos () + actorControllerComponent.GetEyeOffset (), ZERO, fAISoundRadius);
-	gEnv->pAISystem->RegisterStimulus (stim);
-	}
+		if (gEnv->pAISystem)
+		{
+		// Notify AI
+		//If silent feet active, ignore here
+		const float noiseSupression = 0.0f;
+		const float fAISoundRadius = (g_pGameCVars->ai_perception.landed_baseRadius + (g_pGameCVars->ai_perception.landed_speedMultiplier * fallSpeed)) * (1.0f - noiseSupression);
+		SAIStimulus stim (AISTIM_SOUND, AISOUND_MOVEMENT_LOUD, actorControllerComponent.GetEntityId (), 0,
+		actorControllerComponent.GetEntity ()->GetWorldPos () + actorControllerComponent.GetEyeOffset (), ZERO, fAISoundRadius);
+		gEnv->pAISystem->RegisterStimulus (stim);
+		}
 
-	// Record 'Land' telemetry stats.
-	CStatsRecordingMgr::TryTrackEvent (&actorControllerComponent, eGSE_Land, fallSpeed);
+		// Record 'Land' telemetry stats.
+		CStatsRecordingMgr::TryTrackEvent (&actorControllerComponent, eGSE_Land, fallSpeed);
 
-	if (fallSpeed > 0.0f)
-	{
-	//actorControllerComponent.CreateScriptEvent (heavyLanded ? "heavylanded" : "landed", stats.fallSpeed);
-	}*/
+		if (fallSpeed > 0.0f)
+		{
+		//actorControllerComponent.CreateScriptEvent (heavyLanded ? "heavylanded" : "landed", stats.fallSpeed);
+		}*/
 }
 
 

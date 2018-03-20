@@ -4,7 +4,6 @@
 #include <CryMath/Cry_Math.h>
 #include <CryCore/Assert/CryAssert.h>
 #include <ICryMannequin.h>
-#include <IAnimatedCharacter.h>
 #include <IGameObject.h>
 #include <Actor/Animation/ActorAnimation.h>
 #include <Actor/Animation/Actions/ActorAnimationActionAiming.h>
@@ -18,6 +17,8 @@
 #include <Actor/Movement/StateMachine/ActorStateEvents.h>
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
 #include <Actor/ActorControllerComponent.h>
+#include <Animation/ProceduralContext/ProceduralContextAim.h>
+#include <Animation/ProceduralContext/ProceduralContextLook.h>
 #include "Components/Player/PlayerComponent.h"
 #include <Components/Player/Camera/ICameraComponent.h>
 #include <Components/Interaction/EntityAwarenessComponent.h>
@@ -93,14 +94,14 @@ void CActorComponent::Initialize()
 	// Character movement controller.
 	m_pCharacterControllerComponent = pEntity->GetOrCreateComponent<Cry::DefaultComponents::CCharacterControllerComponent>();
 
+	// Contoller.
+	m_pActorControllerComponent = pEntity->GetOrCreateComponent<CActorControllerComponent>();
+
 	// Inventory management.
 	m_pInventoryComponent = pEntity->GetOrCreateComponent<CInventoryComponent>();
 
 	// Equipment management.
 	m_pEquipmentComponent = pEntity->GetOrCreateComponent<CEquipmentComponent>();
-
-	// Contoller.
-	m_pActorControllerComponent = pEntity->GetOrCreateComponent<CActorControllerComponent>();
 
 	// Give the actor a DRS proxy, since it will probably need one.
 	m_pDrsComponent = crycomponent_cast<IEntityDynamicResponseComponent*> (pEntity->CreateProxy(ENTITY_PROXY_DYNAMICRESPONSE));
@@ -141,7 +142,7 @@ void CActorComponent::Initialize()
 	{
 		// Tells this instance to trigger areas and that it's the local player.
 		pEntity->AddFlags(ENTITY_FLAG_TRIGGER_AREAS | ENTITY_FLAG_LOCAL_PLAYER);
-		gEnv->pLog->LogAlways("CActorComponent::HandleEvent(): Entity \"%s\" became the local character!", pEntity->GetName());
+		CryLogAlways("CActorComponent::HandleEvent(): Entity \"%s\" became the local character!", pEntity->GetName());
 	}
 
 	// Reset the entity.
@@ -184,13 +185,20 @@ void CActorComponent::Update(SEntityUpdateContext* pCtx)
 // *** 
 
 
+ICharacterInstance* CActorComponent::GetCharacter() const
+{
+	CRY_ASSERT(m_pAdvancedAnimationComponent);
+	return m_pAdvancedAnimationComponent->GetCharacter();
+}
+
+
 const Vec3 CActorComponent::GetLocalEyePos() const
 {
 	// The default, in case we can't find the actual eye position, will be to use an average male's height.
 	Vec3 eyePosition { 0.0f, 0.0f, 1.82f };
 
 	// Get their character or bail early.
-	ICharacterInstance* pCharacter = GetEntity()->GetCharacter(0);
+	auto pCharacter = m_pAdvancedAnimationComponent->GetCharacter();
 	if (!pCharacter)
 		return eyePosition;
 
@@ -199,7 +207,7 @@ const Vec3 CActorComponent::GetLocalEyePos() const
 	if (pAttachmentManager)
 	{
 		// Did the animators define a camera for us to use?
-		const auto eyeCamera = pAttachmentManager->GetIndexByName("#camera");
+		const auto eyeCamera = pAttachmentManager->GetIndexByName("Camera");
 		const IAttachment* pCameraAttachment = pAttachmentManager->GetInterfaceByIndex(eyeCamera);
 		if (pCameraAttachment)
 		{
@@ -207,8 +215,8 @@ const Vec3 CActorComponent::GetLocalEyePos() const
 			return GetEntity()->GetRotation() * pCameraAttachment->GetAttModelRelative().t;
 		}
 
-		const auto eyeLeft = pAttachmentManager->GetIndexByName("eye_left");
-		const auto eyeRight = pAttachmentManager->GetIndexByName("eye_right");
+		const auto eyeLeft = pAttachmentManager->GetIndexByName("LeftEye");
+		const auto eyeRight = pAttachmentManager->GetIndexByName("RightEye");
 		Vec3 eyeLeftPosition;
 		Vec3 eyeRightPosition;
 		int eyeFlags = 0;
@@ -237,7 +245,7 @@ const Vec3 CActorComponent::GetLocalEyePos() const
 				// This will most likely spam the log. Disable it if it's annoying.
 				if (!alreadyWarned)
 				{
-					CryLogAlways("Character does not have '#camera', 'left_eye' or 'right_eye' defined.");
+					CryLogAlways("Character does not have 'Camera', 'left_eye' or 'right_eye' defined.");
 					alreadyWarned = true;
 				}
 				break;
@@ -269,7 +277,7 @@ Vec3 CActorComponent::GetLocalLeftHandPos() const
 	const Vec3 handPosition { -0.2f, 0.3f, 1.3f };
 
 	// Get their character or bail early.
-	ICharacterInstance* pCharacter = GetEntity()->GetCharacter(0);
+	auto pCharacter = m_pAdvancedAnimationComponent->GetCharacter();
 	if (pCharacter)
 	{
 		// Determine the position of the left and right eyes, using their average for eyePosition.
@@ -298,7 +306,7 @@ Vec3 CActorComponent::GetLocalRightHandPos() const
 	const Vec3 handPosition { 0.2f, 0.3f, 1.3f };
 
 	// Get their character or bail early.
-	ICharacterInstance* pCharacter = GetEntity()->GetCharacter(0);
+	auto pCharacter = m_pAdvancedAnimationComponent->GetCharacter();
 	if (pCharacter)
 	{
 		// Determine the position of the left and right eyes, using their average for eyePosition.
@@ -471,10 +479,10 @@ void CActorComponent::OnResetState()
 	{
 		m_pAdvancedAnimationComponent->SetCharacterFile(m_geometryFirstPerson.value);
 		m_pAdvancedAnimationComponent->SetDefaultScopeContextName("Char1P");
-		
+
 		// TODO: In order to switch the models out, we need to load and reset - but at present that is not removing the
 		// existing models. 
-		
+
 		//m_pAdvancedAnimationComponent->LoadFromDisk();
 		//m_pAdvancedAnimationComponent->ResetCharacter();
 	}
@@ -489,89 +497,89 @@ void CActorComponent::OnResetState()
 	// You need to reset the character after changing the animation properties.
 	m_pAdvancedAnimationComponent->ResetCharacter();
 
-	// HACK: the CAdvancedAnimation doesn't allow us to queue actions yet, this is a workaround.
 	// Queue the locomotion action, which switches fragments and tags as needed for actor locomotion.
-	IActionController *pActionController = gEnv->pGameFramework->GetMannequinInterface().FindActionController(*GetEntity());
-	if (pActionController != nullptr)
+	//auto locomotionAction = new CActorAnimationActionLocomotion();
+	//QueueAction(*locomotionAction);
+
+	// HACK: the CAdvancedAnimation doesn't allow us access to the action controller. This is a workaround.
+	m_pActionController = gEnv->pGameFramework->GetMannequinInterface().FindActionController(*GetEntity());
+
+	if (m_pActionController)
 	{
-		auto locomotionAction = new CActorAnimationActionLocomotion();
-		pActionController->Queue(*locomotionAction);
+		// The mannequin tags for an actor will need to be loaded. Because these are found in the controller definition,
+		// they are potentially different for every actor. 
+		m_actorMannequinParams = GetMannequinUserParams<SActorMannequinParams>(m_pActionController->GetContext());
 
 		// HACK: quick way to get some debug info out. Need to filter it to only one entity to prevent overlays.
-		//if (strcmp(GetEntity()->GetName(), "Hero") == 0)
-		//	pActionController->SetFlag(AC_DebugDraw, true);
+		if (strcmp(GetEntity()->GetName(), "Hero") == 0)
+			m_pActionController->SetFlag(AC_DebugDraw, true);
 	}
 
 	// Mannequin should also be reset.
-	//ResetMannequin();
+	ResetMannequin();
 }
 
 
 // HACK: NOTE: TODO: I removed this code during the 5.4 refactor because it's hard to see quite how it fits in again.
 // Most of it will need to be added in at some point. 
 
-//// TODO: Is this really needed? Perhaps there's a better way to handle it. Revive isn't getting called at present
-//// so there must be a better place for this.
-//
-//void CActor::ResetMannequin()
-//{
-//	if (m_pActionController)
-//	{
-//		//if (IsPlayer() && !IsAIControlled())
-//		//{
-//		//	m_pActionController->Resume();
-//
-//		//	SAnimationContext &animContext = m_pActionController->GetContext();
-//		//	animContext.state.Set(g_actorMannequinParams.tagIDs.localClient, IsClient());
-//		//	animContext.state.SetGroup(g_actorMannequinParams.tagGroupIDs.playMode, gEnv->bMultiplayer ? g_actorMannequinParams.tagIDs.MP : g_actorMannequinParams.tagIDs.SP);
-//		//	animContext.state.Set(g_actorMannequinParams.tagIDs.FP, IsViewFirstPerson());
-//
-//		//	SetStanceTag(m_pCharacterControllerComponent->GetStance(), animContext.state);
-//
-//		//	// Install persistent AimPose action
-//		//	m_pActionController->Queue(*new CPlayerBackgroundAction(EActorActionPriority::eAAP_Movement, g_actorMannequinParams.fragmentIDs.AimPose));
-//
-//		//	// Install persistent WeaponPose action
-//		//	m_pActionController->Queue(*new CPlayerBackgroundAction(EActorActionPriority::eAAP_Lowest, g_actorMannequinParams.fragmentIDs.WeaponPose));
-//
-//		//	CActionItemIdle *itemIdle = new CActionItemIdle(EActorActionPriority::eAAP_Lowest, g_actorMannequinParams.fragmentIDs.Idle, g_actorMannequinParams.fragmentIDs.IdleBreak, TAG_STATE_EMPTY, *this);
-//		//	m_pActionController->Queue(*itemIdle);
-//
-//		//    CPlayerMovementAction *movementAction = new CPlayerMovementAction(EActorActionPriority::eAAP_Movement);
-//		//    m_pActionController->Queue(*movementAction);
-//
-//		// Locomotion action.
-//		auto locomotionAction = new CActorAnimationActionLocomotion();
-//		m_pActionController->Queue(*locomotionAction);
-//
-//		// TODO: Get back to aiming and looking after some interaction is sorted.
-//
-//		// Aim actions.
-//		//if (CActorAnimationActionAimPose::IsSupported(m_pActionController->GetContext())
-//		//	&& CActorAnimationActionAiming::IsSupported(m_pActionController->GetContext()))
-//		//{
-//		//	// TODO: I presume these are needed to do things.
-//		//	//m_pProceduralContextAim = static_cast<CProceduralContextAim*>(m_pActionController->FindOrCreateProceduralContext(PROCEDURAL_CONTEXT_AIM_NAME));
-//
-//		//	m_pActionController->Queue(*new CActorAnimationActionAimPose());
-//		//	m_pActionController->Queue(*new CActorAnimationActionAiming());
-//		//}
-//
-//		//// Look actions.
-//		//if (CActorAnimationActionLookPose::IsSupported(m_pActionController->GetContext()) 
-//		//	&& CActorAnimationActionLooking::IsSupported(m_pActionController->GetContext()))
-//		//{
-//		//	// TODO: I presume these are needed to do things.
-//		//	//m_pProceduralContextLook = static_cast<CProceduralContextLook*>(m_pActionController->FindOrCreateProceduralContext(PROCEDURAL_CONTEXT_LOOK_NAME));
-//
-//		//	m_pActionController->Queue(*new CActorAnimationActionLookPose());
-//		//	m_pActionController->Queue(*new CActorAnimationActionLooking());
-//		//}
-//
-//		//	m_weaponFPAiming.ResetMannequin();
-//		//}
-//	}
-//}
+// TODO: Is this really needed? Perhaps there's a better way to handle it. Revive isn't getting called at present
+// so there must be a better place for this.
+
+void CActorComponent::ResetMannequin()
+{
+	if (m_pActionController)
+	{
+		//if (IsPlayer() && !IsAIControlled())
+		//{
+		//	m_pActionController->Resume();
+		//m_pActionController->Reset();
+
+		//	SAnimationContext &animContext = m_pActionController->GetContext();
+		//	animContext.state.Set(m_actorMannequinParams->tagIDs.localClient, IsClient());
+		//	animContext.state.SetGroup(m_actorMannequinParams->tagGroupIDs.playMode, gEnv->bMultiplayer ? m_actorMannequinParams->tagIDs.MP : m_actorMannequinParams->tagIDs.SP);
+		//	animContext.state.Set(m_actorMannequinParams->tagIDs.FP, IsViewFirstPerson());
+
+		//	SetStanceTag(m_pCharacterControllerComponent->GetStance(), animContext.state);
+
+		//	// Install persistent AimPose action
+		//	QueueAction(*new CPlayerBackgroundAction(EActorActionPriority::eAAP_Movement, m_actorMannequinParams->fragmentIDs.AimPose));
+
+		//	// Install persistent WeaponPose action
+		//	QueueAction(*new CPlayerBackgroundAction(EActorActionPriority::eAAP_Lowest, m_actorMannequinParams->fragmentIDs.WeaponPose));
+
+		//	CActionItemIdle *itemIdle = new CActionItemIdle(EActorActionPriority::eAAP_Lowest, m_actorMannequinParams->fragmentIDs.Idle, m_actorMannequinParams->fragmentIDs.IdleBreak, TAG_STATE_EMPTY, *this);
+		//	QueueAction(*itemIdle);
+
+		//	CPlayerMovementAction *movementAction = new CPlayerMovementAction(EActorActionPriority::eAAP_Movement);
+		//	QueueAction(*movementAction);
+
+		// Queue the locomotion action, which switches fragments and tags as needed for actor locomotion.
+		auto locomotionAction = new CActorAnimationActionLocomotion();
+		QueueAction(*locomotionAction);
+
+		// Aim actions.
+		//if (CActorAnimationActionAimPose::IsSupported(m_pActionController->GetContext())
+		//	&& CActorAnimationActionAiming::IsSupported(m_pActionController->GetContext()))
+		//{
+		//	m_pProceduralContextAim = static_cast<CProceduralContextAim*>(m_pActionController->FindOrCreateProceduralContext(CProceduralContextAim::GetCID()));
+		//	QueueAction(*new CActorAnimationActionAimPose());
+		//	QueueAction(*new CActorAnimationActionAiming());
+		//}
+
+		//// Look actions.
+		if (CActorAnimationActionLookPose::IsSupported(m_pActionController->GetContext())
+			&& CActorAnimationActionLooking::IsSupported(m_pActionController->GetContext()))
+		{
+			m_pProceduralContextLook = static_cast<CProceduralContextLook*>(m_pActionController->FindOrCreateProceduralContext(CProceduralContextLook::GetCID()));
+			QueueAction(*new CActorAnimationActionLookPose());
+			QueueAction(*new CActorAnimationActionLooking());
+		}
+
+		//	m_weaponFPAiming.ResetMannequin();
+		//}
+	}
+}
 
 
 void CActorComponent::Kill()
@@ -616,12 +624,13 @@ void CActorComponent::OnActionItemDrop()
 
 		if (auto pInteractor = pTargetEntity->GetComponent<CEntityInteractionComponent>())
 		{
-			if (auto pInteraction = pInteractor->GetInteraction("interaction_drop")._Get())
+			if (auto pInteraction = pInteractor->GetInteraction("interaction_drop").lock())
 			{
-				pInteraction->OnInteractionStart();
+				pInteraction->OnInteractionStart(*this);
 			}
 		}
 	}
+
 	// We no longer have an entity to drop.
 	m_interactionEntityId = INVALID_ENTITYID;
 }
@@ -636,9 +645,9 @@ void CActorComponent::OnActionItemToss()
 
 		if (auto pInteractor = pTargetEntity->GetComponent<CEntityInteractionComponent>())
 		{
-			if (auto pInteraction = pInteractor->GetInteraction("interaction_toss")._Get())
+			if (auto pInteraction = pInteractor->GetInteraction("interaction_toss").lock())
 			{
-				pInteraction->OnInteractionStart();
+				pInteraction->OnInteractionStart(*this);
 			}
 		}
 	}
@@ -664,9 +673,9 @@ void CActorComponent::OnActionBarUse(int actionBarId)
 				if (verbs.size() >= actionBarId)
 				{
 					auto verb = verbs [actionBarId - 1];
-					auto pInteraction = pInteractor->GetInteraction(verb)._Get();
+					auto pInteraction = pInteractor->GetInteraction(verb).lock();
 
-					pInteraction->OnInteractionStart();
+					pInteraction->OnInteractionStart(*this);
 				}
 				else
 				{
@@ -707,8 +716,8 @@ void CActorComponent::OnActionInspect()
 					pDrsProxy->GetResponseActor()->QueueSignal(verb);
 
 					// #HACK: Another test - just calling the interaction directly instead.
-					auto pInteraction = pInteractor->GetInteraction(verb)._Get();
-					pInteraction->OnInteractionStart();
+					auto pInteraction = pInteractor->GetInteraction(verb).lock();
+					pInteraction->OnInteractionStart(*this);
 				}
 			}
 		}
@@ -724,6 +733,11 @@ void CActorComponent::OnActionInspectEnd()
 
 void CActorComponent::OnActionInteractionStart()
 {
+	// You shouldn't be allowed to start another interaction before the last one is completed.
+	//if (m_pInteraction != nullptr)
+	if (isBusyInInteraction)
+		return;
+
 	if (m_pAwareness)
 	{
 		auto results = m_pAwareness->GetNearDotFiltered();
@@ -734,13 +748,13 @@ void CActorComponent::OnActionInteractionStart()
 
 			// HACK: Another test, this time of the slaved animation code.
 			//TagState tagState { TAG_STATE_EMPTY };
-			//auto pPlayerAction = new CActorAnimationActionCooperative(*this, m_interactionEntityId, g_actorMannequinParams.fragmentIDs.Interaction,
-			//	tagState, g_actorMannequinParams.tagIDs.ScopeSlave);
-			//m_pActionController->Queue(*pPlayerAction);
+			//auto pPlayerAction = new CActorAnimationActionCooperative(*this, m_interactionEntityId, m_actorMannequinParams->fragmentIDs.Interaction,
+			//	tagState, m_actorMannequinParams->tagIDs.ScopeSlave);
+			//QueueAction(*pPlayerAction);
 
 			// HACK: Another test - this time of setting an emote.
 			//auto emoteAction = new CActorAnimationActionEmote(g_emoteMannequinParams.tagIDs.Awe);
-			//m_pActionController->Queue(*emoteAction);
+			//QueueAction(*emoteAction);
 
 			if (auto pInteractor = pInteractionEntity->GetComponent<CEntityInteractionComponent>())
 			{
@@ -761,13 +775,9 @@ void CActorComponent::OnActionInteractionStart()
 					auto verb = verbs [0];
 
 					// #HACK: Another test - just calling the interaction directly instead.
-					m_pInteraction = pInteractor->GetInteraction(verb)._Get();
+					m_pInteraction = pInteractor->GetInteraction(verb).lock();
 					CryLogAlways("Player started interacting with: %s", m_pInteraction->GetVerbUI());
-					m_pInteraction->OnInteractionStart();
-
-					// HACK: Doesn't belong here, test to see if we can queue an interaction action.
-					//auto action = new CActorAnimationActionInteraction();
-					//m_pActionController->Queue(*action);
+					m_pInteraction->OnInteractionStart(*this);
 				}
 			}
 		}
@@ -775,12 +785,12 @@ void CActorComponent::OnActionInteractionStart()
 }
 
 
-void CActorComponent::OnActionInteraction()
+void CActorComponent::OnActionInteractionTick()
 {
 	if (m_pInteraction)
 	{
 		CryWatch("Interacting with: %s", m_pInteraction->GetVerbUI());
-		m_pInteraction->OnInteractionTick();
+		m_pInteraction->OnInteractionTick(*this);
 	}
 	else
 	{
@@ -794,15 +804,163 @@ void CActorComponent::OnActionInteractionEnd()
 	if (m_pInteraction)
 	{
 		CryLogAlways("Player stopped interacting with: %s", m_pInteraction->GetVerbUI());
-		m_pInteraction->OnInteractionComplete();
+		m_pInteraction->OnInteractionComplete(*this);
 	}
 	else
 	{
 		CryLogAlways("Player stopped interacting with nothing");
 	}
+}
 
+
+void CActorComponent::InteractionStart(IInteraction* pInteraction)
+{
+	isBusyInInteraction = true;
+}
+
+
+void CActorComponent::InteractionTick(IInteraction* pInteraction)
+{
+}
+
+
+void CActorComponent::InteractionEnd(IInteraction* pInteraction)
+{
 	// No longer valid.
+	isBusyInInteraction = false;
 	m_pInteraction = nullptr;
-	m_interactionEntityId = INVALID_ENTITYID;
+	m_interactionEntityId = INVALID_ENTITYID; // HACK: FIX: This seems weak, look for a better way to handle keeping an entity Id for later.
+}
+
+
+// ***
+// *** Allow control of the actor's animations / fragments / etc.
+// ***
+
+IActionController* CActorComponent::GetActionController() const
+{
+	return m_pActionController;
+}
+
+
+TagID CActorComponent::GetStanceTagId(EActorStance actorStance)
+{
+	TagID tagId { TAG_ID_INVALID };
+
+	switch (actorStance)
+	{
+		case EActorStance::eAS_Crawling:
+			tagId = m_actorMannequinParams->tagIDs.Crawling;
+			break;
+
+		case EActorStance::eAS_Prone:
+			tagId = m_actorMannequinParams->tagIDs.Prone;
+			break;
+
+		case EActorStance::eAS_Crouching:
+			tagId = m_actorMannequinParams->tagIDs.Crouching;
+			break;
+
+		case EActorStance::eAS_Falling:
+			tagId = m_actorMannequinParams->tagIDs.Falling;
+			break;
+
+		case EActorStance::eAS_Flying:
+			tagId = m_actorMannequinParams->tagIDs.Flying;
+			break;
+
+		case EActorStance::eAS_Kneeling:
+			tagId = m_actorMannequinParams->tagIDs.Kneeling;
+			break;
+
+		case EActorStance::eAS_Landing:
+			tagId = m_actorMannequinParams->tagIDs.Landing;
+			break;
+
+		case EActorStance::eAS_SittingChair:
+			tagId = m_actorMannequinParams->tagIDs.SittingChair;
+			break;
+
+		case EActorStance::eAS_SittingFloor:
+			tagId = m_actorMannequinParams->tagIDs.SittingFloor;
+			break;
+
+		case EActorStance::eAS_Sleeping:
+			tagId = m_actorMannequinParams->tagIDs.Sleeping;
+			break;
+
+		case EActorStance::eAS_Spellcasting:
+			tagId = m_actorMannequinParams->tagIDs.Spellcasting;
+			break;
+
+		case EActorStance::eAS_Standing:
+			tagId = m_actorMannequinParams->tagIDs.Standing;
+			break;
+
+		case EActorStance::eAS_Swimming:
+			tagId = m_actorMannequinParams->tagIDs.Swimming;
+			break;
+	}
+
+	return tagId;
+}
+
+
+TagID CActorComponent::GetPostureTagId(EActorPosture actorPosture)
+{
+	TagID tagId { TAG_ID_INVALID };
+
+	switch (actorPosture)
+	{
+		case EActorPosture::eAP_Aggressive:
+			tagId = m_actorMannequinParams->tagIDs.Aggressive;
+			break;
+
+		case EActorPosture::eAP_Alerted:
+			tagId = m_actorMannequinParams->tagIDs.Alerted;
+			break;
+
+		case EActorPosture::eAP_Bored:
+			tagId = m_actorMannequinParams->tagIDs.Bored;
+			break;
+
+		case EActorPosture::eAP_Dazed:
+			tagId = m_actorMannequinParams->tagIDs.Dazed;
+			break;
+
+		case EActorPosture::eAP_Depressed:
+			tagId = m_actorMannequinParams->tagIDs.Depressed;
+			break;
+
+		case EActorPosture::eAP_Distracted:
+			tagId = m_actorMannequinParams->tagIDs.Distracted;
+			break;
+
+		case EActorPosture::eAP_Excited:
+			tagId = m_actorMannequinParams->tagIDs.Excited;
+			break;
+
+		case EActorPosture::eAP_Interested:
+			tagId = m_actorMannequinParams->tagIDs.Interested;
+			break;
+
+		case EActorPosture::eAP_Neutral:
+			tagId = m_actorMannequinParams->tagIDs.Neutral;
+			break;
+
+		case EActorPosture::eAP_Passive:
+			tagId = m_actorMannequinParams->tagIDs.Passive;
+			break;
+
+		case EActorPosture::eAP_Suspicious:
+			tagId = m_actorMannequinParams->tagIDs.Suspicious;
+			break;
+
+		case EActorPosture::eAP_Unaware:
+			tagId = m_actorMannequinParams->tagIDs.Unaware;
+			break;
+	}
+
+	return tagId;
 }
 }

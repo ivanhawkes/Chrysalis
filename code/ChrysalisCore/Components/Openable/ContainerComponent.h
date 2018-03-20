@@ -41,13 +41,13 @@ public:
 	}
 
 	// IInteractionOpenable
-	void OnInteractionOpenableOpen() override { gEnv->pLog->LogAlways("OnInteractionOpenableOpen fired."); };
-	void OnInteractionOpenableClose() override { gEnv->pLog->LogAlways("OnInteractionOpenableClose fired."); };
+	void OnInteractionOpenableOpen(IActorComponent& actor) override { CryLogAlways("OnInteractionOpenableOpen fired."); };
+	void OnInteractionOpenableClose(IActorComponent& actor) override { CryLogAlways("OnInteractionOpenableClose fired."); };
 	// ~IInteractionOpenable
 
 	// IInteractionLockable
-	void OnInteractionLockableLock() override { gEnv->pLog->LogAlways("OnInteractionLockableLock fired."); };
-	void OnInteractionLockableUnlock() override { gEnv->pLog->LogAlways("OnInteractionLockableUnlock fired."); };
+	void OnInteractionLockableLock(IActorComponent& actor) override { CryLogAlways("OnInteractionLockableLock fired."); };
+	void OnInteractionLockableUnlock(IActorComponent& actor) override { CryLogAlways("OnInteractionLockableUnlock fired."); };
 	// ~IInteractionLockable
 
 	// Called on entity spawn, or when the state of the entity changes in Editor

@@ -18,14 +18,14 @@ DECLARE_SHARED_POINTERS(ISnaplock);
 struct ISnaplockType
 {
 	/** Required by serialisation code. */
-	ISnaplockType() {};
+	ISnaplockType() = default;
 
 	ISnaplockType(string typeName, CryGUID typeId) :
 		m_typeName(typeName),
 		m_typeId(typeId)
 	{
 	}
-	virtual ~ISnaplockType() {};
+	virtual ~ISnaplockType() = default;
 
 	// We will consider types to be identical if their typeIds are identical.
 	bool operator==(const ISnaplockType& rhs) const { return m_typeId == rhs.m_typeId; }
@@ -52,7 +52,7 @@ private:
 struct ISnaplock
 {
 	/** Required by serialisation code. */
-	ISnaplock() {};
+	ISnaplock() = default;
 
 	ISnaplock(ISnaplockType snaplockType, bool isMale, bool isRoot = false) :
 		m_snaplockType(snaplockType),
@@ -60,7 +60,7 @@ struct ISnaplock
 		m_isRoot(isRoot)
 	{
 	}
-	virtual ~ISnaplock() {};
+	virtual ~ISnaplock() = default;
 
 	virtual void Serialize(Serialization::IArchive& ar);
 

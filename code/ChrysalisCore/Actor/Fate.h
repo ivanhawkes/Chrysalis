@@ -21,8 +21,8 @@ class CFate
 {
 public:
 
-	CFate() {};
-	virtual ~CFate() {};
+	CFate() = default;
+	virtual ~CFate() = default;
 
 	/**
 	Changes the seed value of fate for a character. All fate based tests after this point in time

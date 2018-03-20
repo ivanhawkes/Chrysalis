@@ -113,6 +113,17 @@
       <Tag name="Zeal" priority="2"/>
       <Tag name="Zest" priority="2"/>
     </Group>
+    <Group name="InteractionHeight">
+      <Tag name="InteractionHigh" priority="5"/>
+      <Tag name="InteractionMiddle" priority="5"/>
+      <Tag name="InteractionLow" priority="5"/>
+    </Group>
+    <Group name="InteractionMethod">
+      <Tag name="InteractionGrabObject" priority="5"/>
+      <Tag name="InteractionFlipSwitch" priority="5"/>
+      <Tag name="InteractionDeadLift" priority="5"/>
+      <Tag name="InteractionTurnWheel" priority="5"/>
+    </Group>
     <Tag name="ScopeSlave" priority="4"/>
     <Tag name="Rotate"/>
   </Tags>

@@ -1,10 +1,57 @@
 #pragma once
 
 #include <Animation/Animation.h>
+#include <ICryMannequinDefs.h>
 
 
 namespace Chrysalis
 {
+/** All valid actor stances. */
+
+enum EActorStance
+{
+	eAS_Standing,
+	eAS_Crouching,
+	eAS_Crawling,
+	eAS_Prone,
+	eAS_Falling,
+	eAS_Landing,
+	eAS_Swimming,
+	eAS_Flying,
+	eAS_Spellcasting,
+	eAS_SittingChair,
+	eAS_SittingFloor,
+	eAS_Kneeling,
+	eAS_Sleeping
+};
+
+
+/**
+The actor's posture extends the stance, giving more precise control over animating their state of mind. In
+general, these are applied to eAS_Standing, but some may also have application to sitting or other stances.
+**/
+enum EActorPosture
+{
+	// Alertness.
+	eAP_Unaware,
+	eAP_Distracted,
+	eAP_Suspicious,
+	eAP_Alerted,
+
+	// Daze / sap effect on them.
+	eAP_Dazed,
+
+	// Everyday postures.
+	eAP_Neutral,
+	eAP_Passive,
+	eAP_Aggressive,
+	eAP_Interested,
+	eAP_Bored,
+	eAP_Excited,
+	eAP_Depressed,
+};
+
+
 enum EActorActionPriority
 {
 	eAAP_Lowest,
@@ -60,28 +107,36 @@ enum EActorActionPriority
 	//f( Char3P ) \
 
 #define MAN_ACTOR_TAGS( f ) \
-	f( ScopeSlave ) \
-    //f( Crouch ) \
-	//f( Swim ) \
-	//f( Underwater ) \
-	//f( Jump ) \
-	//f( Move ) \
-	//f( Sprint ) \
-	//f( OutOfAmmo ) \
-	//f( Aiming ) \
-	//f( Forward ) \
-	//f( Backward ) \
-	//f( Left ) \
-	//f( Right ) \
-	//f( NW ) \
-	//f( MP ) \
-	//f( SP ) \
-	//f( FP ) \
-	//f( LocalClient ) \
-	//f( Throwing ) \
+	f( Standing )  /* Stance. */ \
+	f( Crouching ) \
+	f( Crawling ) \
+	f( Prone ) \
+	f( Falling ) \
+	f( Landing ) \
+	f( Swimming ) \
+	f( Flying ) \
+	f( Spellcasting ) \
+	f( SittingChair ) \
+	f( SittingFloor ) \
+	f( Kneeling ) \
+	f( Sleeping ) \
+	f( Unaware )  /* Posture. */ \
+	f( Distracted ) \
+	f( Suspicious ) \
+	f( Alerted ) \
+	f( Dazed ) \
+	f( Neutral ) \
+	f( Passive ) \
+	f( Aggressive ) \
+	f( Interested ) \
+	f( Bored ) \
+	f( Excited ) \
+	f( Depressed ) \
+	f( ScopeSlave ) /* Misc. */ \
 
 #define MAN_ACTOR_TAG_GROUPS( f ) \
-	//f( Stance ) \
+    f( Stance ) \
+    f( Posture ) \
 	//f( WeaponType ) \
 	//f( Item ) \
 	//f( Zoom ) \
@@ -117,6 +172,4 @@ enum EActorActionPriority
 	f( melee_multipart, MAN_MELEE_FRAGMENT_TAGS, MANNEQUIN_USER_PARAMS__EMPTY_LIST ) \
 
 MANNEQUIN_USER_PARAMS(SActorMannequinParams, MAN_ACTOR_FRAGMENTS, MAN_ACTOR_TAGS, MAN_ACTOR_TAG_GROUPS, MAN_ACTOR_SCOPES, MAN_ACTOR_CONTEXTS, MAN_ACTOR_FRAGMENT_TAGS);
-
-extern SActorMannequinParams g_actorMannequinParams;
 }

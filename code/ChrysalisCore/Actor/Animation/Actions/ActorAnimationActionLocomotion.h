@@ -13,7 +13,7 @@ public:
 	DEFINE_ACTION("Locomotion");
 
 	CActorAnimationActionLocomotion();
-	virtual ~CActorAnimationActionLocomotion() {};
+	virtual ~CActorAnimationActionLocomotion() = default;
 
 	// IAction
 	void OnInitialise() override;

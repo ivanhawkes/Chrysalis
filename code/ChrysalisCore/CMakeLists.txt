@@ -146,6 +146,12 @@ add_sources("Animation_uber.cpp"
 		"Components/Animation/ControlledAnimationComponent.h"
 		"Components/Animation/SimpleAnimationComponent.h"
 )
+add_sources("Compass_uber.cpp"
+    PROJECTS Chrysalis
+    SOURCE_GROUP "Components\\\\Compass"
+		"Components/Compass/CompassComponent.cpp"
+		"Components/Compass/CompassComponent.h"
+)
 add_sources("Equipment_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Equipment"
@@ -279,24 +285,6 @@ add_sources("Entities_uber.cpp"
 		"Entities/EntityEffects.h"
 		"Entities/EntityScriptCalls.h"
 )
-add_sources("Compass_uber.cpp"
-    PROJECTS Chrysalis
-    SOURCE_GROUP "Entities\\\\Compass"
-		"Entities/Compass/CompassComponent.cpp"
-		"Entities/Compass/CompassComponent.h"
-)
-add_sources("Doors_uber.cpp"
-    PROJECTS Chrysalis
-    SOURCE_GROUP "Entities\\\\Doors"
-		"Entities/Doors/AnimatedDoorComponent.cpp"
-		"Entities/Doors/AnimatedDoorComponent.h"
-)
-add_sources("Flashlight_uber.cpp"
-    PROJECTS Chrysalis
-    SOURCE_GROUP "Entities\\\\Flashlight"
-		"Entities/Flashlight/FlashlightComponent.cpp"
-		"Entities/Flashlight/FlashlightComponent.h"
-)
 add_sources("Interaction_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Entities\\\\Interaction"
@@ -344,15 +332,11 @@ add_sources("Parameters_uber.cpp"
     SOURCE_GROUP "Item\\\\Parameters"
 		"Item/Parameters/ItemAccessoryParameter.cpp"
 		"Item/Parameters/ItemBaseParameter.cpp"
-		"Item/Parameters/ItemFlashlightParameter.cpp"
-		"Item/Parameters/ItemFlashlightParameterShared.cpp"
 		"Item/Parameters/ItemGeometryParameter.cpp"
 		"Item/Parameters/ItemLaserParameter.cpp"
 		"Item/Parameters/ItemParameter.cpp"
 		"Item/Parameters/ItemAccessoryParameter.h"
 		"Item/Parameters/ItemBaseParameter.h"
-		"Item/Parameters/ItemFlashlightParameter.h"
-		"Item/Parameters/ItemFlashlightParameterShared.h"
 		"Item/Parameters/ItemGeometryParameter.h"
 		"Item/Parameters/ItemLaserParameter.h"
 		"Item/Parameters/ItemParameter.h"
@@ -418,6 +402,7 @@ add_sources("Utility_uber.cpp"
 		"Utility/CryWatch.h"
 		"Utility/DRS.h"
 		"Utility/ItemString.h"
+		"Utility/Listener.h"
 		"Utility/LocalizeUtility.h"
 		"Utility/StringConversions.h"
 		"Utility/StringUtils.h"
@@ -460,3 +445,7 @@ set_solution_startup_target(GameLauncher)
 if (WIN32)
     set_visual_studio_debugger_command( ${THIS_PROJECT} "${CRYENGINE_DIR}/bin/win_x64/GameLauncher.exe" "-project \"D:/Chrysalis/Chrysalis.cryproject\"" )
 endif()
+
+#BEGIN-CUSTOM
+# Make any custom changes here, modifications outside of the block will be discarded on regeneration.
+#END-CUSTOM

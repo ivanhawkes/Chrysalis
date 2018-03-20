@@ -325,9 +325,9 @@ void CPlayerInputComponent::OnActionEscape(int activationMode, float value)
 	{
 		CryLogAlways("Escape");
 
-		// Notify listeners.
-		for (auto& it : m_listenersSpecial.GetListeners())
-			it->OnInputSpecialEsc();
+		//// Notify listeners.
+		//for (auto it : m_listenersSpecial.GetListeners())
+		//	it->OnInputSpecialEsc();
 	}
 }
 
@@ -338,9 +338,9 @@ void CPlayerInputComponent::OnActionExamine(int activationMode, float value)
 	{
 		CryLogAlways("Examine");
 
-		// Notify listeners.
-		for (auto& it : m_listenersSpecial.GetListeners())
-			it->OnInputSpecialExamine();
+		//// Notify listeners.
+		//for (auto it : m_listenersSpecial.GetListeners())
+		//	it->OnInputSpecialExamine();
 	}
 }
 
@@ -533,7 +533,7 @@ void CPlayerInputComponent::OnActionInteraction(int activationMode, float value)
 		break;
 
 		case eAAM_OnHold:
-			IF_ACTOR_DO(OnActionInteraction);
+			IF_ACTOR_DO(OnActionInteractionTick);
 		break;
 
 		case eAAM_OnRelease:

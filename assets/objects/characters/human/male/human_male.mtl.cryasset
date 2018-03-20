@@ -7,11 +7,11 @@
   <Detail name="textureCount">6</Detail>
  </Details>
  <Dependencies>
-  <Path>./textures/human_male_clothing_diff.dds</Path>
-  <Path>./textures/human_male_clothing_ddna.dds</Path>
-  <Path>./textures/human_male_clothing_spec.dds</Path>
   <Path>./textures/human_male_diff.dds</Path>
   <Path>./textures/human_male_ddna.dds</Path>
   <Path>./textures/human_male_spec.dds</Path>
+  <Path>./textures/human_male_clothing_diff.dds</Path>
+  <Path>./textures/human_male_clothing_ddna.dds</Path>
+  <Path>./textures/human_male_clothing_spec.dds</Path>
  </Dependencies>
 </AssetMetadata>

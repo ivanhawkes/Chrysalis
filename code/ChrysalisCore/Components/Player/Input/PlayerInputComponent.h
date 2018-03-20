@@ -2,8 +2,9 @@
 
 #include "PlayerInputComponent.h"
 #include <IActionMapManager.h>
-#include "Components/Player/PlayerComponent.h"
 #include <DefaultComponents/Input/InputComponent.h>
+#include "Components/Player/PlayerComponent.h"
+//#include "Utility/Listener.h"
 
 
 namespace Chrysalis
@@ -30,30 +31,6 @@ enum class EInputFlag
 };
 
 
-// HACK: This should be generically useful and so should get moved to a utility file.
-template<typename T>
-struct TListener
-{
-	void AddEventListener(T* pListener)
-	{
-		assert(pListener);
-		if (pListener)
-			stl::push_back_unique(m_listenersList, pListener);
-	}
-
-	void RemoveEventListener(T* pListener)
-	{
-		assert(pListener);
-		m_listenersList.remove(pListener);
-	}
-
-	std::list<T*> GetListeners() { return m_listenersList; }
-
-private:
-	std::list<T*> m_listenersList;
-};
-
-
 class CPlayerInputComponent
 	: public IEntityComponent
 {
@@ -70,8 +47,8 @@ protected:
 	void Update();
 
 public:
-	CPlayerInputComponent() {}
-	virtual ~CPlayerInputComponent() {};
+	CPlayerInputComponent() = default;
+	virtual ~CPlayerInputComponent() = default;
 
 	static void ReflectType(Schematyc::CTypeDesc<CPlayerInputComponent>& desc);
 
@@ -86,10 +63,10 @@ public:
 	Given the current input state, calculate a vector that represents the direction the player wishes their character
 	to move. The vector is normalised. Movement will only be affected along the X and Y axis, since we are not presently
 	processing Z input (up). This should be sufficient for most RPG style games.
-	
+
 	\param	baseRotation	The vector will be calculated using this rotation as a base and then applying the input
 							requests relative to this direction.
-	
+
 	\return The calculated movement direction.
 	**/
 	Vec3 GetMovement(const Quat& baseRotation);
@@ -98,9 +75,9 @@ public:
 	/**
 	Given the current input state, calculate an angular vector that represents the rotation the player has requested
 	using the mouse / xbox controller / etc.
-	
+
 	This is typically used to rotate the character and the camera.
-	
+
 	\return The rotation.
 	**/
 	Ang3 GetRotationDelta() { return Ang3(m_lastPitchDelta, 0.0f, m_lastYawDelta); }
@@ -108,7 +85,7 @@ public:
 
 	/**
 	Gets the combined pitch delta from all devices.
-	
+
 	\return The pitch delta.
 	**/
 	float GetPitchDelta() { return m_lastPitchDelta; }
@@ -116,7 +93,7 @@ public:
 
 	/**
 	Gets the combined yaw delta from all devices.
-	
+
 	\return The yaw delta.
 	**/
 	float GetYawDelta() { return m_lastYawDelta; };
@@ -124,7 +101,7 @@ public:
 
 	/**
 	Gets the pitch delta from the mouse.
-	
+
 	\return The pitch delta.
 	**/
 	float GetMousePitchDelta() { return m_lastMousePitchDelta; }
@@ -132,7 +109,7 @@ public:
 
 	/**
 	Gets the yaw delta from the mouse.
-	
+
 	\return The yaw delta.
 	**/
 	float GetMouseYawDelta() { return m_lastMouseYawDelta; };
@@ -140,7 +117,7 @@ public:
 
 	/**
 	Gets the pitch delta from the XBOX controller.
-	
+
 	\return The pitch delta.
 	**/
 	float GetXiPitchDelta() { return m_lastXiPitchDelta; }
@@ -148,7 +125,7 @@ public:
 
 	/**
 	Gets the yaw delta from the XBOX controller.
-	
+
 	\return The yaw delta.
 	**/
 	float GetXiYawDelta() { return m_lastXiYawDelta; };
@@ -157,28 +134,24 @@ public:
 	/**
 	Provides access to the raw input movement directions as a set of flags for forward, backward, left and right. See
 	EmovementDirectionFlags for the relevant flags.
-	
+
 	\return The movement direction flags.
 	**/
 	TInputFlags GetMovementDirectionFlags() const { return m_inputFlags; };
 
 
-	/** Listen for 'special' keys and be notified when they are input e.g. ESC, Examine. */
-	struct IInputSpecialListener
-	{
-		virtual ~IInputSpecialListener() {};
+	///** Listen for 'special' keys and be notified when they are input e.g. ESC, Examine. */
+	//struct IInputSpecialListener
+	//{
+	//	virtual ~IInputSpecialListener() = default;
 
-		virtual void OnInputSpecialEsc() = 0;
-		virtual void OnInputSpecialExamine() = 0;
-	};
+	//	virtual void OnInputSpecialEsc() = 0;
+	//	virtual void OnInputSpecialExamine() = 0;
+	//};
 
 
-	/**
-	Returns an instance of the special keystroke listener so other code sections can subscribe to special keystrokes.
-
-	\return The special listener.
-	**/
-	TListener<IInputSpecialListener> GetSpecialListener() { return m_listenersSpecial; }
+	///** Get the manager for the listener.*/
+	//TListener<IInputSpecialListener*>GetListenerManager() { return m_listenersSpecial; }
 
 protected:
 	void OnActionEscape(int activationMode, float value);
@@ -262,7 +235,7 @@ private:
 	Cry::DefaultComponents::CInputComponent* m_pInputComponent { nullptr };
 
 	/** The movement mask. */
-	TInputFlags m_inputFlags { (TInputFlags) EInputFlag::None };
+	TInputFlags m_inputFlags { (TInputFlags)EInputFlag::None };
 
 	/**
 	Should we invert the Y axis for mouse camera movements? This is preferred by some players, particularly those
@@ -323,7 +296,7 @@ private:
 	*/
 	float m_xiYawFilter { 0.0001f };
 
-	/** Listeners for special keystrokes. */
-	TListener<IInputSpecialListener> m_listenersSpecial;
+	/** Listens for special keystrokes. */
+	//TListener<IInputSpecialListener*> m_listenersSpecial;
 };
 }

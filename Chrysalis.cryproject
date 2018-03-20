@@ -11,10 +11,6 @@
             "value": "1"
         },
         {
-            "name": "entity_awareness_Debug",
-            "value": "8"
-        },
-        {
             "name": "r_Fullscreen",
             "value": "0"
         },
@@ -51,8 +47,20 @@
             "value": "0"
         },
         {
+            "name": "ca_UseLookIK",
+            "value": "1"
+        },
+        {
+            "name": "ca_UseAimIK",
+            "value": "1"
+        },
+        {
             "name": "ca_useIMG_CAF",
             "value": "0"
+        },
+        {
+            "name": "ca_DrawAimIKVEGrid",
+            "value": "1"
         },
         {
             "name": "drs_dialogSubtitles",

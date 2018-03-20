@@ -177,12 +177,6 @@ void CDynamicLightComponent::OnResetState()
 
 	// Load the light source into the entity
 	m_slot = entity.LoadLight(1, &m_light);
-
-	// Notify listeners.
-	for (auto& pListener : m_listenersList)
-	{
-		pListener->OnDynamicLightResetState();
-	}
 }
 
 

@@ -25,8 +25,8 @@ public:
 	// ~IEntityComponent
 
 	// CCharacterAttributesComponent
-	CCharacterAttributesComponent() {};
-	virtual ~CCharacterAttributesComponent() {};
+	CCharacterAttributesComponent() = default;
+	virtual ~CCharacterAttributesComponent() = default;
 
 	// Called on entity spawn, or when the state of the entity changes in Editor
 	virtual void OnResetState();

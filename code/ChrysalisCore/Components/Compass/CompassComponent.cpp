@@ -18,6 +18,9 @@ void CCompassComponent::ReflectType(Schematyc::CTypeDesc<CCompassComponent>& des
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
 	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+
+	// Mark the entity interaction component as a hard requirement.
+	desc.AddComponentInteraction(SEntityComponentRequirements::EType::HardDependency, CEntityInteractionComponent::IID());
 }
 
 

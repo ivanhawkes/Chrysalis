@@ -11,7 +11,7 @@ void CMountComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
 
 void CMountComponent::ReflectType(Schematyc::CTypeDesc<CMountComponent>& desc)
 {
-	desc.SetGUID(CMountComponent::IID());
+	desc.SetGUID("{19A8D24A-E321-4E28-BFD7-BD35CDF85C32}"_cry_guid);
 	desc.SetEditorCategory("Actors");
 	desc.SetLabel("Mount");
 	desc.SetDescription("No description.");

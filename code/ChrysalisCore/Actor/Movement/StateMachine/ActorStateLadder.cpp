@@ -165,7 +165,7 @@ public:
 	DEFINE_ACTION("LadderGetOn");
 
 	CActionLadderGetOn(CActorStateLadder * ladderState, CActorControllerComponent& actorControllerComponent, CActorStateLadder::ELadderAnimType animType) :
-		CLadderAction(ladderState, actorControllerComponent, g_actorMannequinParams.fragmentIDs.LadderGetOn, animType, "cameraAnimFraction_getOn", "cameraAnimFraction_onLadder")
+		CLadderAction(ladderState, actorControllerComponent, actorControllerComponent.GetActor()->GetMannequinParams()->fragmentIDs.LadderGetOn, animType, "cameraAnimFraction_getOn", "cameraAnimFraction_onLadder")
 	{}
 
 
@@ -210,7 +210,7 @@ public:
 	DEFINE_ACTION("LadderGetOff");
 
 	CActionLadderGetOff(CActorStateLadder * ladderState, CActorControllerComponent& actorControllerComponent, CActorStateLadder::ELadderAnimType animType) :
-		CLadderAction(ladderState, actorControllerComponent, g_actorMannequinParams.fragmentIDs.LadderGetOff, animType, "cameraAnimFraction_onLadder", "cameraAnimFraction_getOff")
+		CLadderAction(ladderState, actorControllerComponent, actorControllerComponent.GetActor()->GetMannequinParams()->fragmentIDs.LadderGetOff, animType, "cameraAnimFraction_onLadder", "cameraAnimFraction_getOff")
 	{}
 
 
@@ -261,7 +261,7 @@ public:
 	DEFINE_ACTION("LadderClimbUpDown");
 
 	CActionLadderClimbUpDown(CActorStateLadder* ladderState, CActorControllerComponent& actorControllerComponent) :
-		CLadderAction(ladderState, actorControllerComponent, g_actorMannequinParams.fragmentIDs.LadderClimb, CActorStateLadder::kLadderAnimType_upLoop, "cameraAnimFraction_onLadder", "cameraAnimFraction_onLadder")
+		CLadderAction(ladderState, actorControllerComponent, actorControllerComponent.GetActor()->GetMannequinParams()->fragmentIDs.LadderClimb, CActorStateLadder::kLadderAnimType_upLoop, "cameraAnimFraction_onLadder", "cameraAnimFraction_onLadder")
 	{
 		m_interruptable = true;
 	}
@@ -556,15 +556,15 @@ void CActorStateLadder::InterruptCurrentAnimation()
 }
 
 
-void CActorStateLadder::QueueLadderAction(CActorControllerComponent& actorControllerComponent, CLadderAction * action)
+void CActorStateLadder::QueueLadderAction(CActorControllerComponent& actorControllerComponent, CLadderAction* action)
 {
 	LadderLog("Queuing %s ladder anim '%s'", actorControllerComponent.GetEntity()->GetEntityTextDescription(), action ? action->GetName() : "NULL");
 	LadderLogIndent();
 
-	/*if (action)
+	if (action)
 	{
-	actorControllerComponent.GetAnimatedCharacter ()->GetActionController ()->Queue (action);
-	}*/
+		//actorControllerComponent.GetActor()->QueueAction(*action);
+	}
 }
 
 

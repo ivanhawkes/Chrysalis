@@ -1,13 +1,5 @@
 <Material MtlFlags="524544" vertModifType="0">
  <SubMaterials>
-  <Material Name="body_SUB" MtlFlags="524416" Shader="Illum" GenMask="C0400001" StringGenMask="%ALLOW_SILHOUETTE_POM%NORMAL_MAP%SPECULAR_MAP%SUBSURFACE_SCATTERING" SurfaceType="" MatTemplate="" Diffuse="1,1,1" Specular="0.065040998,0.065040998,0.065040998" Opacity="1" Shininess="255" vertModifType="0" LayerAct="1">
-   <Textures>
-    <Texture Map="Diffuse" File="./textures/human_male_diff.tif"/>
-    <Texture Map="Bumpmap" File="./textures/human_male_ddna.tif"/>
-    <Texture Map="Specular" File="./textures/human_male_spec.tif"/>
-   </Textures>
-   <PublicParams EmittanceMapGamma="1" SSSIndex="0"/>
-  </Material>
   <Material Name="clothing_SUB" MtlFlags="524416" Shader="Illum" GenMask="C0400001" StringGenMask="%ALLOW_SILHOUETTE_POM%NORMAL_MAP%SPECULAR_MAP%SUBSURFACE_SCATTERING" SurfaceType="" MatTemplate="" Diffuse="1,1,1" Specular="0.065040998,0.065040998,0.065040998" Opacity="1" Shininess="255" vertModifType="0" LayerAct="1">
    <Textures>
     <Texture Map="Diffuse" File="./textures/human_male_clothing_diff.tif"/>
@@ -15,6 +7,14 @@
     <Texture Map="Specular" File="./textures/human_male_clothing_spec.tif"/>
    </Textures>
    <PublicParams EmittanceMapGamma="1" SSSIndex="0"/>
+  </Material>
+  <Material Name="body_SUB" MtlFlags="524416" Shader="Humanskin" GenMask="1040400000" StringGenMask="%NORMAL_MAP%SPECULAR_MAP%TEMP_SKIN" SurfaceType="" MatTemplate="" Diffuse="1,1,1" Specular="0.065040998,0.065040998,0.065040998" Opacity="1" Shininess="255" vertModifType="0" LayerAct="1">
+   <Textures>
+    <Texture Map="Diffuse" File="./textures/human_male_diff.tif"/>
+    <Texture Map="Bumpmap" File="./textures/human_male_ddna.tif"/>
+    <Texture Map="Specular" File="./textures/human_male_spec.tif"/>
+   </Textures>
+   <PublicParams Melanin="0" SSSIndex="1.2" TranslucencyMultiplier="0"/>
   </Material>
   <Material Name="skelProxy_SUB" MtlFlags="524416" Shader="Illum" GenMask="80000001" StringGenMask="%ALLOW_SILHOUETTE_POM%SUBSURFACE_SCATTERING" SurfaceType="" MatTemplate="" Diffuse="0.5,0.5,0.5" Specular="0.5,0.5,0.5" Opacity="1" Shininess="10" vertModifType="0" LayerAct="1">
    <Textures />

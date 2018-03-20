@@ -13,11 +13,8 @@ namespace Chrysalis
 class IEntityOwnership
 {
 public:
-	/** Default constructor. */
-	IEntityOwnership() {};
-
-	/** Destructor. */
-	virtual ~IEntityOwnership() {};
+	IEntityOwnership() = default;
+	virtual ~IEntityOwnership() = default;
 
 
 	/** All notions of ownership are reset to their default state. */

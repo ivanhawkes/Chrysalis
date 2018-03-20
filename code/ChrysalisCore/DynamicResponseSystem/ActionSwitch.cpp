@@ -2,6 +2,8 @@
 
 #include "ActionSwitch.h"
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
+#include "Components/Player/PlayerComponent.h"
+#include "Actor/ActorComponent.h"
 #include "Utility/DRS.h"
 #include <Components/Interaction/EntityInteractionComponent.h>
 
@@ -30,10 +32,11 @@ DRS::IResponseActionInstanceUniquePtr CActionSwitch::Execute(DRS::IResponseInsta
 			{
 				// Simple option is to play the verb.
 				// #TODO: This should be a little more nuanced.
-				auto pInteraction = pInteractor->GetInteraction(verb.GetText())._Get();
+				auto pInteraction = pInteractor->GetInteraction(verb.GetText()).lock();
 				if (pInteraction)
 				{
-					pInteraction->OnInteractionStart();
+					if (auto pActorComponent = CPlayerComponent::GetLocalActor())
+						pInteraction->OnInteractionStart(*pActorComponent);
 				}
 			}
 		}

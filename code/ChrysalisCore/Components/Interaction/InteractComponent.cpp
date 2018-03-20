@@ -7,33 +7,40 @@
 
 namespace Chrysalis
 {
-static void ReflectType(Schematyc::CTypeDesc<CInteractComponent::SInteractStartSignal>& desc)
+static void ReflectType(Schematyc::CTypeDesc<CInteractComponent::SInteractAnimationEnterSignal>& desc)
 {
-	desc.SetGUID("{D7834D96-13FB-41C4-90D1-F3D977CA0AC7}"_cry_guid);
-	desc.SetLabel("Interact Start");
+	desc.SetGUID("{9F8551C1-3DC5-42A3-B0D4-8473D1445DDC}"_cry_guid);
+	desc.SetLabel("Animation Enter");
 }
 
 
-static void ReflectType(Schematyc::CTypeDesc<CInteractComponent::SInteractTickSignal>& desc)
+static void ReflectType(Schematyc::CTypeDesc<CInteractComponent::SInteractAnimationFailSignal>& desc)
 {
-	desc.SetGUID("{C11053C3-0CB4-4316-A643-F53BECBA07B5}"_cry_guid);
-	desc.SetLabel("Interact Tick");
-	desc.AddMember(&CInteractComponent::SInteractTickSignal::m_deltaPitch, 'dpit', "DeltaPitch", "Delta Pitch", "Player input requested change in pitch.", 0.0f);
-	desc.AddMember(&CInteractComponent::SInteractTickSignal::m_deltaYaw, 'dyaw', "DeltaYaw", "Delta Yaw", "Player input requested change in yaw.", 0.0f);
+	desc.SetGUID("{D1F80772-E8CF-4CD4-B9A9-B25BD35A0A9F}"_cry_guid);
+	desc.SetLabel("Animation Fail");
 }
 
 
-static void ReflectType(Schematyc::CTypeDesc<CInteractComponent::SInteractCompleteSignal>& desc)
+static void ReflectType(Schematyc::CTypeDesc<CInteractComponent::SInteractAnimationExitSignal>& desc)
 {
-	desc.SetGUID("{6E153DFF-B21B-4E92-8D50-976B17802556}"_cry_guid);
-	desc.SetLabel("Interact Complete");
+	desc.SetGUID("{60CA3693-111F-4104-9ABD-866B54DDB8AE}"_cry_guid);
+	desc.SetLabel("Animation Exit");
 }
 
 
-static void ReflectType(Schematyc::CTypeDesc<CInteractComponent::SInteractCancelSignal>& desc)
+static void ReflectType(Schematyc::CTypeDesc<CInteractComponent::SInteractAnimationEventSignal>& desc)
 {
-	desc.SetGUID("{42532226-2D75-4AA6-92C4-AE4EB8DC5596}"_cry_guid);	
-	desc.SetLabel("Interact Cancel");
+	desc.SetGUID("{3DA983C8-0794-4176-8CD6-B92B1A0868D4}"_cry_guid);
+	desc.SetLabel("Animation Event");
+
+	desc.AddMember(&CInteractComponent::SInteractAnimationEventSignal::m_eventName, 'evnm', "EventName", "Event Name", "The name of this animation event.", "");
+	desc.AddMember(&CInteractComponent::SInteractAnimationEventSignal::m_eventNameLowercaseCRC32, 'ncrc', "NameCRC32", "Event Name CRC32", "A CRC32 of the animation event name.", 0);
+	desc.AddMember(&CInteractComponent::SInteractAnimationEventSignal::m_customParameter, 'cstp', "CustomParameter", "Custom Parameter", "A custom parameter from the animation event.", "");
+	desc.AddMember(&CInteractComponent::SInteractAnimationEventSignal::m_time, 'time', "Time", "Time", "Time the event was started.", 0.0f);
+	desc.AddMember(&CInteractComponent::SInteractAnimationEventSignal::m_endTime, 'endt', "EndTime", "End Time", "Time the event will end.", 0.0f);
+	desc.AddMember(&CInteractComponent::SInteractAnimationEventSignal::m_bonePathName, 'bnpt', "BonePathName", "Bone path name", "The path to a bone for this event.", "");
+	desc.AddMember(&CInteractComponent::SInteractAnimationEventSignal::m_boneDirection, 'bndr', "BoneDirection", "Bone Direction", "Bone direction.", Vec3(ZERO));
+	desc.AddMember(&CInteractComponent::SInteractAnimationEventSignal::m_boneOffset, 'bnof', "BoneOffset", "Bone offset", "Bone offset.", Vec3(ZERO));
 }
 
 
@@ -42,7 +49,10 @@ void CInteractComponent::Register(Schematyc::CEnvRegistrationScope& componentSco
 	componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CInteractComponent::SInteractStartSignal));
 	componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CInteractComponent::SInteractTickSignal));
 	componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CInteractComponent::SInteractCompleteSignal));
-	componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CInteractComponent::SInteractCancelSignal));
+	componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CInteractComponent::SInteractAnimationEnterSignal));
+	componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CInteractComponent::SInteractAnimationFailSignal));
+	componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CInteractComponent::SInteractAnimationExitSignal));
+	componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CInteractComponent::SInteractAnimationEventSignal));
 }
 
 
@@ -55,9 +65,15 @@ void CInteractComponent::ReflectType(Schematyc::CTypeDesc<CInteractComponent>& d
 	desc.SetIcon("icons:ObjectTypes/light.ico");
 	desc.SetComponentFlags({ IEntityComponent::EFlags::None });
 
+	// Mark the entity interaction component as a hard requirement.
+	desc.AddComponentInteraction(SEntityComponentRequirements::EType::HardDependency, CEntityInteractionComponent::IID());
+
 	desc.AddMember(&CInteractComponent::m_isEnabled, 'isen', "IsEnabled", "IsEnabled", "Is this interaction currently enabled.", true);
 	desc.AddMember(&CInteractComponent::m_isSingleUseOnly, 'issi', "IsSingleUseOnly", "Single Use Only", "Is this Interact only able to be used once.", false);
 	desc.AddMember(&CInteractComponent::m_queueSignal, 'alts', "InteractVerb", "Interact Verb (Override)", "Send an alternative queue signal to DRS if the string is not empty. ('interaction_Interact').", "");
+	
+	// HACK: For now, there's no way to set the list of tags. Release 5.5 should have vector<string> support.
+	desc.AddMember(&CInteractComponent::m_tags, 'tags', "Tags", "Mannequin Tags", "Set these tags when playing the animation.", TagCollection{});
 }
 
 
@@ -79,16 +95,34 @@ void CInteractComponent::OnResetState()
 }
 
 
-void CInteractComponent::OnInteractionInteractStart()
+void CInteractComponent::OnInteractionInteractStart(IInteraction& pInteraction, IActorComponent& actor)
 {
 	if (m_isEnabled)
 	{
-		gEnv->pLog->LogAlways("OnInteractionInteractStart fired.");
+		m_pInteractionActor = &actor;
+		m_interaction = &pInteraction;
+
+		// Inform the actor we are taking control of an interaction.
+		m_pInteractionActor->InteractionStart(m_interaction);
+
+		// HACK: We need to convert the tags from a Schematyc format to a more general one. In 5.5 / 5.6 we should be able
+		// to use the generic containers instead.
+		std::vector<string> tags;
+		for (int i = 0; i < m_tags.Size(); i++)
+		{
+			tags.push_back(m_tags.At(i).tag.c_str());
+		}
+
+		// We should queue an animation for this action.
+		auto action = new CActorAnimationActionInteraction(tags);
+		action->AddEventListener(this);
+		actor.QueueAction(*action);
+
+		// Push the signal out using DRS.
 		InformAllLinkedEntities(kInteractStartVerb, true);
 
 		// Push the signal out using schematyc.
-		if (auto const pSchematycObject = GetEntity()->GetSchematycObject())
-			pSchematycObject->ProcessSignal(SInteractStartSignal(), GetGUID());
+		ProcessSchematycSignalStart();
 
 		// Disable after a single use.
 		if (m_isSingleUseOnly)
@@ -97,54 +131,95 @@ void CInteractComponent::OnInteractionInteractStart()
 }
 
 
-void CInteractComponent::OnInteractionInteractTick()
+void CInteractComponent::OnInteractionInteractTick(IInteraction& pInteraction, IActorComponent& actor)
 {
 	if (m_isEnabled)
 	{
-		gEnv->pLog->LogAlways("OnInteractionInteractTick fired.");
+		// Push the signal out using DRS.
 		InformAllLinkedEntities(kInteractTickVerb, true);
 
-		SInteractTickSignal interactTickSignal;
-
-		// Pass along the delta movement for input devices. This helps enable interactive contol of entities.
+		// Pass along the delta movement for input devices. This helps enable interactive control of entities.
 		if (auto pPlayerInput = CPlayerComponent::GetLocalPlayer()->GetPlayerInput())
-		{
-			interactTickSignal.m_deltaPitch = pPlayerInput->GetPitchDelta();
-			interactTickSignal.m_deltaYaw = pPlayerInput->GetYawDelta();
-		}
-
-		// Push the signal out using schematyc.
-		if (auto const pSchematycObject = GetEntity()->GetSchematycObject())
-			pSchematycObject->ProcessSignal(interactTickSignal, GetGUID());
+			ProcessSchematycSignalTick(pPlayerInput->GetPitchDelta(), pPlayerInput->GetYawDelta());
 	}
 }
 
 
-void CInteractComponent::OnInteractionInteractComplete()
+void CInteractComponent::OnInteractionInteractComplete(IInteraction& pInteraction, IActorComponent& actor)
 {
 	if (m_isEnabled)
 	{
-		gEnv->pLog->LogAlways("OnInteractionInteractComplete fired.");
+		// Push the signal out using DRS.
 		InformAllLinkedEntities(kInteractCompleteVerb, true);
 
 		// Push the signal out using schematyc.
-		if (auto const pSchematycObject = GetEntity()->GetSchematycObject())
-			pSchematycObject->ProcessSignal(SInteractCompleteSignal(), GetGUID());
+		ProcessSignalComplete();
 	}
 }
 
 
-void CInteractComponent::OnInteractionInteractCancel()
+void CInteractComponent::OnActionAnimationEnter()
 {
-	if (m_isEnabled)
-	{
-		gEnv->pLog->LogAlways("OnInteractionInteractCancel fired.");
-		InformAllLinkedEntities(kInteractCancelVerb, true);
+	// Push the signal out using DRS.
+	InformAllLinkedEntities(kInteractAnimationEnterVerb, true);
 
-		// Push the signal out using schematyc.
-		if (auto const pSchematycObject = GetEntity()->GetSchematycObject())
-			pSchematycObject->ProcessSignal(SInteractCompleteSignal(), GetGUID());
-	}
+	// Push the signal out using schematyc.
+	if (auto const pSchematycObject = GetEntity()->GetSchematycObject())
+		pSchematycObject->ProcessSignal(SInteractAnimationEnterSignal(), GetGUID());
+}
+
+
+void CInteractComponent::OnActionAnimationFail(EActionFailure actionFailure)
+{
+	// Inform the actor we are finished with an interaction.
+	m_pInteractionActor->InteractionEnd(m_interaction);
+
+	// Push the signal out using DRS.
+	InformAllLinkedEntities(kInteractAnimationFailVerb, true);
+
+	// Push the signal out using schematyc.
+	if (auto const pSchematycObject = GetEntity()->GetSchematycObject())
+		pSchematycObject->ProcessSignal(SInteractAnimationFailSignal(), GetGUID());
+
+	m_pInteractionActor = nullptr;
+	m_interaction = nullptr;
+}
+
+
+void CInteractComponent::OnActionAnimationExit()
+{
+	// Inform the actor we are finished with an interaction.
+	m_pInteractionActor->InteractionEnd(m_interaction);
+
+	// Push the signal out using DRS.
+	InformAllLinkedEntities(kInteractAnimationExitVerb, true);
+
+	// Push the signal out using schematyc.
+	if (auto const pSchematycObject = GetEntity()->GetSchematycObject())
+		pSchematycObject->ProcessSignal(SInteractAnimationExitSignal(), GetGUID());
+
+	m_pInteractionActor = nullptr;
+	m_interaction = nullptr;
+}
+
+
+void CInteractComponent::OnActionAnimationEvent(ICharacterInstance * pCharacter, const AnimEventInstance & event)
+{
+	CryLogAlways("CInteractComponent::AnimEvent: %s", event.m_EventName);
+
+	// Push the signal out using DRS.
+	InformAllLinkedEntities(kInteractAnimationEventVerb, true);
+
+	// Push the signal out using schematyc.
+	if (auto const pSchematycObject = GetEntity()->GetSchematycObject())
+		pSchematycObject->ProcessSignal(SInteractAnimationEventSignal(Schematyc::CSharedString(event.m_EventName),
+			event.m_EventNameLowercaseCRC32,
+			Schematyc::CSharedString(event.m_CustomParameter),
+			float(event.m_time),
+			float(event.m_endTime),
+			Schematyc::CSharedString(event.m_BonePathName),
+			event.m_vDir,
+			event.m_vOffset), GetGUID());
 }
 
 
@@ -173,5 +248,14 @@ void CInteractComponent::InformAllLinkedEntities(string verb, bool isInteractedO
 		// Next please.
 		entityLinks = entityLinks->next;
 	}
+}
+
+
+bool Serialize(Serialization::IArchive& archive, CInteractComponent::SAnimationTag& value, const char* szName, const char* szLabel)
+{
+	archive(value.tag, "tag", "Tag");
+	archive.doc("An animation tag for the fragment.");
+
+	return true;
 }
 }

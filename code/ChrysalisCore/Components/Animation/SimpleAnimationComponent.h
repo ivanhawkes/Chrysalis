@@ -41,34 +41,11 @@ public:
 	void OnPlayAnimation(Schematyc::LowLevelAnimationName overrideAnimation = "");
 	// CSimpleAnimationComponent
 
-	struct ISimpleAnimationListener
-	{
-		virtual ~ISimpleAnimationListener() {};
-
-		virtual void OnSimpleAnimationResetState() = 0;
-	};
-
-	void AddEventListener(ISimpleAnimationListener* pListener)
-	{
-		assert(pListener);
-		if (pListener)
-			stl::push_back_unique(m_listenersList, pListener);
-	}
-
-	void RemoveEventListener(ISimpleAnimationListener* pListener)
-	{
-		assert(pListener);
-		m_listenersList.remove(pListener);
-	}
-
 	/** It's critical to know which slot this animation will play on. **/
 	int GetSlotId() { return m_slotId; }
 	void SetSlotId(int slotId) { m_slotId = slotId; }
 
 protected:
-	typedef std::list<ISimpleAnimationListener*> TListenersList;
-	TListenersList m_listenersList;
-
 	/** Model for the geometry. */
 	Cry::DefaultComponents::CStaticMeshComponent* m_pGeometryComponent { nullptr };
 

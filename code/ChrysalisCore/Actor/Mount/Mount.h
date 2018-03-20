@@ -27,12 +27,6 @@ public:
 
 	static void ReflectType(Schematyc::CTypeDesc<CMountComponent>& desc);
 
-	static CryGUID& IID()
-	{
-		static CryGUID id = "{19A8D24A-E321-4E28-BFD7-BD35CDF85C32}"_cry_guid;
-		return id;
-	}
-
 	/** Resets the character to an initial state. */
 	virtual void OnResetState();
 };

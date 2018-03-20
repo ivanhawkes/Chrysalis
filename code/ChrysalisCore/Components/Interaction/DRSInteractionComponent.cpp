@@ -21,8 +21,11 @@ void CDRSInteractionComponent::ReflectType(Schematyc::CTypeDesc<CDRSInteractionC
 	desc.SetIcon("icons:ObjectTypes/light.ico");
 	desc.SetComponentFlags({ IEntityComponent::EFlags::None });
 
-//	desc.AddMember(&CDRSInteractionComponent::m_drsResponse, 'resp', "DRSResponse", "DRSResponse", "Verb to pass into DRS e.g. interaction_play_audio.", "");
-//	desc.AddMember(&CDRSInteractionComponent::m_drsProperties, 'prop', "DRSProperties", "DRS Properties", "A list of properties to be passed to the DRS entity.", "");
+	// Mark the entity interaction component as a hard requirement.
+	desc.AddComponentInteraction(SEntityComponentRequirements::EType::HardDependency, CEntityInteractionComponent::IID());
+
+	desc.AddMember(&CDRSInteractionComponent::m_drsResponse, 'resp', "DRSResponse", "DRSResponse", "Verb to pass into DRS e.g. interaction_play_audio.", "");
+	desc.AddMember(&CDRSInteractionComponent::m_drsProperties, 'prop', "DRSProperties", "DRS Properties", "A list of properties to be passed to the DRS entity.", PropertyCollection {});
 }
 
 
@@ -63,7 +66,7 @@ void CDRSInteractionComponent::OnResetState()
 
 void CDRSInteractionComponent::OnInteractionDRS()
 {
-	if (!m_drsResponse.IsEmpty())
+	if (!m_drsResponse.empty())
 	{
 		// Default to self as the target entity.
 		auto pTargetEntity = GetEntity();
@@ -75,16 +78,30 @@ void CDRSInteractionComponent::OnInteractionDRS()
 		DRS::IVariableCollectionSharedPtr pContextVariableCollection = gEnv->pDynamicResponseSystem->CreateContextCollection();
 
 		// It might be useful to know which verb triggered the interaction.
-		pContextVariableCollection->CreateVariable("Verb", CHashedString(m_drsResponse));
+		pContextVariableCollection->CreateVariable("Verb", CHashedString(m_drsResponse.c_str()));
 
 		// Add each key, value to the DRS variable collection.
-		for (auto it : m_drsProperties)
-		{
-			pContextVariableCollection->CreateVariable(CHashedString(it.key), CHashedString(it.value));
-		}
+		//for (auto it : m_drsProperties)
+		//{
+		//	pContextVariableCollection->CreateVariable(CHashedString(it.key.c_str()), CHashedString(it.value.c_str()));
+		//}
 
 		// Queue it and let the DRS handle it now.
-		pDrsProxy->GetResponseActor()->QueueSignal(m_drsResponse, pContextVariableCollection);
+		pDrsProxy->GetResponseActor()->QueueSignal(m_drsResponse.c_str(), pContextVariableCollection);
 	}
+}
+
+
+bool Serialize(Serialization::IArchive& archive, CDRSInteractionComponent::SDRSProperties& value, const char* szName, const char* szLabel)
+{
+	archive(value.key, "key", "Key");
+	archive.doc("Key");
+
+	// HACK: This is broken if there is more than one member added. I don't expect a working collection type until 5.5 or 5.6.
+	// Consider this broken until then and *don't use this collection to store values*.
+	//archive(value.value, "value", "Value");
+	//archive.doc("Value");
+
+	return true;
 }
 }

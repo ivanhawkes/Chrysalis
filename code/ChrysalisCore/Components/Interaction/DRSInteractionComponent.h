@@ -7,6 +7,7 @@ namespace Chrysalis
 {
 class CEntityInteractionComponent;
 
+
 class CDRSInteractionComponent
 	: public IEntityComponent
 	, public IInteractionDRS
@@ -30,25 +31,23 @@ public:
 	struct SDRSProperties
 	{
 		inline bool operator==(const SDRSProperties &rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
+		inline bool operator!=(const SDRSProperties &rhs) const { return 0 != memcmp(this, &rhs, sizeof(rhs)); }
 
-		string key;
-		string value;
+		Schematyc::CSharedString key;
+		Schematyc::CSharedString value;
 
-		virtual void Serialize(Serialization::IArchive& ar)
+		static void ReflectType(Schematyc::CTypeDesc<SDRSProperties>& desc)
 		{
-			ar(key, "DRSKey", "DRS Key");
-			ar(value, "DRSValue", "DRS Value");
+			desc.SetGUID("{C07C367C-106F-4FD4-B7D5-E40C1A21F9F3}"_cry_guid);
+			desc.AddMember(&SDRSProperties::key, 'key', "Key", "Key", "DRS Key", "");
+			
+			// HACK: This is broken if there is more than one member added. I don't expect a working collection type until 5.5 or 5.6.
+			// Consider this broken until then and *don't use this collection to store values*.
+			//desc.AddMember(&SDRSProperties::value, 'valu', "Value", "Value", "DRS Value", "");
 		}
 	};
 
-	static void ReflectType(Schematyc::CTypeDesc<CDRSInteractionComponent::SDRSProperties>& desc)
-	{
-		desc.SetGUID("{C07C367C-106F-4FD4-B7D5-E40C1A21F9F3}"_cry_guid);
-		// TODO: CRITICAL: HACK: BROKEN: !!
-//		desc.AddMember(&CDRSInteractionComponent::SDRSProperties::key, 'key', "Key", "Key", nullptr, "");
-//		desc.AddMember(&CDRSInteractionComponent::SDRSProperties::value, 'valu', "Value", "Value", nullptr, "");
-	}
-
+	typedef Schematyc::CArray<SDRSProperties> PropertyCollection;
 
 	// IEntityComponent
 	void Initialize() override;
@@ -68,9 +67,11 @@ private:
 	CEntityInteractionComponent* m_interactor { nullptr };
 
 	/** The main verb for the DRS response. */
-	string m_drsResponse;
+	Schematyc::CSharedString m_drsResponse;
 
 	/** Properties. */
-	std::vector<SDRSProperties> m_drsProperties;
+	PropertyCollection m_drsProperties;	
 };
+
+bool Serialize(Serialization::IArchive& archive, CDRSInteractionComponent::SDRSProperties& value, const char* szName, const char* szLabel);
 }

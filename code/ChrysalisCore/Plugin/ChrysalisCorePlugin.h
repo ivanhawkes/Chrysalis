@@ -8,7 +8,6 @@
 
 namespace Chrysalis
 {
-class CPlayerComponent;
 class CObjectIdMasterFactory;
 
 

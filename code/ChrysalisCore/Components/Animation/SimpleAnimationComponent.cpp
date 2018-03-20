@@ -33,12 +33,6 @@ void CSimpleAnimationComponent::Initialize()
 	// Look to see if there's some geometry. If so, we will assume it's the one this animation is paired with. All
 	// geometry components will need to be added to the entity before any animation that depends on them.
 	m_pGeometryComponent = GetEntity()->GetComponent<Cry::DefaultComponents::CStaticMeshComponent>();
-	if (m_pGeometryComponent)
-	{
-		// TODO: Replace this functionality with new method from 5.4.
-		//m_pGeometryComponent->AddEventListener(this);
-		//m_slotId = m_pGeometryComponent->GetSlotId();
-	}
 }
 
 
@@ -47,21 +41,11 @@ void CSimpleAnimationComponent::OnResetState()
 	// If they requested animation, give them simple animation playback.
 	if (m_bPlayOnLevelStart)
 		OnPlayAnimation();
-
-	// Notify listeners.
-	for (auto& pListener : m_listenersList)
-	{
-		pListener->OnSimpleAnimationResetState();
-	}
 }
 
 
 void CSimpleAnimationComponent::OnGeometryResetState()
 {
-	//if (m_pGeometryComponent)
-	//{
-	//	m_slotId = m_pGeometryComponent->GetSlotId();
-	//}
 }
 
 
