@@ -21,8 +21,8 @@ protected:
 
 	// IEntityComponent
 	void Initialize() override;
-	void ProcessEvent(SEntityEvent& event) override;
-	uint64 GetEventMask() const { return m_EventMask; }
+	void ProcessEvent(const SEntityEvent& event) override;
+	Cry::Entity::EntityEventMask GetEventMask() const override { return m_EventMask; }
 	void OnShutDown() override;
 	// ~IEntityComponent
 
@@ -84,6 +84,6 @@ private:
 	float m_viewYaw;
 
 	/** Provides a way to avoid updates when they are not required. **/
-	uint64 m_EventMask { 0L };
+	Cry::Entity::EntityEventMask m_EventMask;
 };
 }

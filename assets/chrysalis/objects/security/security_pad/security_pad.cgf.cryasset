@@ -1,0 +1,16 @@
+<cryasset>
+ <AssetMetadata version="0" type="Mesh" guid="4dccab48-3f2d-de30-dfdc-898a3b05c134">
+  <Files>
+   <File path="security_pad.cgf"/>
+  </Files>
+  <Details>
+   <Detail name="materialCount">16</Detail>
+   <Detail name="triangleCount">164</Detail>
+   <Detail name="vertexCount">316</Detail>
+   <Detail name="16BitPrecision">false</Detail>
+  </Details>
+  <Dependencies>
+   <Path usageCount="1">./security_pad.mtl</Path>
+  </Dependencies>
+ </AssetMetadata>
+</cryasset>

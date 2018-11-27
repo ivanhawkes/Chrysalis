@@ -35,35 +35,32 @@ void CCameraManagerComponent::ReflectType(Schematyc::CTypeDesc<CCameraManagerCom
 
 void CCameraManagerComponent::Initialize()
 {
-	// Allow this instance to be updated every frame.
-	const auto pEntity = GetEntity();
-
 	// Query for the player that owns this extension.
-	m_pPlayer = pEntity->GetComponent<CPlayerComponent>();
+	m_pPlayer = m_pEntity->GetComponent<CPlayerComponent>();
 
 	// #HACK: #TODO: Is this right? We only want to register action maps on the local client.
 	if (GetEntityId() == gEnv->pGameFramework->GetClientActorId())
 		RegisterActionMaps();
 
 	// First person camera.
-	m_cameraModes [ECameraMode::eCameraMode_FirstPerson] = pEntity->CreateComponent<CFirstPersonCameraComponent>();
+	m_cameraModes [ECameraMode::eCameraMode_FirstPerson] = m_pEntity->CreateComponent<CFirstPersonCameraComponent>();
 
 	// Action RPG Camera.
-	m_cameraModes [ECameraMode::eCameraMode_ActionRpg] = pEntity->CreateComponent<CActionRPGCameraComponent>();
+	m_cameraModes [ECameraMode::eCameraMode_ActionRpg] = m_pEntity->CreateComponent<CActionRPGCameraComponent>();
 
 	// Examine entity camera.
-	m_cameraModes [ECameraMode::eCameraMode_Examine] = pEntity->CreateComponent<CExamineCameraComponent>();
+	m_cameraModes [ECameraMode::eCameraMode_Examine] = m_pEntity->CreateComponent<CExamineCameraComponent>();
 
 	// Select the initial camera based on their cvar setting.
 	SetCameraMode((ECameraMode) g_cvars.m_cameraManagerDefaultCamera, "Initial selection of camera.");
 }
 
 
-void CCameraManagerComponent::ProcessEvent(SEntityEvent& event)
+void CCameraManagerComponent::ProcessEvent(const SEntityEvent& event)
 {
 	switch (event.event)
 	{
-		case ENTITY_EVENT_UPDATE:
+		case EEntityEvent::Update:
 			Update();
 			break;
 	}

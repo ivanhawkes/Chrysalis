@@ -30,19 +30,17 @@ void CContainerComponent::ReflectType(Schematyc::CTypeDesc<CContainerComponent>&
 
 void CContainerComponent::Initialize()
 {
-	const auto pEntity = GetEntity();
-
 	// Get some geometry.
-	m_pGeometryComponent = pEntity->GetOrCreateComponent<Cry::DefaultComponents::CStaticMeshComponent>();
+	m_pGeometryComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CStaticMeshComponent>();
 
 	// Get a simple animation component.
-	m_pSimpleAnimationComponent = pEntity->GetOrCreateComponent<CSimpleAnimationComponent>();
+	m_pSimpleAnimationComponent = m_pEntity->GetOrCreateComponent<CSimpleAnimationComponent>();
 
 	// Allow locking.
-	m_lockableComponent = pEntity->GetOrCreateComponent<CLockableComponent>();
+	m_lockableComponent = m_pEntity->GetOrCreateComponent<CLockableComponent>();
 
 	// We want to supply interaction verbs.
-	m_interactor = pEntity->GetOrCreateComponent<CEntityInteractionComponent>();
+	m_interactor = m_pEntity->GetOrCreateComponent<CEntityInteractionComponent>();
 	if (m_interactor)
 	{
 		m_interactor->AddInteraction(std::make_shared<CInteractionOpenableOpen>(this));

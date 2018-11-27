@@ -40,8 +40,8 @@ protected:
 
 	// IEntityComponent
 	void Initialize() override;
-	void ProcessEvent(SEntityEvent& event) override;
-	uint64 GetEventMask() const { return BIT64(ENTITY_EVENT_UPDATE); }
+	void ProcessEvent(const SEntityEvent& event) override;
+	Cry::Entity::EntityEventMask GetEventMask() const override { return EventToMask(EEntityEvent::Update); }
 	// ~IEntityComponent
 
 	void Update();
@@ -56,6 +56,16 @@ public:
 	{
 		static CryGUID id = "{B38ECC98-FEB2-467D-B78B-05743B1CA260}"_cry_guid;
 		return id;
+	}
+
+
+	/**
+	Determine if the player has requested any movement for this frame.
+
+	\return True if movement requested, false if not.
+	**/
+	bool IsMovementRequested() const {
+		return m_inputFlags != 0; 
 	}
 
 

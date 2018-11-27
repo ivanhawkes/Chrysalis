@@ -57,8 +57,6 @@ private:
 	void Landed(CActorControllerComponent& actorControllerComponent, const bool isHeavyWeapon, float fallSpeed);
 	const Vec3 CalculateInAirJumpExtraVelocity(const CActorControllerComponent& actorControllerComponent, const Vec3& desiredVelocity) const;
 
-	void OnSpecialMove(CActorControllerComponent& actorControllerComponent, IActorEventListener::ESpecialMove specialMove);
-
 	EJumpState m_jumpState;
 	mutable float m_jumpLock;
 	float m_startFallingHeight;

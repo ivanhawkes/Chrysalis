@@ -24,18 +24,18 @@ void ICameraComponent::ReflectType(Schematyc::CTypeDesc<ICameraComponent>& desc)
 }
 
 
-bool ICameraComponent::OnAsyncCameraCallback(const HmdTrackingState& sensorState, IHmdDevice::AsyncCameraContext& context)
-{
-	context.outputCameraMatrix = m_cameraMatrix;
-
-	Matrix33 orientation = Matrix33(context.outputCameraMatrix);
-	Vec3 position = context.outputCameraMatrix.GetTranslation();
-
-	context.outputCameraMatrix.AddTranslation(orientation * sensorState.pose.position);
-	context.outputCameraMatrix.SetRotation33(orientation * Matrix33(sensorState.pose.orientation));
-
-	return true;
-}
+//bool ICameraComponent::OnAsyncCameraCallback(const HmdTrackingState& sensorState, IHmdDevice::AsyncCameraContext& context)
+//{
+//	context.outputCameraMatrix = m_cameraMatrix;
+//
+//	Matrix33 orientation = Matrix33(context.outputCameraMatrix);
+//	Vec3 position = context.outputCameraMatrix.GetTranslation();
+//
+//	context.outputCameraMatrix.AddTranslation(orientation * sensorState.pose.position);
+//	context.outputCameraMatrix.SetRotation33(orientation * Matrix33(sensorState.pose.orientation));
+//
+//	return true;
+//}
 
 
 void ICameraComponent::GetCameraAnimationFactor(float& position, float& rotation)

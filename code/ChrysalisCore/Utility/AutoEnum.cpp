@@ -22,7 +22,7 @@ TBitfield AutoEnum_GetBitfieldFromString(const char* inString, const char** inAr
 {
 	unsigned int reply = 0;
 
-	if (inString && inString [0] != '\0') // Avoid a load of work if the string's NULL or empty
+	if (inString && inString [0] != '\0') // Avoid a load of work if the string's nullptr or empty
 	{
 		const char* startFrom = inString;
 
@@ -70,7 +70,7 @@ bool AutoEnum_GetEnumValFromString(const char* inString, const char** inArray, i
 {
 	bool done = false;
 
-	if (inString && (inString [0] != '\0'))  // avoid a load of work if the string's NULL or empty
+	if (inString && (inString [0] != '\0'))  // avoid a load of work if the string's nullptr or empty
 	{
 		CRY_ASSERT(arraySize > 0);
 

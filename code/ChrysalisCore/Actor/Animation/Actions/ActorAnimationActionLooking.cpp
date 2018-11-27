@@ -26,7 +26,7 @@ MANNEQUIN_USER_PARAMS(SMannequinLookingParams, LOOKING_FRAGMENTS, LOOKING_TAGS, 
 FragmentID CActorAnimationActionLooking::FindFragmentId(const SAnimationContext& context)
 {
 	const SMannequinLookingParams* pUserParams = GetMannequinUserParams<SMannequinLookingParams>(context);
-	CRY_ASSERT(pUserParams != NULL);
+	CRY_ASSERT(pUserParams != nullptr);
 
 	return pUserParams->fragmentIDs.Looking;
 }
@@ -55,9 +55,11 @@ IAction::EStatus CActorAnimationActionLooking::Update(float timePassed)
 	// Update the fragments and tags if they are different.
 	const IScope& rootScope = GetRootScope();
 	if (rootScope.IsDifferent(m_fragmentID, m_fragTags))
-	{
 		SetFragment(m_fragmentID, m_fragTags);
-	}
+
+#ifdef DEBUG
+	CryWatch("CActorAnimationActionLooking Update");
+#endif
 
 	return m_eStatus;
 }
@@ -65,8 +67,13 @@ IAction::EStatus CActorAnimationActionLooking::Update(float timePassed)
 
 bool CActorAnimationActionLooking::IsSupported(const SAnimationContext& context)
 {
-	const FragmentID fragmentId = FindFragmentId(context);
-	const bool isSupported = (fragmentId != FRAGMENT_ID_INVALID);
-	return isSupported;
+	// HACK: TODO: These tests need to come back in when they stop crashing the game.
+
+	//const FragmentID fragmentId = FindFragmentId(context);
+	//const bool isSupported = (fragmentId != FRAGMENT_ID_INVALID);
+
+	//return isSupported;
+	
+	return true;
 }
 }

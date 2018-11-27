@@ -174,7 +174,7 @@ public:
 		/*switch (m_animType)
 		{
 		case CActorStateLadder::kLadderAnimType_atBottom:
-		InitialiseWithParams ("up", NULL);
+		InitialiseWithParams ("up", nullptr);
 		return;
 
 		case CActorStateLadder::kLadderAnimType_atTopLeftFoot:
@@ -220,7 +220,7 @@ public:
 		{
 		case CActorStateLadder::kLadderAnimType_atBottom:
 		{
-		InitialiseWithParams ("down", NULL);
+		InitialiseWithParams ("down", nullptr);
 		return;
 		}
 
@@ -280,7 +280,7 @@ CActorStateLadder::CActorStateLadder()
 	m_dbgNumActions = 0;
 #endif
 
-	/*m_mostRecentlyEnteredAction = NULL;
+	/*m_mostRecentlyEnteredAction = nullptr;
 
 	if (s_ladderFractionCRC == 0)
 	{
@@ -359,7 +359,7 @@ void CActorStateLadder::OnUseLadder(CActorControllerComponent& actorControllerCo
 	float ladderClimbableHeight = height - heightOffsetTop - heightOffsetBottom;
 	m_playGetOffAnim = kLadderAnimType_none;
 	m_playGetOnAnim = kLadderAnimType_none;
-	SetMostRecentlyEnteredAction (NULL);
+	SetMostRecentlyEnteredAction (nullptr);
 	m_ladderEntityId = pLadder->GetId ();
 	m_numRungsFromBottomPosition = 0;
 	m_fractionBetweenRungs = 0.f;
@@ -511,7 +511,7 @@ void CActorStateLadder::OnExit(CActorControllerComponent& actorControllerCompone
 	CActorStateUtility::CancelCrouchAndProneInputs (actorControllerComponent);
 
 	InterruptCurrentAnimation ();
-	SetMostRecentlyEnteredAction (NULL);
+	SetMostRecentlyEnteredAction (nullptr);
 
 	if (m_playGetOffAnim)
 	{
@@ -521,7 +521,7 @@ void CActorStateLadder::OnExit(CActorControllerComponent& actorControllerCompone
 	{
 	// Finishing the above 'get off' animation will retrieve the actorControllerComponent's weapon...
 	// if we're not playing one then we unholster it now.
-	QueueLadderAction (actorControllerComponent, NULL);
+	QueueLadderAction (actorControllerComponent, nullptr);
 	LadderExitIsComplete (actorControllerComponent);
 	}
 
@@ -558,7 +558,7 @@ void CActorStateLadder::InterruptCurrentAnimation()
 
 void CActorStateLadder::QueueLadderAction(CActorControllerComponent& actorControllerComponent, CLadderAction* action)
 {
-	LadderLog("Queuing %s ladder anim '%s'", actorControllerComponent.GetEntity()->GetEntityTextDescription(), action ? action->GetName() : "NULL");
+	LadderLog("Queuing %s ladder anim '%s'", actorControllerComponent.GetEntity()->GetEntityTextDescription(), action ? action->GetName() : "nullptr");
 	LadderLogIndent();
 
 	if (action)
@@ -607,7 +607,7 @@ bool CActorStateLadder::OnPrePhysicsUpdate(CActorControllerComponent& actorContr
 		}
 		#endif
 
-		IScriptTable * pEntityScript = pLadder ? pLadder->GetScriptTable () : NULL;
+		IScriptTable * pEntityScript = pLadder ? pLadder->GetScriptTable () : nullptr;
 		SmartScriptTable propertiesTable;
 
 		if (pEntityScript)
@@ -616,7 +616,7 @@ bool CActorStateLadder::OnPrePhysicsUpdate(CActorControllerComponent& actorContr
 		}
 
 		int bUsable = 0;
-		if (pLadder == NULL || (propertiesTable->GetValue ("bUsable", bUsable) && bUsable == 0))
+		if (pLadder == nullptr || (propertiesTable->GetValue ("bUsable", bUsable) && bUsable == 0))
 		{
 		actorControllerComponent.StateMachineHandleEventMovement (SStateEventLeaveLadder (eLLL_Drop));
 		}
@@ -628,7 +628,7 @@ bool CActorStateLadder::OnPrePhysicsUpdate(CActorControllerComponent& actorContr
 		}
 
 		IItem * pItem = actorControllerComponent.GetCurrentItem ();
-		bool canPlayGetOnAnim = (pItem == NULL);
+		bool canPlayGetOnAnim = (pItem == nullptr);
 
 		if (!canPlayGetOnAnim)
 		{
@@ -637,11 +637,11 @@ bool CActorStateLadder::OnPrePhysicsUpdate(CActorControllerComponent& actorContr
 		EntityId switchingToItemID = actorControllerComponent.GetActorState ()->exchangeItemStats.switchingToItemID;
 		IEntity * pEntity = gEnv->pEntitySystem->GetEntity (switchingToItemID);
 
-		if (pEntity == NULL)
+		if (pEntity == nullptr)
 		{
 		GameWarning ("!%s should be switching to 'NoWeapon' but is using %s and switching to %s",
 		actorControllerComponent.GetEntity ()->GetEntityTextDescription (), pItem->GetEntity ()->GetClass ()->GetName (),
-		pEntity ? pEntity->GetClass ()->GetName () : "<NULL>");
+		pEntity ? pEntity->GetClass ()->GetName () : "<nullptr>");
 		canPlayGetOnAnim = true;
 		}
 		}
@@ -894,7 +894,7 @@ bool CActorStateLadder::IsUsableLadder(CActorControllerComponent& actorControlle
 		pGeom->DrawLine (ladderBasePos + rungEndSideways, ladderColour, ladderBasePos + rungEndSideways + offsetToTop, ladderColour, 20.f);
 		}
 
-		CryWatch ("[LADDER] Is %s usable by %s? %s", pLadder ? pLadder->GetEntityTextDescription () : "<NULL ladder entity>", actorControllerComponent.GetEntity ()->GetEntityTextDescription (), retVal ? "$3YES$o" : "$4NO$o");
+		CryWatch ("[LADDER] Is %s usable by %s? %s", pLadder ? pLadder->GetEntityTextDescription () : "<nullptr ladder entity>", actorControllerComponent.GetEntity ()->GetEntityTextDescription (), retVal ? "$3YES$o" : "$4NO$o");
 		}
 		#endif
 		*/

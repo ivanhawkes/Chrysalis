@@ -9,6 +9,6 @@
   <Detail name="16BitPrecision">false</Detail>
  </Details>
  <Dependencies>
-  <Path>Objects/default/editorprimitive.mtl</Path>
+  <Path usageCount="1">Objects/default/editorprimitive.mtl</Path>
  </Dependencies>
 </AssetMetadata>

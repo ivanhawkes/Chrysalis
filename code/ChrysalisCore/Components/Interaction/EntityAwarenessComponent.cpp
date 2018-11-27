@@ -54,11 +54,11 @@ void CEntityAwarenessComponent::Initialize()
 }
 
 
-void CEntityAwarenessComponent::ProcessEvent(SEntityEvent& event)
+void CEntityAwarenessComponent::ProcessEvent(const SEntityEvent& event)
 {
 	switch (event.event)
 	{
-		case ENTITY_EVENT_UPDATE:
+		case EEntityEvent::Update:
 			Update();
 			break;
 	}
@@ -146,6 +146,9 @@ CEntityAwarenessComponent::~CEntityAwarenessComponent()
 
 void CEntityAwarenessComponent::UpdateRaycastQuery()
 {
+	m_isRayHit = false;
+	m_rayHitPosition = Vec3(ZERO);
+		
 	if (!m_pActor || m_pActor->GetEntity()->IsHidden())
 		return;
 
@@ -237,6 +240,7 @@ void CEntityAwarenessComponent::OnRayCastDataReceived(const QueuedRayID& rayID, 
 			m_rayHitPierceable.pCollider = nullptr;
 			m_rayHitPierceable.next = nullptr;
 
+
 #if defined(_DEBUG)
 			if (g_cvars.m_componentAwarenessDebug & eDB_RayCast)
 			{
@@ -259,7 +263,11 @@ void CEntityAwarenessComponent::OnRayCast(const ray_hit & rayHit)
 	// Otherwise hit[0] is always the solid hit (and thus the last), hit[1-n] are then first to last-1 in order of distance
 	m_rayHitSolid = rayHit;
 
-	// Find out what we can about the type of surface it intersected. This is useful for determining which of several
+	// Keep this for people to query.
+	m_isRayHit = true;
+	m_rayHitPosition = m_rayHitSolid.pt;
+	
+		// Find out what we can about the type of surface it intersected. This is useful for determining which of several
 	// proxies it hit, etc.
 	if (ISurfaceType* pSurfaceType = gEnv->p3DEngine->GetMaterialManager()->GetSurfaceType(m_rayHitSolid.surface_idx))
 	{
@@ -278,7 +286,7 @@ void CEntityAwarenessComponent::OnRayCast(const ray_hit & rayHit)
 	if (g_cvars.m_componentAwarenessDebug & eDB_RayCast)
 	{
 		// Highlight the hit point.
-		gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(m_rayHitSolid.pt, 0.01f, ColorB(255, 0, 0));
+		gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(m_rayHitSolid.pt, 0.025f, ColorB(255, 0, 0));
 	}
 #endif
 

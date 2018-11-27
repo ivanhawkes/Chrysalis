@@ -164,7 +164,7 @@ void CActorStateDead::UpdateAICorpseStatus(CActorControllerComponent& actorContr
 		if (!actorControllerComponent.GetEntity ()->IsHidden ())
 		{
 		CAICorpseManager* pAICorpseManager = CAICorpseManager::GetInstance ();
-		if (pAICorpseManager != NULL)
+		if (pAICorpseManager != nullptr)
 		{
 		CAICorpseManager::SCorpseParameters corpseParams;
 		corpseParams.priority = CAICorpseManager::GetPriorityForClass (actorControllerComponent.GetEntity ()->GetClass ());

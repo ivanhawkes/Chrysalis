@@ -34,8 +34,8 @@ protected:
 
 	// IEntityComponent
 	void Initialize() override;
-	virtual void ProcessEvent(SEntityEvent& event) override;
-	uint64 GetEventMask() const { return BIT64(ENTITY_EVENT_START_GAME) | BIT64(ENTITY_EVENT_UPDATE); }
+	virtual void ProcessEvent(const SEntityEvent& event) override;
+	Cry::Entity::EntityEventMask GetEventMask() const override { return ENTITY_EVENT_BIT(ENTITY_EVENT_UPDATE) | ENTITY_EVENT_BIT(ENTITY_EVENT_START_GAME); }
 	// ~IEntityComponent
 
 public:
@@ -238,7 +238,7 @@ public:
 
 
 	/** Revives the atatched character, if there is one. */
-	void Revive();
+	void OnRevive();
 
 	/** A network client has connected to the player. */
 	void NetworkClientConnect();

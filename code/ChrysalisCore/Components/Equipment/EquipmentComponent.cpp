@@ -23,8 +23,6 @@ void CEquipmentComponent::ReflectType(Schematyc::CTypeDesc<CEquipmentComponent>&
 
 void CEquipmentComponent::Initialize()
 {
-	const auto pEntity = GetEntity();
-
 	OnResetState();
 }
 

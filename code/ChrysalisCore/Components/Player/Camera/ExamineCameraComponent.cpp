@@ -36,11 +36,11 @@ void CExamineCameraComponent::Initialize()
 }
 
 
-void CExamineCameraComponent::ProcessEvent(SEntityEvent& event)
+void CExamineCameraComponent::ProcessEvent(const SEntityEvent& event)
 {
 	switch (event.event)
 	{
-		case ENTITY_EVENT_UPDATE:
+		case EEntityEvent::Update:
 			Update();
 			UpdateView();
 			break;
@@ -114,7 +114,7 @@ void CExamineCameraComponent::AttachToEntity(EntityId entityId)
 
 void CExamineCameraComponent::OnActivate()
 {
-	m_EventMask |= BIT64(ENTITY_EVENT_UPDATE);
+	m_EventMask |= EventToMask(EEntityEvent::Update);
 	GetEntity()->UpdateComponentEventMask(this);
 	ResetCamera();
 
@@ -132,7 +132,7 @@ void CExamineCameraComponent::OnActivate()
 
 void CExamineCameraComponent::OnDeactivate()
 {
-	m_EventMask &= ~BIT64(ENTITY_EVENT_UPDATE);
+	m_EventMask &= ~EventToMask(EEntityEvent::Update);
 	GetEntity()->UpdateComponentEventMask(this);
 }
 

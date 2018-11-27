@@ -15,7 +15,7 @@ namespace Chrysalis
 //--------------------------------------------------------------------------------
 // cry_copyStringUntilFindChar: Parameter order is the same as strncpy;
 // additional 'until' parameter defines which additional character should
-// stop the copying. Return value is number of bytes (including NULL)
+// stop the copying. Return value is number of bytes (including nullptr)
 // written into 'destination', or 0 if 'until' character not found in
 // first 'bufferLength' bytes of 'source'.
 size_t cry_copyStringUntilFindChar(char* destination, const char* source, size_t bufferLength, char until);

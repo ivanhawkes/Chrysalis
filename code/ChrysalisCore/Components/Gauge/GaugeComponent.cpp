@@ -38,7 +38,8 @@ void CGaugeComponent::ReflectType(Schematyc::CTypeDesc<CGaugeComponent>& desc)
 	desc.AddMember(&CGaugeComponent::m_filePath, 'file', "FilePath", "File", "Determines the animated mesh to load", "");
 	desc.AddMember(&CGaugeComponent::m_renderParameters, 'rend', "Render", "Rendering Settings", "Settings for the rendered representation of the component", Cry::DefaultComponents::SRenderParameters());
 	desc.AddMember(&CGaugeComponent::m_physics, 'phys', "Physics", "Physics", "Physical properties for the object, only used if a simple physics or character controller is applied to the entity.", Cry::DefaultComponents::SPhysicsParameters());
-	
+	desc.AddMember(&CGaugeComponent::m_materialPath, 'mat', "Material", "Material", "Specifies the override material for the selected object", "");
+
 	// Specific for time pieces.
 	desc.AddMember(&CGaugeComponent::m_gaugeProperties, 'time', "Time", "Time", "Time components", CGaugeComponent::SGaugeProperties());
 }
@@ -51,11 +52,11 @@ void CGaugeComponent::Initialize()
 }
 
 
-void CGaugeComponent::ProcessEvent(SEntityEvent& event)
+void CGaugeComponent::ProcessEvent(const SEntityEvent& event)
 {
 	switch (event.event)
 	{
-		case ENTITY_EVENT_EDITOR_PROPERTY_CHANGED:
+		case EEntityEvent::EditorPropertyChanged:
 		{
 			m_pEntity->UpdateComponentEventMask(this);
 			LoadFromDisk();
@@ -63,7 +64,7 @@ void CGaugeComponent::ProcessEvent(SEntityEvent& event)
 		}
 		break;
 
-		case ENTITY_EVENT_UPDATE:
+		case EEntityEvent::Update:
 		{
 			SEntityUpdateContext* pCtx = (SEntityUpdateContext*)event.nParam [0];
 			Update(pCtx);
@@ -120,4 +121,26 @@ void CGaugeComponent::Update(SEntityUpdateContext* pCtx)
 		}
 	}
 }
+
+
+//bool CGaugeComponent::SetMaterial(int slotId, const char* szMaterial)
+//{
+//	if (slotId == GetEntitySlotId())
+//	{
+//		if (IMaterial* pMaterial = gEnv->p3DEngine->GetMaterialManager()->LoadMaterial(szMaterial, false))
+//		{
+//			m_materialPath = szMaterial;
+//			m_pEntity->SetSlotMaterial(GetEntitySlotId(), pMaterial);
+//		}
+//		else if (szMaterial [0] == '\0')
+//		{
+//			m_materialPath.value.clear();
+//			m_pEntity->SetSlotMaterial(GetEntitySlotId(), nullptr);
+//		}
+//
+//		return true;
+//	}
+//
+//	return false;
+//}
 }

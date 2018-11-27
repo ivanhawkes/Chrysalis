@@ -1,0 +1,12 @@
+<AssetMetadata version="0" type="Material" guid="46c74a3d-00dd-4296-35b3-eedc5c36e882">
+ <Files>
+  <File path="book.mtl"/>
+ </Files>
+ <Details>
+  <Detail name="subMaterialCount">2</Detail>
+  <Detail name="textureCount">1</Detail>
+ </Details>
+ <Dependencies>
+  <Path usageCount="1">objects/Weapons/equipment/medical_kit/textures/medical_kit_bag.dds</Path>
+ </Dependencies>
+</AssetMetadata>

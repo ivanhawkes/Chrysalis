@@ -30,8 +30,8 @@ protected:
 
 	// IEntityComponent
 	void Initialize() override;
-	void ProcessEvent(SEntityEvent& event) override;
-	uint64 GetEventMask() const { return BIT64(ENTITY_EVENT_UPDATE); }
+	void ProcessEvent(const SEntityEvent& event) override;
+	Cry::Entity::EntityEventMask GetEventMask() const override { return EventToMask(EEntityEvent::Update); }
 	virtual void GetMemoryUsage(ICrySizer* pSizer) const;
 	// ~IEntityComponent
 
@@ -121,47 +121,17 @@ public:
 
 
 	/**
-	Utilises the base ray-cast query to see if there is a hit within the "forwardCastDistance".
-	If so, that hit is returned.
+	Gets the entity ID which is being looked at. This may return an invalid enity.
 
-	\param	maxDistance The maximum distance at which a hit from the base ray is to be considered.
-	\param	ignoreGlass true to ignore glass.
+	\param	ignoreGlass (Optional) True to ignore glass.
 
-	\return null if it fails, else the look at point.
+	\return The look at entity identifier if found, or INVALID_ENTITYID if none.
 	**/
-	ILINE const ray_hit* GetLookAtPoint(const float maxDistance = 0.0f, bool ignoreGlass = false)
-	{
-		RefreshQueryCache(eWQ_Raycast);
-
-		if (m_rayHitAny)
-		{
-			const ray_hit* hit = !ignoreGlass && m_rayHitPierceable.dist >= 0.0f ? &m_rayHitPierceable : &m_rayHitSolid;
-
-			if ((maxDistance <= 0.0f) || (hit->dist <= maxDistance))
-				return hit;
-		}
-
-		return nullptr;
-	}
-
-
 	ILINE const EntityId GetLookAtEntityId(bool ignoreGlass = false)
 	{
 		RefreshQueryCache(eWQ_Raycast);
 
 		return !ignoreGlass && m_rayHitPierceable.dist >= 0.0f ? INVALID_ENTITYID : m_lookAtEntityId;
-	}
-
-
-	/**
-	Utilises the base ray-cast query, but filters the result to only include a hit if there is a viable
-	result within the proximity radius limit.
-
-	\return null if it fails, else the successful raycast data.
-	**/
-	ILINE const ray_hit* RaycastQuery()
-	{
-		return GetLookAtPoint(m_proximityRadius);
 	}
 
 
@@ -206,7 +176,59 @@ public:
 	const Entities& GetNearDotFiltered(float minDot = 0.9f, float maxDot = 1.0f);
 
 
+	/**
+	Query if a raycast hit anything this frame.
+	
+	\return True if ray hit, false if not.
+	**/
+	bool GetRayHit() const { return m_isRayHit; }
+
+
+	/**
+	Gets ray hit position, if available. This is undefined if there was no hit this frame.
+	
+	\return The ray hit position.
+	**/
+	Vec3 GetRayHitPosition() const { return m_rayHitPosition; }
+
 private:
+	/**
+	Utilises the base ray-cast query to see if there is a hit within the "forwardCastDistance".
+	If so, that hit is returned.
+
+	\param	maxDistance The maximum distance at which a hit from the base ray is to be considered.
+	\param	ignoreGlass true to ignore glass.
+
+	\return null if it fails, else the look at point.
+	**/
+	ILINE const ray_hit* GetLookAtPoint(const float maxDistance = 0.0f, bool ignoreGlass = false)
+	{
+		RefreshQueryCache(eWQ_Raycast);
+
+		if (m_rayHitAny)
+		{
+			const ray_hit* hit = !ignoreGlass && m_rayHitPierceable.dist >= 0.0f ? &m_rayHitPierceable : &m_rayHitSolid;
+
+			if ((maxDistance <= 0.0f) || (hit->dist <= maxDistance))
+				return hit;
+		}
+
+		return nullptr;
+	}
+
+
+	/**
+	Utilises the base ray-cast query, but filters the result to only include a hit if there is a viable
+	result within the proximity radius limit.
+
+	\return null if it fails, else the successful raycast data.
+	**/
+	ILINE const ray_hit* RaycastQuery()
+	{
+		return GetLookAtPoint(m_proximityRadius);
+	}
+
+
 	// Keep in sync with m_updateQueryFunctions.
 	enum EWorldQuery
 	{
@@ -294,8 +316,14 @@ private:
 	// TODO: CRITICAL: HACK: BROKEN: !!
 	IActorComponent* m_pActor { nullptr };
 
+	/** Did a raycast anything this frame? **/
+	bool m_isRayHit { false };
+
+	/** The position where a raycast hit, if successful. Undefined if not. **/
+	Vec3 m_rayHitPosition { ZERO };
+
 	/** The eye position for our actor. */
-	Vec3 m_eyePosition = Vec3 { ZERO };
+	Vec3 m_eyePosition { ZERO };
 
 	/** The direction in which our actor is looking. */
 	Quat m_eyeDirection { IDENTITY };

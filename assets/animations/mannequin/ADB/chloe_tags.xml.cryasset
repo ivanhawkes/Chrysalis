@@ -1,8 +1,0 @@
-<AssetMetadata version="0" type="Xml" guid="4d675b46-e6ef-574a-00ea-618ffbecdd5b">
- <Files>
-  <File path="chloe_tags.xml"/>
- </Files>
- <Details>
-  <Detail name="rootTag">TagDefinition</Detail>
- </Details>
-</AssetMetadata>

@@ -51,7 +51,7 @@ public:
 
 	// IEntityComponent
 	void Initialize() override;
-	void ProcessEvent(SEntityEvent& event) override;
+	void ProcessEvent(const SEntityEvent& event) override;
 	// ~IEntityComponent
 
 	// IDRSInteractionEntityComponent

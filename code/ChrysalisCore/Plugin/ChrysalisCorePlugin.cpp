@@ -2,7 +2,6 @@
 
 #include "ChrysalisCorePlugin.h"
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
-#include <CryExtension/ICryPluginManager.h>
 #include <CrySchematyc/Env/IEnvRegistry.h>
 #include <CrySchematyc/Env/EnvPackage.h>
 #include <CrySchematyc/Utils/SharedString.h>
@@ -224,9 +223,6 @@ bool CChrysalisCorePlugin::Initialize(SSystemGlobalEnvironment& env, const SSyst
 	// Register for engine system events, in our case we need ESYSTEM_EVENT_GAME_POST_INIT to load the map
 	gEnv->pSystem->GetISystemEventDispatcher()->RegisterListener(this, "CChrysalisCore");
 
-	// Listen for client connection events, in order to create the local player
-	gEnv->pGameFramework->AddNetworkedClientListener(*this);
-
 	// Register all the cvars.
 	g_cvars.RegisterVariables();
 
@@ -285,6 +281,9 @@ void CChrysalisCorePlugin::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UI
 			// Search the file system to find XML files with definitions for game weapons.
 			// TODO: CRITICAL: HACK: BROKEN: !!
 			//gEnv->pGameFramework->GetIActorSystem()->Scan("Parameters/Actors");
+
+			// Listen for client connection events, in order to create the local player
+			gEnv->pGameFramework->AddNetworkedClientListener(*this);
 
 			// We need to register the procedural contexts.
 			IProceduralClipFactory& proceduralClipFactory = gEnv->pGameFramework->GetMannequinInterface().GetProceduralClipFactory();
@@ -412,8 +411,7 @@ CChrysalisCorePlugin* CChrysalisCorePlugin::Get()
 	if (!plugIn)
 		plugIn = gEnv->pSystem->GetIPluginManager()->QueryPlugin<CChrysalisCorePlugin>();
 
-	if (!plugIn)
-		CRY_ASSERT_MESSAGE(plugIn, "Chrysalis Core plugin was not found.");
+	CRY_ASSERT_MESSAGE(plugIn, "Chrysalis Core plugin was not found.");
 
 	return plugIn;
 }

@@ -41,9 +41,17 @@ You can find out more about Git LFS at [https://git-lfs.github.com/]
 
 Most new work is performed on the 'ivan' branch - a feature branch where I work, typically for a month or so at a time, before I perform a 'squash merge' back into the 'development' branch.
 
+If there's no 'ivan' branch, have a look and see if there is work happening on a feature branch. I often go a couple of months getting a feature ready or re-factoring, before I can safely merge it all back into the 'development' branch.
+
 The 'development' branch is there to merge multiple feature branches prior to a squash merge into the 'master' branch.
 
 The 'master' branch is usually a month or so behind any work, but is generally expected to both build and have a test level to get you started quickly.
+
+It is important to point out here that you need the CRYENGINE source code in order to build this project. It's best if you checkout the source from GitHub, as Chrysalis will track the CRYENGINE source pretty closely. The engine needs to be installed, and the Chrysalis project must point to the version of the engine you will build it against.
+
+**Currently, it is building against the 'Stabilisation' branch of my fork of the CRYENGINE repository.**
+
+https://github.com/ivanhawkes/CRYENGINE/tree/stabilisation
 
 After you have cloned the repository to your local hard drive you will need to right click on the **'Chrysalis.cryproject'** and tell it to **'Generate Solution'**.
 

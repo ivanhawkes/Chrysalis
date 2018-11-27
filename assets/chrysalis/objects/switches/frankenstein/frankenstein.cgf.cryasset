@@ -1,0 +1,16 @@
+<cryasset>
+ <AssetMetadata version="0" type="Mesh" guid="6c2706cf-a539-5bd5-2b79-3313f68eef15">
+  <Files>
+   <File path="frankenstein.cgf"/>
+  </Files>
+  <Details>
+   <Detail name="materialCount">3</Detail>
+   <Detail name="triangleCount">306</Detail>
+   <Detail name="vertexCount">375</Detail>
+   <Detail name="16BitPrecision">false</Detail>
+  </Details>
+  <Dependencies>
+   <Path usageCount="1">./Switch.mtl</Path>
+  </Dependencies>
+ </AssetMetadata>
+</cryasset>

@@ -222,7 +222,7 @@ struct SStateEventInteractiveAction : public SStateEvent
 		{
 			return static_cast<const char*> (GetData(0).GetPtr());
 		}
-		return NULL;
+		return nullptr;
 	}
 
 

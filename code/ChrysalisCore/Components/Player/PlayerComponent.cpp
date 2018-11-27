@@ -34,33 +34,31 @@ void CPlayerComponent::ReflectType(Schematyc::CTypeDesc<CPlayerComponent>& desc)
 
 void CPlayerComponent::Initialize()
 {
-	const auto pEntity = GetEntity();
-
 	CryLogAlways("The player Id is %d - should be 30583.", GetEntityId());
 
 	// Create a camera manager for this player. We do this early, since character attachment code needs to make calls
 	// to a functioning camera.
-	m_pCameraManager = pEntity->CreateComponent<CCameraManagerComponent>();
+	m_pCameraManager = m_pEntity->CreateComponent<CCameraManagerComponent>();
 
 	// Acquire a player input component. At a later time it will be useful to check if a network version is needed, or
-	// perhaps AI / NULL versions.
+	// perhaps AI / nullptr versions.
 	// NOTE: This component requires a pointer to a camera manager - so it must always load after that component.
-	m_pPlayerInput = pEntity->CreateComponent<CPlayerInputComponent>();
+	m_pPlayerInput = m_pEntity->CreateComponent<CPlayerInputComponent>();
 }
 
 
-void CPlayerComponent::ProcessEvent(SEntityEvent& event)
+void CPlayerComponent::ProcessEvent(const SEntityEvent& event)
 {
 	switch (event.event)
 	{
-		case ENTITY_EVENT_START_GAME:
+		case EEntityEvent::GameplayStarted:
 		{
 			// Revive the entity when gameplay starts
-			Revive();
+			OnRevive();
 		}
 		break;
 
-		case ENTITY_EVENT_UPDATE:
+		case EEntityEvent::Update:
 		{
 			SEntityUpdateContext* pCtx = (SEntityUpdateContext*)event.nParam [0];
 		}
@@ -145,11 +143,11 @@ IActorComponent* CPlayerComponent::GetLocalActor()
 }
 
 
-void CPlayerComponent::Revive()
+void CPlayerComponent::OnRevive()
 {
 	if (auto pActorComponent = GetLocalActor())
 	{
-		pActorComponent->Revive();
+		pActorComponent->OnRevive();
 	}
 }
 
@@ -161,7 +159,7 @@ void CPlayerComponent::NetworkClientConnect()
 	if (IsLocalPlayer())
 		AttachToHero();
 
-	Revive();
+	OnRevive();
 }
 
 

@@ -1,0 +1,9 @@
+<AssetMetadata version="0" type="Material" guid="a0e4413e-18a2-b96c-4e7e-db6a9e2ce37a">
+ <Files>
+  <File path="human_female_skeleton.mtl"/>
+ </Files>
+ <Details>
+  <Detail name="subMaterialCount">11</Detail>
+  <Detail name="textureCount">0</Detail>
+ </Details>
+</AssetMetadata>

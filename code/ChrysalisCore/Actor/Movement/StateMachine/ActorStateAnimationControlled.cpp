@@ -118,7 +118,7 @@ const CActorStateAnimationControlled::TStateIndex CActorStateAnimationControlled
 			{
 			m_interactiveActionController.OnEnter (actorControllerComponent, action.GetObjectEntityID (), action.GetInteractionIndex ());
 			}
-			else if (action.GetObjectInteractionName () != NULL)
+			else if (action.GetObjectInteractionName () != nullptr)
 			{
 			m_interactiveActionController.OnEnterByName (actorControllerComponent, action.GetObjectInteractionName (), action.GetActionSpeed ());
 			}

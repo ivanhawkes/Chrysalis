@@ -1,0 +1,134 @@
+<TagDefinition version="2">
+  <Tags>
+    <Group name="Health">
+      <Tag name="Alive" priority="5"/>
+      <Tag name="Dead" priority="5"/>
+    </Group>
+    <Group name="Posture">
+      <Tag name="Unaware" priority="4"/>
+      <Tag name="Distracted" priority="4"/>
+      <Tag name="Suspicious" priority="4"/>
+      <Tag name="Alerted" priority="4"/>
+      <Tag name="Dazed" priority="4"/>
+      <Tag name="Neutral" priority="4"/>
+      <Tag name="Passive" priority="4"/>
+      <Tag name="Aggressive" priority="4"/>
+      <Tag name="Interested" priority="4"/>
+      <Tag name="Bored" priority="4"/>
+      <Tag name="Excited" priority="4"/>
+      <Tag name="Depressed" priority="4"/>
+    </Group>
+    <Group name="Stance">
+      <Tag name="Standing" priority="3"/>
+      <Tag name="Crouching" priority="3"/>
+      <Tag name="Crawling" priority="3"/>
+      <Tag name="Prone" priority="3"/>
+      <Tag name="Falling" priority="3"/>
+      <Tag name="Landing" priority="3"/>
+      <Tag name="Swimming" priority="3"/>
+      <Tag name="Flying" priority="3"/>
+      <Tag name="Spellcasting" priority="3"/>
+      <Tag name="SittingChair" priority="3"/>
+      <Tag name="SittingFloor" priority="3"/>
+      <Tag name="Kneeling" priority="3"/>
+      <Tag name="Sleeping" priority="3"/>
+    </Group>
+    <Group name="LocalMoveDirection">
+      <Tag name="NoMovement"/>
+      <Tag name="MoveBackward"/>
+      <Tag name="MoveForward"/>
+      <Tag name="MoveLeft"/>
+      <Tag name="MoveRight"/>
+    </Group>
+    <Group name="Gait">
+      <Tag name="NoGait"/>
+      <Tag name="Walk"/>
+      <Tag name="Run"/>
+      <Tag name="Sprint"/>
+    </Group>
+    <Group name="Aim">
+      <Tag name="NotAiming" priority="1"/>
+      <Tag name="Aiming" priority="1"/>
+    </Group>
+    <Group name="Look">
+      <Tag name="NotLooking" priority="1"/>
+      <Tag name="Looking" priority="1"/>
+    </Group>
+    <Group name="Emote">
+      <Tag name="Anger" priority="2"/>
+      <Tag name="Annoyance" priority="2"/>
+      <Tag name="Anxiety" priority="2"/>
+      <Tag name="Apathy" priority="2"/>
+      <Tag name="Awe" priority="2"/>
+      <Tag name="Boredom" priority="2"/>
+      <Tag name="Confidence" priority="2"/>
+      <Tag name="Contempt" priority="2"/>
+      <Tag name="Contentment" priority="2"/>
+      <Tag name="Courage" priority="2"/>
+      <Tag name="Curiosity" priority="2"/>
+      <Tag name="Depression" priority="2"/>
+      <Tag name="Despair" priority="2"/>
+      <Tag name="Disappointment" priority="2"/>
+      <Tag name="Disgust" priority="2"/>
+      <Tag name="Dread" priority="2"/>
+      <Tag name="Embarrassment" priority="2"/>
+      <Tag name="Excitement" priority="2"/>
+      <Tag name="Fear" priority="2"/>
+      <Tag name="Frustration" priority="2"/>
+      <Tag name="Gratitude" priority="2"/>
+      <Tag name="Grief" priority="2"/>
+      <Tag name="Guilt" priority="2"/>
+      <Tag name="Happiness" priority="2"/>
+      <Tag name="Hatred" priority="2"/>
+      <Tag name="Hope" priority="2"/>
+      <Tag name="Horror" priority="2"/>
+      <Tag name="Hostility" priority="2"/>
+      <Tag name="Hurt" priority="2"/>
+      <Tag name="Hysteria" priority="2"/>
+      <Tag name="Indifference" priority="2"/>
+      <Tag name="Interest" priority="2"/>
+      <Tag name="Joy" priority="2"/>
+      <Tag name="Loathing" priority="2"/>
+      <Tag name="Loneliness" priority="2"/>
+      <Tag name="Outrage" priority="2"/>
+      <Tag name="Panic" priority="2"/>
+      <Tag name="Pity" priority="2"/>
+      <Tag name="Pleasure" priority="2"/>
+      <Tag name="Pride" priority="2"/>
+      <Tag name="Rage" priority="2"/>
+      <Tag name="Regret" priority="2"/>
+      <Tag name="Relief" priority="2"/>
+      <Tag name="Remorse" priority="2"/>
+      <Tag name="Sadness" priority="2"/>
+      <Tag name="Satisfaction" priority="2"/>
+      <Tag name="Shame" priority="2"/>
+      <Tag name="Shock" priority="2"/>
+      <Tag name="Shyness" priority="2"/>
+      <Tag name="Sorrow" priority="2"/>
+      <Tag name="Surprise" priority="2"/>
+      <Tag name="Terror" priority="2"/>
+      <Tag name="Trust" priority="2"/>
+      <Tag name="Wonder" priority="2"/>
+      <Tag name="Worry" priority="2"/>
+      <Tag name="Zeal" priority="2"/>
+      <Tag name="Zest" priority="2"/>
+    </Group>
+    <Group name="InteractionHeight">
+      <Tag name="InteractionHigh" priority="5"/>
+      <Tag name="InteractionMiddle" priority="5"/>
+      <Tag name="InteractionLow" priority="5"/>
+    </Group>
+    <Group name="InteractionMethod">
+      <Tag name="InteractionGrabObject" priority="5"/>
+      <Tag name="InteractionFlipSwitch" priority="5"/>
+      <Tag name="InteractionDeadLift" priority="5"/>
+      <Tag name="InteractionTurnWheel" priority="5"/>
+    </Group>
+    <Tag name="Rotate"/>
+    <Tag name="ScopeSlave" priority="4"/>
+    <Tag name="ScopeAimPose"/>
+    <Tag name="ScopeAiming"/>
+    <Tag name="ScopeLookPose"/>
+    <Tag name="ScopeLooking"/>
+  </Tags>
+</TagDefinition>

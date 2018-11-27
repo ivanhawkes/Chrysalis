@@ -58,7 +58,7 @@ void CProceduralContextRagdoll::QueueRagdoll(bool bAlive)
 
 	IActor* piActor = gEnv->pGameFramework->GetIActorSystem()->GetActor(m_targetEntityId);
 
-	// NOTE: The case where piActor is NULL is when you're - in the CryMann preview!
+	// NOTE: The case where piActor is nullptr is when you're - in the CryMann preview!
 	if (piActor)
 	{
 		if (gEnv->bServer && !m_bDispatchedAspectProfile && (piActor->GetGameObject()->GetAspectProfile(eEA_Physics) != eAP_Ragdoll))

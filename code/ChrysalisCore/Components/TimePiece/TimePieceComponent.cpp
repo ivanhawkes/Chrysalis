@@ -65,11 +65,11 @@ void CTimePieceComponent::Initialize()
 }
 
 
-void CTimePieceComponent::ProcessEvent(SEntityEvent& event)
+void CTimePieceComponent::ProcessEvent(const SEntityEvent& event)
 {
 	switch (event.event)
 	{
-		case ENTITY_EVENT_EDITOR_PROPERTY_CHANGED:
+		case EEntityEvent::EditorPropertyChanged:
 		{
 			m_pEntity->UpdateComponentEventMask(this);
 			LoadFromDisk();
@@ -77,7 +77,7 @@ void CTimePieceComponent::ProcessEvent(SEntityEvent& event)
 		}
 		break;
 
-		case ENTITY_EVENT_UPDATE:
+		case EEntityEvent::Update:
 		{
 			SEntityUpdateContext* pCtx = (SEntityUpdateContext*)event.nParam [0];
 			Update(pCtx);
@@ -155,4 +155,26 @@ void CTimePieceComponent::Update(SEntityUpdateContext* pCtx)
 		}
 	}
 }
+
+
+//bool CTimePieceComponent::SetMaterial(int slotId, const char* szMaterial)
+//{
+//	if (slotId == GetEntitySlotId())
+//	{
+//		if (IMaterial* pMaterial = gEnv->p3DEngine->GetMaterialManager()->LoadMaterial(szMaterial, false))
+//		{
+//			m_materialPath = szMaterial;
+//			m_pEntity->SetSlotMaterial(GetEntitySlotId(), pMaterial);
+//		}
+//		else if (szMaterial [0] == '\0')
+//		{
+//			m_materialPath.value.clear();
+//			m_pEntity->SetSlotMaterial(GetEntitySlotId(), nullptr);
+//		}
+//
+//		return true;
+//	}
+//
+//	return false;
+//}
 }

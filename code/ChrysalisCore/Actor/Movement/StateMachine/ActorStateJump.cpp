@@ -24,7 +24,7 @@ CActorStateJump::CActorStateJump()
 	m_jumpLock(0.0f),
 	m_startFallingHeight(-FLT_MAX),
 	m_firstPrePhysicsUpdate(false),
-	m_jumpAction(NULL),
+	m_jumpAction(nullptr),
 	m_expectedJumpEndHeight(0.0f)
 {}
 
@@ -65,120 +65,120 @@ void CActorStateJump::OnFall(CActorControllerComponent& actorControllerComponent
 
 void CActorStateJump::StartJump(CActorControllerComponent& actorControllerComponent, const bool isHeavyWeapon, const float fVerticalSpeedModifier)
 {
-	/*	const SActorPhysics& actorPhysics = actorControllerComponent.GetActorPhysics ();
-		const SActorStats& stats = *actorControllerComponent.GetActorState ();
-		const float onGroundTime = 0.2f;
+	//const SActorPhysics& actorPhysics = actorControllerComponent.GetActorPhysics ();
+	//const SActorStats& stats = *actorControllerComponent.GetActorState ();
+	//const float onGroundTime = 0.2f;
 
-		float g = actorPhysics.gravity.len ();
+	//float g = actorPhysics.gravity.len ();
 
-		const float jumpHeightScale = 1.0f;
-		const float jumpHeight = actorControllerComponent.GetActorParams ().jumpHeight * jumpHeightScale;
+	//const float jumpHeightScale = 1.0f;
+	//const float jumpHeight = actorControllerComponent.GetActorParams ().jumpHeight * jumpHeightScale;
 
-		float CharacterZ = actorControllerComponent.GetEntity ()->GetWorldPos ().z;
-		float expectedJumpEndHeight = CharacterZ + jumpHeight;
+	//float CharacterZ = actorControllerComponent.GetEntity ()->GetWorldPos ().z;
+	//float expectedJumpEndHeight = CharacterZ + jumpHeight;
 
-		pe_CHARACTER_dimensions dimensions;
-		IPhysicalEntity *pPhysics = actorControllerComponent.GetEntity ()->GetPhysics ();
-		if (pPhysics && pPhysics->GetParams (&dimensions))
-		{
-		float physicsBottom = dimensions.heightCollider - dimensions.sizeCollider.z;
-		if (dimensions.bUseCapsule)
-		{
-		physicsBottom -= dimensions.sizeCollider.x;
-		}
-		expectedJumpEndHeight += physicsBottom;
-		}
+	//pe_CHARACTER_dimensions dimensions;
+	//IPhysicalEntity *pPhysics = actorControllerComponent.GetEntity ()->GetPhysics ();
+	//if (pPhysics && pPhysics->GetParams (&dimensions))
+	//{
+	//float physicsBottom = dimensions.heightCollider - dimensions.sizeCollider.z;
+	//if (dimensions.bUseCapsule)
+	//{
+	//physicsBottom -= dimensions.sizeCollider.x;
+	//}
+	//expectedJumpEndHeight += physicsBottom;
+	//}
 
-		float jumpSpeed = 0.0f;
+	//float jumpSpeed = 0.0f;
 
-		if (g > 0.0f)
-		{
-		jumpSpeed = sqrt_tpl (2.0f*jumpHeight*(1.0f / g)) * g;
+	//if (g > 0.0f)
+	//{
+	//jumpSpeed = sqrt_tpl (2.0f*jumpHeight*(1.0f / g)) * g;
 
-		if (isHeavyWeapon)
-		{
-		jumpSpeed *= g_pGameCVars->pl_movement.nonCombat_heavy_weapon_speed_scale;
-		}
-		}
+	//if (isHeavyWeapon)
+	//{
+	//jumpSpeed *= g_pGameCVars->pl_movement.nonCombat_heavy_weapon_speed_scale;
+	//}
+	//}
 
-		// This is used to easily find steep ground.
-		float slopeDelta = (Vec3Constants<float>::fVec3_OneZ - actorPhysics.groundNormal).len ();
+	//// This is used to easily find steep ground.
+	//float slopeDelta = (Vec3Constants<float>::fVec3_OneZ - actorPhysics.groundNormal).len ();
 
-		SetJumpState (actorControllerComponent, JState_Jump);
+	//SetJumpState (actorControllerComponent, JState_Jump);
 
-		Vec3 jumpVec (ZERO);
+	//Vec3 jumpVec (ZERO);
 
-		bool bNormalJump = true;
+	//bool bNormalJump = true;
 
-		actorControllerComponent.PlaySound (CActorControllerComponent::ESound_Jump);
+	//actorControllerComponent.PlaySound (CActorControllerComponent::ESound_Jump);
 
-		OnSpecialMove (actorControllerComponent, IActorEventListener::eSM_Jump);
+	//OnSpecialMove (actorControllerComponent);
 
-		CCCPOINT_IF (actorControllerComponent.IsClient (), CharacterMovement_LocalCharacterNormalJump);
-		CCCPOINT_IF (!actorControllerComponent.IsClient (), CharacterMovement_NonLocalCharacterNormalJump);
+	//CCCPOINT_IF (actorControllerComponent.IsClient (), CharacterMovement_LocalCharacterNormalJump);
+	//CCCPOINT_IF (!actorControllerComponent.IsClient (), CharacterMovement_NonLocalCharacterNormalJump);
 
-		{
-		// This was causing the vertical jumping speed to be much slower.
-		float verticalMult = max (1.0f - m_jumpLock, 0.3f);
+	//{
+	//// This was causing the vertical jumping speed to be much slower.
+	//float verticalMult = max (1.0f - m_jumpLock, 0.3f);
 
-		const Quat baseQuat = actorControllerComponent.GetBaseQuat ();
-		jumpVec += baseQuat.GetColumn2 () * jumpSpeed * verticalMult;
-		jumpVec.z += fVerticalSpeedModifier;
+	//const Quat baseQuat = actorControllerComponent.GetBaseQuat ();
+	//jumpVec += baseQuat.GetColumn2 () * jumpSpeed * verticalMult;
+	//jumpVec.z += fVerticalSpeedModifier;
 
-		#ifdef STATE_DEBUG
-		if (g_pGameCVars->pl_debugInterpolation > 1)
-		{
-		CryWatch ("Jumping: vec from actorControllerComponent BaseQuat only = (%f, %f, %f)", jumpVec.x, jumpVec.y, jumpVec.z);
-		}
-		#endif
+	//#ifdef STATE_DEBUG
+	//if (g_pGameCVars->pl_debugInterpolation > 1)
+	//{
+	//CryWatch ("Jumping: vec from actorControllerComponent BaseQuat only = (%f, %f, %f)", jumpVec.x, jumpVec.y, jumpVec.z);
+	//}
+	//#endif
 
-		if (g_pGameCVars->pl_adjustJumpAngleWithFloorNormal && actorPhysics.groundNormal.len2 () > 0.0f)
-		{
-		float vertical = clamp_tpl ((actorPhysics.groundNormal.z - 0.25f) / 0.5f, 0.0f, 1.0f);
-		Vec3 modifiedJumpDirection = LERP (actorPhysics.groundNormal, Vec3 (0, 0, 1), vertical);
-		jumpVec = modifiedJumpDirection * jumpVec.len ();
-		}
+	//if (g_pGameCVars->pl_adjustJumpAngleWithFloorNormal && actorPhysics.groundNormal.len2 () > 0.0f)
+	//{
+	//float vertical = clamp_tpl ((actorPhysics.groundNormal.z - 0.25f) / 0.5f, 0.0f, 1.0f);
+	//Vec3 modifiedJumpDirection = LERP (actorPhysics.groundNormal, Vec3 (0, 0, 1), vertical);
+	//jumpVec = modifiedJumpDirection * jumpVec.len ();
+	//}
 
-		#ifdef STATE_DEBUG
-		if (g_pGameCVars->pl_debugInterpolation > 1)
-		{
-		CryWatch ("Jumping (%f, %f, %f)", jumpVec.x, jumpVec.y, jumpVec.z);
-		}
-		#endif
-		}
+	//#ifdef STATE_DEBUG
+	//if (g_pGameCVars->pl_debugInterpolation > 1)
+	//{
+	//CryWatch ("Jumping (%f, %f, %f)", jumpVec.x, jumpVec.y, jumpVec.z);
+	//}
+	//#endif
+	//}
 
-		NETINPUT_TRACE (actorControllerComponent.GetEntityId (), jumpVec);
+	//NETINPUT_TRACE (actorControllerComponent.GetEntityId (), jumpVec);
 
-		FinalizeVelocity (actorControllerComponent, jumpVec);
+	//FinalizeVelocity (actorControllerComponent, jumpVec);
 
-		if (!actorControllerComponent.IsRemote ())
-		{
-		actorControllerComponent.HasJumped (actorControllerComponent.GetMoveRequest ().velocity);
-		}
+	//if (!actorControllerComponent.IsRemote ())
+	//{
+	//actorControllerComponent.HasJumped (actorControllerComponent.GetMoveRequest ().velocity);
+	//}
 
-		IPhysicalEntity* pPhysEnt = actorControllerComponent.GetEntity ()->GetPhysics ();
-		if (pPhysEnt != NULL)
-		{
-		SAnimatedCharacterParams params = actorControllerComponent.m_pAnimatedCharacter->GetParams ();
-		pe_player_dynamics pd;
-		pd.kAirControl = actorControllerComponent.GetAirControl ()* g_pGameCVars->pl_jump_control.air_control_scale;
-		pd.kAirResistance = actorControllerComponent.GetAirResistance () * g_pGameCVars->pl_jump_control.air_resistance_scale;
+	//IPhysicalEntity* pPhysEnt = actorControllerComponent.GetEntity ()->GetPhysics ();
+	//if (pPhysEnt != nullptr)
+	//{
+	//SAnimatedCharacterParams params = actorControllerComponent.m_pAnimatedCharacter->GetParams ();
+	//pe_player_dynamics pd;
+	//pd.kAirControl = actorControllerComponent.GetAirControl ()* g_pGameCVars->pl_jump_control.air_control_scale;
+	//pd.kAirResistance = actorControllerComponent.GetAirResistance () * g_pGameCVars->pl_jump_control.air_resistance_scale;
 
-		params.inertia = actorControllerComponent.GetInertia () * g_pGameCVars->pl_jump_control.air_inertia_scale;
+	//params.inertia = actorControllerComponent.GetInertia () * g_pGameCVars->pl_jump_control.air_inertia_scale;
 
-		if (actorControllerComponent.IsRemote () && (g_pGameCVars->pl_velocityInterpAirControlScale > 0))
-		{
-		pd.kAirControl = g_pGameCVars->pl_velocityInterpAirControlScale;
-		}
+	//if (actorControllerComponent.IsRemote () && (g_pGameCVars->pl_velocityInterpAirControlScale > 0))
+	//{
+	//pd.kAirControl = g_pGameCVars->pl_velocityInterpAirControlScale;
+	//}
 
-		pPhysEnt->SetParams (&pd);
+	//pPhysEnt->SetParams (&pd);
 
-		// Let Animated actorControllerComponent handle the inertia
-		actorControllerComponent.SetAnimatedCharacterParams (params);
-		}
+	//// Let Animated actorControllerComponent handle the inertia
+	//actorControllerComponent.SetAnimatedCharacterParams (params);
+	//}
 
-		m_expectedJumpEndHeight = expectedJumpEndHeight;
-		m_bSprintJump = actorControllerComponent.IsSprinting ();*/
+	//m_expectedJumpEndHeight = expectedJumpEndHeight;
+	//m_bSprintJump = actorControllerComponent.IsSprinting ();
 }
 
 
@@ -212,11 +212,11 @@ void CActorStateJump::OnExit(CActorControllerComponent& actorControllerComponent
 		{
 		m_jumpAction->TriggerExit ();
 		m_jumpAction->Release ();
-		m_jumpAction = NULL;
+		m_jumpAction = nullptr;
 		}
 
 		IPhysicalEntity* pPhysEnt = actorControllerComponent.GetEntity ()->GetPhysics ();
-		if (pPhysEnt != NULL)
+		if (pPhysEnt != nullptr)
 		{
 		SAnimatedCharacterParams params = actorControllerComponent.m_pAnimatedCharacter->GetParams ();
 		pe_player_dynamics pd;
@@ -236,22 +236,6 @@ void CActorStateJump::OnExit(CActorControllerComponent& actorControllerComponent
 		}*/
 
 	SetJumpState(actorControllerComponent, JState_None);
-}
-
-
-void CActorStateJump::OnSpecialMove(CActorControllerComponent& actorControllerComponent, IActorEventListener::ESpecialMove specialMove)
-{
-	/*	if (!actorControllerComponent.m_CharacterEventListeners.empty())
-		{
-			CActorControllerComponent::TCharacterEventListeners::const_iterator iter = actorControllerComponent.m_CharacterEventListeners.begin();
-			CActorControllerComponent::TCharacterEventListeners::const_iterator cur;
-			while (iter != actorControllerComponent.m_CharacterEventListeners.end())
-			{
-				cur = iter;
-				++iter;
-				(*cur)->OnSpecialMove(&actorControllerComponent, specialMove);
-			}
-		}*/
 }
 
 
@@ -326,7 +310,7 @@ void CActorStateJump::Landed(CActorControllerComponent& actorControllerComponent
 	//			remoteControlled = true;
 	//		}
 	//	}
-	//	CRY_ASSERT_MESSAGE(actorControllerComponent.GetLinkedEntity() == NULL || remoteControlled, "Cannot 'land' when you're linked to another entity!");
+	//	CRY_ASSERT_MESSAGE(actorControllerComponent.GetLinkedEntity() == nullptr || remoteControlled, "Cannot 'land' when you're linked to another entity!");
 	//#endif
 
 		/*const SActorStats& stats = actorControllerComponent.m_actorState;
@@ -368,7 +352,7 @@ void CActorStateJump::Landed(CActorControllerComponent& actorControllerComponent
 		bool heavyLanded = false;
 
 		IItem* pCurrentItem = actorControllerComponent.GetCurrentItem ();
-		CWeapon* pCurrentWeapon = pCurrentItem ? static_cast<CWeapon*>(pCurrentItem->GetIWeapon ()) : NULL;
+		CWeapon* pCurrentWeapon = pCurrentItem ? static_cast<CWeapon*>(pCurrentItem->GetIWeapon ()) : nullptr;
 
 		if (fallSpeed > 0.0f && actorControllerComponent.IsCharacter ())
 		{

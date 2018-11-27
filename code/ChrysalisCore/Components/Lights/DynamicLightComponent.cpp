@@ -164,7 +164,7 @@ void CDynamicLightComponent::OnResetState()
 		}
 	}
 
-	if (!(m_light.m_Flags & DLF_AREA_LIGHT) && m_light.m_fLightFrustumAngle && (m_light.m_pLightImage != NULL) && m_light.m_pLightImage->IsTextureLoaded() || m_light.m_pLightDynTexSource)
+	if (!(m_light.m_Flags & DLF_AREA_LIGHT) && m_light.m_fLightFrustumAngle && (m_light.m_pLightImage != nullptr) && m_light.m_pLightImage->IsTextureLoaded() || m_light.m_pLightDynTexSource)
 	{
 		m_light.m_Flags |= DLF_PROJECT;
 	}

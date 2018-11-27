@@ -32,7 +32,7 @@ void CActorStateGround::OnPrePhysicsUpdate(CActorControllerComponent& actorContr
 
 	const CAutoAimManager& autoAimManager = gEnv->pGameFramework->GetAutoAimManager();
 	const EntityId closeCombatTargetId = autoAimManager.GetCloseCombatSnapTarget();
-	const IActor* pCloseCombatTarget = isLocalPlayer && closeCombatTargetId && actorControllerComponent.IsClient() ? CActorComponent::GetActor(closeCombatTargetId) : NULL;
+	const IActor* pCloseCombatTarget = isLocalPlayer && closeCombatTargetId && actorControllerComponent.IsClient() ? CActorComponent::GetActor(closeCombatTargetId) : nullptr;
 
 	// This is to restore inertia if the ProcessAlignToTarget set it previously.
 	if (m_inertiaIsZero)
@@ -275,7 +275,7 @@ bool CActorStateGround::CheckForVaultTrigger(CActorControllerComponent & actorCo
 #ifdef STATE_DEBUG
 					if (g_pGameCVars->pl_ledgeClamber.debugDraw)
 					{
-						const char * message = NULL;
+						const char * message = nullptr;
 						switch (ledgeTransition.m_ledgeTransition)
 						{
 							case SLedgeTransitionData::eOLT_VaultOnto:

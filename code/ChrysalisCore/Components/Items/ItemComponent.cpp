@@ -25,10 +25,8 @@ void CItemComponent::ReflectType(Schematyc::CTypeDesc<CItemComponent>& desc)
 
 void CItemComponent::Initialize()
 {
-	const auto pEntity = GetEntity();
-
 	// Manage our snaplocks.
-	m_pSnaplockComponent = pEntity->GetOrCreateComponent<CSnaplockComponent>();
+	m_pSnaplockComponent = m_pEntity->GetOrCreateComponent<CSnaplockComponent>();
 
 	// Provide them with an effects controller for this entity.
 	m_effectsController.Init(GetEntityId());
@@ -38,17 +36,17 @@ void CItemComponent::Initialize()
 }
 
 
-void CItemComponent::ProcessEvent(SEntityEvent& event)
+void CItemComponent::ProcessEvent(const SEntityEvent& event)
 {
 	switch (event.event)
 	{
 		// Physicalize on level start for Launcher
-		case ENTITY_EVENT_START_LEVEL:
+		case EEntityEvent::LevelStarted:
 
 			// Editor specific, physicalize on reset, property change or transform change
-		case ENTITY_EVENT_RESET:
-		case ENTITY_EVENT_EDITOR_PROPERTY_CHANGED:
-		case ENTITY_EVENT_XFORM_FINISHED_EDITOR:
+		case EEntityEvent::Reset:
+		case EEntityEvent::EditorPropertyChanged:
+		case EEntityEvent::TransformChangeFinishedInEditor:
 			OnResetState();
 			break;
 	}
@@ -82,11 +80,11 @@ void CItemComponent::EnablePicking(bool enable, bool dropped)
 		m_itemStatus.dropped = true;
 		m_itemStatus.pickable = true;
 
-		if (dropped)
-		{
-			GetEntity()->KillTimer(eIT_Flying);
-			GetEntity()->SetTimer(eIT_Flying, 750);
-		}
+		//if (dropped)
+		//{
+		//	GetEntity()->KillTimer(eIT_Flying);
+		//	GetEntity()->SetTimer(eIT_Flying, 750);
+		//}
 
 		//if (GetEntity()->IsSlotValid(eIGS_Aux0))
 		//{

@@ -46,6 +46,9 @@
     <ConvertDoubleSlashComments value="true" />
     <AddDocTableForEnums value="false" />
     <LiveSLCommentUpdate value="true" />
+    <InsertLocation value="AboveDecl" />
+    <PreserveExceptions value="true" />
+    <GenerateInheritdoc />
   </DocComment>
   <DocXml>
     <BlockFormatNew />
@@ -100,8 +103,9 @@
     <MinimiseWhitespace value="true" />
   </Columnise>
   <Misc>
-    <RulesPath value="D:\CRYENGINE\Chrysalis\wiki\standards\atomineer" />
+    <RulesPath value="D:\Chrysalis\_wiki\standards\atomineer" />
     <UserName value="(Use login name)" />
+    <Language value="English (US)" />
     <MMAddDocComment value="true" />
     <MMDocThisScope value="true" />
     <MMDocThisFile value="true" />
@@ -112,8 +116,6 @@
     <MMShowDocWindow value="true" />
     <MMColumnise value="true" />
     <MMOutlineDocComments value="true" />
-    <MMOutlineAttributes value="true" />
-    <MMOpenSourceOrHeader value="true" />
     <MMImplementMethod value="true" />
     <MMAddAccessMethods value="true" />
     <MMAddProperty value="true" />
@@ -129,7 +131,15 @@
     <CMAddProperty value="false" />
     <CMAddAccessMethods value="false" />
     <CMImplementMethod value="false" />
-    <CMOpenSourceOrHeader value="false" />
-    <Language value="English (US)" />
   </Misc>
+  <Natural>
+    <TagPrefix value="" />
+    <TagSuffix value=":" />
+    <Casing value="Sentence" />
+  </Natural>
+  <DocBox>
+    <FillColour value="" />
+    <BorderColour value="" />
+    <Enabled value="false" />
+  </DocBox>
 </Prefs>

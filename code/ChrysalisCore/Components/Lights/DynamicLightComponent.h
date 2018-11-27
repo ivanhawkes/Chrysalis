@@ -52,7 +52,7 @@ public:
 private:
 	bool m_isActive { true };
 	int m_slot { -1 };
-	CDLight m_light;
+	SRenderLight m_light;
 	bool m_bIgnoreVisAreas { false };
 	bool m_bAffectsThisAreaOnly { true };
 	bool m_bAmbient { false };

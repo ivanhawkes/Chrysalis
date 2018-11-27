@@ -4,6 +4,7 @@
 #include <CryGame/IGameFramework.h>
 #include <CryEntitySystem/IEntityClass.h>
 #include <CryNetwork/INetwork.h>
+#include <CryExtension/ClassWeaver.h>
 
 
 namespace Chrysalis
@@ -18,12 +19,12 @@ first called.
 **/
 
 class CChrysalisCorePlugin
-	: public ICryPlugin
+	: public Cry::IEnginePlugin
 	, public ISystemEventListener
 	, public INetworkedClientListener
 {
 public:
-	CRYINTERFACE_SIMPLE(ICryPlugin)
+	CRYINTERFACE_SIMPLE(Cry::IEnginePlugin)
 	CRYGENERATE_SINGLETONCLASS_GUID(CChrysalisCorePlugin, "ChrysalisCore", "{CA15546E-9C8A-4554-9EE6-426DEEF423EA}"_cry_guid);
 	static CryGUID GetSchematycPackageGUID() { return "{A403DB90-2A16-434A-8603-9B35098F6364}"_cry_guid; }
 
@@ -38,7 +39,6 @@ public:
 	virtual const char* GetName() const override { return "ChrysalisCore"; }
 	virtual const char* GetCategory() const override { return "Game"; }
 	virtual bool Initialize(SSystemGlobalEnvironment& env, const SSystemInitParams& initParams) override;
-	virtual void OnPluginUpdate(EPluginUpdateType updateType) override {}
 	// ~ICryPlugin
 
 	// ISystemEventListener

@@ -82,7 +82,7 @@ void CActorStateSwimWaterTestProxy::OnExitWater(const CActorControllerComponent&
 
 void CActorStateSwimWaterTestProxy::Update(const CActorControllerComponent& actorControllerComponent, const float frameTime)
 {
-	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
+	CRY_PROFILE_FUNCTION(PROFILE_GAME);
 
 	if (gEnv->IsEditor() && !gEnv->IsEditorGameMode())
 	{
@@ -150,7 +150,7 @@ void CActorStateSwimWaterTestProxy::PreUpdateSwimming(const CActorControllerComp
 
 void CActorStateSwimWaterTestProxy::UpdateOutOfWater(const CActorControllerComponent& actorControllerComponent, const float frameTime)
 {
-	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
+	CRY_PROFILE_FUNCTION(PROFILE_GAME);
 
 	// Out of water, only query water level to figure out if Character / AI is in contact with a water volume.
 	const Matrix34& CharacterWorldTM = actorControllerComponent.GetEntity()->GetWorldTM();
@@ -177,7 +177,7 @@ void CActorStateSwimWaterTestProxy::UpdateOutOfWater(const CActorControllerCompo
 
 void CActorStateSwimWaterTestProxy::UpdateInWater(const CActorControllerComponent& actorControllerComponent, const float frameTime)
 {
-	FUNCTION_PROFILER(GetISystem(), PROFILE_GAME);
+	CRY_PROFILE_FUNCTION(PROFILE_GAME);
 
 	const Matrix34& CharacterWorldTM = actorControllerComponent.GetEntity()->GetWorldTM();
 	const Vec3 CharacterWorldPos = CharacterWorldTM.GetTranslation();
@@ -322,7 +322,7 @@ void CActorStateSwimWaterTestProxy::OnRayCastBottomLevelDataReceived(const Queue
 
 void CActorStateSwimWaterTestProxy::RayTestBottomLevel(const CActorControllerComponent& actorControllerComponent, const Vec3& referencePosition, float maxRelevantDepth)
 {
-	/*	FUNCTION_PROFILER (gEnv->pSystem, PROFILE_GAME);
+	/*	CRY_PROFILE_FUNCTION(PROFILE_GAME);
 
 		const float terrainWorldZ = gEnv->p3DEngine->GetTerrainElevation (referencePosition.x, referencePosition.y);
 

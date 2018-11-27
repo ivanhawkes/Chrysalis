@@ -96,7 +96,7 @@ namespace LocalizeUtility
 	}
 
 
-	void LocalizeStringn(char* dest, size_t bufferSizeInBytes, const char *text, const char *arg1 /*= NULL*/, const char *arg2 /*= NULL*/, const char *arg3 /*= NULL*/, const char *arg4 /*= NULL*/)
+	void LocalizeStringn(char* dest, size_t bufferSizeInBytes, const char *text, const char *arg1 /*= nullptr*/, const char *arg2 /*= nullptr*/, const char *arg3 /*= nullptr*/, const char *arg4 /*= nullptr*/)
 	{
 		cry_strcpy(dest, bufferSizeInBytes, LocalizeString(text, arg1, arg2, arg3, arg4));
 	}

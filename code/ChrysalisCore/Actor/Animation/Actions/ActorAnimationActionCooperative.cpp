@@ -4,6 +4,10 @@
 #include <Actor/ActorComponent.h>
 
 
+// TODO: This whole concept hasn't worked correctly since the major CRYENGINE refactor for 5.x.
+// Access to the action controller is now patially obscured, and shouldn't be considered the right
+// path for management in any case. Re-write this class to work in a new manner. 
+
 namespace Chrysalis
 {
 CActorAnimationActionCooperative::CActorAnimationActionCooperative(CActorComponent &sourceActor, EntityId targetEntityId, FragmentID fragmentID, TagState tagState, TagID targetTagID, const IAnimationDatabase* pTargetOptionalDatabase)
@@ -98,7 +102,7 @@ void CActorAnimationActionCooperative::Exit()
 }
 
 
-void CActorAnimationActionCooperative::OnEntityEvent(IEntity *pEntity, SEntityEvent &event)
+void CActorAnimationActionCooperative::OnEntityEvent(IEntity* pEntity, const SEntityEvent& event)
 {
 	if (!pEntity)
 		return;
@@ -134,53 +138,53 @@ void CActorAnimationActionCooperative::OnEntityEvent(IEntity *pEntity, SEntityEv
 
 void CActorAnimationActionCooperative::AddTargetToSlaveContext()
 {
-	if (const auto pSourceActionController = m_sourceActor.GetActionController())
-	{		
-		IActionController* pTargetActionController { nullptr };
+	//if (const auto pSourceActionController = m_sourceActor.GetActionController())
+	//{		
+	//	IActionController* pTargetActionController { nullptr };
 
-		// Check which way we will enslave the target actor.
-		if ((m_pTargetActor) && (pTargetActionController = m_pTargetActor->GetActionController()))
-		{
-			// There is an action controller on the target actor, so we directly slave that to our action controller.
-			pSourceActionController->SetSlaveController(*pTargetActionController,
-				m_scopeContextId, true, m_pTargetOptionalDatabase);
+	//	// Check which way we will enslave the target actor.
+	//	if ((m_pTargetActor) && (pTargetActionController = m_pTargetActor->GetActionController()))
+	//	{
+	//		// There is an action controller on the target actor, so we directly slave that to our action controller.
+	//		pSourceActionController->SetSlaveController(*pTargetActionController,
+	//			m_scopeContextId, true, m_pTargetOptionalDatabase);
 
-			// Set the target tag.
-			pTargetActionController->GetContext().state.Set(m_targetTagID, true);
-		}
-		else
-		{
-			// No action controller, so instead we set the scope content to our slave character context.			
-			if (auto pTargetEntity = gEnv->pEntitySystem->GetEntity(m_targetEntityId))
-			{
-				pSourceActionController->SetScopeContext(m_scopeContextId, *pTargetEntity,
-					pTargetEntity->GetCharacter(0), m_pTargetOptionalDatabase);
-			}
-		}
-	}
+	//		// Set the target tag.
+	//		pTargetActionController->GetContext().state.Set(m_targetTagID, true);
+	//	}
+	//	else
+	//	{
+	//		// No action controller, so instead we set the scope content to our slave character context.			
+	//		if (auto pTargetEntity = gEnv->pEntitySystem->GetEntity(m_targetEntityId))
+	//		{
+	//			pSourceActionController->SetScopeContext(m_scopeContextId, *pTargetEntity,
+	//				pTargetEntity->GetCharacter(0), m_pTargetOptionalDatabase);
+	//		}
+	//	}
+	//}
 }
 
 
 void CActorAnimationActionCooperative::RemoveTargetFromSlaveContext()
 {
-	IActionController* pTargetActionController { nullptr };
+	//IActionController* pTargetActionController { nullptr };
 
-	if ((m_pTargetActor) && (pTargetActionController = m_pTargetActor->GetActionController()))
-	{
-		// Remove the slave scope context.
-		if (const auto pSourceActionController = m_sourceActor.GetActionController())
-		{
-			pSourceActionController->SetSlaveController(*pTargetActionController, m_scopeContextId, false, m_pTargetOptionalDatabase);
+	//if ((m_pTargetActor) && (pTargetActionController = m_pTargetActor->GetActionController()))
+	//{
+	//	// Remove the slave scope context.
+	//	if (const auto pSourceActionController = m_sourceActor.GetActionController())
+	//	{
+	//		pSourceActionController->SetSlaveController(*pTargetActionController, m_scopeContextId, false, m_pTargetOptionalDatabase);
 
-			// Remove the target tag.
-			pTargetActionController->GetContext().state.Set(m_targetTagID, false);
-		}
-	}
-	else
-	{
-		// Remove the slave scope context.
-		m_rootScope->GetActionController().ClearScopeContext(m_scopeContextId);
-	}
+	//		// Remove the target tag.
+	//		pTargetActionController->GetContext().state.Set(m_targetTagID, false);
+	//	}
+	//}
+	//else
+	//{
+	//	// Remove the slave scope context.
+	//	m_rootScope->GetActionController().ClearScopeContext(m_scopeContextId);
+	//}
 }
 
 

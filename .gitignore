@@ -48,35 +48,33 @@ Solutions/
 /user2/
 /user3/
 /user4/
-assets/user/
-assets/user1/
-assets/user2/
-assets/user3/
-assets/user4/
+/assets/user/
+/assets/user1/
+/assets/user2/
+/assets/user3/
+/assets/user4/
 
 # Assets we don't want to include for various reasons e.g. copyright
-assets/audio/
-assets/animations/FireDoor/
-assets/objects/FireDoor/
-assets/objects/items/compass/
-assets/animations/human/male/crouch/
-assets/dark-vale/
+/assets/chrysalis/audio/
+/assets/chrysalis/objects/items/compass/
+/assets/dark-vale/
 
 # Keep out the generated files and folders.
-/assets/textures/cubemaps/
-/assets/engineassets/
 /assets/_tmp/
+/assets/engineassets/
+/assets/textures/cubemaps/
+/assets/textures/reference/.mayaSwatches/
 /Backup/
 /engineassets
-_newpreview_.mtl
-/chrysalis/engineassets/
 /Editor/ResourceCache/
+_newpreview_.mtl
 error*.*
 log.txt
 *.tmp
-assets/textures/reference/.mayaSwatches/
 
 # All other things.
+/assets_source/
+/assets/animations/editor/
 last_fbx_scene.txt
 bin/CMakeCache.txt
 bin/Chrysalis.vcxproj.user
@@ -84,8 +82,10 @@ Editor/Tmp/
 build_scripts/temprc/
 build_scripts/client/
 .vs/
-assets/objects/characters/human/male/animations/crouch/
 *.ods#
-assets/animations/editor/
-assets_source/
 *.swatches
+*.thmb.png
+/assets/libs/environmentpresets/levels/house.xml.cryasset
+/assets/libs/environmentpresets/levels/house.xml
+/assets/chrysalis/levels/house/
+/assets/chrysalis/levels/house.level.cryasset

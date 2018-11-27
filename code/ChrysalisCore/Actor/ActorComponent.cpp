@@ -23,7 +23,6 @@
 #include <Components/Player/Camera/ICameraComponent.h>
 #include <Components/Interaction/EntityAwarenessComponent.h>
 #include <Components/Interaction/EntityInteractionComponent.h>
-#include <Components/Inventory/InventoryComponent.h>
 #include <Components/Equipment/EquipmentComponent.h>
 #include <Components/Snaplocks/SnaplockComponent.h>
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
@@ -68,50 +67,35 @@ void CActorComponent::ReflectType(Schematyc::CTypeDesc<CActorComponent>& desc)
 
 CActorComponent::~CActorComponent()
 {
-	// Inventory takes a little extra work to break down.
-	// TODO: CRITICAL: HACK: BROKEN: !!
-	//if (m_pInventory)
-	//{
-	//	if (IItem* item = GetCurrentItem())
-	//	{
-	//		if (item->IsUsed())
-	//			item->StopUse(GetEntityId());
-	//	}
-
-	//	if (gEnv->bServer)
-	//		m_pInventory->Destroy();
-	//}
 }
 
 
 void CActorComponent::Initialize()
 {
-	const auto pEntity = GetEntity();
-
 	// Mesh and animation.
-	m_pAdvancedAnimationComponent = pEntity->GetOrCreateComponent<Cry::DefaultComponents::CAdvancedAnimationComponent>();
+	m_pAdvancedAnimationComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CAdvancedAnimationComponent>();
 
 	// Character movement controller.
-	m_pCharacterControllerComponent = pEntity->GetOrCreateComponent<Cry::DefaultComponents::CCharacterControllerComponent>();
+	m_pCharacterControllerComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CCharacterControllerComponent>();
 
 	// Contoller.
-	m_pActorControllerComponent = pEntity->GetOrCreateComponent<CActorControllerComponent>();
+	m_pActorControllerComponent = m_pEntity->GetOrCreateComponent<CActorControllerComponent>();
 
 	// Inventory management.
-	m_pInventoryComponent = pEntity->GetOrCreateComponent<CInventoryComponent>();
+	m_pInventoryComponent = m_pEntity->GetOrCreateComponent<CInventoryComponent>();
 
 	// Equipment management.
-	m_pEquipmentComponent = pEntity->GetOrCreateComponent<CEquipmentComponent>();
+	m_pEquipmentComponent = m_pEntity->GetOrCreateComponent<CEquipmentComponent>();
 
 	// Give the actor a DRS proxy, since it will probably need one.
-	m_pDrsComponent = crycomponent_cast<IEntityDynamicResponseComponent*> (pEntity->CreateProxy(ENTITY_PROXY_DYNAMICRESPONSE));
+	m_pDrsComponent = crycomponent_cast<IEntityDynamicResponseComponent*> (m_pEntity->CreateProxy(ENTITY_PROXY_DYNAMICRESPONSE));
 
 	// For now, all actors will have awareness built-in, but this should default to not having it at some stage unless they are
 	// the player target.
-	m_pAwareness = pEntity->GetOrCreateComponent<CEntityAwarenessComponent>();
+	m_pAwareness = m_pEntity->GetOrCreateComponent<CEntityAwarenessComponent>();
 
 	// Manage our snaplocks.
-	m_pSnaplockComponent = pEntity->GetOrCreateComponent<CSnaplockComponent>();
+	m_pSnaplockComponent = m_pEntity->GetOrCreateComponent<CSnaplockComponent>();
 
 	// HACK: Need a way to add the default snaplocks in place. For now, I'm going to hard code them to test.
 	m_pSnaplockComponent->AddSnaplock(ISnaplock(SLT_ACTOR_HEAD, false));
@@ -135,14 +119,14 @@ void CActorComponent::Initialize()
 	//m_isAIControlled = false;
 
 	// Tells this instance to trigger areas.
-	pEntity->AddFlags(ENTITY_FLAG_TRIGGER_AREAS);
+	m_pEntity->AddFlags(ENTITY_FLAG_TRIGGER_AREAS);
 
 	// Are we the local player?
 	if (GetEntityId() == gEnv->pGameFramework->GetClientActorId())
 	{
 		// Tells this instance to trigger areas and that it's the local player.
-		pEntity->AddFlags(ENTITY_FLAG_TRIGGER_AREAS | ENTITY_FLAG_LOCAL_PLAYER);
-		CryLogAlways("CActorComponent::HandleEvent(): Entity \"%s\" became the local character!", pEntity->GetName());
+		m_pEntity->AddFlags(ENTITY_FLAG_TRIGGER_AREAS | ENTITY_FLAG_LOCAL_PLAYER);
+		CryLogAlways("CActorComponent::HandleEvent(): Entity \"%s\" became the local character!", m_pEntity->GetName());
 	}
 
 	// Reset the entity.
@@ -150,21 +134,21 @@ void CActorComponent::Initialize()
 }
 
 
-void CActorComponent::ProcessEvent(SEntityEvent& event)
+void CActorComponent::ProcessEvent(const SEntityEvent& event)
 {
 	switch (event.event)
 	{
 		// Physicalize on level start for Launcher
-		case ENTITY_EVENT_START_LEVEL:
+		case EEntityEvent::LevelStarted:
 
-			// Editor specific, physicalize on reset, property change or transform change
-		case ENTITY_EVENT_RESET:
-		case ENTITY_EVENT_EDITOR_PROPERTY_CHANGED:
-		case ENTITY_EVENT_XFORM_FINISHED_EDITOR:
+		// Editor specific, physicalize on reset, property change or transform change
+		case EEntityEvent::Reset:
+		case EEntityEvent::EditorPropertyChanged:
+		case EEntityEvent::TransformChangeFinishedInEditor:
 			OnResetState();
 			break;
 
-		case ENTITY_EVENT_UPDATE:
+		case EEntityEvent::Update:
 		{
 			SEntityUpdateContext* pCtx = (SEntityUpdateContext*)event.nParam [0];
 			Update(pCtx);
@@ -177,11 +161,14 @@ void CActorComponent::ProcessEvent(SEntityEvent& event)
 void CActorComponent::Update(SEntityUpdateContext* pCtx)
 {
 	const float frameTime = pCtx->fFrameTime;
+
+	// HACK: This belongs in pre-physics...I think.
+	SetIK();
 }
 
 
 // *** 
-// *** IActor
+// *** IActorComponent
 // *** 
 
 
@@ -273,20 +260,18 @@ const Vec3 CActorComponent::GetLocalEyePos() const
 
 Vec3 CActorComponent::GetLocalLeftHandPos() const
 {
-	// The default, in case we can't find the actual hand position.
+	// A terrible default, in case we can't find the actual hand position.
 	const Vec3 handPosition { -0.2f, 0.3f, 1.3f };
 
 	// Get their character or bail early.
 	auto pCharacter = m_pAdvancedAnimationComponent->GetCharacter();
 	if (pCharacter)
 	{
-		// Determine the position of the left and right eyes, using their average for eyePosition.
 		const IAttachmentManager* pAttachmentManager = pCharacter->GetIAttachmentManager();
 		if (pAttachmentManager)
 		{
 			// Did the animators define a hand bone for us to use?
-			// #TODO: This is from SDK guys. Change this to a well defined name for our skeleton attachments.
-			const auto handBone = pAttachmentManager->GetIndexByName("left_weapon");
+			const auto handBone = pAttachmentManager->GetIndexByName("LeftHand");
 			const IAttachment* pAttachment = pAttachmentManager->GetInterfaceByIndex(handBone);
 			if (pAttachment)
 			{
@@ -302,20 +287,18 @@ Vec3 CActorComponent::GetLocalLeftHandPos() const
 
 Vec3 CActorComponent::GetLocalRightHandPos() const
 {
-	// The default, in case we can't find the actual hand position.
+	// A terrible default, in case we can't find the actual hand position.
 	const Vec3 handPosition { 0.2f, 0.3f, 1.3f };
 
 	// Get their character or bail early.
 	auto pCharacter = m_pAdvancedAnimationComponent->GetCharacter();
 	if (pCharacter)
 	{
-		// Determine the position of the left and right eyes, using their average for eyePosition.
 		const IAttachmentManager* pAttachmentManager = pCharacter->GetIAttachmentManager();
 		if (pAttachmentManager)
 		{
 			// Did the animators define a hand bone for us to use?
-			// #TODO: This is from SDK guys. Change this to a well defined name for our skeleton attachments.
-			const auto handBone = pAttachmentManager->GetIndexByName("weapon");
+			const auto handBone = pAttachmentManager->GetIndexByName("RightHand");
 			const IAttachment* pAttachment = pAttachmentManager->GetInterfaceByIndex(handBone);
 			if (pAttachment)
 			{
@@ -340,51 +323,55 @@ bool CActorComponent::IsViewFirstPerson() const
 }
 
 
-// ***
-// *** IActorEventListener
-// ***
-
-void CActorComponent::OnSpecialMove(IActor* pActor, IActorEventListener::ESpecialMove move)
-{}
-
-
-void CActorComponent::OnDeath(IActor* pActor, bool bIsGod)
+void CActorComponent::OnKill()
 {
 }
 
 
-void CActorComponent::OnRevive(IActor* pActor, bool bIsGod)
+void CActorComponent::OnRevive()
 {
-	Revive();
+	// Mannequin should be reset.
+	OnResetState();
+
+	// Controller needs to be reset.
 	m_pActorControllerComponent->OnRevive();
 }
 
 
-void CActorComponent::OnEnterVehicle(IActor* pActor, const char* strVehicleClassName, const char* strSeatName, bool bThirdPerson)
+void CActorComponent::OnDeath()
+{
+}
+
+
+void CActorComponent::OnJump()
 {}
 
 
-void CActorComponent::OnExitVehicle(IActor* pActor)
+void CActorComponent::OnEnterVehicle(const char* strVehicleClassName, const char* strSeatName, bool bThirdPerson)
 {}
 
 
-void CActorComponent::OnHealthChanged(IActor* pActor, float newHealth)
+void CActorComponent::OnExitVehicle()
 {}
 
 
-void CActorComponent::OnItemPickedUp(IActor* pActor, EntityId itemId)
+void CActorComponent::OnHealthChanged(float newHealth)
 {}
 
 
-void CActorComponent::OnItemUsed(IActor* pActor, EntityId itemId)
+void CActorComponent::OnItemPickedUp(EntityId itemId)
 {}
 
 
-void CActorComponent::OnItemDropped(IActor* pActor, EntityId itemId)
+void CActorComponent::OnItemUsed(EntityId itemId)
 {}
 
 
-void CActorComponent::OnSprintStaminaChanged(IActor* pActor, float newStamina)
+void CActorComponent::OnItemDropped(EntityId itemId)
+{}
+
+
+void CActorComponent::OnSprintStaminaChanged(float newStamina)
 {}
 
 
@@ -469,131 +456,110 @@ void CActorComponent::OnToggleFirstPerson()
 }
 
 
+// HACK: NOTE: I have removed some parts of the code in the following function because it's causing problems with
+// animation playback. This needs to be dropped back in at some point when the correct method is found.
+
 void CActorComponent::OnResetState()
 {
-	const auto pEntity = GetEntity();
-
-	// Select a character definition based on first / third person mode. Hard coding the default scope isn't a great
-	// idea, but it's good enough for now. 
-	if (IsViewFirstPerson())
-	{
-		m_pAdvancedAnimationComponent->SetCharacterFile(m_geometryFirstPerson.value);
-		m_pAdvancedAnimationComponent->SetDefaultScopeContextName("Char1P");
-
-		// TODO: In order to switch the models out, we need to load and reset - but at present that is not removing the
-		// existing models. 
-
-		//m_pAdvancedAnimationComponent->LoadFromDisk();
-		//m_pAdvancedAnimationComponent->ResetCharacter();
-	}
-	else
-	{
-		m_pAdvancedAnimationComponent->SetCharacterFile(m_geometryThirdPerson.value);
-		m_pAdvancedAnimationComponent->SetDefaultScopeContextName("Char3P");
-		//m_pAdvancedAnimationComponent->LoadFromDisk();
-		//m_pAdvancedAnimationComponent->ResetCharacter();
-	}
-
-	// You need to reset the character after changing the animation properties.
-	m_pAdvancedAnimationComponent->ResetCharacter();
-
-	// Queue the locomotion action, which switches fragments and tags as needed for actor locomotion.
-	//auto locomotionAction = new CActorAnimationActionLocomotion();
-	//QueueAction(*locomotionAction);
-
 	// HACK: the CAdvancedAnimation doesn't allow us access to the action controller. This is a workaround.
 	m_pActionController = gEnv->pGameFramework->GetMannequinInterface().FindActionController(*GetEntity());
-
+	
 	if (m_pActionController)
 	{
+		// HACK: This prevents a weird crash when getting the context a second time.
+		m_pProceduralContextLook = nullptr;
+
+		const auto& pContext = m_pActionController->GetContext();
+
 		// The mannequin tags for an actor will need to be loaded. Because these are found in the controller definition,
 		// they are potentially different for every actor. 
-		m_actorMannequinParams = GetMannequinUserParams<SActorMannequinParams>(m_pActionController->GetContext());
+		m_actorMannequinParams = GetMannequinUserParams<SActorMannequinParams>(pContext);
 
-		// HACK: quick way to get some debug info out. Need to filter it to only one entity to prevent overlays.
-		if (strcmp(GetEntity()->GetName(), "Hero") == 0)
-			m_pActionController->SetFlag(AC_DebugDraw, true);
-	}
+	//	// NOTE: This is the main cause of the errors with handling character movement and the crashes.
+	//	// We're going to clear all the mannequin state, and set it all up again.
+	//	//m_pActionController->Reset();
+		m_pActionController->Flush();
+		m_pActionController->Resume();
 
-	// Mannequin should also be reset.
-	ResetMannequin();
-}
-
-
-// HACK: NOTE: TODO: I removed this code during the 5.4 refactor because it's hard to see quite how it fits in again.
-// Most of it will need to be added in at some point. 
-
-// TODO: Is this really needed? Perhaps there's a better way to handle it. Revive isn't getting called at present
-// so there must be a better place for this.
-
-void CActorComponent::ResetMannequin()
-{
-	if (m_pActionController)
-	{
-		//if (IsPlayer() && !IsAIControlled())
-		//{
-		//	m_pActionController->Resume();
-		//m_pActionController->Reset();
-
-		//	SAnimationContext &animContext = m_pActionController->GetContext();
-		//	animContext.state.Set(m_actorMannequinParams->tagIDs.localClient, IsClient());
-		//	animContext.state.SetGroup(m_actorMannequinParams->tagGroupIDs.playMode, gEnv->bMultiplayer ? m_actorMannequinParams->tagIDs.MP : m_actorMannequinParams->tagIDs.SP);
-		//	animContext.state.Set(m_actorMannequinParams->tagIDs.FP, IsViewFirstPerson());
-
-		//	SetStanceTag(m_pCharacterControllerComponent->GetStance(), animContext.state);
-
-		//	// Install persistent AimPose action
-		//	QueueAction(*new CPlayerBackgroundAction(EActorActionPriority::eAAP_Movement, m_actorMannequinParams->fragmentIDs.AimPose));
-
-		//	// Install persistent WeaponPose action
-		//	QueueAction(*new CPlayerBackgroundAction(EActorActionPriority::eAAP_Lowest, m_actorMannequinParams->fragmentIDs.WeaponPose));
-
-		//	CActionItemIdle *itemIdle = new CActionItemIdle(EActorActionPriority::eAAP_Lowest, m_actorMannequinParams->fragmentIDs.Idle, m_actorMannequinParams->fragmentIDs.IdleBreak, TAG_STATE_EMPTY, *this);
-		//	QueueAction(*itemIdle);
-
-		//	CPlayerMovementAction *movementAction = new CPlayerMovementAction(EActorActionPriority::eAAP_Movement);
-		//	QueueAction(*movementAction);
+	//	// Select a character definition based on first / third person mode. Hard coding the default scope isn't a great
+	//	// idea, but it's good enough for now. 
+	//	if (IsViewFirstPerson())
+	//	{
+	//		m_pAdvancedAnimationComponent->SetDefaultScopeContextName("Char1P");
+	//		m_pAdvancedAnimationComponent->SetCharacterFile(m_geometryFirstPerson.value);
+	//	}
+	//	else
+	//	{
+	//		m_pAdvancedAnimationComponent->SetDefaultScopeContextName("Char3P");
+	//		m_pAdvancedAnimationComponent->SetCharacterFile(m_geometryThirdPerson.value);
+	//	}
 
 		// Queue the locomotion action, which switches fragments and tags as needed for actor locomotion.
 		auto locomotionAction = new CActorAnimationActionLocomotion();
 		QueueAction(*locomotionAction);
 
-		// Aim actions.
-		//if (CActorAnimationActionAimPose::IsSupported(m_pActionController->GetContext())
-		//	&& CActorAnimationActionAiming::IsSupported(m_pActionController->GetContext()))
-		//{
-		//	m_pProceduralContextAim = static_cast<CProceduralContextAim*>(m_pActionController->FindOrCreateProceduralContext(CProceduralContextAim::GetCID()));
-		//	QueueAction(*new CActorAnimationActionAimPose());
-		//	QueueAction(*new CActorAnimationActionAiming());
-		//}
-
-		//// Look actions.
-		if (CActorAnimationActionLookPose::IsSupported(m_pActionController->GetContext())
-			&& CActorAnimationActionLooking::IsSupported(m_pActionController->GetContext()))
+		// Third person views allow a little extra control.
+		if (!IsViewFirstPerson())
 		{
-			m_pProceduralContextLook = static_cast<CProceduralContextLook*>(m_pActionController->FindOrCreateProceduralContext(CProceduralContextLook::GetCID()));
-			QueueAction(*new CActorAnimationActionLookPose());
-			QueueAction(*new CActorAnimationActionLooking());
-		}
+			//// Aim actions.
+			//if (CActorAnimationActionAimPose::IsSupported(pContext)
+			//	&& CActorAnimationActionAiming::IsSupported(pContext))
+			//{
+			//	m_pProceduralContextAim = static_cast<CProceduralContextAim*>(m_pActionController->FindOrCreateProceduralContext(CProceduralContextAim::GetCID()));
+			//	QueueAction(*new CActorAnimationActionAimPose());
+			//	QueueAction(*new CActorAnimationActionAiming());
+			//}
 
-		//	m_weaponFPAiming.ResetMannequin();
-		//}
+			// Set the scope tag for look pose.
+			auto& animContext = m_pActionController->GetContext();
+			animContext.state.Set(m_actorMannequinParams->tagIDs.ScopeLookPose, true);
+
+			// Look actions.
+			//if (CActorAnimationActionLookPose::IsSupported(pContext) // HACK: These tests are causing crashes on the second run through.
+				//&& CActorAnimationActionLooking::IsSupported(pContext))
+			{
+				const auto pX = m_pActionController->FindOrCreateProceduralContext(CProceduralContextLook::GetCID());
+				m_pProceduralContextLook = static_cast<CProceduralContextLook*>(pX);
+
+				QueueAction(*new CActorAnimationActionLookPose());
+				QueueAction(*new CActorAnimationActionLooking());
+			}
+		}
+	}
+	else
+	{
+		CryLogAlways("Couldn't get a valid action controller.");
 	}
 }
 
 
-void CActorComponent::Kill()
+void CActorComponent::SetIK()
 {
-	// #TODO: A *LOT* of code needs to be added here to handle reviving.
+	// TEST: If the actor is looking at something, let's apply the IK.
+	if (m_pAwareness && m_pAwareness->GetRayHit())
+	{
+		// TEST: Just look straight ahead.
+		SetLookingIK(true, m_pAwareness->GetRayHitPosition());
+	}
+	else
+	{
+		// Don't allow look IK.
+		SetLookingIK(false, Vec3 { ZERO });
+	}
 }
 
 
-void CActorComponent::Revive(EReasonForRevive reasonForRevive)
+bool CActorComponent::SetLookingIK(const bool isLooking, const Vec3& lookTarget)
 {
-	// #TODO: A *LOT* of code needs to be added here to handle reviving.
+	const bool shouldHandle = (m_pProceduralContextLook != nullptr);
 
-	// Mannequin should be reset.
-	//ResetMannequin();
+	if (shouldHandle)
+	{
+		m_pProceduralContextLook->SetLookTarget(lookTarget);
+		m_pProceduralContextLook->SetIsLookingGame(isLooking);
+	}
+
+	return shouldHandle;
 }
 
 
@@ -837,10 +803,10 @@ void CActorComponent::InteractionEnd(IInteraction* pInteraction)
 // *** Allow control of the actor's animations / fragments / etc.
 // ***
 
-IActionController* CActorComponent::GetActionController() const
-{
-	return m_pActionController;
-}
+//IActionController* CActorComponent::GetActionController() const
+//{
+//	return m_pActionController;
+//}
 
 
 TagID CActorComponent::GetStanceTagId(EActorStance actorStance)

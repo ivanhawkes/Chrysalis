@@ -47,11 +47,11 @@ void CItemInteractionComponent::Initialize()
 }
 
 
-void CItemInteractionComponent::ProcessEvent(SEntityEvent& event)
+void CItemInteractionComponent::ProcessEvent(const SEntityEvent& event)
 {
 	switch (event.event)
 	{
-		case ENTITY_EVENT_UPDATE:
+		case EEntityEvent::Update:
 			Update();
 			break;
 	}
@@ -72,9 +72,8 @@ void CItemInteractionComponent::OnInteractionItemInspect(IActorComponent& actor)
 
 	if (auto pActorComponent = CPlayerComponent::GetLocalActor())
 	{
-		const auto pEntity = GetEntity();
-		m_initialPosition = pEntity->GetPos();
-		m_initialRotation = pEntity->GetRotation();
+		m_initialPosition = m_pEntity->GetPos();
+		m_initialRotation = m_pEntity->GetRotation();
 		m_targetPosition = pActorComponent->GetEntity()->GetPos() + pActorComponent->GetLocalLeftHandPos();
 		m_timeInAir = 0.0f;
 		m_timeInAirRequired = (m_targetPosition - m_initialPosition).GetLength() / kJumpToPlayerSpeed;
@@ -123,13 +122,11 @@ void CItemInteractionComponent::OnInteractionItemDrop(IActorComponent& actor)
 
 	if (auto pActorComponent = CPlayerComponent::GetLocalActor())
 	{
-		const auto pEntity = GetEntity();
-
 		pe_action_awake action;
 		action.bAwake = true;
 
 		// No impulse, we're just letting it drop.
-		IPhysicalEntity* pPhysEntity = pEntity->GetPhysics();
+		IPhysicalEntity* pPhysEntity = m_pEntity->GetPhysics();
 		if (pPhysEntity)
 			pPhysEntity->Action(&action);
 	}
@@ -148,7 +145,6 @@ void CItemInteractionComponent::OnInteractionItemToss(IActorComponent& actor)
 
 	if (auto pActorComponent = CPlayerComponent::GetLocalActor())
 	{
-		const auto pEntity = GetEntity();
 		Vec3 impulse = pActorComponent->GetEntity()->GetRotation() * FORWARD_DIRECTION * kTossNewtons;
 
 		// A small impulse to toss it aside.
@@ -156,7 +152,7 @@ void CItemInteractionComponent::OnInteractionItemToss(IActorComponent& actor)
 		action.impulse = impulse;
 		action.point = pActorComponent->GetLocalRightHandPos();
 
-		IPhysicalEntity* pPhysEntity = pEntity->GetPhysics();
+		IPhysicalEntity* pPhysEntity = m_pEntity->GetPhysics();
 		if (pPhysEntity)
 			pPhysEntity->Action(&action);
 	}
@@ -213,15 +209,13 @@ void CItemInteractionComponent::Update()
 
 void CItemInteractionComponent::OnInspectingUpdate(const float frameTime)
 {
-	const auto pEntity = GetEntity();
-
 	// For now, just pull the object to a target location.
 	m_timeInAir = min(m_timeInAirRequired, m_timeInAir + frameTime);
 
 	if (auto pActorComponent = CPlayerComponent::GetLocalActor())
 	{
 		Vec3 delta = (m_targetPosition - m_initialPosition) * (1.0f - (m_timeInAir / m_timeInAirRequired));
-		pEntity->SetPos(m_targetPosition - delta);
+		m_pEntity->SetPos(m_targetPosition - delta);
 
 		// Allow them to rotate the item in their hands.
 		if (auto pPlayerInput = CPlayerComponent::GetLocalPlayer()->GetPlayerInput())
@@ -230,7 +224,7 @@ void CItemInteractionComponent::OnInspectingUpdate(const float frameTime)
 			// from the rotation?
 			const auto inputRotation = Quat(Ang3(pPlayerInput->GetPitchDelta() * kInspectionRotationFactor, pPlayerInput->GetYawDelta() * kInspectionRotationFactor, 0.0f));
 			const auto characterRotation = Quat(Ang3(0.0f, 0.0f, pActorComponent->GetEntity()->GetRotation().GetFwdZ())).GetNormalized();
-			pEntity->SetRotation(pEntity->GetRotation() * inputRotation * characterRotation);
+			m_pEntity->SetRotation(m_pEntity->GetRotation() * inputRotation * characterRotation);
 		}
 	}
 }
@@ -238,22 +232,20 @@ void CItemInteractionComponent::OnInspectingUpdate(const float frameTime)
 
 void CItemInteractionComponent::OnPickingUpUpdate(const float frameTime)
 {
-	const auto pEntity = GetEntity();
-
 	// For now, just pull the object to a target location.
 	m_timeInAir = min(m_timeInAirRequired, m_timeInAir + frameTime);
 
 	if (auto pActorComponent = CPlayerComponent::GetLocalActor())
 	{
 		Vec3 delta = (m_targetPosition - m_initialPosition) * (1.0f - (m_timeInAir / m_timeInAirRequired));
-		pEntity->SetPos(m_targetPosition - delta);
+		m_pEntity->SetPos(m_targetPosition - delta);
 	}
 
 	// Allow them to rotate the item in their hands.
 	if (auto pPlayerInput = CPlayerComponent::GetLocalPlayer()->GetPlayerInput())
 	{
 		const auto rotation = Quat(Ang3(0.0f, 0.0f, pPlayerInput->GetYawDelta()));
-		pEntity->SetRotation(pEntity->GetRotation() * rotation);
+		m_pEntity->SetRotation(m_pEntity->GetRotation() * rotation);
 	}
 }
 }

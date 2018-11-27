@@ -1,0 +1,12 @@
+<AssetMetadata version="0" type="Material" guid="a2d273eb-f7a8-0b64-177a-d70ad3b5eab3">
+ <Files>
+  <File path="security_pad.mtl"/>
+ </Files>
+ <Details>
+  <Detail name="subMaterialCount">15</Detail>
+  <Detail name="textureCount">1</Detail>
+ </Details>
+ <Dependencies>
+  <Path usageCount="1">textures/reference/zone_system.dds</Path>
+ </Dependencies>
+</AssetMetadata>

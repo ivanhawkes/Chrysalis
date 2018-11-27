@@ -7,9 +7,22 @@
 *   Run the fbxtool to remove the Mixamo namespace, and add the Root and RootProxy nodes e.g.
 
 ```
-.\bin\x64\Debug\fbxtool.exe -i human_male.fbx -o D:\Chrysalis\assets_source\objects\characters\human\male\human_male.fbx -v -j .\mixamo-to-autodesk.json -f
+.\bin\x64\Debug\fbxtool.exe -i human_male.fbx -o D:\Chrysalis\assets_source\objects\characters\human\male
+\human_male.fbx -v -j .\mixamo-to-autodesk.json -f -k
 ```
 
+For Lavizh
+
+```
+.\bin\x64\Debug\fbxtool.exe -i aurora.fbx -o D:\Chrysalis\assets_source\objects\characters\human\aurora\a
+urora.fbx -v -j d:\fbxtool\mixamo-to-autodesk.json -f -k
+```
+
+For Yoshida
+
+```
+.\bin\x64\Debug\fbxtool.exe -i soldier.fbx -o D:\Chrysalis\assets_source\objects\characters\human\soldier\soldier.fbx -v -j d:\fbxtool\resonance-to-autodesk.json -f -k
+```
 
 #From FBXTool into Maya
 

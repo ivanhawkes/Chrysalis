@@ -31,7 +31,7 @@ namespace Chrysalis
 
 int CryWatchFunc(const char * message);
 int CryWatchLogFunc(const char * message);
-void CryWatch3DAdd(const char * text, const Vec3 & posIn, float lifetime = 2.f, const Vec3 * velocity = NULL, float gravity = 3.f);
+void CryWatch3DAdd(const char * text, const Vec3 & posIn, float lifetime = 2.f, const Vec3 * velocity = nullptr, float gravity = 3.f);
 void CryWatch3DReset();
 void CryWatch3DTick(float dt);
 

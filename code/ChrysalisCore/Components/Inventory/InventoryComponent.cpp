@@ -27,8 +27,6 @@ void CInventoryComponent::ReflectType(Schematyc::CTypeDesc<CInventoryComponent>&
 
 void CInventoryComponent::Initialize()
 {
-	const auto pEntity = GetEntity();
-
 	OnResetState();
 }
 

@@ -5,6 +5,7 @@
 #include "Snaplocks/Snaplock.h"
 #include "DefaultComponents/Geometry/AdvancedAnimationComponent.h"
 #include "DefaultComponents/Physics/CharacterControllerComponent.h"
+#include <Components/Inventory/InventoryComponent.h>
 #include <Components/Player/Input/PlayerInputComponent.h>
 #include <Actor/ActorControllerComponent.h>
 #include <Entities/Interaction/IEntityInteraction.h>
@@ -59,112 +60,6 @@ enum EActorClassType
 };
 
 
-struct IActorEventListener
-{
-	enum ESpecialMove
-	{
-		eSM_Jump = 0,
-		eSM_SpeedSprint,
-	};
-
-	IActorEventListener() {}
-	virtual ~IActorEventListener() {}
-
-
-	/**
-	Executes the special move action. Special moves are defined in an enum.
-
-	\param [in,out]	pActor If non-null, the actor.
-	\param	move		   The move.
-	**/
-
-	// #TODO: Since there are just two special moves, consider making them full events instead.
-	virtual void OnSpecialMove(IActor* pActor, IActorEventListener::ESpecialMove move) = 0;
-
-
-	/**
-	The actor has died.
-
-	\param [in,out]	pActor If non-null, the actor.
-	\param	bIsGod		   true if this instance is god.
-	**/
-	virtual void OnDeath(IActor* pActor, bool bIsGod) = 0;
-
-
-	/**
-	The actor has been revived.
-
-	\param [in,out]	pActor If non-null, the actor.
-	\param	bIsGod		   true if this instance is god.
-	**/
-	virtual void OnRevive(IActor* pActor, bool bIsGod) = 0;
-
-
-	/**
-	The actor has entered a vehicle.
-
-	\param [in,out]	pActor	    If non-null, the actor.
-	\param	strVehicleClassName Name of the vehicle class.
-	\param	strSeatName		    Name of the seat.
-	\param	bThirdPerson	    true if we are in third person.
-	**/
-	virtual void OnEnterVehicle(IActor* pActor, const char* strVehicleClassName, const char* strSeatName, bool bThirdPerson) = 0;
-
-
-	/**
-	The actor has exited a vehicle.
-
-	\param [in,out]	pActor If non-null, the actor.
-	**/
-	virtual void OnExitVehicle(IActor* pActor) = 0;
-
-
-	/**
-	The actor's health has changed.
-
-	\param [in,out]	pActor If non-null, the actor.
-	\param	newHealth	   The new health.
-	**/
-	virtual void OnHealthChanged(IActor* pActor, float newHealth) = 0;
-
-
-	/**
-	The actor has picked up an item.
-
-	\param [in,out]	pActor If non-null, the actor.
-	\param	itemId		   Identifier for the item.
-	**/
-	virtual void OnItemPickedUp(IActor* pActor, EntityId itemId) = 0;
-
-
-	/**
-	The actor has used an item.
-
-	\param [in,out]	pActor If non-null, the actor.
-	\param	itemId		   Identifier for the item.
-	**/
-	virtual void OnItemUsed(IActor* pActor, EntityId itemId) = 0;
-
-
-	/**
-	The actor has dropped an item.
-
-	\param [in,out]	pActor If non-null, the actor.
-	\param	itemId		   Identifier for the item.
-	**/
-	virtual void OnItemDropped(IActor* pActor, EntityId itemId) = 0;
-
-
-	/**
-	The actor's sprint stamina has changed.
-
-	\param [in,out]	pActor If non-null, the actor.
-	\param	newStamina	   The new stamina.
-	**/
-	virtual void OnSprintStaminaChanged(IActor* pActor, float newStamina) = 0;
-};
-
-
 /**
 A very simple base class for all actors. This is replacing the old CryTek interface.
 
@@ -191,34 +86,66 @@ public:
 	}
 
 
-	/**	Is this actor being controller by the local player?
-	TODO: We might not need this and IsClient, look at removing one or naming them better. */
+	/**
+	Is this actor being controller by the local player?
+	
+	\return A const bool.
+	**/
 	virtual const bool IsPlayer() const = 0;
 
-	/**	Is this actor being controller by the local player? */
+
+	/**
+	Is this actor being controller by the local player?
+	
+	\return A const bool.
+	**/
 	virtual const bool IsClient() const = 0;
 
-	/** Get's the player controlling this actor, if there is one. This may return nullptr. */
+
+	/**
+	Get's the player controlling this actor, if there is one. This may return nullptr.
+	
+	\return Null if it fails, else the player.
+	**/
 	virtual CPlayerComponent* GetPlayer() const = 0;
 
+
+	/**
+	Gets the character instance for this actor.
+	
+	\return Null if it fails, else the character.
+	**/
 	virtual ICharacterInstance* GetCharacter() const = 0;
+
 
 	/**
 	Gets this instance's local-space eye position (for a human, this is typically Vec3 (0, 0, 1.76f)).
-
+	
 	The code will first attempt to return a "Camera" helper if there is one. If only one eye is available (left_eye,
 	right_eye) then that is used as the local position. In the case of two eyes, the position is the average of the two
 	eyes.
-
+	
 	Position is calculated each time using the attachment manager, so it will be better to cache the results if you need
 	to call this a few times in an update.
-
+	
 	\return This instance's local-space eye position.
 	**/
 	virtual const Vec3 GetLocalEyePos() const { return { 0.0f, 0.0f, 1.82f }; };
 
+
+	/**
+	Gets local left hand position.
+	
+	\return The local left hand position.
+	**/
 	virtual Vec3 GetLocalLeftHandPos() const { return Vec3(ZERO); };
 
+
+	/**
+	Gets local right hand position.
+	
+	\return The local right hand position.
+	**/
 	virtual Vec3 GetLocalRightHandPos() const { return Vec3(ZERO); };
 
 	/** Action handler for the "use" verb for entities that provide a use function. */
@@ -229,6 +156,7 @@ public:
 
 	/** Action handler for dropping an item / entity. */
 	virtual void OnActionItemDrop() = 0;
+
 
 	/**
 	Action handler for throwing an item. General expectation is this will be used for "Pick and Throw" weapons but it
@@ -288,55 +216,56 @@ public:
 	/** Is the actor currently jogging?  */
 	virtual bool IsJogging() const = 0;
 
+
 	/**
 	Call this to place the actor into "interaction mode". This should be called by any section of code that wants to
 	trigger an interaction with the actor. This will lock out any other attempts to start an interaction until this one
 	has completed. Generally, you will want whatever process is kicked off by the 'OnActionInteractionStart' function to
 	make a call to this at the start of it's specific interaction.
+	
+	\param [in,out]	pInteraction If non-null, the interaction.
 	**/
 	virtual void InteractionStart(IInteraction* pInteraction) = 0;
 
-	/** Received at intervals during an on-going interaction. */
+
+	/**
+	Received at intervals during an on-going interaction.
+	
+	\param [in,out]	pInteraction If non-null, the interaction.
+	**/
 	virtual void InteractionTick(IInteraction* pInteraction) = 0;
 
-	/** Call this to remove the actor from "interaction mode". This will open the actor up to accepting interactions again. */
+
+	/**
+	Call this to remove the actor from "interaction mode". This will open the actor up to accepting interactions
+	again.
+	
+	\param [in,out]	pInteraction If non-null, the interaction.
+	**/
 	virtual void InteractionEnd(IInteraction* pInteraction) = 0;
 
-	/** Queue an action onto the animation queue. */
-	virtual void QueueAction(TAction<SAnimationContext>& pAction) = 0;
+
+	/**
+	Queue an action onto the animation queue.
+	
+	\param [in,out]	pAction The action.
+	**/
+	virtual void QueueAction(IAction& pAction) = 0;
+
 
 	/**
 	Gets action controller.
-
+	
 	\return Null if it fails, else the action controller.
 	**/
-	virtual IActionController* GetActionController() const = 0;
-
-	/** Kill the character. */
-	virtual void Kill() = 0;
-
-	enum EReasonForRevive
-	{
-		RFR_None,
-		RFR_FromInit,
-		RFR_StartSpectating,
-		RFR_Spawn,
-		RFR_ScriptBind,
-	};
-
-	/**
-	Revive the character from death.
-
-	\param	reasonForRevive	the reason for revive.
-	*/
-	virtual void Revive(EReasonForRevive reasonForRevive = RFR_None) = 0;
+	//virtual IActionController* GetActionController() const = 0;
 
 
 	/**
 	Call this routine when a player has attached to this actor to complete the circle. The player is now in control
 	of this actor's movements and may view them through a camera attached to it. This routine is not meant for direct
 	calling, instead use the AttachToCharacter routine that is provided on a valid CPlayerComponent object.
-
+	
 	\param [in,out]	player The player.
 	**/
 	virtual void OnPlayerAttach(CPlayerComponent& player) = 0;
@@ -351,17 +280,84 @@ public:
 
 	/** The actor has toggled between third person and first person view modes. */
 	virtual void OnToggleFirstPerson() = 0;
+
+
+	/** Kill the actor. */
+	virtual void OnKill() = 0;
+
+
+	/** The actor has died. */
+	virtual void OnDeath() = 0;
+
+
+	/** The actor has been revived. */
+	virtual void OnRevive() = 0;
+
+
+	/** Executes the jump action. */
+	virtual void OnJump() = 0;
+
+
+	/**
+	The actor has entered a vehicle.
+	
+	\param	strVehicleClassName Name of the vehicle class.
+	\param	strSeatName		    Name of the seat.
+	\param	bThirdPerson	    true if we are in third person.
+	**/
+	virtual void OnEnterVehicle(const char* strVehicleClassName, const char* strSeatName, bool bThirdPerson) = 0;
+
+
+	/** The actor has exited a vehicle. */
+	virtual void OnExitVehicle() = 0;
+
+
+	/**
+	The actor's health has changed.
+	
+	\param	newHealth The new health.
+	**/
+	virtual void OnHealthChanged(float newHealth) = 0;
+
+
+	/**
+	The actor has picked up an item.
+	
+	\param	itemId Identifier for the item.
+	**/
+	virtual void OnItemPickedUp(EntityId itemId) = 0;
+
+
+	/**
+	The actor has used an item.
+	
+	\param	itemId Identifier for the item.
+	**/
+	virtual void OnItemUsed(EntityId itemId) = 0;
+
+
+	/**
+	The actor has dropped an item.
+	
+	\param	itemId Identifier for the item.
+	**/
+	virtual void OnItemDropped(EntityId itemId) = 0;
+
+
+	/**
+	The actor's sprint stamina has changed.
+	
+	\param	newStamina The new stamina.
+	**/
+	virtual void OnSprintStaminaChanged(float newStamina) = 0;
 };
 DECLARE_SHARED_POINTERS(IActor);
 
 
 /** Base class for any components that wish to provide actor services. */
 
-// #TODO: probably needs to also implement IInventoryListener to listen for inventory changes.
-
 class CActorComponent
 	: public IActorComponent
-	, public IActorEventListener
 {
 protected:
 	friend CChrysalisCorePlugin;
@@ -370,8 +366,8 @@ protected:
 
 	// IEntityComponent
 	void Initialize() override;
-	void ProcessEvent(SEntityEvent& event) override;
-	uint64 GetEventMask() const { return BIT64(ENTITY_EVENT_UPDATE) | BIT64(ENTITY_EVENT_PREPHYSICSUPDATE); }
+	void ProcessEvent(const SEntityEvent& event) override;
+	Cry::Entity::EntityEventMask GetEventMask() const override { return ENTITY_EVENT_BIT(ENTITY_EVENT_UPDATE) | ENTITY_EVENT_BIT(ENTITY_EVENT_PREPHYSICSUPDATE); }
 	// ~IEntityComponent
 
 	virtual void Update(SEntityUpdateContext* pCtx);
@@ -389,103 +385,74 @@ public:
 	}
 
 
-	// ***
-	// *** IActorEventListener
-	// ***
-
-public:
-
-	/**
-	Executes the special move action. Special moves are defined in an enum.
-
-	\param [in,out]	pActor If non-null, the actor.
-	\param	move		   The move.
-	**/
-
-	// #TODO: Since there are just two special moves, consider making them full events instead.
-	void OnSpecialMove(IActor* pActor, IActorEventListener::ESpecialMove move) override;
+	/** Kill the actor. */
+	void OnKill() override;
 
 
-	/**
-	The actor has died.
-
-	\param [in,out]	pActor If non-null, the actor.
-	\param	bIsGod		   true if this instance is god.
-	**/
-	void OnDeath(IActor* pActor, bool bIsGod) override;
+	/** The actor has died. */
+	void OnDeath() override;
 
 
-	/**
-	The actor has been revived.
+	/** The actor has been revived. */
+	void OnRevive() override;
 
-	\param [in,out]	pActor If non-null, the actor.
-	\param	bIsGod		   true if this instance is god.
-	**/
-	void OnRevive(IActor* pActor, bool bIsGod) override;
+
+	/** Executes the jump action. */
+	void OnJump() override;
 
 
 	/**
 	The actor has entered a vehicle.
-
-	\param [in,out]	pActor	    If non-null, the actor.
+	
 	\param	strVehicleClassName Name of the vehicle class.
 	\param	strSeatName		    Name of the seat.
 	\param	bThirdPerson	    true if we are in third person.
 	**/
-	void OnEnterVehicle(IActor* pActor, const char* strVehicleClassName, const char* strSeatName, bool bThirdPerson) override;
+	void OnEnterVehicle(const char* strVehicleClassName, const char* strSeatName, bool bThirdPerson) override;
 
 
-	/**
-	The actor has exited a vehicle.
-
-	\param [in,out]	pActor If non-null, the actor.
-	**/
-	void OnExitVehicle(IActor* pActor) override;
+	/** The actor has exited a vehicle. */
+	void OnExitVehicle() override;
 
 
 	/**
 	The actor's health has changed.
-
-	\param [in,out]	pActor If non-null, the actor.
-	\param	newHealth	   The new health.
+	
+	\param	newHealth The new health.
 	**/
-	void OnHealthChanged(IActor* pActor, float newHealth) override;
+	void OnHealthChanged(float newHealth) override;
 
 
 	/**
 	The actor has picked up an item.
-
-	\param [in,out]	pActor If non-null, the actor.
-	\param	itemId		   Identifier for the item.
+	
+	\param	itemId Identifier for the item.
 	**/
-	void OnItemPickedUp(IActor* pActor, EntityId itemId) override;
+	void OnItemPickedUp(EntityId itemId) override;
 
 
 	/**
 	The actor has used an item.
-
-	\param [in,out]	pActor If non-null, the actor.
-	\param	itemId		   Identifier for the item.
+	
+	\param	itemId Identifier for the item.
 	**/
-	void OnItemUsed(IActor* pActor, EntityId itemId) override;
+	void OnItemUsed(EntityId itemId) override;
 
 
 	/**
 	The actor has dropped an item.
-
-	\param [in,out]	pActor If non-null, the actor.
-	\param	itemId		   Identifier for the item.
+	
+	\param	itemId Identifier for the item.
 	**/
-	void OnItemDropped(IActor* pActor, EntityId itemId) override;
+	void OnItemDropped(EntityId itemId) override;
 
 
 	/**
 	The actor's sprint stamina has changed.
-
-	\param [in,out]	pActor If non-null, the actor.
-	\param	newStamina	   The new stamina.
+	
+	\param	newStamina The new stamina.
 	**/
-	void OnSprintStaminaChanged(IActor* pActor, float newStamina) override;
+	void OnSprintStaminaChanged(float newStamina) override;
 
 public:
 	/** Provide a means for them to query the move velocity and direction. */
@@ -527,7 +494,11 @@ protected:
 	additionally by the editor when you both enter and leave game mode. */
 	virtual void OnResetState();
 
-	void ResetMannequin();
+	/** Set the IK bones, if applicable. */
+	void SetIK();
+
+	/** Set the look IK on or off, giving it a target if it's being set on. **/
+	bool SetLookingIK(const bool isLooking, const Vec3& lookTarget);
 
 private:
 	/** An component which is used to discover entities near the actor. */
@@ -562,23 +533,6 @@ private:
 public:
 	void OnPlayerAttach(CPlayerComponent& player) override;
 	void OnPlayerDetach() override;
-
-
-	// ***
-	// *** Life-cycle
-	// ***
-
-public:
-	/** Kill the character. */
-	void Kill() override;
-
-
-	/**
-	Revive the character from death.
-
-	\param	reasonForRevive	the reason for revive.
-	*/
-	void Revive(EReasonForRevive reasonForRevive = RFR_Spawn) override;
 
 
 	// ***
@@ -641,9 +595,9 @@ private:
 	// ***
 
 public:
-	void QueueAction(TAction<SAnimationContext>& pAction) override { m_pAdvancedAnimationComponent->QueueAction(pAction); };
+	void QueueAction(IAction& pAction) override { m_pAdvancedAnimationComponent->QueueCustomFragment(pAction); };
 
-	virtual IActionController* GetActionController() const;
+	//virtual IActionController* GetActionController() const;
 
 	const SActorMannequinParams* GetMannequinParams() const { return m_actorMannequinParams; }
 

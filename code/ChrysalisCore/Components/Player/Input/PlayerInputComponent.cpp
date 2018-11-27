@@ -34,13 +34,11 @@ void CPlayerInputComponent::ReflectType(Schematyc::CTypeDesc<CPlayerInputCompone
 
 void CPlayerInputComponent::Initialize()
 {
-	const auto pEntity = GetEntity();
-
 	// Query for the player that owns this extension.
-	m_pPlayer = pEntity->GetComponent<CPlayerComponent>();
+	m_pPlayer = m_pEntity->GetComponent<CPlayerComponent>();
 
 	// Grab the camera manager.
-	m_pCameraManager = pEntity->GetComponent<CCameraManagerComponent>();
+	m_pCameraManager = m_pEntity->GetComponent<CCameraManagerComponent>();
 
 	// #HACK: #TODO: Is this right? We only want to register action maps on the local client.
 	if (GetEntityId() == gEnv->pGameFramework->GetClientActorId())
@@ -48,11 +46,11 @@ void CPlayerInputComponent::Initialize()
 }
 
 
-void CPlayerInputComponent::ProcessEvent(SEntityEvent& event)
+void CPlayerInputComponent::ProcessEvent(const SEntityEvent& event)
 {
 	switch (event.event)
 	{
-		case ENTITY_EVENT_UPDATE:
+		case EEntityEvent::Update:
 			Update();
 			break;
 	}
@@ -295,20 +293,20 @@ void CPlayerInputComponent::HandleInputFlagChange(TInputFlags flags, int activat
 	{
 		case EInputFlagType::Hold:
 		{
-			if (activationMode == eIS_Released)
-			{
-				m_inputFlags &= ~flags;
-			}
-			else
+			if (activationMode & eIS_Pressed)
 			{
 				m_inputFlags |= flags;
+			}
+			else if (activationMode & eIS_Released)
+			{
+				m_inputFlags &= ~flags;
 			}
 		}
 		break;
 
 		case EInputFlagType::Toggle:
 		{
-			if (activationMode == eIS_Released)
+			if (activationMode & eIS_Released)
 			{
 				// Toggle the bit(s)
 				m_inputFlags ^= flags;

@@ -33,16 +33,14 @@ void CActorControllerComponent::ReflectType(Schematyc::CTypeDesc<CActorControlle
 
 void CActorControllerComponent::Initialize()
 {
-	const auto pEntity = GetEntity();
-
 	// Mesh and animation.
-	m_pAdvancedAnimationComponent = pEntity->GetOrCreateComponent<Cry::DefaultComponents::CAdvancedAnimationComponent>();
+	m_pAdvancedAnimationComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CAdvancedAnimationComponent>();
 
 	// Character movement controller.
-	m_pCharacterControllerComponent = pEntity->GetOrCreateComponent<Cry::DefaultComponents::CCharacterControllerComponent>();
+	m_pCharacterControllerComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CCharacterControllerComponent>();
 
 	// We need to know which actor component we are paired with. The actor controller class is pretty worthless without this.
-	m_pActorComponent = pEntity->GetOrCreateComponent<CActorComponent>();
+	m_pActorComponent = m_pEntity->GetOrCreateComponent<CActorComponent>();
 	CRY_ASSERT_MESSAGE(m_pActorComponent, "The actor controller component must be paired with an actor component.");
 
 	// Initialise the movement state machine.
@@ -53,21 +51,21 @@ void CActorControllerComponent::Initialize()
 }
 
 
-void CActorControllerComponent::ProcessEvent(SEntityEvent& event)
+void CActorControllerComponent::ProcessEvent(const SEntityEvent& event)
 {
 	switch (event.event)
 	{
 		// Physicalize on level start for Launcher
-		case ENTITY_EVENT_START_LEVEL:
+		case EEntityEvent::LevelStarted:
 
 			// Editor specific, physicalize on reset, property change or transform change
-		case ENTITY_EVENT_RESET:
-		case ENTITY_EVENT_EDITOR_PROPERTY_CHANGED:
-		case ENTITY_EVENT_XFORM_FINISHED_EDITOR:
+		case EEntityEvent::Reset:
+		case EEntityEvent::EditorPropertyChanged:
+		case EEntityEvent::TransformChangeFinishedInEditor:
 			OnResetState();
 			break;
 
-		case ENTITY_EVENT_UPDATE:
+		case EEntityEvent::Update:
 		{
 			SEntityUpdateContext* pCtx = (SEntityUpdateContext*)event.nParam [0];
 			Update(pCtx);
@@ -300,18 +298,24 @@ void CActorControllerComponent::UpdateMovementRequest(float frameTime)
 	// If there's a player controlling us, we can query them for inputs and camera and apply that to our movement.
 	if (auto* pPlayer = m_pActorComponent->GetPlayer())
 	{
+		/**
+		The request needs to take into account both the direction of the camera and the direction of
+		the movement i.e. left is alway left relative to the camera. TODO: What will it take to make this
+		use AddVelocity instead? The values don't seem to match with what I'd expect to input to it.
+		**/
 		auto* pPlayerInput = pPlayer->GetPlayerInput();
-
-		// The request needs to take into account both the direction of the camera and the direction of the movement i.e.
-		// left is alway left relative to the camera.
-		// TODO: What will it take to make this use AddVelocity instead? The values don't seem to match with what I'd
-		// expect to input to it. 
 		float moveSpeed = GetMovementBaseSpeed(pPlayerInput->GetMovementDirectionFlags());
-		if (moveSpeed > FLT_EPSILON)
+		if ((moveSpeed > FLT_EPSILON) && (pPlayerInput->IsMovementRequested()))
 		{
 			m_movingDuration += frameTime;
 			m_movementRequest = pPlayerInput->GetMovement(pPlayer->GetCamera()->GetRotation()) * moveSpeed;
 			SetVelocity(m_movementRequest);
+		}
+		else
+		{
+			// I'm forcing the velocity to zero if we're not actively controlling the character. This naive
+			// approach is probably wrong, but it works for now. 
+			SetVelocity(ZERO);
 		}
 	}
 }

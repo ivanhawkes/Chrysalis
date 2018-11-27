@@ -1,6 +1,0 @@
-<CrySchematyc CryXmlVersion="2" version="105" guid="0151b7f7-7b53-44d8-b2e9-40c278f0734c" scope="">
- <root elementType="Module" guid="b56b1684-0622-4c27-b632-f36591db1acb" name="math">
-  <extensions />
-  <children />
- </root>
-</CrySchematyc>

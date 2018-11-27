@@ -273,7 +273,7 @@ void CActorStateSwim::OnEnter(CActorControllerComponent& actorControllerComponen
 	/*actorControllerComponent.m_stateSwimWaterTestProxy.OnEnterWater (Character);
 
 	IPhysicalEntity* pPhysEnt = actorControllerComponent.GetEntity ()->GetPhysics ();
-	if (pPhysEnt != NULL)
+	if (pPhysEnt != nullptr)
 	{
 	// get current gravity before setting to zero.
 	pe_player_dynamics simPar;
@@ -342,7 +342,7 @@ void CActorStateSwim::OnExit(CActorControllerComponent& actorControllerComponent
 	}
 
 	IPhysicalEntity* pPhysEnt = actorControllerComponent.GetEntity ()->GetPhysics ();
-	if (pPhysEnt != NULL)
+	if (pPhysEnt != nullptr)
 	{
 	CActorStateUtility::PhySetNoFly (Character, m_gravity);
 	}

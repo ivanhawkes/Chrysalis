@@ -28,7 +28,7 @@ MANNEQUIN_USER_PARAMS(SMannequinLookPoseParams, LOOKPOSE_FRAGMENTS, LOOKPOSE_TAG
 FragmentID FindFragmentId(const SAnimationContext& context)
 {
 	const SMannequinLookPoseParams* pUserParams = GetMannequinUserParams<SMannequinLookPoseParams>(context);
-	CRY_ASSERT(pUserParams != NULL);
+	CRY_ASSERT(pUserParams != nullptr);
 
 	return pUserParams->fragmentIDs.LookPose;
 }
@@ -54,12 +54,6 @@ void CActorAnimationActionLookPose::Install()
 {
 	CAnimationAction::Install();
 
-	InitialiseLookPoseBlender();
-}
-
-
-void CActorAnimationActionLookPose::InitialiseLookPoseBlender()
-{
 	IScope& rootScope = GetRootScope();
 	ICharacterInstance* pCharacterInstance = rootScope.GetCharInst();
 	CRY_ASSERT(pCharacterInstance);
@@ -90,9 +84,11 @@ IAction::EStatus CActorAnimationActionLookPose::Update(float timePassed)
 	// Update the fragments and tags if they are different.
 	const IScope& rootScope = GetRootScope();
 	if (rootScope.IsDifferent(m_fragmentID, m_fragTags))
-	{
 		SetFragment(m_fragmentID, m_fragTags);
-	}
+
+#ifdef DEBUG
+	CryWatch("CActorAnimationActionLookPose Update");
+#endif
 
 	return m_eStatus;
 }
@@ -102,6 +98,7 @@ bool CActorAnimationActionLookPose::IsSupported(const SAnimationContext& context
 {
 	const FragmentID fragmentId = FindFragmentId(context);
 	const bool isSupported = (fragmentId != FRAGMENT_ID_INVALID);
+
 	return isSupported;
 }
 }

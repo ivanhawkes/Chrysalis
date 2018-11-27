@@ -20,8 +20,5 @@ public:
 	// ~IAction
 
 	static bool IsSupported(const SAnimationContext& context);
-
-private:
-	void InitialiseLookPoseBlender();
 };
 }

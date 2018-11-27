@@ -17,9 +17,13 @@ protected:
 
 	// IEntityComponent
 	virtual void Initialize() final;
-	virtual void ProcessEvent(SEntityEvent& event) final;
-	uint64 GetEventMask() const { return Cry::DefaultComponents::CBaseMeshComponent::GetEventMask() | BIT64(ENTITY_EVENT_UPDATE); }
+	void ProcessEvent(const SEntityEvent& event) override;
+	Cry::Entity::EntityEventMask GetEventMask() const override { return Cry::DefaultComponents::CBaseMeshComponent::GetEventMask() | EntityEventMask(EEntityEvent::Update); }
 	// ~IEntityComponent
+
+	// IEditorEntityComponent
+	//virtual bool SetMaterial(int slotId, const char* szMaterial) override;
+	// ~IEditorEntityComponent
 
 public:
 	CControlledAnimationComponent() {}
@@ -61,6 +65,7 @@ protected:
 	virtual void Update(SEntityUpdateContext* pCtx);
 
 	CryCharAnimationParams m_animationParams;
+	Schematyc::MaterialFileName m_materialPath;
 	//Schematyc::CharacterFileName m_filePath;
 	Schematyc::GeomFileName m_filePath;
 	Schematyc::LowLevelAnimationName m_defaultAnimation;

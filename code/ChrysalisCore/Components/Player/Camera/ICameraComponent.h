@@ -27,15 +27,15 @@ const Vec3 AverageEyePosition { 0.0f, 0.0f, 1.82f };
 
 struct ICameraComponent
 	: public IEntityComponent
-	, public IHmdDevice::IAsyncCameraCallback
+	//, public IHmdDevice::IAsyncCameraCallback
 {
 protected:
 	friend CChrysalisCorePlugin;
 	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
 
-	// IAsyncCameraCallback
-	virtual bool OnAsyncCameraCallback(const HmdTrackingState& state, IHmdDevice::AsyncCameraContext& context) final;
-	// ~IAsyncCameraCallback
+	//// IAsyncCameraCallback
+	//virtual bool OnAsyncCameraCallback(const HmdTrackingState& state, IHmdDevice::AsyncCameraContext& context) final;
+	//// ~IAsyncCameraCallback
 
 public:
 	ICameraComponent() {}

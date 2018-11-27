@@ -56,7 +56,7 @@ struct SStateEventData
 
 	int8 m_type;
 
-	SStateEventData() : m_pointer(NULL), m_type(eSEDT_undef) {}
+	SStateEventData() : m_pointer(nullptr), m_type(eSEDT_undef) {}
 	SStateEventData(int val) : m_int(val), m_type(eSEDT_int) {}
 	SStateEventData(float val) : m_float(val), m_type(eSEDT_float) {}
 	SStateEventData(bool val) : m_bool(val), m_type(eSEDT_bool) {}
@@ -65,7 +65,7 @@ struct SStateEventData
 	int GetInt() const { assert(m_type == eSEDT_int); return m_int; }
 	float GetFloat() const { assert(m_type == eSEDT_float); return m_float; }
 	bool GetBool() const { assert(m_type == eSEDT_bool); return m_bool; }
-	const void* GetPtr() const { assert((m_pointer == NULL) || (m_type == eSEDT_voidptr)); return m_pointer; }
+	const void* GetPtr() const { assert((m_pointer == nullptr) || (m_type == eSEDT_voidptr)); return m_pointer; }
 };
 
 struct SStateEvent
@@ -377,7 +377,7 @@ public:
 		{
 			return CALL_STATE_CREATE_FN(trueStateID)(*this);
 		}
-		return NULL;
+		return nullptr;
 	}
 
 	void DeleteState(CStateHierarchy<HOST>*& pState)
@@ -403,11 +403,11 @@ struct SStateIndex
 		DebugInit("UNDEFINED_NEED_TO_ADD_STATE_TO_HIERARCHY_BEFORE_TRANSITIONING_TO_IT");
 	}
 	SStateIndex(CryHash hashName)
-		: m_name(hashName), m_func(0), m_parent(NULL), m_stateID(0), m_hierarchy(0) {
+		: m_name(hashName), m_func(0), m_parent(nullptr), m_stateID(0), m_hierarchy(0) {
 		DebugInit("UnknownHash");
 	}
 	explicit SStateIndex(const char* pName)
-		: m_name(CryStringUtils::HashString(pName)), m_func(), m_parent(NULL), m_stateID(0), m_hierarchy(0) {
+		: m_name(CryStringUtils::HashString(pName)), m_func(), m_parent(nullptr), m_stateID(0), m_hierarchy(0) {
 		DebugInit(pName);
 	}
 	SStateIndex(const char* pName, typename CStateProxy<HOST>::StatePtr func, const SStateIndex<HOST>* parent, uint stateID)
@@ -492,7 +492,7 @@ public:
 
 		// Beware, pointer ownership changes!
 		STATE* pTransitionState = pActiveState->m_pTransitionStateHierarchy;
-		pActiveState->m_pTransitionStateHierarchy = NULL;
+		pActiveState->m_pTransitionStateHierarchy = nullptr;
 
 		SStateEvent pendingEvent = pActiveState->m_pendingTransitionStateEvent;
 
@@ -531,7 +531,7 @@ public:
 			{
 				if ((stateResult & stateCurrent.m_stateID) == stateCurrent.m_stateID)
 				{
-					STATE_DEBUG_LOG(NULL, "GenerateCommonParent: For: <%s> And: <%s> Is: <%s>", stateCurrentOriginal.m_pDebugName, stateCommon.m_pDebugName, stateCurrent.m_pDebugName);
+					STATE_DEBUG_LOG(nullptr, "GenerateCommonParent: For: <%s> And: <%s> Is: <%s>", stateCurrentOriginal.m_pDebugName, stateCommon.m_pDebugName, stateCurrent.m_pDebugName);
 
 					return stateCurrent.m_stateID;
 				}
@@ -541,7 +541,7 @@ public:
 					stateCurrent = *stateCurrent.m_parent;
 				}
 			}
-			while (stateCurrent.m_parent != NULL);
+			while (stateCurrent.m_parent != nullptr);
 		}
 		return stateCurrent.m_stateID;
 	}
@@ -597,7 +597,7 @@ public:
 				case STATE_DONE:
 					break;
 				case STATE_CONTINUE:
-					if (currentState.m_parent != NULL && currentState.m_parent->m_stateID != commonID)
+					if (currentState.m_parent != nullptr && currentState.m_parent->m_stateID != commonID)
 					{
 						stateResult = CALL_SUBSTATE_PARENT_FN(pState, currentState)(host, event);
 
@@ -635,7 +635,7 @@ public:
 					break;
 			}
 		}
-		while (stateResult.m_name != STATE_DONE && (currentState.m_parent != NULL || stateResult.m_func != NULL));
+		while (stateResult.m_name != STATE_DONE && (currentState.m_parent != nullptr || stateResult.m_func != nullptr));
 
 		if (pState->m_pTransitionStateHierarchy)
 		{
@@ -729,7 +729,7 @@ protected:
 		State_Done(CryHash(STATE_DONE)),
 		State_Continue(CryHash(STATE_CONTINUE)),
 		m_stateID(stateID),
-		m_pTransitionStateHierarchy(NULL),
+		m_pTransitionStateHierarchy(nullptr),
 		m_currentState(CryHash(STATE_DONE)),
 		m_defaultState(defaultState),
 		m_stateMachineReg(stateMachineReg)
@@ -823,7 +823,7 @@ class CStateMachine
 	typedef CStateHelper<HOST, CStateHierarchy<HOST> > STATE_HELPER;
 public:
 	CStateMachine()
-		: m_pCurrentStateHierarchy(NULL)
+		: m_pCurrentStateHierarchy(nullptr)
 		, m_processingEvent(false)
 	{
 	}
@@ -1067,7 +1067,7 @@ const SStateEvent SStateDebugContext::StateDebugAndLog(CStateHierarchy<HOST>* pS
 #define DEFINE_STATE_MACHINE( host, name )\
 		void host::RegisterState( CStateProxy<host>::CreateStatePtr createPtr, CStateProxy<host>::DeleteStatePtr deletePtr, uint stateID ) \
 		{\
-			if( s_pStateMachineRegistration##name == NULL ) \
+			if( s_pStateMachineRegistration##name == nullptr ) \
 			{\
 				s_pStateMachineRegistration##name = new CStateMachineRegistration<host>;\
 			}\
@@ -1076,35 +1076,35 @@ const SStateEvent SStateDebugContext::StateDebugAndLog(CStateHierarchy<HOST>* pS
 		void host::UnRegisterState( uint stateID ) \
 		{\
 		}\
-		CStateMachineRegistration<host>* host::s_pStateMachineRegistration##name = NULL; \
+		CStateMachineRegistration<host>* host::s_pStateMachineRegistration##name = nullptr; \
 		void host::StateMachineHandleEvent##name( const SStateEvent& event ) \
 		{\
-			CRY_ASSERT_TRACE( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is NULL for the <%s> State Machine", #name) );\
+			CRY_ASSERT_TRACE( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is nullptr for the <%s> State Machine", #name) );\
 			m_stateMachine##name.StateMachineHandleEvent( *this, *s_pStateMachineRegistration##name, event ); \
 		}\
 		void host::StateMachineInit##name()\
 		{\
-			CRY_ASSERT_TRACE( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is NULL for the <%s> State Machine", #name) );\
+			CRY_ASSERT_TRACE( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is nullptr for the <%s> State Machine", #name) );\
 			m_stateMachine##name.StateMachineInit( *this, *s_pStateMachineRegistration##name );\
 		}\
 		void host::StateMachineRelease##name()\
 		{\
-			CRY_ASSERT_TRACE( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is NULL for the <%s> State Machine", #name) );\
+			CRY_ASSERT_TRACE( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is nullptr for the <%s> State Machine", #name) );\
 			m_stateMachine##name.StateMachineRelease( *this, *s_pStateMachineRegistration##name );\
 		}\
 		void host::StateMachineReset##name()\
 		{\
-			CRY_ASSERT_TRACE( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is NULL for the <%s> State Machine", #name) );\
+			CRY_ASSERT_TRACE( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is nullptr for the <%s> State Machine", #name) );\
 			m_stateMachine##name.StateMachineReset( *this, *s_pStateMachineRegistration##name );\
 		}\
 		void host::StateMachineUpdate##name( const float frameTime, const bool bShouldDebug )\
 		{\
-			CRY_ASSERT_TRACE( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is NULL for the <%s> State Machine", #name) );\
+			CRY_ASSERT_TRACE( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is nullptr for the <%s> State Machine", #name) );\
 			m_stateMachine##name.StateMachineUpdateTime( *this, *s_pStateMachineRegistration##name, frameTime, bShouldDebug );\
 		}\
 		void host::StateMachineSerialize##name( const SStateEvent& event )\
 		{\
-			CRY_ASSERT_TRACE( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is NULL for the <%s> State Machine", #name) );\
+			CRY_ASSERT_TRACE( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is nullptr for the <%s> State Machine", #name) );\
 			m_stateMachine##name.StateMachineSerialize( *this, *s_pStateMachineRegistration##name, event );\
 		}
 
@@ -1146,7 +1146,7 @@ const SStateEvent SStateDebugContext::StateDebugAndLog(CStateHierarchy<HOST>* pS
 		:	CStateHierarchy<host>( stateId, State_##defaultState, stateMachineReg )\
 		, m_subStateIndex(1) \
 		{\
-			State_Root = SStateIndex<host> ("Root", (CStateProxy<host>::StatePtr)&stateClass::Root, NULL, m_subStateIndex++ ); \
+			State_Root = SStateIndex<host> ("Root", (CStateProxy<host>::StatePtr)&stateClass::Root, nullptr, m_subStateIndex++ ); \
 			m_stateIndexContainer.push_back( &State_Root ); 
 
 #define DEFINE_STATE_CLASS_ADD( host, stateClass, stateFunc, parentState )\

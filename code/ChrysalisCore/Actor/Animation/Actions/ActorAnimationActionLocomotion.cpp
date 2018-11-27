@@ -117,6 +117,8 @@ IAction::EStatus CActorAnimationActionLocomotion::Update(float timePassed)
 	// Cycle.
 	m_lastPosture = newPosture;
 
+	// At present, this test is good enough to see if we're moving. It might need to be replaced with something more
+	// robust later. 
 	FragmentID newFragmentId;
 	if (actor.GetVelocity().len() > FLT_EPSILON)
 		newFragmentId = m_locomotionParams->fragmentIDs.Move;

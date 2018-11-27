@@ -28,7 +28,7 @@ MANNEQUIN_USER_PARAMS(SMannequinAimPoseParams, AIMPOSE_FRAGMENTS, AIMPOSE_TAGS, 
 FragmentID CActorAnimationActionAimPose::FindFragmentId(const SAnimationContext& context)
 {
 	const SMannequinAimPoseParams* pUserParams = GetMannequinUserParams<SMannequinAimPoseParams>(context);
-	CRY_ASSERT(pUserParams != NULL);
+	CRY_ASSERT(pUserParams != nullptr);
 
 	return pUserParams->fragmentIDs.AimPose;
 }
@@ -90,9 +90,7 @@ IAction::EStatus CActorAnimationActionAimPose::Update(float timePassed)
 	// Update the fragments and tags if they are different.
 	const IScope& rootScope = GetRootScope();
 	if (rootScope.IsDifferent(m_fragmentID, m_fragTags))
-	{
 		SetFragment(m_fragmentID, m_fragTags);
-	}
 
 	return m_eStatus;
 }
@@ -102,6 +100,7 @@ bool CActorAnimationActionAimPose::IsSupported(const SAnimationContext& context)
 {
 	const FragmentID fragmentId = FindFragmentId(context);
 	const bool isSupported = (fragmentId != FRAGMENT_ID_INVALID);
+
 	return isSupported;
 }
 }

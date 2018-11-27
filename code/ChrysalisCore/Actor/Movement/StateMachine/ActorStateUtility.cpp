@@ -108,7 +108,7 @@ void CActorStateUtility::AdjustMovementForEnvironment(const CActorControllerComp
 		if (gEnv->bMultiCharacter)
 		{
 			CGameRules *pGameRules = gEnv->pGameFramework->GetGameRules();
-			IGameRulesObjectivesModule *pObjectives = pGameRules ? pGameRules->GetObjectivesModule() : NULL;
+			IGameRulesObjectivesModule *pObjectives = pGameRules ? pGameRules->GetObjectivesModule() : nullptr;
 
 			if (pObjectives)
 			{
@@ -170,7 +170,7 @@ void CActorStateUtility::AdjustMovementForEnvironment(const CActorControllerComp
 void CActorStateUtility::PhySetFly(CActorControllerComponent& actorControllerComponent)
 {
 	IPhysicalEntity* pPhysEnt = actorControllerComponent.GetEntity()->GetPhysics();
-	if (pPhysEnt != NULL)
+	if (pPhysEnt != nullptr)
 	{
 		pe_player_dynamics pd;
 		pd.bSwimming = true;
@@ -185,7 +185,7 @@ void CActorStateUtility::PhySetFly(CActorControllerComponent& actorControllerCom
 void CActorStateUtility::PhySetNoFly(CActorControllerComponent& actorControllerComponent, const Vec3& gravity)
 {
 	/*IPhysicalEntity* pPhysEnt = actorControllerComponent.GetEntity()->GetPhysics();
-	if (pPhysEnt != NULL)
+	if (pPhysEnt != nullptr)
 	{
 		pe_player_dynamics pd;
 		pd.kAirControl = actorControllerComponent.GetAirControl();
@@ -405,7 +405,7 @@ bool CActorStateUtility::IsSprintingAllowed(const CActorControllerComponent& act
 
 	bool restrictSprint = actorControllerComponent.IsJumping() || stats.bIgnoreSprinting || actorControllerComponent.IsSliding() || actorControllerComponent.IsCinematicFlagActive(SActorStats::eCinematicFlag_RestrictMovement);
 
-	CWeapon* pWeapon = pCurrentActorItem ? static_cast<CWeapon*>(pCurrentActorItem->GetIWeapon()) : NULL;
+	CWeapon* pWeapon = pCurrentActorItem ? static_cast<CWeapon*>(pCurrentActorItem->GetIWeapon()) : nullptr;
 	bool isZooming = pWeapon ? pWeapon->IsZoomed() && !pWeapon->IsZoomingInOrOut() : false;
 	if (pWeapon && !pWeapon->CanSprint())
 		restrictSprint = true;

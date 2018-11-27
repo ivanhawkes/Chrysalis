@@ -10,7 +10,7 @@ SMannequinEmoteParams g_emoteMannequinParams;
 FragmentID CActorAnimationActionEmote::FindFragmentId(const SAnimationContext& context)
 {
 	const SMannequinEmoteParams* pUserParams = GetMannequinUserParams<SMannequinEmoteParams>(context);
-	CRY_ASSERT(pUserParams != NULL);
+	CRY_ASSERT(pUserParams != nullptr);
 
 	return pUserParams->fragmentIDs.Emote;
 }
@@ -58,9 +58,7 @@ IAction::EStatus CActorAnimationActionEmote::Update(float timePassed)
 	// Update the fragments and tags if they are different.
 	const IScope& rootScope = GetRootScope();
 	if (rootScope.IsDifferent(m_fragmentID, m_fragTags))
-	{
 		SetFragment(m_fragmentID, m_fragTags);
-	}
 
 	return m_eStatus;
 }
@@ -70,6 +68,7 @@ bool CActorAnimationActionEmote::IsSupported(const SAnimationContext& context)
 {
 	const FragmentID fragmentId = FindFragmentId(context);
 	const bool isSupported = (fragmentId != FRAGMENT_ID_INVALID);
+
 	return isSupported;
 }
 }

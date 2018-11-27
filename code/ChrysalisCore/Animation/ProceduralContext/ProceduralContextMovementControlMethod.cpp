@@ -11,7 +11,7 @@
 //void CProceduralContextMovementControlMethod::Update(float timePassedSeconds)
 //{
 //	IAnimatedCharacter* pAnimatedCharacter = GetAnimatedCharacter();
-//	IF_UNLIKELY(pAnimatedCharacter == NULL)
+//	IF_UNLIKELY(pAnimatedCharacter == nullptr)
 //	{
 //		return;
 //	}
@@ -51,7 +51,7 @@
 //{
 //	const EntityId entityId = m_entity->GetId();
 //	IActor* pActor = gEnv->pGameFramework->GetIActorSystem()->GetActor(entityId);
-//	IAnimatedCharacter* pAnimatedCharacter = (pActor != NULL) ? pActor->GetAnimatedCharacter() : NULL;
+//	IAnimatedCharacter* pAnimatedCharacter = (pActor != nullptr) ? pActor->GetAnimatedCharacter() : nullptr;
 //	return pAnimatedCharacter;
 //}
 //}

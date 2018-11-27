@@ -1,0 +1,16 @@
+<cryasset>
+ <AssetMetadata version="0" type="Mesh" guid="db6a305f-ca2b-148f-f0c1-13c2241eb4ec">
+  <Files>
+   <File path="book.cgf"/>
+  </Files>
+  <Details>
+   <Detail name="materialCount">3</Detail>
+   <Detail name="triangleCount">100</Detail>
+   <Detail name="vertexCount">266</Detail>
+   <Detail name="16BitPrecision">false</Detail>
+  </Details>
+  <Dependencies>
+   <Path usageCount="1">./book.mtl</Path>
+  </Dependencies>
+ </AssetMetadata>
+</cryasset>
