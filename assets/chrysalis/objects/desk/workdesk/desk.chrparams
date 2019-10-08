@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<Params>
+	<AnimationList>
+		<Comment value="-------EVENT DATABASE-------"/>
+		<Animation name="$AnimEventDatabase" path="chrysalis/objects/desk/workdesk/animations/workdesk.animevents"/>
+		<Animation name="$TracksDatabase" path="chrysalis/objects/desk/workdesk/*/*.dba"/>
+		
+		<Animation name="#filepath" path="chrysalis/objects/desk/workdesk"/>
+		<Animation name="*" path="*/*.caf"/>
+		<Animation name="*" path="*/*.i_caf"/>
+		<Animation name="*" path="*/*.bspace"/>
+		<Animation name="*" path="*/*.comb"/>
+	</AnimationList>
+</Params>

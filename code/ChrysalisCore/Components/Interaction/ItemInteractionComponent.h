@@ -17,12 +17,9 @@ class CItemInteractionComponent
 	, public IInteractionItem
 {
 protected:
-	friend CChrysalisCorePlugin;
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 	// IEntityComponent
 	void Initialize() override;
-	Cry::Entity::EntityEventMask GetEventMask() const override { return EventToMask(EEntityEvent::Update); }
+	Cry::Entity::EventFlags GetEventMask() const override { return EEntityEvent::Update; }
 	void ProcessEvent(const SEntityEvent& event) override;
 	// ~IEntityComponent
 
@@ -48,7 +45,7 @@ public:
 
 protected:
 	/** An instance of an interaction component. */
-	CEntityInteractionComponent* m_interactor { nullptr };
+	CEntityInteractionComponent* m_interactor {nullptr};
 
 	/** Speed at which object 'jump' towards player when being inspected (m/sec). */
 	const float kJumpToPlayerSpeed = 4.0f;
@@ -69,7 +66,7 @@ protected:
 		eCancelled,
 	};
 
-	InspectionState m_inspectionState { InspectionState::eNone };
+	InspectionState m_inspectionState {InspectionState::eNone};
 	float m_timeInAirRequired;
 	float m_timeInAir;
 	Vec3 m_initialPosition;

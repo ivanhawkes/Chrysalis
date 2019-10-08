@@ -1,0 +1,46 @@
+<ControllerDef>
+ <Tags filename="chrysalis/characters/human/male/male_tags.xml"/>
+ <Fragments filename="chrysalis/characters/human/male/male_fragment_ids.xml"/>
+ <FragmentDefs>
+  <Idle scopes="FullBody1P+FullBody3P+LookPose">
+   <Override tags="ScopeLookPose" scopes="FullBody1P+FullBody3P+LookPose"/>
+  </Idle>
+  <Move scopes="FullBody1P+FullBody3P"/>
+  <Interaction scopes="FullBody1P+FullBody3P+SlaveCharacter+SlaveObject"/>
+  <Emote scopes="FullBody1P+FullBody3P+Torso1P+Torso3P+Audio1+Audio2"/>
+  <Looking scopes="Looking"/>
+  <LookPose scopes="LookPose"/>
+  <Aiming scopes="FullBody1P+FullBody3P+GroundAlignment1P+GroundAlignment3P+Torso1P+Torso3P+Audio1+Audio2+AimPose+Aiming+Looking+SlaveCharacter+SlaveObject+Weapon+WeaponForceFeedback+AttachmentTop+AttachmentBottom"/>
+  <AimPose scopes="FullBody1P+FullBody3P+GroundAlignment1P+GroundAlignment3P+Torso1P+Torso3P+Audio1+Audio2+AimPose+Aiming+Looking+SlaveCharacter+SlaveObject+Weapon+WeaponForceFeedback+AttachmentTop+AttachmentBottom"/>
+ </FragmentDefs>
+ <ScopeContextDefs>
+  <Char1P />
+  <Char3P />
+  <Weapon />
+  <Audio />
+  <AttachmentTop />
+  <AttachmentBottom />
+  <SlaveCharacter />
+  <SlaveObject />
+ </ScopeContextDefs>
+ <ScopeDefs>
+  <FullBody1P layer="0" numLayers="3" context="Char1P"/>
+  <FullBody3P layer="0" numLayers="3" context="Char3P"/>
+  <GroundAlignment1P layer="13" numLayers="1" context="Char1P"/>
+  <GroundAlignment3P layer="13" numLayers="1" context="Char3P"/>
+  <Torso1P layer="5" numLayers="2" context="Char1P"/>
+  <Torso3P layer="5" numLayers="2" context="Char3P"/>
+  <Audio1 layer="0" numLayers="0" context="Audio"/>
+  <Audio2 layer="0" numLayers="0" context="Audio"/>
+  <AimPose layer="14" numLayers="1" context="Char3P" Tags="ScopeAimPose"/>
+  <Aiming layer="14" numLayers="0" context="Char3P" Tags="ScopeAiming"/>
+  <LookPose layer="15" numLayers="1" context="Char3P" Tags="ScopeLookPose"/>
+  <Looking layer="15" numLayers="0" context="Char3P" Tags="ScopeLooking"/>
+  <SlaveCharacter layer="0" numLayers="3" context="SlaveCharacter" Tags="ScopeSlave"/>
+  <SlaveObject layer="0" numLayers="3" context="SlaveObject" Tags="ScopeSlave"/>
+  <Weapon layer="0" numLayers="3" context="Weapon"/>
+  <WeaponForceFeedback layer="0" numLayers="0" context="Weapon"/>
+  <AttachmentTop layer="0" numLayers="3" context="AttachmentTop"/>
+  <AttachmentBottom layer="0" numLayers="3" context="AttachmentBottom"/>
+ </ScopeDefs>
+</ControllerDef>

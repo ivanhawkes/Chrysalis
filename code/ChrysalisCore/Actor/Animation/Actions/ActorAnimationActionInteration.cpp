@@ -7,7 +7,7 @@
 namespace Chrysalis
 {
 #define INTERACTION_FRAGMENTS( x ) \
-	x( Interaction ) \
+	x( Interaction )
 
 #define INTERACTION_TAGS( x ) \
 	x( InteractionHigh ) /* The general height of the interaction object. */ \
@@ -16,13 +16,13 @@ namespace Chrysalis
 	x( InteractionGrabObject ) /* Interaction method. */ \
 	x( InteractionFlipSwitch ) \
 	x( InteractionDeadLift ) \
-	x( InteractionTurnWheel ) \
+	x( InteractionTurnWheel )
 
 #define INTERACTION_TAGGROUPS( x ) \
 	x( InteractionHeight ) \
-	x( InteractionMethod ) \
+	x( InteractionMethod )
 
-#define INTERACTION_SCOPES( x ) \
+#define INTERACTION_SCOPES( x )
 
 #define INTERACTION_CONTEXTS( x )
 
@@ -38,15 +38,31 @@ CActorAnimationActionInteraction::CActorAnimationActionInteraction(const std::ve
 }
 
 
+FragmentID CActorAnimationActionInteraction::FindFragmentId(const SAnimationContext& context)
+{
+	const SMannequinInteractionParams* pUserParams = GetMannequinUserParams<SMannequinInteractionParams>(context);
+	CRY_ASSERT(pUserParams != nullptr);
+
+	return pUserParams->fragmentIDs.Interaction;
+}
+
+
+bool CActorAnimationActionInteraction::IsSupported(const SAnimationContext& context)
+{
+	const FragmentID fragmentId = FindFragmentId(context);
+	const bool isSupported = (fragmentId != FRAGMENT_ID_INVALID);
+
+	return isSupported;
+}
+
+
 void CActorAnimationActionInteraction::OnInitialise()
 {
 	CAnimationAction::OnInitialise();
 
-	m_interactionParams = GetMannequinUserParams<SMannequinInteractionParams>(*m_context);
-	CRY_ASSERT(m_interactionParams);
-
-	// Set the fragment for animation.
-	SetFragment(m_interactionParams->fragmentIDs.Interaction);
+	const FragmentID fragmentId = FindFragmentId(*m_context);
+	CRY_ASSERT(fragmentId != FRAGMENT_ID_INVALID);
+	SetFragment(fragmentId);
 }
 
 
@@ -98,9 +114,6 @@ void CActorAnimationActionInteraction::Fail(EActionFailure actionFailure)
 void CActorAnimationActionInteraction::Exit()
 {
 	CAnimationAction::Exit();
-
-	// Grab the actor in the root scope.
-	CActorComponent& actor = *CActorComponent::GetActor(m_rootScope->GetEntityId());
 
 	// I'm going to pop some tags...
 	const SControllerDef& controllerDef = m_rootScope->GetActionController().GetContext().controllerDef;

@@ -19,6 +19,8 @@ History:
 #include "CryWatch.h"
 #include <CrySystem/ISystem.h>
 #include <CryRenderer/IRenderer.h>
+#include <CryRenderer/IRenderAuxGeom.h>
+#include <CryFont/IFont.h>
 #include <CryString/StringUtils.h>
 #include "Plugin/ChrysalisCorePlugin.h"
 #include <Console/CVars.h>
@@ -70,8 +72,6 @@ static float GetWatchTextYPos()
 	return s_watchTextYPos;
 }
 
-
-#include <CryRenderer/IRenderAuxGeom.h>
 
 int CryWatchFunc(const char * message)
 {

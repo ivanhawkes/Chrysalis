@@ -25,13 +25,10 @@ class CEntityAwarenessComponent
 	: public IEntityComponent
 {
 protected:
-	friend CChrysalisCorePlugin;
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 	// IEntityComponent
 	void Initialize() override;
 	void ProcessEvent(const SEntityEvent& event) override;
-	Cry::Entity::EntityEventMask GetEventMask() const override { return EventToMask(EEntityEvent::Update); }
+	Cry::Entity::EventFlags GetEventMask() const override { return EEntityEvent::Update; }
 	virtual void GetMemoryUsage(ICrySizer* pSizer) const;
 	// ~IEntityComponent
 
@@ -158,7 +155,7 @@ public:
 		auto entities = InFrontOfQuery();
 
 		// #TODO: This should probably be more precise about what it returns, rather than just the first element of the vector.
-		return entities.empty() ? nullptr : gEnv->pEntitySystem->GetEntity(entities [0]);
+		return entities.empty() ? nullptr : gEnv->pEntitySystem->GetEntity(entities[0]);
 	}
 
 
@@ -178,7 +175,7 @@ public:
 
 	/**
 	Query if a raycast hit anything this frame.
-	
+
 	\return True if ray hit, false if not.
 	**/
 	bool GetRayHit() const { return m_isRayHit; }
@@ -186,7 +183,7 @@ public:
 
 	/**
 	Gets ray hit position, if available. This is undefined if there was no hit this frame.
-	
+
 	\return The ray hit position.
 	**/
 	Vec3 GetRayHitPosition() const { return m_rayHitPosition; }
@@ -288,7 +285,7 @@ private:
 
 		// Run the query the caller was interested in.
 		// Results are returned as a side-effect of the function that is run.
-		(this->*(m_updateQueryFunctions [query]))();
+		(this->*(m_updateQueryFunctions[query]))();
 
 		// Mark that query as now being valid for this FrameId.
 		m_validQueries |= queryMask;
@@ -299,50 +296,50 @@ private:
 	typedef void (CEntityAwarenessComponent::*UpdateQueryFunction)();
 
 	// Limit the size of the array used to track the raycasts.
-	static const int maxQueuedRays { 6 };
+	static const int maxQueuedRays {6};
 
 	/** The proximity radius defines the maximum distance we will search for entities that are considered
 	"in-proximity". It is used to restrict both proximity queries and ray-cast queries. */
-	float m_proximityRadius { 6.0f };
+	float m_proximityRadius {6.0f};
 
 	// A mask of queries which are currently valid for this FrameId.
-	uint32 m_validQueries { 0 };
+	uint32 m_validQueries {0};
 
 	// Track the current render frame so we can drop query results that are too old.
-	int m_renderFrameId { -1 };
+	int m_renderFrameId {-1};
 
 	/** The actor associated with this instance. It's critical that this value is non-null or the queries
 	will fail to run correctly. */
 	// TODO: CRITICAL: HACK: BROKEN: !!
-	IActorComponent* m_pActor { nullptr };
+	IActorComponent* m_pActor {nullptr};
 
 	/** Did a raycast anything this frame? **/
-	bool m_isRayHit { false };
+	bool m_isRayHit {false};
 
 	/** The position where a raycast hit, if successful. Undefined if not. **/
-	Vec3 m_rayHitPosition { ZERO };
+	Vec3 m_rayHitPosition {ZERO};
 
 	/** The eye position for our actor. */
-	Vec3 m_eyePosition { ZERO };
+	Vec3 m_eyePosition {ZERO};
 
 	/** The direction in which our actor is looking. */
-	Quat m_eyeDirection { IDENTITY };
+	Quat m_eyeDirection {IDENTITY};
 
 	// An array of functors which run the update queries.
-	static UpdateQueryFunction m_updateQueryFunctions [];
+	static UpdateQueryFunction m_updateQueryFunctions[];
 
 	// #TODO: Maybe use a vector for this?
-	SRayInfo m_queuedRays [maxQueuedRays];
+	SRayInfo m_queuedRays[maxQueuedRays];
 
 	// Keep a track of how many rays we have queued.
 	// #TODO: Is there a safer way to handle all of this?
-	uint32 m_requestCounter { 0 };
+	uint32 m_requestCounter {0};
 
 	/** Track the time of the last deferred ray-cast. */
-	float m_timeLastDeferredResult { 0.0f };
+	float m_timeLastDeferredResult {0.0f};
 
 	// ray-cast query
-	bool m_rayHitAny { false };
+	bool m_rayHitAny {false};
 
 	/** If there is a solid hit from the forward ray this is it's result. The result may become stale. */
 	ray_hit m_rayHitSolid;
@@ -351,7 +348,7 @@ private:
 	ray_hit m_rayHitPierceable;
 
 	// The entity the object is currently looking towards.
-	EntityId m_lookAtEntityId { INVALID_ENTITYID };
+	EntityId m_lookAtEntityId {INVALID_ENTITYID};
 
 	// The entities within proximity of the AABB surrounding the actor. It may be worth highlighting these as being
 	// interactive for the player.

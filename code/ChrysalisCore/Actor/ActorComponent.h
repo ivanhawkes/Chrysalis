@@ -3,10 +3,10 @@
 #include <Actor/Fate.h>
 #include <CryAISystem/IAgent.h>
 #include "Snaplocks/Snaplock.h"
-#include "DefaultComponents/Geometry/AdvancedAnimationComponent.h"
 #include "DefaultComponents/Physics/CharacterControllerComponent.h"
 #include <Components/Inventory/InventoryComponent.h>
 #include <Components/Player/Input/PlayerInputComponent.h>
+#include <Components/Animation/ActorAnimationComponent.h>
 #include <Actor/ActorControllerComponent.h>
 #include <Entities/Interaction/IEntityInteraction.h>
 
@@ -68,11 +68,6 @@ TODO: Remove this at some point, or strip it nearly bare.
 class IActorComponent
 	: public IEntityComponent
 {
-protected:
-	friend CChrysalisCorePlugin;
-
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 public:
 	IActorComponent() {}
 	virtual ~IActorComponent() {}
@@ -88,7 +83,7 @@ public:
 
 	/**
 	Is this actor being controller by the local player?
-	
+
 	\return A const bool.
 	**/
 	virtual const bool IsPlayer() const = 0;
@@ -96,7 +91,7 @@ public:
 
 	/**
 	Is this actor being controller by the local player?
-	
+
 	\return A const bool.
 	**/
 	virtual const bool IsClient() const = 0;
@@ -104,7 +99,7 @@ public:
 
 	/**
 	Get's the player controlling this actor, if there is one. This may return nullptr.
-	
+
 	\return Null if it fails, else the player.
 	**/
 	virtual CPlayerComponent* GetPlayer() const = 0;
@@ -112,7 +107,7 @@ public:
 
 	/**
 	Gets the character instance for this actor.
-	
+
 	\return Null if it fails, else the character.
 	**/
 	virtual ICharacterInstance* GetCharacter() const = 0;
@@ -120,22 +115,22 @@ public:
 
 	/**
 	Gets this instance's local-space eye position (for a human, this is typically Vec3 (0, 0, 1.76f)).
-	
+
 	The code will first attempt to return a "Camera" helper if there is one. If only one eye is available (left_eye,
 	right_eye) then that is used as the local position. In the case of two eyes, the position is the average of the two
 	eyes.
-	
+
 	Position is calculated each time using the attachment manager, so it will be better to cache the results if you need
 	to call this a few times in an update.
-	
+
 	\return This instance's local-space eye position.
 	**/
-	virtual const Vec3 GetLocalEyePos() const { return { 0.0f, 0.0f, 1.82f }; };
+	virtual const Vec3 GetLocalEyePos() const { return {0.0f, 0.0f, 1.82f}; };
 
 
 	/**
 	Gets local left hand position.
-	
+
 	\return The local left hand position.
 	**/
 	virtual Vec3 GetLocalLeftHandPos() const { return Vec3(ZERO); };
@@ -143,7 +138,7 @@ public:
 
 	/**
 	Gets local right hand position.
-	
+
 	\return The local right hand position.
 	**/
 	virtual Vec3 GetLocalRightHandPos() const { return Vec3(ZERO); };
@@ -222,7 +217,7 @@ public:
 	trigger an interaction with the actor. This will lock out any other attempts to start an interaction until this one
 	has completed. Generally, you will want whatever process is kicked off by the 'OnActionInteractionStart' function to
 	make a call to this at the start of it's specific interaction.
-	
+
 	\param [in,out]	pInteraction If non-null, the interaction.
 	**/
 	virtual void InteractionStart(IInteraction* pInteraction) = 0;
@@ -230,7 +225,7 @@ public:
 
 	/**
 	Received at intervals during an on-going interaction.
-	
+
 	\param [in,out]	pInteraction If non-null, the interaction.
 	**/
 	virtual void InteractionTick(IInteraction* pInteraction) = 0;
@@ -239,7 +234,7 @@ public:
 	/**
 	Call this to remove the actor from "interaction mode". This will open the actor up to accepting interactions
 	again.
-	
+
 	\param [in,out]	pInteraction If non-null, the interaction.
 	**/
 	virtual void InteractionEnd(IInteraction* pInteraction) = 0;
@@ -247,7 +242,7 @@ public:
 
 	/**
 	Queue an action onto the animation queue.
-	
+
 	\param [in,out]	pAction The action.
 	**/
 	virtual void QueueAction(IAction& pAction) = 0;
@@ -255,17 +250,18 @@ public:
 
 	/**
 	Gets action controller.
-	
+
 	\return Null if it fails, else the action controller.
 	**/
-	//virtual IActionController* GetActionController() const = 0;
+	virtual IActionController* GetActionController() const = 0;
 
+	virtual const SActorMannequinParams* GetMannequinParams() const = 0;
 
 	/**
 	Call this routine when a player has attached to this actor to complete the circle. The player is now in control
 	of this actor's movements and may view them through a camera attached to it. This routine is not meant for direct
 	calling, instead use the AttachToCharacter routine that is provided on a valid CPlayerComponent object.
-	
+
 	\param [in,out]	player The player.
 	**/
 	virtual void OnPlayerAttach(CPlayerComponent& player) = 0;
@@ -300,7 +296,7 @@ public:
 
 	/**
 	The actor has entered a vehicle.
-	
+
 	\param	strVehicleClassName Name of the vehicle class.
 	\param	strSeatName		    Name of the seat.
 	\param	bThirdPerson	    true if we are in third person.
@@ -314,7 +310,7 @@ public:
 
 	/**
 	The actor's health has changed.
-	
+
 	\param	newHealth The new health.
 	**/
 	virtual void OnHealthChanged(float newHealth) = 0;
@@ -322,7 +318,7 @@ public:
 
 	/**
 	The actor has picked up an item.
-	
+
 	\param	itemId Identifier for the item.
 	**/
 	virtual void OnItemPickedUp(EntityId itemId) = 0;
@@ -330,7 +326,7 @@ public:
 
 	/**
 	The actor has used an item.
-	
+
 	\param	itemId Identifier for the item.
 	**/
 	virtual void OnItemUsed(EntityId itemId) = 0;
@@ -338,7 +334,7 @@ public:
 
 	/**
 	The actor has dropped an item.
-	
+
 	\param	itemId Identifier for the item.
 	**/
 	virtual void OnItemDropped(EntityId itemId) = 0;
@@ -346,7 +342,7 @@ public:
 
 	/**
 	The actor's sprint stamina has changed.
-	
+
 	\param	newStamina The new stamina.
 	**/
 	virtual void OnSprintStaminaChanged(float newStamina) = 0;
@@ -360,14 +356,10 @@ class CActorComponent
 	: public IActorComponent
 {
 protected:
-	friend CChrysalisCorePlugin;
-
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 	// IEntityComponent
 	void Initialize() override;
 	void ProcessEvent(const SEntityEvent& event) override;
-	Cry::Entity::EntityEventMask GetEventMask() const override { return ENTITY_EVENT_BIT(ENTITY_EVENT_UPDATE) | ENTITY_EVENT_BIT(ENTITY_EVENT_PREPHYSICSUPDATE); }
+	Cry::Entity::EventFlags GetEventMask() const override { return EEntityEvent::Update | EEntityEvent::PrePhysicsUpdate; }
 	// ~IEntityComponent
 
 	virtual void Update(SEntityUpdateContext* pCtx);
@@ -403,7 +395,7 @@ public:
 
 	/**
 	The actor has entered a vehicle.
-	
+
 	\param	strVehicleClassName Name of the vehicle class.
 	\param	strSeatName		    Name of the seat.
 	\param	bThirdPerson	    true if we are in third person.
@@ -417,7 +409,7 @@ public:
 
 	/**
 	The actor's health has changed.
-	
+
 	\param	newHealth The new health.
 	**/
 	void OnHealthChanged(float newHealth) override;
@@ -425,7 +417,7 @@ public:
 
 	/**
 	The actor has picked up an item.
-	
+
 	\param	itemId Identifier for the item.
 	**/
 	void OnItemPickedUp(EntityId itemId) override;
@@ -433,7 +425,7 @@ public:
 
 	/**
 	The actor has used an item.
-	
+
 	\param	itemId Identifier for the item.
 	**/
 	void OnItemUsed(EntityId itemId) override;
@@ -441,7 +433,7 @@ public:
 
 	/**
 	The actor has dropped an item.
-	
+
 	\param	itemId Identifier for the item.
 	**/
 	void OnItemDropped(EntityId itemId) override;
@@ -449,7 +441,7 @@ public:
 
 	/**
 	The actor's sprint stamina has changed.
-	
+
 	\param	newStamina The new stamina.
 	**/
 	void OnSprintStaminaChanged(float newStamina) override;
@@ -484,8 +476,8 @@ public:
 	ICharacterInstance* GetCharacter() const override;
 
 protected:
-	Cry::DefaultComponents::CAdvancedAnimationComponent* m_pAdvancedAnimationComponent { nullptr };
-	Cry::DefaultComponents::CCharacterControllerComponent* m_pCharacterControllerComponent { nullptr };
+	CActorAnimationComponent* m_pActorAnimationComponent {nullptr};
+	Cry::DefaultComponents::CCharacterControllerComponent* m_pCharacterControllerComponent {nullptr};
 
 	Schematyc::CharacterFileName m_geometryFirstPerson;
 	Schematyc::CharacterFileName m_geometryThirdPerson;
@@ -502,25 +494,25 @@ protected:
 
 private:
 	/** An component which is used to discover entities near the actor. */
-	CEntityAwarenessComponent * m_pAwareness { nullptr };
+	CEntityAwarenessComponent * m_pAwareness {nullptr};
 
 	/** A component that allows for management of snaplocks. */
-	CSnaplockComponent* m_pSnaplockComponent { nullptr };
+	CSnaplockComponent* m_pSnaplockComponent {nullptr};
 
 	/** Manage their inventory. */
-	CInventoryComponent* m_pInventoryComponent { nullptr };
+	CInventoryComponent* m_pInventoryComponent {nullptr};
 
 	/** Manage their equipment. */
-	CEquipmentComponent* m_pEquipmentComponent { nullptr };
+	CEquipmentComponent* m_pEquipmentComponent {nullptr};
 
 	/** All control is handled through an actor controller. */
-	CActorControllerComponent* m_pActorControllerComponent { nullptr };
+	CActorControllerComponent* m_pActorControllerComponent {nullptr};
 
 	/**	A dynamic response proxy. **/
 	IEntityDynamicResponseComponent* m_pDrsComponent;
 
 	/** If a player is controlling this character, this pointer will be valid. */
-	CPlayerComponent* m_pPlayer { nullptr };
+	CPlayerComponent* m_pPlayer {nullptr};
 
 	/** The pre-determined fate for this actor. */
 	CFate m_fate;
@@ -581,25 +573,34 @@ public:
 
 private:
 	/** If we are interacting with an entity, it is this entity. */
-	EntityId m_interactionEntityId { INVALID_ENTITYID };
+	EntityId m_interactionEntityId {INVALID_ENTITYID};
 
 	/** If we're interacting with something, this is the actual interaction. */
 	IInteractionPtr m_pInteraction;
 
 	/** True when the actor is busy interaction with something, and shouldn't be allowed to start a new interaction until
 	the first is finished. */
-	bool isBusyInInteraction { false };
+	bool isBusyInInteraction {false};
 
 	// ***
 	// *** Allow control of the actor's animations / fragments / etc.
 	// ***
 
 public:
-	void QueueAction(IAction& pAction) override { m_pAdvancedAnimationComponent->QueueCustomFragment(pAction); };
+	void QueueAction(IAction& pAction) override { m_pActorAnimationComponent->QueueAction(pAction); };
 
-	//virtual IActionController* GetActionController() const;
+	/**
+	Get access to the action controller. Try to limit calls to this function as it's only here since some
+	functions need the controller passed into them.
 
-	const SActorMannequinParams* GetMannequinParams() const { return m_actorMannequinParams; }
+	\return The action controller.
+	**/
+	virtual IActionController* GetActionController() const
+	{
+		return m_pActorAnimationComponent->GetActionController();
+	}
+
+	const SActorMannequinParams* GetMannequinParams() const override { return m_actorMannequinParams; }
 
 
 	/**
@@ -622,10 +623,9 @@ public:
 	TagID GetPostureTagId(EActorPosture actorPosture);
 
 private:
-	const SActorMannequinParams* m_actorMannequinParams { nullptr };
-	class CProceduralContextAim* m_pProceduralContextAim { nullptr };
-	class CProceduralContextLook* m_pProceduralContextLook { nullptr };
-	IActionController* m_pActionController { nullptr };
+	const SActorMannequinParams* m_actorMannequinParams {nullptr};
+	class CProceduralContextAim* m_pProceduralContextAim {nullptr};
+	class CProceduralContextLook* m_pProceduralContextLook {nullptr};
 
 	// ***
 	// *** Item System.

@@ -12,10 +12,6 @@ class CDRSInteractionComponent
 	: public IEntityComponent
 	, public IInteractionDRS
 {
-protected:
-	friend CChrysalisCorePlugin;
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 public:
 	CDRSInteractionComponent() {}
 	virtual ~CDRSInteractionComponent() {}
@@ -40,7 +36,7 @@ public:
 		{
 			desc.SetGUID("{C07C367C-106F-4FD4-B7D5-E40C1A21F9F3}"_cry_guid);
 			desc.AddMember(&SDRSProperties::key, 'key', "Key", "Key", "DRS Key", "");
-			
+
 			// HACK: This is broken if there is more than one member added. I don't expect a working collection type until 5.5 or 5.6.
 			// Consider this broken until then and *don't use this collection to store values*.
 			//desc.AddMember(&SDRSProperties::value, 'valu', "Value", "Value", "DRS Value", "");
@@ -64,13 +60,13 @@ public:
 
 private:
 	/** An instance of an interaction component. */
-	CEntityInteractionComponent* m_interactor { nullptr };
+	CEntityInteractionComponent* m_interactor {nullptr};
 
 	/** The main verb for the DRS response. */
 	Schematyc::CSharedString m_drsResponse;
 
 	/** Properties. */
-	PropertyCollection m_drsProperties;	
+	PropertyCollection m_drsProperties;
 };
 
 bool Serialize(Serialization::IArchive& archive, CDRSInteractionComponent::SDRSProperties& value, const char* szName, const char* szLabel);

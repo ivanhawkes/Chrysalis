@@ -1,12 +1,38 @@
 #include "StdAfx.h"
 
 #include "InteractComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
+#include <Actor/Animation/Actions/ActorAnimationActionCooperative.h>
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
 #include <Components/Player/Input/PlayerInputComponent.h>
 
 
 namespace Chrysalis
 {
+static void RegisterInteractComponent(Schematyc::IEnvRegistrar& registrar)
+{
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CInteractComponent));
+
+		// Signals.
+		componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CInteractComponent::SInteractStartSignal));
+		componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CInteractComponent::SInteractTickSignal));
+		componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CInteractComponent::SInteractCompleteSignal));
+		componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CInteractComponent::SInteractAnimationEnterSignal));
+		componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CInteractComponent::SInteractAnimationFailSignal));
+		componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CInteractComponent::SInteractAnimationExitSignal));
+		componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CInteractComponent::SInteractAnimationEventSignal));
+
+		// Functions
+		{
+		}
+	}
+}
+
+
 static void ReflectType(Schematyc::CTypeDesc<CInteractComponent::SInteractAnimationEnterSignal>& desc)
 {
 	desc.SetGUID("{9F8551C1-3DC5-42A3-B0D4-8473D1445DDC}"_cry_guid);
@@ -44,26 +70,14 @@ static void ReflectType(Schematyc::CTypeDesc<CInteractComponent::SInteractAnimat
 }
 
 
-void CInteractComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
-{
-	componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CInteractComponent::SInteractStartSignal));
-	componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CInteractComponent::SInteractTickSignal));
-	componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CInteractComponent::SInteractCompleteSignal));
-	componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CInteractComponent::SInteractAnimationEnterSignal));
-	componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CInteractComponent::SInteractAnimationFailSignal));
-	componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CInteractComponent::SInteractAnimationExitSignal));
-	componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CInteractComponent::SInteractAnimationEventSignal));
-}
-
-
 void CInteractComponent::ReflectType(Schematyc::CTypeDesc<CInteractComponent>& desc)
 {
 	desc.SetGUID(CInteractComponent::IID());
-	desc.SetEditorCategory("Interact");
+	desc.SetEditorCategory("Interaction");
 	desc.SetLabel("Generic Interaction");
 	desc.SetDescription("An interaction between a player and an entity.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::None });
+	desc.SetComponentFlags({IEntityComponent::EFlags::None});
 
 	// Mark the entity interaction component as a hard requirement.
 	desc.AddComponentInteraction(SEntityComponentRequirements::EType::HardDependency, CEntityInteractionComponent::IID());
@@ -71,9 +85,9 @@ void CInteractComponent::ReflectType(Schematyc::CTypeDesc<CInteractComponent>& d
 	desc.AddMember(&CInteractComponent::m_isEnabled, 'isen', "IsEnabled", "IsEnabled", "Is this interaction currently enabled.", true);
 	desc.AddMember(&CInteractComponent::m_isSingleUseOnly, 'issi', "IsSingleUseOnly", "Single Use Only", "Is this Interact only able to be used once.", false);
 	desc.AddMember(&CInteractComponent::m_queueSignal, 'alts', "InteractVerb", "Interact Verb (Override)", "Send an alternative queue signal to DRS if the string is not empty. ('interaction_Interact').", "");
-	
+
 	// HACK: For now, there's no way to set the list of tags. Release 5.5 should have vector<string> support.
-	desc.AddMember(&CInteractComponent::m_tags, 'tags', "Tags", "Mannequin Tags", "Set these tags when playing the animation.", TagCollection{});
+	desc.AddMember(&CInteractComponent::m_tags, 'tags', "Tags", "Mannequin Tags", "Set these tags when playing the animation.", TagCollection {});
 }
 
 
@@ -114,7 +128,33 @@ void CInteractComponent::OnInteractionInteractStart(IInteraction& pInteraction, 
 		}
 
 		// We should queue an animation for this action.
-		auto action = new CActorAnimationActionInteraction(tags);
+		//auto actorAction = new CActorAnimationActionInteraction(tags);
+		//actorAction->AddEventListener(this);
+		//actor.QueueAction(*actorAction);
+
+		// Animation is handled by this component for most things. If it exists we can use it to find the animation control we need.
+		auto* pActorAnimationComponent = m_pEntity->GetComponent<CActorAnimationComponent>();
+
+		// NOTE: This method isn't working, although it really should. It doesn't load the fragments and tags for the
+		// interaction action, and so we end up queuing an action with no fragment or failing the IsSupported test.
+		//// Check the context and find out if the fragment is supported before we try and queue the interaction.
+		//const auto& pContext = pActorAnimationComponent->GetContext();
+		//if (CActorAnimationActionInteraction::IsSupported(pContext))
+		//{
+		//	auto targetAction = new CActorAnimationActionInteraction(tags);
+		//	//targetAction->AddEventListener(this);
+		//	pActorAnimationComponent->QueueAction(*targetAction);
+		//}
+
+		// NOTE: This method works.
+		//pActorAnimationComponent->QueueFragment("Interact");
+
+		// We prefer to place the actor into a co-operative animation if possible.
+		TagState tagState {TAG_STATE_EMPTY}; // TODO: Is this needed? Does it duplicate the tag list we are passing in?
+		auto action = new CActorAnimationActionCooperative(actor,
+			pActorAnimationComponent,
+			GetEntityId(),
+			actor.GetMannequinParams()->fragmentIDs.Interaction, tagState, actor.GetMannequinParams()->tagIDs.ScopeSlave, tags);
 		action->AddEventListener(this);
 		actor.QueueAction(*action);
 
@@ -242,7 +282,7 @@ void CInteractComponent::InformAllLinkedEntities(string verb, bool isInteractedO
 		pContextVariableCollection->CreateVariable("IsInteractedOn", isInteractedOn);
 
 		// Queue it and let the DRS handle it now.
-		const string queueSignalVerb = m_queueSignal.empty() ? kQueueSignal : m_queueSignal.c_str();
+		const string queueSignalVerb = m_queueSignal.empty() ? static_cast<string>(kQueueSignal) : static_cast<string>(m_queueSignal.c_str());
 		pDrsProxy->GetResponseActor()->QueueSignal(queueSignalVerb, pContextVariableCollection);
 
 		// Next please.
@@ -258,4 +298,6 @@ bool Serialize(Serialization::IArchive& archive, CInteractComponent::SAnimationT
 
 	return true;
 }
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterInteractComponent)
 }

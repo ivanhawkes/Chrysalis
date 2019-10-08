@@ -9,10 +9,6 @@ namespace Chrysalis
 class CLockableComponent
 	: public IEntityComponent
 {
-protected:
-	friend CChrysalisCorePlugin;
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 public:
 	CLockableComponent() {}
 	virtual ~CLockableComponent() {}

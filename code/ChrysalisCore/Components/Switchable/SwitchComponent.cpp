@@ -1,17 +1,26 @@
 #include "StdAfx.h"
 
 #include "SwitchComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
 #include "Actor/ActorComponent.h"
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
 
 
 namespace Chrysalis
 {
-void CSwitchComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterSwitchComponent(Schematyc::IEnvRegistrar& registrar)
 {
-	componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CSwitchComponent::SSwitchOnSignal));
-	componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CSwitchComponent::SSwitchOffSignal));
-	componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CSwitchComponent::SSwitchToggleSignal));
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CSwitchComponent));
+
+		// Signals.
+		componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CSwitchComponent::SSwitchOnSignal));
+		componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CSwitchComponent::SSwitchOffSignal));
+		componentScope.Register(SCHEMATYC_MAKE_ENV_SIGNAL(CSwitchComponent::SSwitchToggleSignal));
+	}
 }
 
 
@@ -143,11 +152,13 @@ void CSwitchComponent::InformAllLinkedEntities(string verb, bool isSwitchedOn)
 		pContextVariableCollection->CreateVariable("IsSwitchedOn", isSwitchedOn);
 
 		// Queue it and let the DRS handle it now.
-		const string queueSignalVerb = m_queueSignal.empty() ? kQueueSignal : m_queueSignal.c_str();
+		const string queueSignalVerb = m_queueSignal.empty() ? static_cast<string>(kQueueSignal) : static_cast<string>(m_queueSignal.c_str());
 		pDrsProxy->GetResponseActor()->QueueSignal(queueSignalVerb, pContextVariableCollection);
 
 		// Next please.
 		entityLinks = entityLinks->next;
 	}
 }
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterSwitchComponent)
 }

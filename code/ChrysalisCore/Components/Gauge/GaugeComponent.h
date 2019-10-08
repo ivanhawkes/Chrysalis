@@ -14,17 +14,14 @@ class CGaugeComponent
 	: public Cry::DefaultComponents::CBaseMeshComponent
 {
 protected:
-	friend CChrysalisCorePlugin;
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 	// IEntityComponent
 	void Initialize() override;
 	void ProcessEvent(const SEntityEvent& event) override;
-	Cry::Entity::EntityEventMask GetEventMask() const override { return Cry::DefaultComponents::CBaseMeshComponent::GetEventMask() | EntityEventMask(EEntityEvent::Update); }
+	Cry::Entity::EventFlags GetEventMask() const override { return Cry::DefaultComponents::CBaseMeshComponent::GetEventMask() | EEntityEvent::Update; }
 	// ~IEntityComponent
 
 	// IEditorEntityComponent
-	//virtual bool SetMaterial(int slotId, const char* szMaterial) override;
+	virtual bool SetMaterial(int slotId, const char* szMaterial) override;
 	// ~IEditorEntityComponent
 
 public:
@@ -43,7 +40,7 @@ public:
 	{
 		inline bool operator==(const SGaugeProperties &rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
 
-		Vec3 axis { 0.0f, 1.0f, 0.0f };
+		Vec3 axis {0.0f, 1.0f, 0.0f};
 		Schematyc::Range<0, 360> needleValue = 0.0f;
 	};
 

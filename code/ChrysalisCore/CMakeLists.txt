@@ -1,10 +1,11 @@
-cmake_minimum_required (VERSION 3.6.2)
-set(CRYENGINE_DIR "D:/CRYENGINE-SOURCE")
+cmake_minimum_required (VERSION 3.14)
+set(CRYENGINE_DIR "D:/Crytek/CRYENGINE Launcher/Crytek/CRYENGINE_5.6" CACHE STRING "CRYENGINE root directory.")
 set(TOOLS_CMAKE_DIR "${CRYENGINE_DIR}/Tools/CMake")
 
 set(PROJECT_BUILD 1)
 set(PROJECT_DIR "${CMAKE_SOURCE_DIR}/../")
 
+include("${TOOLS_CMAKE_DIR}/InitialSetup.cmake")
 include("${TOOLS_CMAKE_DIR}/CommonOptions.cmake")
 
 add_subdirectory("${CRYENGINE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/CRYENGINE")
@@ -141,8 +142,10 @@ add_sources("Components_uber.cpp"
 add_sources("Animation_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Animation"
+		"Components/Animation/ActorAnimationComponent.cpp"
 		"Components/Animation/ControlledAnimationComponent.cpp"
 		"Components/Animation/SimpleAnimationComponent.cpp"
+		"Components/Animation/ActorAnimationComponent.h"
 		"Components/Animation/ControlledAnimationComponent.h"
 		"Components/Animation/SimpleAnimationComponent.h"
 )
@@ -190,12 +193,6 @@ add_sources("Items_uber.cpp"
 		"Components/Items/ItemComponent.cpp"
 		"Components/Items/ItemComponent.h"
 )
-add_sources("Lights_uber.cpp"
-    PROJECTS Chrysalis
-    SOURCE_GROUP "Components\\\\Lights"
-		"Components/Lights/DynamicLightComponent.cpp"
-		"Components/Lights/DynamicLightComponent.h"
-)
 add_sources("Lockable_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Lockable"
@@ -203,6 +200,12 @@ add_sources("Lockable_uber.cpp"
 		"Components/Lockable/LockableComponent.cpp"
 		"Components/Lockable/KeyringComponent.h"
 		"Components/Lockable/LockableComponent.h"
+)
+add_sources("Loot_uber.cpp"
+    PROJECTS Chrysalis
+    SOURCE_GROUP "Components\\\\Loot"
+		"Components/Loot/LootableComponent.cpp"
+		"Components/Loot/LootableComponent.h"
 )
 add_sources("Openable_uber.cpp"
     PROJECTS Chrysalis
@@ -235,6 +238,18 @@ add_sources("Input_uber.cpp"
     SOURCE_GROUP "Components\\\\Player\\\\Input"
 		"Components/Player/Input/PlayerInputComponent.cpp"
 		"Components/Player/Input/PlayerInputComponent.h"
+)
+add_sources("SecurityPad_uber.cpp"
+    PROJECTS Chrysalis
+    SOURCE_GROUP "Components\\\\SecurityPad"
+		"Components/SecurityPad/SecurityPadComponent.cpp"
+		"Components/SecurityPad/SecurityPadComponent.h"
+)
+add_sources("Skeleton_uber.cpp"
+    PROJECTS Chrysalis
+    SOURCE_GROUP "Components\\\\Skeleton"
+		"Components/Skeleton/JointManipulationComponent.cpp"
+		"Components/Skeleton/JointManipulationComponent.h"
 )
 add_sources("Snaplocks_uber.cpp"
     PROJECTS Chrysalis
@@ -288,9 +303,7 @@ add_sources("Entities_uber.cpp"
 add_sources("Interaction_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Entities\\\\Interaction"
-		"Entities/Interaction/DRSInteractionEntity.cpp"
 		"Entities/Interaction/IEntityInteraction.cpp"
-		"Entities/Interaction/DRSInteractionEntity.h"
 		"Entities/Interaction/IEntityInteraction.h"
 )
 add_sources("Ownership_uber.cpp"
@@ -298,12 +311,6 @@ add_sources("Ownership_uber.cpp"
     SOURCE_GROUP "Entities\\\\Ownership"
 		"Entities/Ownership/IEntityOwnership.cpp"
 		"Entities/Ownership/IEntityOwnership.h"
-)
-add_sources("SecurityPad_uber.cpp"
-    PROJECTS Chrysalis
-    SOURCE_GROUP "Entities\\\\SecurityPad"
-		"Entities/SecurityPad/SecurityPadComponent.cpp"
-		"Entities/SecurityPad/SecurityPadComponent.h"
 )
 add_sources("Game_uber.cpp"
     PROJECTS Chrysalis
@@ -408,9 +415,24 @@ add_sources("Utility_uber.cpp"
 		"Utility/StringUtils.h"
 )
 
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/CVarOverrides.h")
+    add_sources("NoUberFile"
+        PROJECTS Game
+        SOURCE_GROUP "Root"
+            "CVarOverrides.h"
+    )
+endif()
+
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/EngineDefineOverrides.h")
+    add_sources("NoUberFile"
+        PROJECTS Game
+        SOURCE_GROUP "Root"
+            "EngineDefineOverrides.h"
+    )
+endif()
 end_sources()
 
-CryEngineModule(Chrysalis FORCE_SHARED PCH "StdAfx.cpp" SOLUTION_FOLDER "Project")
+CryGameModule(Chrysalis FORCE_SHARED PCH "StdAfx.cpp" SOLUTION_FOLDER "Project")
 
 target_include_directories(${THIS_PROJECT}
 PRIVATE
@@ -420,21 +442,67 @@ PRIVATE
     "${CRYENGINE_DIR}/Code/CryPlugins/CryDefaultEntities/Module"
 )
 
+if(CMAKE_CXX_COMPILER_ID MATCHES "[Cc]lang")
+    target_compile_options(${THIS_PROJECT} PRIVATE
+        -Wno-unused-variable
+        -Wno-reorder
+        -Wno-unknown-pragmas
+        -Wno-parentheses
+        -Wno-switch
+        -Wno-format
+        -Wno-dynamic-class-memaccess
+        -Wno-unused-private-field
+        -Wno-unused-value
+        -Wno-invalid-offsetof
+        -Wno-multichar
+        -Wno-char-subscripts
+        -Wno-null-conversion
+        -Wno-empty-body
+        -Wno-unused-lambda-capture
+        -Wno-unused-function
+        -Wno-tautological-constant-out-of-range-compare
+    )
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(${THIS_PROJECT} PRIVATE
+        -Wno-unused-function
+        -Wno-unused-value
+        -Wno-unused-variable
+        -Wno-aligned-new
+        -Wno-int-in-bool-context
+        -Wno-invalid-offsetof
+        -Wno-comment
+        -Wno-sign-compare
+        -Wno-unused-but-set-variable
+        -Wno-maybe-uninitialized
+        -Wno-misleading-indentation
+        -Wno-unused-result
+        -Wno-unknown-pragmas
+        -Wno-multichar
+        -Wno-strict-aliasing
+        -Wno-char-subscripts
+        -Wno-conversion-null
+        -Wno-reorder
+        -Wno-parentheses
+        -Wno-format
+        -Wno-switch
+    )
+endif()
+
 
 if(OPTION_ENGINE)
     if(NOT EXISTS "${CRYENGINE_DIR}/Code/Sandbox/EditorQt")
-		add_library(Editor STATIC "${CRYENGINE_DIR}/Code/CryEngine/CryCommon/CryCore/Platform/platform.h")
-		set_target_properties(Editor PROPERTIES LINKER_LANGUAGE CXX)
-		if (WIN32)
-			set_visual_studio_debugger_command(Editor "${CRYENGINE_DIR}/bin/win_x64/Sandbox.exe" "-project \"${PROJECT_DIR}Chrysalis.cryproject\"")
-		endif()
-	endif()
+        add_library(Editor STATIC "${CRYENGINE_DIR}/Code/CryEngine/CryCommon/CryCore/Platform/platform.h")
+        set_target_properties(Editor PROPERTIES LINKER_LANGUAGE CXX)
+        if (WIN32)
+            set_visual_studio_debugger_command(Editor "${CRYENGINE_DIR}/bin/win_x64/Sandbox.exe" "-project \"${PROJECT_DIR}Chrysalis.cryproject\"")
+        endif()
+    endif()
 else()
-	add_library(GameLauncher STATIC "${CRYENGINE_DIR}/Code/CryEngine/CryCommon/CryCore/Platform/platform.h")
-	set_target_properties(GameLauncher PROPERTIES LINKER_LANGUAGE CXX)
-	if (WIN32)
-		set_visual_studio_debugger_command(GameLauncher "${CRYENGINE_DIR}/bin/win_x64/GameLauncher.exe" "-project \"${PROJECT_DIR}Chrysalis.cryproject\"")
-	endif()
+    add_library(GameLauncher STATIC "${CRYENGINE_DIR}/Code/CryEngine/CryCommon/CryCore/Platform/platform.h")
+    set_target_properties(GameLauncher PROPERTIES LINKER_LANGUAGE CXX)
+    if (WIN32)
+        set_visual_studio_debugger_command(GameLauncher "${CRYENGINE_DIR}/bin/win_x64/GameLauncher.exe" "-project \"${PROJECT_DIR}Chrysalis.cryproject\"")
+    endif()
 
     add_library(Editor STATIC "${CRYENGINE_DIR}/Code/CryEngine/CryCommon/CryCore/Platform/platform.h")
     set_target_properties(Editor PROPERTIES LINKER_LANGUAGE CXX)
@@ -442,11 +510,11 @@ else()
         set_visual_studio_debugger_command(Editor "${CRYENGINE_DIR}/bin/win_x64/Sandbox.exe" "-project \"${PROJECT_DIR}Chrysalis.cryproject\"")
     endif()
 
-	add_library(GameServer STATIC "${CRYENGINE_DIR}/Code/CryEngine/CryCommon/CryCore/Platform/platform.h")
-	set_target_properties(GameServer PROPERTIES LINKER_LANGUAGE CXX)
-	if (WIN32)
-		set_visual_studio_debugger_command(GameServer "${CRYENGINE_DIR}/bin/win_x64/Game_Server.exe" "-project \"${PROJECT_DIR}Chrysalis.cryproject\"")
-	endif()
+    add_library(GameServer STATIC "${CRYENGINE_DIR}/Code/CryEngine/CryCommon/CryCore/Platform/platform.h")
+    set_target_properties(GameServer PROPERTIES LINKER_LANGUAGE CXX)
+    if (WIN32)
+        set_visual_studio_debugger_command(GameServer "${CRYENGINE_DIR}/bin/win_x64/Game_Server.exe" "-project \"${PROJECT_DIR}Chrysalis.cryproject\"")
+    endif()
 endif()
 
 # Set StartUp project in Visual Studio

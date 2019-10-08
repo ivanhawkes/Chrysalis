@@ -14,17 +14,14 @@ class CTimePieceComponent
 	: public Cry::DefaultComponents::CBaseMeshComponent
 {
 protected:
-	friend CChrysalisCorePlugin;
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 	// IEntityComponent
 	void Initialize() override;
 	void ProcessEvent(const SEntityEvent& event) override;
-	Cry::Entity::EntityEventMask GetEventMask() const override { return Cry::DefaultComponents::CBaseMeshComponent::GetEventMask() | EntityEventMask(EEntityEvent::Update); }
+	Cry::Entity::EventFlags GetEventMask() const override { return Cry::DefaultComponents::CBaseMeshComponent::GetEventMask() | EEntityEvent::Update; }
 	// ~IEntityComponent
 
 	// IEditorEntityComponent
-	//virtual bool SetMaterial(int slotId, const char* szMaterial) override;
+	virtual bool SetMaterial(int slotId, const char* szMaterial) override;
 	// ~IEditorEntityComponent
 
 public:

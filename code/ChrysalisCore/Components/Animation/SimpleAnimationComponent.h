@@ -13,9 +13,6 @@ class CSimpleAnimationComponent
 
 {
 protected:
-	friend CChrysalisCorePlugin;
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 	// IEntityComponent
 	virtual void Initialize() final;
 	// ~IEntityComponent
@@ -47,21 +44,21 @@ public:
 
 protected:
 	/** Model for the geometry. */
-	Cry::DefaultComponents::CStaticMeshComponent* m_pGeometryComponent { nullptr };
+	Cry::DefaultComponents::CStaticMeshComponent* m_pGeometryComponent {nullptr};
 
 	/** The entity slot to load the model into.	**/
-	int m_slotId { 1 };
+	int m_slotId {1};
 
 	/**	Animation file to play. **/
 	Schematyc::LowLevelAnimationName m_animation;
 
 	/**	Speed of the animation. **/
-	float m_animationSpeed { 1.0f };
+	float m_animationSpeed {1.0f};
 
 	/**	True to loop the animation. **/
-	bool m_bLoopAnimation { true };
+	bool m_bLoopAnimation {true};
 
 	/** Should the animation play when the level starts? **/
-	bool m_bPlayOnLevelStart { true };
+	bool m_bPlayOnLevelStart {true};
 };
 }

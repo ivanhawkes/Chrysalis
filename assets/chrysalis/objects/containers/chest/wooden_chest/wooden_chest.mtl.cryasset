@@ -1,0 +1,9 @@
+<AssetMetadata version="0" type="Material" guid="b8c86d02-5447-3b2c-af96-4eea22786bd9">
+ <Files>
+  <File path="wooden_chest.mtl"/>
+ </Files>
+ <Details>
+  <Detail name="subMaterialCount">2</Detail>
+  <Detail name="textureCount">0</Detail>
+ </Details>
+</AssetMetadata>

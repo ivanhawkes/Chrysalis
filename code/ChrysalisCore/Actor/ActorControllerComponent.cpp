@@ -1,6 +1,9 @@
 #include <StdAfx.h>
 
 #include "ActorControllerComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
 #include "Components/Player/PlayerComponent.h"
 
 
@@ -9,8 +12,15 @@ namespace Chrysalis
 // Definition of the state machine that controls actor movement.
 DEFINE_STATE_MACHINE(CActorControllerComponent, Movement);
 
-void CActorControllerComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterActorControllerComponent(Schematyc::IEnvRegistrar& registrar)
 {
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CActorControllerComponent));
+		// Functions
+		{
+		}
+	}
 }
 
 
@@ -21,7 +31,7 @@ void CActorControllerComponent::ReflectType(Schematyc::CTypeDesc<CActorControlle
 	desc.SetLabel("Actor Controller");
 	desc.SetDescription("Actor controller.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
+	desc.SetComponentFlags({IEntityComponent::EFlags::Singleton});
 
 	// Mark the actor component as a hard requirement.
 	desc.AddComponentInteraction(SEntityComponentRequirements::EType::HardDependency, CActorComponent::IID());
@@ -34,7 +44,7 @@ void CActorControllerComponent::ReflectType(Schematyc::CTypeDesc<CActorControlle
 void CActorControllerComponent::Initialize()
 {
 	// Mesh and animation.
-	m_pAdvancedAnimationComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CAdvancedAnimationComponent>();
+	m_pActorAnimationComponent = m_pEntity->GetOrCreateComponent<CActorAnimationComponent>();
 
 	// Character movement controller.
 	m_pCharacterControllerComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CCharacterControllerComponent>();
@@ -67,12 +77,12 @@ void CActorControllerComponent::ProcessEvent(const SEntityEvent& event)
 
 		case EEntityEvent::Update:
 		{
-			SEntityUpdateContext* pCtx = (SEntityUpdateContext*)event.nParam [0];
+			SEntityUpdateContext* pCtx = (SEntityUpdateContext*)event.nParam[0];
 			Update(pCtx);
 		}
 		break;
 
-		case ENTITY_EVENT_PREPHYSICSUPDATE:
+		case EEntityEvent::PrePhysicsUpdate:
 			PrePhysicsUpdate();
 			break;
 	}
@@ -349,14 +359,14 @@ void CActorControllerComponent::UpdateLookDirectionRequest(float frameTime)
 
 			// We add in some extra rotation to 'catch up' to the direction they are being moved. This will perform a gradual
 			// turn on the actor over several frames.
-			float rotationDelta { 0.0f };
+			float rotationDelta {0.0f};
 			if (std::abs(facingDir.x - ypr.x) > g_PI)
 				rotationDelta = ypr.x - facingDir.x;
 			else
 				rotationDelta = facingDir.x - ypr.x;
 
 			// Catchup allows us to step towards the goal direction in even steps using a set angular velocity.
-			float catchUp { 0.0f };
+			float catchUp {0.0f};
 			if (std::abs(rotationDelta) > FLT_EPSILON)
 			{
 				if (rotationDelta > 0.0f)
@@ -392,20 +402,21 @@ void CActorControllerComponent::UpdateAnimation(float frameTime)
 		const bool isTurning = std::abs(m_yawAngularVelocity) > angularVelocityMin;
 
 		// Resolve the animation tags.
-		// HACK: This should be done once on init or on entity changed events or similar. It fails hard if the init order is switched with CAdvancedAnimationComponent.
-		if ((m_rotateTagId == TAG_ID_INVALID) && (strlen(m_pAdvancedAnimationComponent->GetControllerDefinitionFile()) > 0))
-			m_rotateTagId = m_pAdvancedAnimationComponent->GetTagId("Rotate");
+		// HACK: This should be done once on init or on entity changed events or similar. It fails hard if the init order
+		// is switched with CActorAnimationComponent.
+		if ((m_rotateTagId == TAG_ID_INVALID) && (strlen(m_pActorAnimationComponent->GetControllerDefinitionFile()) > 0))
+			m_rotateTagId = m_pActorAnimationComponent->GetTagId("Rotate");
 
 		// Set the tag, if it exists.
 		if (m_rotateTagId != TAG_ID_INVALID)
-			m_pAdvancedAnimationComponent->SetTagWithId(m_rotateTagId, isTurning);
+			m_pActorAnimationComponent->SetTagWithId(m_rotateTagId, isTurning);
 
 		if (isTurning)
 		{
 			// Expect the turning motion to take approximately one second.
 			// TODO: Get to work on making this happen more like Blade and Soul.
 			const float turnDuration = 1.0f;
-			m_pAdvancedAnimationComponent->SetMotionParameter(eMotionParamID_TurnAngle, m_yawAngularVelocity * turnDuration);
+			m_pActorAnimationComponent->SetMotionParameter(eMotionParamID_TurnAngle, m_yawAngularVelocity * turnDuration);
 		}
 
 		// Update entity rotation as the player turns. We only want to affect Z-axis rotation, zero pitch and roll.
@@ -423,14 +434,14 @@ void CActorControllerComponent::UpdateAnimation(float frameTime)
 
 float CActorControllerComponent::GetMovementBaseSpeed(TInputFlags movementDirectionFlags) const
 {
-	const static float walkBaseSpeed { 2.1f };
-	const static float jogBaseSpeed { 4.2f };
-	const static float runBaseSpeed { 6.3f };
-	const static float crawlBaseSpeed { 1.2f };
-	const static float proneBaseSpeed { 0.4f };
-	const static float crouchBaseSpeed { 1.2f };
-	float baseSpeed { 0.0f };
-	float dirScale { 1.0f };
+	const static float walkBaseSpeed {2.1f};
+	const static float jogBaseSpeed {4.2f};
+	const static float runBaseSpeed {6.3f};
+	const static float crawlBaseSpeed {1.2f};
+	const static float proneBaseSpeed {0.4f};
+	const static float crouchBaseSpeed {1.2f};
+	float baseSpeed {0.0f};
+	float dirScale {1.0f};
 
 	switch (GetStance())
 	{
@@ -561,4 +572,6 @@ void CActorControllerComponent::OnActionSitToggle()
 	else
 		SetStance(EActorStance::eAS_SittingFloor);
 }
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterActorControllerComponent)
 }

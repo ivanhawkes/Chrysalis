@@ -1,0 +1,19 @@
+<ControllerDef>
+ <Tags filename="chrysalis/objects/desk/workdesk/tags.xml"/>
+ <Fragments filename="chrysalis/objects/desk/workdesk/fragment_ids.xml"/>
+ <FragmentDefs>
+  <Interact scopes="SlaveCharacter+SlaveObject"/>
+  <Closed scopes="SlaveCharacter+SlaveObject"/>
+  <Open scopes="SlaveCharacter+SlaveObject"/>
+  <Opening scopes="SlaveCharacter+SlaveObject"/>
+  <Closing scopes="SlaveCharacter+SlaveObject"/>
+ </FragmentDefs>
+ <ScopeContextDefs>
+  <SlaveCharacter />
+  <SlaveObject />
+ </ScopeContextDefs>
+ <ScopeDefs>
+  <SlaveCharacter layer="0" numLayers="3" context="SlaveCharacter" Tags="ScopeSlave"/>
+  <SlaveObject layer="0" numLayers="3" context="SlaveObject" Tags="ScopeSlave"/>
+ </ScopeDefs>
+</ControllerDef>

@@ -8,11 +8,6 @@
 
 namespace Chrysalis
 {
-void ICameraComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
-{
-}
-
-
 void ICameraComponent::ReflectType(Schematyc::CTypeDesc<ICameraComponent>& desc)
 {
 	desc.SetGUID(ICameraComponent::IID());
@@ -56,8 +51,8 @@ const Vec3 ICameraComponent::GetAimTarget(const IEntity* pRayCastingEntity) cons
 	// Try and update where the player is aiming.
 	// #TODO: need to skip the player's geometry and if they are in a vehicle, that needs skipping too.
 	ray_hit rayhit;
-	static IPhysicalEntity* pSkipEnts [10];
-	int skipCount { 0 };
+	static IPhysicalEntity* pSkipEnts[10];
+	int skipCount{ 0 };
 
 	// Skip the target actor for this.
 	if (pRayCastingEntity)
@@ -65,7 +60,7 @@ const Vec3 ICameraComponent::GetAimTarget(const IEntity* pRayCastingEntity) cons
 		auto pPhysicalEntity = pRayCastingEntity->GetPhysics();
 		if (pPhysicalEntity)
 		{
-			pSkipEnts [0] = pRayCastingEntity->GetPhysics();
+			pSkipEnts[0] = pRayCastingEntity->GetPhysics();
 			skipCount++;
 		}
 	}

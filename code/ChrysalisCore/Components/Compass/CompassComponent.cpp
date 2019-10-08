@@ -1,12 +1,22 @@
 #include "StdAfx.h"
 
 #include "CompassComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
 
 
 namespace Chrysalis
 {
-void CCompassComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterCompassComponent(Schematyc::IEnvRegistrar& registrar)
 {
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CCompassComponent));
+		// Functions
+		{
+		}
+	}
 }
 
 
@@ -17,7 +27,7 @@ void CCompassComponent::ReflectType(Schematyc::CTypeDesc<CCompassComponent>& des
 	desc.SetLabel("Compass");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+	desc.SetComponentFlags({IEntityComponent::EFlags::Transform});
 
 	// Mark the entity interaction component as a hard requirement.
 	desc.AddComponentInteraction(SEntityComponentRequirements::EType::HardDependency, CEntityInteractionComponent::IID());
@@ -46,4 +56,6 @@ void CCompassComponent::Initialize()
 void CCompassComponent::OnResetState()
 {
 }
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterCompassComponent)
 }

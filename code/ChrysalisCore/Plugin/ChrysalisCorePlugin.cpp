@@ -8,37 +8,7 @@
 #include <CrySystem/ISystem.h>
 #include <IGameObjectSystem.h>
 #include <IGameObject.h>
-#include "Actor/Character/CharacterAttributesComponent.h"
-#include "Actor/ActorComponent.h"
-#include "Actor/ActorControllerComponent.h"
-#include "Actor/Character/CharacterComponent.h"
-#include "Actor/Mount/Mount.h"
-#include "Actor/Pet/Pet.h"
-#include "Components/Items/ItemComponent.h"
-#include "Components/Animation/ControlledAnimationComponent.h"
-#include "Components/Animation/SimpleAnimationComponent.h"
-#include "Components/Compass/CompassComponent.h"
-#include "Components/Equipment/EquipmentComponent.h"
-#include "Components/Interaction/DRSInteractionComponent.h"
-#include "Components/Interaction/EntityAwarenessComponent.h"
-#include "Components/Interaction/EntityInteractionComponent.h"
-#include "Components/Interaction/InteractComponent.h"
-#include "Components/Interaction/ItemInteractionComponent.h"
-#include "Components/Inventory/InventoryComponent.h"
-#include "Components/Lights/DynamicLightComponent.h"
-#include "Components/Lockable/KeyringComponent.h"
-#include "Components/Lockable/LockableComponent.h"
 #include "Components/Player/PlayerComponent.h"
-#include "Components/Openable/ContainerComponent.h"
-#include "Components/Switchable/SwitchComponent.h"
-#include "Components/Player/Input/PlayerInputComponent.h"
-#include "Components/Snaplocks/SnaplockComponent.h"
-#include "Components/Player/Camera/CameraManagerComponent.h"
-#include "Components/Player/Camera/ActionRPGCameraComponent.h"
-#include "Components/Player/Camera/ExamineCameraComponent.h"
-#include "Components/Player/Camera/FirstPersonCameraComponent.h"
-#include "Components/TimePiece/TimePieceComponent.h"
-#include "Components/Gauge/GaugeComponent.h"
 #include "Console/CVars.h"
 #include "DynamicResponseSystem/ConditionDistanceToEntity.h"
 #include "DynamicResponseSystem/ActionClose.h"
@@ -47,8 +17,6 @@
 #include "DynamicResponseSystem/ActionPlayAnimation.h"
 #include "DynamicResponseSystem/ActionSwitch.h"
 #include "DynamicResponseSystem/ActionUnlock.h"
-#include "Entities/Interaction/DRSInteractionEntity.h"
-#include "Entities/SecurityPad/SecurityPadComponent.h"
 #include "ObjectID/ObjectIdMasterFactory.h"
 #include "Schematyc/CoreEnv.h"
 
@@ -74,150 +42,6 @@ CChrysalisCorePlugin::~CChrysalisCorePlugin()
 }
 
 
-void CChrysalisCorePlugin::RegisterComponents(Schematyc::IEnvRegistrar& registrar)
-{
-	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
-	{
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CPlayerComponent));
-			Chrysalis::CPlayerComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CPlayerInputComponent));
-			Chrysalis::CPlayerInputComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CCameraManagerComponent));
-			Chrysalis::CCameraManagerComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CFirstPersonCameraComponent));
-			Chrysalis::CFirstPersonCameraComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CExamineCameraComponent));
-			Chrysalis::CExamineCameraComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CActionRPGCameraComponent));
-			Chrysalis::CActionRPGCameraComponent::Register(componentScope);
-		}
-		//{
-		//	Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::IActorComponent));
-		//	Chrysalis::IActorComponent::Register(componentScope);
-		//}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CActorComponent));
-			Chrysalis::CActorComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CActorControllerComponent));
-			Chrysalis::CActorControllerComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CCharacterComponent));
-			Chrysalis::CCharacterComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CPetComponent));
-			Chrysalis::CPetComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CMountComponent));
-			Chrysalis::CMountComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CCharacterAttributesComponent));
-			Chrysalis::CCharacterAttributesComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CItemComponent));
-			Chrysalis::CItemComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CControlledAnimationComponent));
-			Chrysalis::CControlledAnimationComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CSimpleAnimationComponent));
-			Chrysalis::CSimpleAnimationComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CEquipmentComponent));
-			Chrysalis::CEquipmentComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CDRSInteractionComponent));
-			Chrysalis::CDRSInteractionComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CEntityAwarenessComponent));
-			Chrysalis::CEntityAwarenessComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CEntityInteractionComponent));
-			Chrysalis::CEntityInteractionComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CItemInteractionComponent));
-			Chrysalis::CItemInteractionComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CInventoryComponent));
-			Chrysalis::CInventoryComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CDynamicLightComponent));
-			Chrysalis::CDynamicLightComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CKeyringComponent));
-			Chrysalis::CKeyringComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CLockableComponent));
-			Chrysalis::CLockableComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CContainerComponent));
-			Chrysalis::CContainerComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CSnaplockComponent));
-			Chrysalis::CSnaplockComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CSwitchComponent));
-			Chrysalis::CSwitchComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CCompassComponent));
-			Chrysalis::CCompassComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CDRSInteractionEntity));
-			Chrysalis::CDRSInteractionEntity::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CSecurityPadComponent));
-			Chrysalis::CSecurityPadComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CTimePieceComponent));
-			Chrysalis::CTimePieceComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CGaugeComponent));
-			Chrysalis::CGaugeComponent::Register(componentScope);
-		}
-		{
-			Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(Chrysalis::CInteractComponent));
-			Chrysalis::CInteractComponent::Register(componentScope);
-		}
-	}
-}
-
-
 bool CChrysalisCorePlugin::Initialize(SSystemGlobalEnvironment& env, const SSystemInitParams& initParams)
 {
 	// Register for engine system events, in our case we need ESYSTEM_EVENT_GAME_POST_INIT to load the map
@@ -240,6 +64,7 @@ void CChrysalisCorePlugin::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UI
 	{
 		case ESYSTEM_EVENT_REGISTER_SCHEMATYC_ENV:
 		{
+			// Register core environmental Schematyc code.
 			if (gEnv->pSchematyc)
 			{
 				gEnv->pSchematyc->GetEnvRegistry().RegisterPackage(
@@ -251,21 +76,18 @@ void CChrysalisCorePlugin::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UI
 			{
 				// Call all static callback registered with the CRY_STATIC_AUTO_REGISTER_WITH_PARAM
 				Detail::CStaticAutoRegistrar<Schematyc::IEnvRegistrar&>::InvokeStaticCallbacks(registrar);
-
-				// Register our components.
-				RegisterComponents(registrar);
 			};
 
 			if (gEnv->pSchematyc)
 			{
 				gEnv->pSchematyc->GetEnvRegistry().RegisterPackage(
 					stl::make_unique<Schematyc::CEnvPackage>(
-					GetSchematycPackageGUID(),
-					"EntityComponents",
-					"Chrysalis",
-					"Components",
-					staticAutoRegisterLambda
-				)
+						GetSchematycPackageGUID(),
+						"EntityComponents",
+						"Chrysalis",
+						"Components",
+						staticAutoRegisterLambda
+						)
 				);
 			}
 		}
@@ -329,11 +151,10 @@ bool CChrysalisCorePlugin::OnClientConnectionReceived(int channelId, bool bIsRes
 	SEntitySpawnParams spawnParams;
 	spawnParams.pClass = gEnv->pEntitySystem->GetClassRegistry()->GetDefaultClass();
 	spawnParams.sName = "Player";
-	spawnParams.nFlags |= ENTITY_FLAG_NEVER_NETWORK_STATIC;
 
 	// Determine if this channel is the local player channel. The first player to connect is considered the local
 	// player, and this will rollover to new maps when they are loaded. 
-	bool isLocal { false };
+	bool isLocal {false};
 	if (!gEnv->IsDedicated())
 	{
 		if (m_players.size() == 0)
@@ -367,7 +188,7 @@ bool CChrysalisCorePlugin::OnClientConnectionReceived(int channelId, bool bIsRes
 		pPlayerEntity->GetNetEntity()->BindToNetwork();
 
 		// Create the player component instance
-		CPlayerComponent* pPlayer = pPlayerEntity->GetOrCreateComponent<CPlayerComponent>();
+		pPlayerEntity->GetOrCreateComponent<CPlayerComponent>();
 
 		// Push the component into our map, with the channel id as the key
 		m_players.emplace(std::make_pair(channelId, pPlayerEntity->GetId()));
@@ -406,7 +227,7 @@ void CChrysalisCorePlugin::OnClientDisconnected(int channelId, EDisconnectionCau
 
 CChrysalisCorePlugin* CChrysalisCorePlugin::Get()
 {
-	static CChrysalisCorePlugin* plugIn { nullptr };
+	static CChrysalisCorePlugin* plugIn {nullptr};
 
 	if (!plugIn)
 		plugIn = gEnv->pSystem->GetIPluginManager()->QueryPlugin<CChrysalisCorePlugin>();

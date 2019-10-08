@@ -26,7 +26,7 @@ DRS::IResponseActionInstanceUniquePtr CActionSwitch::Execute(DRS::IResponseInsta
 
 			// This allows us to select between being switched on and off.
 			// #TODO: Put this into use and look into what else we can add.
-			bool isSwitchOn = DRSUtility::GetValueOrDefault(pContextVariables, "IsSwitchedOn", false);
+			//bool isSwitchOn = DRSUtility::GetValueOrDefault(pContextVariables, "IsSwitchedOn", false);
 
 			if (auto pInteractor = pEntity->GetComponent<CEntityInteractionComponent>())
 			{

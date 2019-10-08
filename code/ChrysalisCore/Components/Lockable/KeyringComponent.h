@@ -7,10 +7,6 @@ namespace Chrysalis
 class CKeyringComponent
 	: public IEntityComponent
 {
-protected:
-	friend CChrysalisCorePlugin;
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 	// IEntityComponent
 	void Initialize() override {};
 	// ~IEntityComponent

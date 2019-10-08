@@ -1,6 +1,10 @@
 #include <StdAfx.h>
 
 #include "ExamineCameraComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
+#include <CryRenderer/IRenderAuxGeom.h>
 #include "Components/Player/PlayerComponent.h"
 #include <Components/Player/Input/PlayerInputComponent.h>
 #include <Actor/Character/CharacterComponent.h>
@@ -10,8 +14,15 @@
 
 namespace Chrysalis
 {
-void CExamineCameraComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterExamineCameraComponent(Schematyc::IEnvRegistrar& registrar)
 {
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CExamineCameraComponent));
+		// Functions
+		{
+		}
+	}
 }
 
 
@@ -22,7 +33,7 @@ void CExamineCameraComponent::ReflectType(Schematyc::CTypeDesc<CExamineCameraCom
 	desc.SetLabel("Examine Camera");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Socket, IEntityComponent::EFlags::Attach, IEntityComponent::EFlags::ClientOnly });
+	desc.SetComponentFlags({IEntityComponent::EFlags::Socket, IEntityComponent::EFlags::Attach, IEntityComponent::EFlags::ClientOnly});
 }
 
 
@@ -85,7 +96,7 @@ void CExamineCameraComponent::Update()
 			// We will use the rotation of the entity as a base, and apply pitch based on our own reckoning.
 			const Vec3 position = pEntity->GetPos();// +xx;
 			const Quat rotation = pEntity->GetRotation();// *Quat(Ang3(m_viewPitch, 0.0f, 0.0f)) * Quat(Ang3(m_viewYaw, 0.0f, 0.0f));
-			newCameraMatrix = Matrix34::Create(Vec3(1.0f),rotation, position);
+			newCameraMatrix = Matrix34::Create(Vec3(1.0f), rotation, position);
 
 #if defined(_DEBUG)
 			if (g_cvars.m_examineCameraDebug)
@@ -114,7 +125,7 @@ void CExamineCameraComponent::AttachToEntity(EntityId entityId)
 
 void CExamineCameraComponent::OnActivate()
 {
-	m_EventMask |= EventToMask(EEntityEvent::Update);
+	m_EventFlags |= EEntityEvent::Update;
 	GetEntity()->UpdateComponentEventMask(this);
 	ResetCamera();
 
@@ -132,7 +143,7 @@ void CExamineCameraComponent::OnActivate()
 
 void CExamineCameraComponent::OnDeactivate()
 {
-	m_EventMask &= ~EventToMask(EEntityEvent::Update);
+	m_EventFlags &= ~EEntityEvent::Update;
 	GetEntity()->UpdateComponentEventMask(this);
 }
 
@@ -142,4 +153,6 @@ void CExamineCameraComponent::ResetCamera()
 	m_viewYaw = (DEG2RAD(g_cvars.m_examineCameraYawMax) + DEG2RAD(g_cvars.m_examineCameraYawMin)) / 2;
 	m_viewPitch = (DEG2RAD(g_cvars.m_examineCameraPitchMax) + DEG2RAD(g_cvars.m_examineCameraPitchMin)) / 2;
 }
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterExamineCameraComponent)
 }

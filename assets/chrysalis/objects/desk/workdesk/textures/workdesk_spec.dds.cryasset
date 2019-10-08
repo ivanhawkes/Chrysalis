@@ -1,0 +1,10 @@
+<AssetMetadata version="0" type="Texture" guid="e7349a41-2984-59d6-27ab-6d910a3733fe" source="workdesk_spec.tif">
+ <Files>
+  <File path="workdesk_spec.dds"/>
+ </Files>
+ <Details>
+  <Detail name="width">1024</Detail>
+  <Detail name="height">1024</Detail>
+  <Detail name="mipCount">9</Detail>
+ </Details>
+</AssetMetadata>

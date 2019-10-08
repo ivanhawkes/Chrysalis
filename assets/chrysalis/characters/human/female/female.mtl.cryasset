@@ -1,0 +1,14 @@
+<AssetMetadata version="0" type="Material" guid="717919c2-75bd-0778-3e7d-46ca1091d9ad">
+ <Files>
+  <File path="female.mtl"/>
+ </Files>
+ <Details>
+  <Detail name="subMaterialCount">4</Detail>
+  <Detail name="textureCount">3</Detail>
+ </Details>
+ <Dependencies>
+  <Path usageCount="2">./textures/female_diff.dds</Path>
+  <Path usageCount="2">./textures/female_ddna.dds</Path>
+  <Path usageCount="2">./textures/female_spec.dds</Path>
+ </Dependencies>
+</AssetMetadata>

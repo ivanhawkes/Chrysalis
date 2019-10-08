@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="afbe757a-271d-3702-c043-daff205f824d">
+ <Files>
+  <File path="tags.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">TagDefinition</Detail>
+ </Details>
+</AssetMetadata>

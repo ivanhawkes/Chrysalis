@@ -1,55 +1,62 @@
 #include "StdAfx.h"
 
 #include "ControlledAnimationComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
 #include <Cry3DEngine/IRenderNode.h>
 
 
 namespace Chrysalis
 {
-void CControlledAnimationComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterControlledAnimationComponent(Schematyc::IEnvRegistrar& registrar)
 {
-	// Functions
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
 	{
-		auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CControlledAnimationComponent::PlayAnimation, "{479DD227-E758-487B-AB8C-30C6DF4BDDBF}"_cry_guid, "PlayAnimation");
-		pFunction->SetDescription("Plays a low-level animation on the animated mesh");
-		pFunction->SetFlags(Schematyc::EEnvFunctionFlags::None);
-		pFunction->BindInput(1, 'name', "Name");
-		componentScope.Register(pFunction);
-	}
-	{
-		auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CControlledAnimationComponent::SetPlaybackSpeed, "{BAB3BAB6-6D26-47F2-8663-5BBFFE88E066}"_cry_guid, "SetPlaybackSpeed");
-		pFunction->SetDescription("Sets the speed at which animations are played");
-		pFunction->SetFlags(Schematyc::EEnvFunctionFlags::Construction);
-		pFunction->BindInput(1, 'sped', "Speed");
-		componentScope.Register(pFunction);
-	}
-	{
-		auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CControlledAnimationComponent::SetPlaybackWeight, "{32B3F3E5-F245-4050-853A-6818ED02721B}"_cry_guid, "SetPlaybackWeight");
-		pFunction->SetDescription("Sets the weight at which animations are played");
-		pFunction->SetFlags(Schematyc::EEnvFunctionFlags::Construction);
-		pFunction->BindInput(1, 'weig', "Weight");
-		componentScope.Register(pFunction);
-	}
-	{
-		auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CControlledAnimationComponent::SetLayer, "{B9C3DAB0-7998-4572-95F7-056612434151}"_cry_guid, "SetLayer");
-		pFunction->SetDescription("Sets the layer at which animations are played");
-		pFunction->SetFlags(Schematyc::EEnvFunctionFlags::Construction);
-		pFunction->BindInput(1, 'layr', "Layer");
-		componentScope.Register(pFunction);
-	}
-	{
-		auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CControlledAnimationComponent::SetMeshType, "{9D5182CF-C754-41EE-AAA2-F0A8833462B4}"_cry_guid, "SetType");
-		pFunction->BindInput(1, 'type', "Type");
-		pFunction->SetDescription("Changes the type of the object");
-		pFunction->SetFlags({ Schematyc::EEnvFunctionFlags::Member });
-		componentScope.Register(pFunction);
-	}
-	{
-		auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CControlledAnimationComponent::SeekFrame, "{A27A52CF-67A8-4ABF-9BCE-123DD83F4AAF}"_cry_guid, "SeekToFrame");
-		pFunction->SetDescription("Seeks to the requested frame within the animation");
-		pFunction->SetFlags(Schematyc::EEnvFunctionFlags::None);
-		pFunction->BindInput(1, 'fram', "Frame");
-		componentScope.Register(pFunction);
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CControlledAnimationComponent));
+		// Functions
+		{
+			auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CControlledAnimationComponent::PlayAnimation, "{479DD227-E758-487B-AB8C-30C6DF4BDDBF}"_cry_guid, "PlayAnimation");
+			pFunction->SetDescription("Plays a low-level animation on the animated mesh");
+			pFunction->SetFlags(Schematyc::EEnvFunctionFlags::None);
+			pFunction->BindInput(1, 'name', "Name");
+			componentScope.Register(pFunction);
+		}
+		{
+			auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CControlledAnimationComponent::SetPlaybackSpeed, "{BAB3BAB6-6D26-47F2-8663-5BBFFE88E066}"_cry_guid, "SetPlaybackSpeed");
+			pFunction->SetDescription("Sets the speed at which animations are played");
+			pFunction->SetFlags(Schematyc::EEnvFunctionFlags::Construction);
+			pFunction->BindInput(1, 'sped', "Speed");
+			componentScope.Register(pFunction);
+		}
+		{
+			auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CControlledAnimationComponent::SetPlaybackWeight, "{32B3F3E5-F245-4050-853A-6818ED02721B}"_cry_guid, "SetPlaybackWeight");
+			pFunction->SetDescription("Sets the weight at which animations are played");
+			pFunction->SetFlags(Schematyc::EEnvFunctionFlags::Construction);
+			pFunction->BindInput(1, 'weig', "Weight");
+			componentScope.Register(pFunction);
+		}
+		{
+			auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CControlledAnimationComponent::SetLayer, "{B9C3DAB0-7998-4572-95F7-056612434151}"_cry_guid, "SetLayer");
+			pFunction->SetDescription("Sets the layer at which animations are played");
+			pFunction->SetFlags(Schematyc::EEnvFunctionFlags::Construction);
+			pFunction->BindInput(1, 'layr', "Layer");
+			componentScope.Register(pFunction);
+		}
+		{
+			auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CControlledAnimationComponent::SetMeshType, "{9D5182CF-C754-41EE-AAA2-F0A8833462B4}"_cry_guid, "SetType");
+			pFunction->BindInput(1, 'type', "Type");
+			pFunction->SetDescription("Changes the type of the object");
+			pFunction->SetFlags({Schematyc::EEnvFunctionFlags::Member});
+			componentScope.Register(pFunction);
+		}
+		{
+			auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CControlledAnimationComponent::SeekFrame, "{A27A52CF-67A8-4ABF-9BCE-123DD83F4AAF}"_cry_guid, "SeekToFrame");
+			pFunction->SetDescription("Seeks to the requested frame within the animation");
+			pFunction->SetFlags(Schematyc::EEnvFunctionFlags::None);
+			pFunction->BindInput(1, 'fram', "Frame");
+			componentScope.Register(pFunction);
+		}
 	}
 }
 
@@ -60,7 +67,7 @@ void CControlledAnimationComponent::ReflectType(Schematyc::CTypeDesc<CControlled
 	desc.SetEditorCategory("Geometry");
 	desc.SetLabel("Controlled Animation");
 	desc.SetDescription("A component containing a simple mesh that can be animated using direct control");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform, IEntityComponent::EFlags::Socket, IEntityComponent::EFlags::Attach });
+	desc.SetComponentFlags({IEntityComponent::EFlags::Transform, IEntityComponent::EFlags::Socket, IEntityComponent::EFlags::Attach});
 
 	desc.AddMember(&CControlledAnimationComponent::m_type, 'type', "Type", "Type", "Determines the behavior of the static mesh", Cry::DefaultComponents::EMeshType::RenderAndCollider);
 
@@ -132,7 +139,7 @@ void CControlledAnimationComponent::ProcessEvent(const SEntityEvent& event)
 
 		case EEntityEvent::Update:
 		{
-			SEntityUpdateContext* pCtx = (SEntityUpdateContext*)event.nParam [0];
+			SEntityUpdateContext* pCtx = (SEntityUpdateContext*)event.nParam[0];
 			Update(pCtx);
 		}
 		break;
@@ -180,24 +187,26 @@ void CControlledAnimationComponent::SetDefaultAnimationName(const char* szPath)
 }
 
 
-//bool CControlledAnimationComponent::SetMaterial(int slotId, const char* szMaterial)
-//{
-//	if (slotId == GetEntitySlotId())
-//	{
-//		if (IMaterial* pMaterial = gEnv->p3DEngine->GetMaterialManager()->LoadMaterial(szMaterial, false))
-//		{
-//			m_materialPath = szMaterial;
-//			m_pEntity->SetSlotMaterial(GetEntitySlotId(), pMaterial);
-//		}
-//		else if (szMaterial [0] == '\0')
-//		{
-//			m_materialPath.value.clear();
-//			m_pEntity->SetSlotMaterial(GetEntitySlotId(), nullptr);
-//		}
-//
-//		return true;
-//	}
-//
-//	return false;
-//}
+bool CControlledAnimationComponent::SetMaterial(int slotId, const char* szMaterial)
+{
+	if (slotId == GetEntitySlotId())
+	{
+		if (IMaterial* pMaterial = gEnv->p3DEngine->GetMaterialManager()->LoadMaterial(szMaterial, false))
+		{
+			m_materialPath = szMaterial;
+			m_pEntity->SetSlotMaterial(GetEntitySlotId(), pMaterial);
+		}
+		else if (szMaterial[0] == '\0')
+		{
+			m_materialPath.value.clear();
+			m_pEntity->SetSlotMaterial(GetEntitySlotId(), nullptr);
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterControlledAnimationComponent)
 }

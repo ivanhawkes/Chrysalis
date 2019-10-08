@@ -21,9 +21,6 @@ class CContainerComponent
 	, public IInteractionLockable
 {
 protected:
-	friend CChrysalisCorePlugin;
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 	// IEntityComponent
 	void Initialize() override;
 	// ~IEntityComponent
@@ -55,15 +52,15 @@ public:
 
 private:
 	/** Model for the geometry. */
-	Cry::DefaultComponents::CStaticMeshComponent* m_pGeometryComponent { nullptr };
+	Cry::DefaultComponents::CStaticMeshComponent* m_pGeometryComponent {nullptr};
 
 	/** Animation for the geometry. */
-	CSimpleAnimationComponent* m_pSimpleAnimationComponent { nullptr };
+	CSimpleAnimationComponent* m_pSimpleAnimationComponent {nullptr};
 
 	/** Doors should be lockable. */
-	CLockableComponent* m_lockableComponent { nullptr };
+	CLockableComponent* m_lockableComponent {nullptr};
 
 	/** This entity should be interactive. */
-	CEntityInteractionComponent* m_interactor { nullptr };
+	CEntityInteractionComponent* m_interactor {nullptr};
 };
 }

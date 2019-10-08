@@ -1,13 +1,23 @@
 #include <StdAfx.h>
 
 #include "EntityInteractionComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
 #include "Components/Player/PlayerComponent.h"
 
 
 namespace Chrysalis
 {
-void CEntityInteractionComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterEntityInteractionComponent(Schematyc::IEnvRegistrar& registrar)
 {
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CEntityInteractionComponent));
+		// Functions
+		{
+		}
+	}
 }
 
 
@@ -19,7 +29,7 @@ void CEntityInteractionComponent::ReflectType(Schematyc::CTypeDesc<CEntityIntera
 	desc.SetDescription("Allow interaction with this entity.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
 
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
+	desc.SetComponentFlags({IEntityComponent::EFlags::Singleton});
 }
 
 
@@ -127,4 +137,6 @@ void CEntityInteractionComponent::OnInteractionComplete(IActorComponent& actor)
 	CRY_ASSERT_MESSAGE(m_selectedInteraction, "Be sure to set an interaction before attempting to call it.");
 	m_selectedInteraction->OnInteractionComplete(actor);
 }
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterEntityInteractionComponent)
 }

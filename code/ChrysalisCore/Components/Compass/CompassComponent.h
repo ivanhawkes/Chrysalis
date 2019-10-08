@@ -12,9 +12,6 @@ class CCompassComponent
 	, public IInteractionItem
 {
 protected:
-	friend CChrysalisCorePlugin;
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 	// IEntityComponent
 	virtual void Initialize() final;
 	// ~IEntityComponent
@@ -42,12 +39,12 @@ public:
 
 private:
 	/** Model for the geometry. */
-	Cry::DefaultComponents::CStaticMeshComponent* m_pGeometryComponent { nullptr };
+	Cry::DefaultComponents::CStaticMeshComponent* m_pGeometryComponent {nullptr};
 
 	///** Animation for the geometry. */
 	//CControlledAnimationComponent* m_pControlledAnimationComponent { nullptr };
 
 	/** This entity should be interactive. */
-	CEntityInteractionComponent* m_interactor { nullptr };
+	CEntityInteractionComponent* m_interactor {nullptr};
 };
 }

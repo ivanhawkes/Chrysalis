@@ -21,13 +21,10 @@ class CCameraManagerComponent
 	: public IEntityComponent
 {
 protected:
-	friend CChrysalisCorePlugin;
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 	// IEntityComponent
 	void Initialize() override;
 	void ProcessEvent(const SEntityEvent& event) override;
-	Cry::Entity::EntityEventMask GetEventMask() const override { return EventToMask(EEntityEvent::Update); }
+	Cry::Entity::EventFlags GetEventMask() const override { return EEntityEvent::Update; }
 	// ~IEntityComponent
 
 	void RegisterActionMaps();
@@ -102,7 +99,7 @@ public:
 	value and use it to adjust their zoom. Value is set in stone on PrePhysicsUpdate () so it can be consistently queried
 	during the Update() routine. It's provided as a float, even though currently implementation is integral steps. This
 	will give us more fine control if needed later.
-	
+
 	\return The zoom delta.
 	**/
 	float GetZoomDelta() { return m_lastZoomDelta; };
@@ -126,30 +123,30 @@ public:
 
 private:
 	/** The player. */
-	CPlayerComponent* m_pPlayer { nullptr };
+	CPlayerComponent* m_pPlayer {nullptr};
 
 	/** The input component */
-	Cry::DefaultComponents::CInputComponent* m_pInputComponent { nullptr };
+	Cry::DefaultComponents::CInputComponent* m_pInputComponent {nullptr};
 
 	/**	An array large enough to hold one of each defined camera mode. **/
-	ICameraComponent* m_cameraModes [ECameraMode::eCameraMode_Last];
+	ICameraComponent* m_cameraModes[ECameraMode::eCameraMode_Last];
 
 	/** The current camera mode. */
-	ECameraMode m_cameraMode { ECameraMode::eCameraMode_NoCamera };
+	ECameraMode m_cameraMode {ECameraMode::eCameraMode_NoCamera};
 
 	/** The last camera mode. */
-	ECameraMode m_lastCameraMode { ECameraMode::eCameraMode_NoCamera };
+	ECameraMode m_lastCameraMode {ECameraMode::eCameraMode_NoCamera};
 
 	/** The amount each offset tweak will adjust the camera by. **/
-	const float adjustmentAmount { 0.025f };
+	const float adjustmentAmount {0.025f};
 
 	/** Provides a last moment offset for the view - useful for debugging and player controller extra camera movement. **/
-	Vec3 m_interactiveViewOffset { ZERO };
+	Vec3 m_interactiveViewOffset {ZERO};
 
 	/**	Zoom delta. A value that indicates how much they wish to zoom in (negative values) or out (positive values). **/
-	float m_zoomDelta { 0.0f };
+	float m_zoomDelta {0.0f};
 
 	/**	Last zoom delta. **/
-	float m_lastZoomDelta { 0.0f };
+	float m_lastZoomDelta {0.0f};
 };
 }

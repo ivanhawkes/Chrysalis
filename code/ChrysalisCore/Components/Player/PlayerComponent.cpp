@@ -1,6 +1,9 @@
 #include <StdAfx.h>
 
 #include "PlayerComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
 #include <Components/Items/ItemComponent.h>
 #include <Item/Weapon/Weapon.h>
 #include <Actor/Character/CharacterComponent.h>
@@ -11,8 +14,15 @@
 
 namespace Chrysalis
 {
-void CPlayerComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterPlayerComponent(Schematyc::IEnvRegistrar& registrar)
 {
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CPlayerComponent));
+		// Functions
+		{
+		}
+	}
 }
 
 
@@ -23,7 +33,7 @@ void CPlayerComponent::ReflectType(Schematyc::CTypeDesc<CPlayerComponent>& desc)
 	desc.SetLabel("Player");
 	desc.SetDescription("A local / remote player.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
+	desc.SetComponentFlags({IEntityComponent::EFlags::Singleton});
 }
 
 
@@ -60,7 +70,7 @@ void CPlayerComponent::ProcessEvent(const SEntityEvent& event)
 
 		case EEntityEvent::Update:
 		{
-			SEntityUpdateContext* pCtx = (SEntityUpdateContext*)event.nParam [0];
+			//SEntityUpdateContext* pCtx = (SEntityUpdateContext*)event.nParam [0];
 		}
 		break;
 	}
@@ -181,4 +191,6 @@ ICameraComponent* CPlayerComponent::GetCamera() const
 	//	CRY_ASSERT_MESSAGE(m_pCameraManager, "A camera manager is critical when the level contains actors.");
 	return m_pCameraManager ? m_pCameraManager->GetCamera() : nullptr;
 }
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterPlayerComponent)
 }

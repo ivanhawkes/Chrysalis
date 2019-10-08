@@ -1,0 +1,15 @@
+<AssetMetadata version="0" type="SkinnedMesh" guid="b4d4b64b-9e7d-776c-749e-109bec28ea03">
+ <Files>
+  <File path="drawer_bottom.skin"/>
+ </Files>
+ <Details>
+  <Detail name="materialCount">3</Detail>
+  <Detail name="triangleCount">388</Detail>
+  <Detail name="vertexCount">344</Detail>
+  <Detail name="16BitPrecision">false</Detail>
+  <Detail name="bonesCount">5</Detail>
+ </Details>
+ <Dependencies>
+  <Path usageCount="1">./Workdesk.mtl</Path>
+ </Dependencies>
+</AssetMetadata>

@@ -1,12 +1,22 @@
 #include <StdAfx.h>
 
 #include "CharacterAttributesComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
 
 
 namespace Chrysalis
 {
-void CCharacterAttributesComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterCharacterAttributesComponent(Schematyc::IEnvRegistrar& registrar)
 {
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CCharacterAttributesComponent));
+		// Functions
+		{
+		}
+	}
 }
 
 
@@ -17,7 +27,7 @@ void CCharacterAttributesComponent::ReflectType(Schematyc::CTypeDesc<CCharacterA
 	desc.SetLabel("Character Attributes");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
+	desc.SetComponentFlags({IEntityComponent::EFlags::Singleton});
 }
 
 
@@ -30,4 +40,6 @@ void CCharacterAttributesComponent::Initialize()
 void CCharacterAttributesComponent::OnResetState()
 {
 }
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterCharacterAttributesComponent)
 }

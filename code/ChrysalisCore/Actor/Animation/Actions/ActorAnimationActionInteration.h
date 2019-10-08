@@ -1,24 +1,12 @@
 #pragma once
 
 #include "ICryMannequin.h"
-#include "Actor/Animation/ActorAnimation.h"
-#include "Utility/Listener.h"
+#include <Actor/Animation/ActorAnimation.h>
+#include <Utility/Listener.h>
 
 
 namespace Chrysalis
 {
-/** Listen for animation events that are triggered while running this action. */
-struct IAnimationEventListener
-{
-	virtual ~IAnimationEventListener() = default;
-
-	virtual void OnActionAnimationEnter() = 0;
-	virtual void OnActionAnimationFail(EActionFailure actionFailure) = 0;
-	virtual void OnActionAnimationExit() = 0;
-	virtual void OnActionAnimationEvent(ICharacterInstance* pCharacter, const AnimEventInstance& event) = 0;
-};
-
-
 class CActorAnimationActionInteraction : public CAnimationAction
 {
 public:
@@ -48,8 +36,14 @@ public:
 		m_listenersList.remove(pListener);
 	}
 
+	static bool IsSupported(const SAnimationContext& context);
+
 private:
+	static FragmentID FindFragmentId(const SAnimationContext& context);
+
 	const struct SMannequinInteractionParams* m_interactionParams;
+
+	// Tags for controlling the animation.
 	std::vector<string> m_tags;
 
 	/** Listeners for animation events. */

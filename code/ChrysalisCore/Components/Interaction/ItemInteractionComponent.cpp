@@ -1,6 +1,9 @@
 #include <StdAfx.h>
 
 #include "ItemInteractionComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
 #include <Components/Interaction/EntityInteractionComponent.h>
 #include "Components/Player/PlayerComponent.h"
 #include <Components/Player/Input/PlayerInputComponent.h>
@@ -9,8 +12,15 @@
 
 namespace Chrysalis
 {
-void CItemInteractionComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterItemInteractionComponent(Schematyc::IEnvRegistrar& registrar)
 {
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CItemInteractionComponent));
+		// Functions
+		{
+		}
+	}
 }
 
 
@@ -21,7 +31,7 @@ void CItemInteractionComponent::ReflectType(Schematyc::CTypeDesc<CItemInteractio
 	desc.SetLabel("Item Interaction");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
+	desc.SetComponentFlags({IEntityComponent::EFlags::Singleton});
 }
 
 
@@ -248,4 +258,6 @@ void CItemInteractionComponent::OnPickingUpUpdate(const float frameTime)
 		m_pEntity->SetRotation(m_pEntity->GetRotation() * rotation);
 	}
 }
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterItemInteractionComponent)
 }

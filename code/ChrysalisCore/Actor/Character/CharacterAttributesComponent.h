@@ -7,10 +7,6 @@ namespace Chrysalis
 class CCharacterAttributesComponent
 	: public IEntityComponent
 {
-protected:
-	friend CChrysalisCorePlugin;
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 public:
 	static void ReflectType(Schematyc::CTypeDesc<CCharacterAttributesComponent>& desc);
 

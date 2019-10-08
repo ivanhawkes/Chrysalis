@@ -52,7 +52,7 @@ DECLARE_SHARED_POINTERS(IInteraction);
 
 
 // ***
-// *** Generic interactions e.g. "use", "interact". Good for when then is really only one
+// *** Generic interactions e.g. "use", "interact". Good for when there is really only one
 // *** option for interacting with an entity.
 // ***
 

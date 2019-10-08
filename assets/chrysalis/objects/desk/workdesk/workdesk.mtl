@@ -1,0 +1,16 @@
+<Material MtlFlags="524544" vertModifType="0">
+ <SubMaterials>
+  <Material Name="proxy" MtlFlags="525440" Shader="Nodraw" GenMask="0" StringGenMask="" SurfaceType="mat_wood" MatTemplate="" Diffuse="0.20392159,0.34509805,0.95686281" Specular="0,0,0" Opacity="0.1" Shininess="9.999999" vertModifType="0" LayerAct="1">
+   <Textures />
+  </Material>
+  <Material Name="Workdesk_Albedo" MtlFlags="524416" Shader="Illum" GenMask="C0400000" StringGenMask="%NORMAL_MAP%SPECULAR_MAP%SUBSURFACE_SCATTERING" SurfaceType="mat_wood" MatTemplate="" Diffuse="0.58823532,0.58823532,0.58823532" Specular="0,0,0" Opacity="1" Shininess="9.999999" vertModifType="0" LayerAct="1">
+   <Textures>
+    <Texture Map="Diffuse" File="./textures/Workdesk_Albedo.tif"/>
+    <Texture Map="Bumpmap" File="./textures/Workdesk_DDNA.tif"/>
+    <Texture Map="Specular" File="./textures/Workdesk_Spec.tif"/>
+   </Textures>
+   <PublicParams EmittanceMapGamma="1" SSSIndex="0"/>
+  </Material>
+ </SubMaterials>
+ <PublicParams EmittanceMapGamma="1" SSSIndex="0"/>
+</Material>

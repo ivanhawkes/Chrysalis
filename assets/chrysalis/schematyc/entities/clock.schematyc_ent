@@ -1,0 +1,154 @@
+<CrySchematyc CryXmlVersion="2" version="105" guid="4567e386-7b3d-4a97-b914-d1fdcfe11ea6" scope="">
+ <root elementType="Class" guid="4d150a08-40ab-4b85-9410-0b4723e5345c" name="clock">
+  <userDocumentation author="ivanh" description=""/>
+  <extensions />
+  <children>
+   <element elementType="Constructor" guid="72c4f37d-70a0-4047-bb8d-e898d4854710" name="ConstructionGraph">
+    <userDocumentation author="ivanh" description=""/>
+    <extensions>
+     <Graph>
+      <pos x="0" y="0"/>
+      <nodes>
+       <element key="13f9650b-f7fd-4c8d-a5a1-5149a1d34442" typeGUID="12bdfa06-ba95-4e48-bb2d-bb48a7080abc">
+        <value guid="13f9650b-f7fd-4c8d-a5a1-5149a1d34442">
+         <pos x="0" y="0"/>
+        </value>
+       </element>
+      </nodes>
+      <links />
+     </Graph>
+    </extensions>
+    <children />
+   </element>
+   <element elementType="SignalReceiver" guid="358fa068-dd1b-4901-b765-5cb55b6e1c7e" name="SignalGraph" type="Universal" signalGUID="">
+    <userDocumentation author="ivanh" description=""/>
+    <extensions>
+     <Graph>
+      <pos x="429" y="147"/>
+      <nodes>
+       <element key="862406f4-9694-40d6-bac9-bcea5a2c9ce8" typeGUID="1bcfd811-b8b7-4032-a90c-311dfa4454c6">
+        <value guid="862406f4-9694-40d6-bac9-bcea5a2c9ce8" objectGUID="">
+         <pos x="244" y="200"/>
+         <functionId domain="Env" guid="5d515a5b-7128-4652-809a-821b8db68f57"/>
+         <inputs>
+          <element value="0">
+           <key type="UInt32" value="1953066341"/>
+          </element>
+         </inputs>
+        </value>
+       </element>
+       <element key="e131ff3f-24bd-4166-a9a9-b7b801b65187" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="e131ff3f-24bd-4166-a9a9-b7b801b65187" objectGUID="">
+         <pos x="0" y="100"/>
+         <signalId domain="Env" guid="52ad5add-7781-429b-b4a9-0cb6c905e353"/>
+        </value>
+       </element>
+       <element key="770b2333-2cae-455d-a45f-60304257acd7" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="770b2333-2cae-455d-a45f-60304257acd7" objectGUID="">
+         <pos x="0" y="0"/>
+         <signalId domain="Env" guid="a9279137-7c66-491d-b9a0-8752c24c8979"/>
+        </value>
+       </element>
+       <element key="89010a60-ed00-4ec8-8f88-baad5a5e6bf4" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="89010a60-ed00-4ec8-8f88-baad5a5e6bf4" objectGUID="">
+         <pos x="0" y="200"/>
+         <signalId domain="Env" guid="b2561caa-0753-458b-a91f-e8e38b0f0cdf"/>
+        </value>
+       </element>
+      </nodes>
+      <links>
+       <element srcNodeGUID="89010a60-ed00-4ec8-8f88-baad5a5e6bf4" dstNodeGUID="862406f4-9694-40d6-bac9-bcea5a2c9ce8">
+        <srcOutputId type="Idx" value="0"/>
+        <dstInputId type="Idx" value="0"/>
+       </element>
+       <element srcNodeGUID="89010a60-ed00-4ec8-8f88-baad5a5e6bf4" dstNodeGUID="862406f4-9694-40d6-bac9-bcea5a2c9ce8">
+        <srcOutputId type="UInt32" value="1953066341"/>
+        <dstInputId type="UInt32" value="1953066341"/>
+       </element>
+      </links>
+     </Graph>
+    </extensions>
+    <children />
+   </element>
+   <element elementType="Base" guid="fc3fd162-e379-4d2b-8b83-edc3398708f2" name="Base [Entity]">
+    <classId domain="Env" guid="be845278-0dd2-409f-b8be-97895607c256"/>
+    <envClassProperties icon="%EDITOR%/objecticons/schematyc.bmp" bHideInEditor="false" bTriggerAreas="true" bCreatePerClient="false"/>
+    <extensions />
+    <children>
+     <element elementType="ComponentInstance" guid="f21c7b67-7bff-4d26-99a2-d3bb6644b660" name="Entity" accessor="Private" typeGUID="e88093df-904f-4c52-af38-911e26777cdc">
+      <properties />
+      <extensions />
+      <children />
+     </element>
+    </children>
+   </element>
+   <element elementType="ComponentInstance" guid="f42315c6-8ab9-4601-8be4-6aebd68d645f" name="Entity Interaction" accessor="Private" typeGUID="86e63bfb-ca1e-4365-8ad5-cd208f2a7010">
+    <properties />
+    <extensions />
+    <children />
+   </element>
+   <element elementType="ComponentInstance" guid="a804e0f6-5367-4734-8d28-7ee27bab6381" name="Generic Interaction" accessor="Public" typeGUID="c03d46f4-d1c9-45be-aac6-2362efd3abcc">
+    <properties IsEnabled="true" IsSingleUseOnly="false" InteractVerb="">
+     <Tags />
+    </properties>
+    <extensions />
+    <children />
+   </element>
+   <element elementType="ComponentInstance" guid="41791516-376c-4320-80a3-94d188c099da" name="Rigidbody" accessor="Private" typeGUID="912c6ce8-56f7-4ffa-9134-f98d4e307bd6">
+    <properties Networked="false" EnabledByDefault="true" Resting="false" Type="Rigid" SendCollisionSignal="false">
+     <Buoyancy Damping="1" Density="1" Resistance="1"/>
+    </properties>
+    <extensions />
+    <children />
+   </element>
+   <element elementType="ComponentInstance" guid="f0d5d3b0-8d1c-40cf-bdb0-4b1636425281" name="JointManipulation" accessor="Public" typeGUID="a674648b-c54c-4c28-bace-e99e9ab403fa">
+    <transform>
+     <translation>
+      <position>
+       <element element="0"/>
+       <element element="0"/>
+       <element element="0"/>
+      </position>
+     </translation>
+     <rotation x="0" y="-0" z="0"/>
+     <scale>
+      <element element="1"/>
+      <element element="1"/>
+      <element element="1"/>
+     </scale>
+    </transform>
+    <properties Type="RenderAndCollider" FilePath="chrysalis/objects/desk/workdesk/workdesk.cdf">
+     <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
+     <Physics WeightType="EWeightType::Mass" Density="9.9999997e-05" Mass="10"/>
+     <Time JointName="" AttachmentName=""/>
+    </properties>
+    <extensions />
+    <children />
+   </element>
+   <element elementType="ComponentInstance" guid="54bfeebc-ead9-45da-a968-f5211e364066" name="Actor Animation" accessor="Public" typeGUID="ddbd2129-a579-466f-96a1-7b378a35cab3">
+    <transform>
+     <translation>
+      <position>
+       <element element="0"/>
+       <element element="0"/>
+       <element element="0"/>
+      </position>
+     </translation>
+     <rotation x="0" y="-0" z="0"/>
+     <scale>
+      <element element="1"/>
+      <element element="1"/>
+      <element element="1"/>
+     </scale>
+    </transform>
+    <properties Type="RenderAndCollider" Character="chrysalis/objects/desk/workdesk/workdesk.cdf" DatabasePath="" AnimDriven="true" GroundAlign="false">
+     <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
+     <DefaultScope ControllerDefPath="chrysalis/objects/desk/workdesk/controller_defs.xml" DefaultScope="SlaveCharacter" DefaultFragment="Open"/>
+     <Physics WeightType="EWeightType::Mass" Density="9.9999997e-05" Mass="10"/>
+    </properties>
+    <extensions />
+    <children />
+   </element>
+  </children>
+ </root>
+</CrySchematyc>

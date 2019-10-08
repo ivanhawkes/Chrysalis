@@ -1,12 +1,22 @@
 #include <StdAfx.h>
 
 #include "LockableComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
 
 
 namespace Chrysalis
 {
-void CLockableComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterLockableComponent(Schematyc::IEnvRegistrar& registrar)
 {
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CLockableComponent));
+		// Functions
+		{
+		}
+	}
 }
 
 
@@ -26,4 +36,6 @@ void CLockableComponent::ReflectType(Schematyc::CTypeDesc<CLockableComponent>& d
 void CLockableComponent::OnResetState()
 {
 }
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterLockableComponent)
 }

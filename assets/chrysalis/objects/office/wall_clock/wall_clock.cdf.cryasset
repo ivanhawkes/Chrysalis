@@ -4,12 +4,12 @@
  </Files>
  <Details />
  <Dependencies>
-  <Path>objects/characters/human/male/human_male.chr</Path>
-  <Path>materials/reference/zone_system.mtl</Path>
-  <Path>objects/school/wall_clock/wall_clock_body.cgf</Path>
-  <Path>objects/school/wall_clock/wall_clock_hours.cgf</Path>
-  <Path>objects/school/wall_clock/wall_clock_minutes.cgf</Path>
-  <Path>objects/school/wall_clock/wall_clock_seconds.cgf</Path>
-  <Path>materials/reference/zone_system.mtl</Path>
+  <Path>chrysalis/characters/human/male/male.chr</Path>
+  <Path>chrysalis/materials/reference/macbeth.mtl</Path>
+  <Path>chrysalis/objects/office/wall_clock/wall_clock_body.cgf</Path>
+  <Path>chrysalis/objects/office/wall_clock/wall_clock_hours.cgf</Path>
+  <Path>chrysalis/objects/office/wall_clock/wall_clock_minutes.cgf</Path>
+  <Path>chrysalis/objects/office/wall_clock/wall_clock_seconds.cgf</Path>
+  <Path>chrysalis/materials/reference/zone_system.mtl</Path>
  </Dependencies>
 </AssetMetadata>

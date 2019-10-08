@@ -1,6 +1,9 @@
 #include <StdAfx.h>
 
 #include "CameraManagerComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
 #include "ActionRPGCameraComponent.h"
 #include "ExamineCameraComponent.h"
 #include "FirstPersonCameraComponent.h"
@@ -12,8 +15,15 @@
 
 namespace Chrysalis
 {
-void CCameraManagerComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterCameraManagerComponent(Schematyc::IEnvRegistrar& registrar)
 {
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CCameraManagerComponent));
+		// Functions
+		{
+		}
+	}
 }
 
 
@@ -24,7 +34,7 @@ void CCameraManagerComponent::ReflectType(Schematyc::CTypeDesc<CCameraManagerCom
 	desc.SetLabel("Camera Manager");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton, IEntityComponent::EFlags::Socket, IEntityComponent::EFlags::Attach, IEntityComponent::EFlags::ClientOnly });
+	desc.SetComponentFlags({IEntityComponent::EFlags::Singleton, IEntityComponent::EFlags::Socket, IEntityComponent::EFlags::Attach, IEntityComponent::EFlags::ClientOnly});
 }
 
 
@@ -43,16 +53,16 @@ void CCameraManagerComponent::Initialize()
 		RegisterActionMaps();
 
 	// First person camera.
-	m_cameraModes [ECameraMode::eCameraMode_FirstPerson] = m_pEntity->CreateComponent<CFirstPersonCameraComponent>();
+	m_cameraModes[ECameraMode::eCameraMode_FirstPerson] = m_pEntity->CreateComponent<CFirstPersonCameraComponent>();
 
 	// Action RPG Camera.
-	m_cameraModes [ECameraMode::eCameraMode_ActionRpg] = m_pEntity->CreateComponent<CActionRPGCameraComponent>();
+	m_cameraModes[ECameraMode::eCameraMode_ActionRpg] = m_pEntity->CreateComponent<CActionRPGCameraComponent>();
 
 	// Examine entity camera.
-	m_cameraModes [ECameraMode::eCameraMode_Examine] = m_pEntity->CreateComponent<CExamineCameraComponent>();
+	m_cameraModes[ECameraMode::eCameraMode_Examine] = m_pEntity->CreateComponent<CExamineCameraComponent>();
 
 	// Select the initial camera based on their cvar setting.
-	SetCameraMode((ECameraMode) g_cvars.m_cameraManagerDefaultCamera, "Initial selection of camera.");
+	SetCameraMode((ECameraMode)g_cvars.m_cameraManagerDefaultCamera, "Initial selection of camera.");
 }
 
 
@@ -86,8 +96,8 @@ void CCameraManagerComponent::AttachToEntity(EntityId entityID)
 	// it. An alternative would be to perform an attach when switching cameras. This is good enough for now. 
 	for (unsigned int i = 0; i < ECameraMode::eCameraMode_Last; ++i)
 	{
-		if (m_cameraModes [i])
-			m_cameraModes [i]->AttachToEntity(entityID);
+		if (m_cameraModes[i])
+			m_cameraModes[i]->AttachToEntity(entityID);
 	}
 }
 
@@ -104,11 +114,11 @@ void CCameraManagerComponent::SetCameraMode(ECameraMode mode, const char* reason
 	{
 		// Tell the previous camera it's no longer in use.
 		if (m_cameraMode != ECameraMode::eCameraMode_NoCamera)
-			m_cameraModes [m_cameraMode]->OnDeactivate();
+			m_cameraModes[m_cameraMode]->OnDeactivate();
 
 		// Tell the new camera it is entering usage.
 		if (mode != ECameraMode::eCameraMode_NoCamera)
-			m_cameraModes [mode]->OnActivate();
+			m_cameraModes[mode]->OnActivate();
 
 		// Track the previous camera mode, in case we want to switch back to it.
 		m_lastCameraMode = m_cameraMode;
@@ -138,7 +148,7 @@ void CCameraManagerComponent::SetLastCameraMode()
 
 ICameraComponent* CCameraManagerComponent::GetCamera() const
 {
-	return m_cameraModes [m_cameraMode];
+	return m_cameraModes[m_cameraMode];
 }
 
 
@@ -243,4 +253,6 @@ bool CCameraManagerComponent::OnActionCameraShiftBackward(int activationMode, fl
 
 	return false;
 }
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterCameraManagerComponent)
 }

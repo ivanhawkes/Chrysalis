@@ -13,13 +13,10 @@ class CActionRPGCameraComponent
 	: public ICameraComponent
 {
 protected:
-	friend CChrysalisCorePlugin;
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 	// IEntityComponent
 	void Initialize() override;
 	void ProcessEvent(const SEntityEvent& event) override;
-	Cry::Entity::EntityEventMask GetEventMask() const override { return m_EventMask; }
+	Cry::Entity::EventFlags GetEventMask() const override { return m_EventFlags; }
 	void OnShutDown() override;
 	// ~IEntityComponent
 
@@ -70,9 +67,9 @@ public:
 	/**
 	Determines the position for camera to aim at on the target entity. It relies on the target being an actor for
 	accurate results, otherwise the position will be based on the average height for a person.
-	
+
 	\param [in,out]	pEntity If non-null, the entity.
-	
+
 	\return The target aim position.
 	**/
 	Vec3 GetTargetAimPosition(IEntity* const pEntity);
@@ -81,10 +78,10 @@ public:
 	/**
 	Performs a very simple collision detection. The camera view position is updated to the best viewing location
 	based on the results of the raycasting.
-	
+
 	\param 		   	Goal		   The goal.
 	\param [in,out]	CameraPosition The camera position.
-	
+
 	\return true if it succeeds, false if it fails.
 	**/
 	bool CollisionDetection(const Vec3& Goal, Vec3& CameraPosition);
@@ -100,38 +97,38 @@ private:
 	void ToggleFirstPerson();
 
 	/** If our entity has a camera manager, we store a pointer to it here. **/
-	CCameraManagerComponent* m_pCameraManager { nullptr };
+	CCameraManagerComponent* m_pCameraManager {nullptr};
 
 	/** Identifier for the entity which this camera is targeted towards. */
-	EntityId m_targetEntityID { INVALID_ENTITYID };
+	EntityId m_targetEntityID {INVALID_ENTITYID};
 
 	/** Position of the camera during the last update. */
-	Vec3 m_vecLastPosition { ZERO };
+	Vec3 m_vecLastPosition {ZERO};
 
 	/** Rotation of the camera during the last update. */
-	Quat m_quatLastTargetRotation { IDENTITY };
+	Quat m_quatLastTargetRotation {IDENTITY};
 
 	/** Initial rotation of the camera in reference to the entity it is attached onto. */
-	Quat m_quatTargetRotation { IDENTITY };
+	Quat m_quatTargetRotation {IDENTITY};
 
 	/** The last known position of the camera target. */
-	Vec3 m_vecLastTargetPosition { ZERO };
+	Vec3 m_vecLastTargetPosition {ZERO};
 
 	/** The last known position of the camera aim target. */
-	Vec3 m_vecLastTargetAimPosition { ZERO };
+	Vec3 m_vecLastTargetAimPosition {ZERO};
 
 	/**
 	The last rotation value for the view goal. This is used in the SLERP calculations for camera smoothing through
 	rotations.
 	*/
-	Quat m_quatLastViewRotation { IDENTITY };
+	Quat m_quatLastViewRotation {IDENTITY};
 
 	/**
 	Set to true when you want to avoid using interpolation for the update next frame. There are times when we don't
 	have a reasonable value for the last camera position / rotation and this allows us to get around those awkward
 	moments.
 	*/
-	bool m_skipInterpolation { true };
+	bool m_skipInterpolation {true};
 
 	/** The zoom goal. */
 	float m_zoomGoal;
@@ -152,9 +149,9 @@ private:
 	float m_viewYaw;
 
 	/** Provides a way to avoid updates when they are not required. **/
-	Cry::Entity::EntityEventMask m_EventMask;
+	Cry::Entity::EventFlags m_EventFlags;
 
 	/** Is the camera view in first person mode? **/
-	bool m_isFirstPerson { true };
+	bool m_isFirstPerson {true};
 };
 }

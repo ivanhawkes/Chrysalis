@@ -1,14 +1,24 @@
 #include "StdAfx.h"
 
 #include "SimpleAnimationComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
 #include <CryAnimation/ICryAnimation.h>
 #include <CrySchematyc/Utils/SharedString.h>
 
 
 namespace Chrysalis
 {
-void CSimpleAnimationComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterSimpleAnimationComponent(Schematyc::IEnvRegistrar& registrar)
 {
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CSimpleAnimationComponent));
+		// Functions
+		{
+		}
+	}
 }
 
 
@@ -19,7 +29,7 @@ void CSimpleAnimationComponent::ReflectType(Schematyc::CTypeDesc<CSimpleAnimatio
 	desc.SetLabel("Simple Animation");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
+	desc.SetComponentFlags({IEntityComponent::EFlags::Transform});
 
 	desc.AddMember(&CSimpleAnimationComponent::m_animation, 'anim', "Animation", "Animation", "Animation to play.", "");
 	desc.AddMember(&CSimpleAnimationComponent::m_animationSpeed, 'spee', "Speed", "Speed", "Speed at which animation will play.", 1.0f);
@@ -67,4 +77,6 @@ void CSimpleAnimationComponent::OnPlayAnimation(Schematyc::LowLevelAnimationName
 		gEnv->pLog->LogWarning("Animation playback on %s entity failed. No character found.", animation.value.c_str());
 	}
 }
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterSimpleAnimationComponent)
 }

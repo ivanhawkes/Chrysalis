@@ -1,6 +1,9 @@
 #include <StdAfx.h>
 
 #include "PlayerInputComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
 #include <CryMath/Cry_Math.h>
 #include "Components/Player/PlayerComponent.h"
 #include <Actor/ActorComponent.h>
@@ -12,12 +15,18 @@
 
 namespace Chrysalis
 {
-
 #define IF_ACTOR_DO(run_action) if (auto pActorComponent = CPlayerComponent::GetLocalActor()) { pActorComponent->run_action(); }
 
 
-void CPlayerInputComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterPlayerInputComponent(Schematyc::IEnvRegistrar& registrar)
 {
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CPlayerInputComponent));
+		// Functions
+		{
+		}
+	}
 }
 
 
@@ -28,7 +37,7 @@ void CPlayerInputComponent::ReflectType(Schematyc::CTypeDesc<CPlayerInputCompone
 	desc.SetLabel("Player Input");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
+	desc.SetComponentFlags({IEntityComponent::EFlags::Singleton});
 }
 
 
@@ -528,15 +537,17 @@ void CPlayerInputComponent::OnActionInteraction(int activationMode, float value)
 	{
 		case eAAM_OnPress:
 			IF_ACTOR_DO(OnActionInteractionStart);
-		break;
+			break;
 
 		case eAAM_OnHold:
 			IF_ACTOR_DO(OnActionInteractionTick);
-		break;
+			break;
 
 		case eAAM_OnRelease:
 			IF_ACTOR_DO(OnActionInteractionEnd);
-		break;
+			break;
 	}
 }
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterPlayerInputComponent)
 }

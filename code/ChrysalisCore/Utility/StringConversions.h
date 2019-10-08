@@ -70,9 +70,9 @@ inline ColorF StringToColor(const char *sColor, bool adjustGamma)
 
 		// Convert to linear space
 		if (adjustGamma)
-			color [i] = powf(fToken / 255, 2.2f);
+			color[i] = powf(fToken / 255, 2.2f);
 		else
-			color [i] = fToken;
+			color[i] = fToken;
 
 		if (pos == colorString.size())
 			break;
@@ -98,7 +98,7 @@ inline Vec3 StringToVec3(const char *sVector)
 
 		float fToken = (float)atof(sToken);
 
-		v [i] = fToken;
+		v[i] = fToken;
 
 		if (pos == vecString.size())
 			break;

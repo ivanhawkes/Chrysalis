@@ -1,0 +1,8 @@
+<MannequinPreview>
+ <controllerDef filename="chrysalis/objects/containers/chest/wooden_chest/controller_defs.xml"/>
+ <contexts>
+  <contextData name="SlaveCharacter" database="chrysalis/objects/containers/chest/wooden_chest/wooden_chest.adb" context="SlaveCharacter" tags="Standing+ScopeSlave" fragtags="ScopeSlave" model="chrysalis/objects/containers/chest/wooden_chest/wooden_chest.cdf" startPosition="2,0,0"/>
+  <contextData name="SlaveObject" database="chrysalis/objects/containers/chest/wooden_chest/wooden_chest.adb" context="SlaveObject" tags="Standing+ScopeSlave" fragtags="ScopeSlave" model="chrysalis/objects/containers/chest/wooden_chest/wooden_chest.cdf" startPosition="0,2,0"/>
+ </contexts>
+ <History StartTime="-4.3160208e+008" EndTime="-4.3160208e+008"/>
+</MannequinPreview>

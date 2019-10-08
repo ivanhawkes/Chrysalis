@@ -66,6 +66,39 @@ enum EActorActionPriority
 };
 
 
+/** Listen for animation events that are triggered while running a mannequin action. */
+struct IAnimationEventListener
+{
+	virtual ~IAnimationEventListener() = default;
+
+	virtual void OnActionAnimationEnter() = 0;
+	virtual void OnActionAnimationFail(EActionFailure actionFailure) = 0;
+	virtual void OnActionAnimationExit() = 0;
+	virtual void OnActionAnimationEvent(ICharacterInstance* pCharacter, const AnimEventInstance& event) = 0;
+};
+
+
+/** Small lightweight interface to animation systems. This allows us to pass just enough control to
+	other sections of code without giving them the whole class. */
+
+struct IActorAnimationControl
+{
+	virtual ~IActorAnimationControl() = default;
+
+	/** Is there a valid action controller we can request? */
+	virtual bool HasActionController() const = 0;
+
+	/** Get the action controller. */
+	virtual IActionController* GetActionController() const = 0;
+
+	/** Get the animation context. */
+	virtual SAnimationContext& GetContext() const = 0;
+
+	/** Get the animation context, create one if there is no context. */
+	virtual IProceduralContext* FindOrCreateProceduralContext(CryClassID classId) const = 0;
+};
+
+
 #define MAN_ACTOR_FRAGMENTS( f ) \
 	f( Idle ) \
 	f( Move ) \

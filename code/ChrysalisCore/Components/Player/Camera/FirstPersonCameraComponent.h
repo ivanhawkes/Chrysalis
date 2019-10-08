@@ -14,13 +14,10 @@ class CFirstPersonCameraComponent
 	: public ICameraComponent
 {
 protected:
-	friend CChrysalisCorePlugin;
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 	// IEntityComponent
 	void Initialize() override;
 	void ProcessEvent(const SEntityEvent& event) override;
-	Cry::Entity::EntityEventMask GetEventMask() const override { return m_EventMask; }
+	Cry::Entity::EventFlags GetEventMask() const override { return m_EventFlags; }
 	void OnShutDown() override;
 	// ~IEntityComponent
 
@@ -70,15 +67,15 @@ public:
 
 private:
 	/** If our entity has a camera manager, we store a pointer to it here. **/
-	CCameraManagerComponent* m_pCameraManager { nullptr };
+	CCameraManagerComponent* m_pCameraManager {nullptr};
 
 	/** Identifier for the entity which this camera is targeted towards. */
-	EntityId m_targetEntityID { INVALID_ENTITYID };
+	EntityId m_targetEntityID {INVALID_ENTITYID};
 
 	/** A delta value (degrees) to apply to the camera's initial calculated pitch. */
 	float m_viewPitch;
 
 	/** Provides a way to avoid updates when they are not required. **/
-	Cry::Entity::EntityEventMask m_EventMask;
+	Cry::Entity::EventFlags m_EventFlags;
 };
 }

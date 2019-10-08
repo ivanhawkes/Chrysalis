@@ -16,9 +16,6 @@ class CEntityInteractionComponent
 	: public IEntityComponent
 {
 protected:
-	friend CChrysalisCorePlugin;
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 	// IEntityComponent
 	void Initialize() override;
 	// ~IEntityComponent
@@ -49,6 +46,6 @@ public:
 
 private:
 	std::vector<IInteractionPtr> m_Interactions;
-	IInteractionPtr m_selectedInteraction { IInteractionPtr() };
+	IInteractionPtr m_selectedInteraction {IInteractionPtr()};
 };
 }

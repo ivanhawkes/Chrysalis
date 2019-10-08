@@ -7,6 +7,6 @@
   <Detail name="textureCount">1</Detail>
  </Details>
  <Dependencies>
-  <Path usageCount="1">textures/reference/zone_system.dds</Path>
+  <Path usageCount="1">chrysalis/textures/reference/zone_system.dds</Path>
  </Dependencies>
 </AssetMetadata>

@@ -1,0 +1,9 @@
+<TagDefinition version="2">
+ <Tags>
+  <Tag name="Interact"/>
+  <Tag name="Closed"/>
+  <Tag name="Open"/>
+  <Tag name="Opening"/>
+  <Tag name="Closing"/>
+ </Tags>
+</TagDefinition>

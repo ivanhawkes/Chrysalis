@@ -1,14 +1,24 @@
 #include "StdAfx.h"
 
 #include "DRSInteractionComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
 #include <Components/Interaction/EntityInteractionComponent.h>
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
 
 
 namespace Chrysalis
 {
-void CDRSInteractionComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterDRSInteractionComponent(Schematyc::IEnvRegistrar& registrar)
 {
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CDRSInteractionComponent));
+		// Functions
+		{
+		}
+	}
 }
 
 
@@ -19,7 +29,7 @@ void CDRSInteractionComponent::ReflectType(Schematyc::CTypeDesc<CDRSInteractionC
 	desc.SetLabel("DRS Interaction");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::None });
+	desc.SetComponentFlags({IEntityComponent::EFlags::None});
 
 	// Mark the entity interaction component as a hard requirement.
 	desc.AddComponentInteraction(SEntityComponentRequirements::EType::HardDependency, CEntityInteractionComponent::IID());
@@ -104,4 +114,6 @@ bool Serialize(Serialization::IArchive& archive, CDRSInteractionComponent::SDRSP
 
 	return true;
 }
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterDRSInteractionComponent)
 }

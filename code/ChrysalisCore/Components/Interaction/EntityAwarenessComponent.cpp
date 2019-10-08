@@ -1,6 +1,11 @@
 #include <StdAfx.h>
 
 #include "EntityAwarenessComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
+#include <CryRenderer/IRenderAuxGeom.h>
+#include <Cry3DEngine/ISurfaceType.h>
 #include <GameObjects/GameObject.h>
 #include <IActorSystem.h>
 #include <IMovementController.h>
@@ -26,8 +31,15 @@ static const float maxRaycastStaleness = 0.05f;
 #define PIERCE_GLASS (13)
 
 
-void CEntityAwarenessComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterEntityAwarenessComponent(Schematyc::IEnvRegistrar& registrar)
 {
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CEntityAwarenessComponent));
+		// Functions
+		{
+		}
+	}
 }
 
 
@@ -40,7 +52,7 @@ void CEntityAwarenessComponent::ReflectType(Schematyc::CTypeDesc<CEntityAwarenes
 	desc.SetIcon("icons:ObjectTypes/light.ico");
 
 	// TODO: Do we need a transform for this? Likely not.
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
+	desc.SetComponentFlags({IEntityComponent::EFlags::Singleton});
 
 	// Mark the actor component as a hard requirement.
 	desc.AddComponentInteraction(SEntityComponentRequirements::EType::HardDependency, CActorComponent::IID());
@@ -120,7 +132,7 @@ void CEntityAwarenessComponent::GetMemoryUsage(ICrySizer *pSizer) const
 // ***
 
 
-CEntityAwarenessComponent::UpdateQueryFunction CEntityAwarenessComponent::m_updateQueryFunctions [] =
+CEntityAwarenessComponent::UpdateQueryFunction CEntityAwarenessComponent::m_updateQueryFunctions[] =
 {
 	&CEntityAwarenessComponent::UpdateRaycastQuery,
 	&CEntityAwarenessComponent::UpdateProximityQuery,
@@ -139,7 +151,7 @@ CEntityAwarenessComponent::~CEntityAwarenessComponent()
 {
 	for (int i = 0; i < maxQueuedRays; ++i)
 	{
-		m_queuedRays [i].Reset();
+		m_queuedRays[i].Reset();
 	}
 }
 
@@ -148,7 +160,7 @@ void CEntityAwarenessComponent::UpdateRaycastQuery()
 {
 	m_isRayHit = false;
 	m_rayHitPosition = Vec3(ZERO);
-		
+
 	if (!m_pActor || m_pActor->GetEntity()->IsHidden())
 		return;
 
@@ -156,8 +168,8 @@ void CEntityAwarenessComponent::UpdateRaycastQuery()
 	{
 		IEntity * pEntity = m_pActor->GetEntity();
 		IPhysicalEntity * pPhysEnt = pEntity ? pEntity->GetPhysics() : nullptr;
-		IPhysicalEntity *skipEntities [1];
-		skipEntities [0] = pPhysEnt;
+		IPhysicalEntity *skipEntities[1];
+		skipEntities[0] = pPhysEnt;
 
 		int raySlot = RequestRaySlotId();
 		CRY_ASSERT(raySlot != -1);
@@ -218,7 +230,7 @@ void CEntityAwarenessComponent::OnRayCastDataReceived(const QueuedRayID& rayID, 
 
 	// Clear out the raycast slot if we used one.
 	if (raySlot != -1)
-		m_queuedRays [raySlot].Reset();
+		m_queuedRays[raySlot].Reset();
 
 	// Force the distance to a negative value to invalidate the last result.
 	m_rayHitPierceable.dist = -1.0f;
@@ -230,13 +242,13 @@ void CEntityAwarenessComponent::OnRayCastDataReceived(const QueuedRayID& rayID, 
 		// Only because the raycast is being done with rwi_stop_at_pierceable can we rely on there being only 1 hit.
 		// Otherwise hit[0] is always the solid hit (and thus the last), hit[1-n] are then first to last-1 in order of
 		// distance. 
-		OnRayCast(result.hits [0]);
+		OnRayCast(result.hits[0]);
 
 		// Do we also have a pieceable result?
 		if (result.hitCount > 1)
 		{
 			// We'll use the first pieceable result if there is one.
-			m_rayHitPierceable = result.hits [1];
+			m_rayHitPierceable = result.hits[1];
 			m_rayHitPierceable.pCollider = nullptr;
 			m_rayHitPierceable.next = nullptr;
 
@@ -244,7 +256,7 @@ void CEntityAwarenessComponent::OnRayCastDataReceived(const QueuedRayID& rayID, 
 #if defined(_DEBUG)
 			if (g_cvars.m_componentAwarenessDebug & eDB_RayCast)
 			{
-				gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(result.hits [1].pt, 0.01f, ColorB(0, 0, 255));
+				gEnv->pRenderer->GetIRenderAuxGeom()->DrawSphere(result.hits[1].pt, 0.01f, ColorB(0, 0, 255));
 			}
 #endif
 		}
@@ -266,16 +278,16 @@ void CEntityAwarenessComponent::OnRayCast(const ray_hit & rayHit)
 	// Keep this for people to query.
 	m_isRayHit = true;
 	m_rayHitPosition = m_rayHitSolid.pt;
-	
-		// Find out what we can about the type of surface it intersected. This is useful for determining which of several
-	// proxies it hit, etc.
+
+	// Find out what we can about the type of surface it intersected. This is useful for determining which of several
+// proxies it hit, etc.
 	if (ISurfaceType* pSurfaceType = gEnv->p3DEngine->GetMaterialManager()->GetSurfaceType(m_rayHitSolid.surface_idx))
 	{
 		// TODO: Do something useful with this instead of it being a null op.
 		// This should be exposed to code / schematyc / FG.
-		auto surfaceId = pSurfaceType->GetId();
-		string surfaceName = pSurfaceType->GetName();
-		auto surfaceTypeName = pSurfaceType->GetType();
+		//auto surfaceId = pSurfaceType->GetId();
+		//string surfaceName = pSurfaceType->GetName();
+		//auto surfaceTypeName = pSurfaceType->GetType();
 
 		//CryWatch("SurfaceId: %d", surfaceId);
 		//CryWatch("surfaceName: %s", surfaceName);
@@ -315,7 +327,7 @@ int CEntityAwarenessComponent::RequestRaySlotId()
 {
 	for (int i = 0; i < maxQueuedRays; ++i)
 	{
-		if (m_queuedRays [i].rayId == 0)
+		if (m_queuedRays[i].rayId == 0)
 		{
 			return i;
 		}
@@ -327,14 +339,14 @@ int CEntityAwarenessComponent::RequestRaySlotId()
 	int oldestSlot = 0;
 	for (int i = 0; i < maxQueuedRays; ++i)
 	{
-		if (m_queuedRays [i].counter < oldestCounter)
+		if (m_queuedRays[i].counter < oldestCounter)
 		{
-			oldestCounter = m_queuedRays [i].counter;
+			oldestCounter = m_queuedRays[i].counter;
 			oldestSlot = i;
 		}
 	}
 
-	m_queuedRays [oldestSlot].Reset();
+	m_queuedRays[oldestSlot].Reset();
 
 	return oldestSlot;
 }
@@ -344,7 +356,7 @@ int CEntityAwarenessComponent::QueryRaySlotId(const QueuedRayID& rayId) const
 {
 	for (int i = 0; i < maxQueuedRays; ++i)
 	{
-		if (m_queuedRays [i].rayId == rayId)
+		if (m_queuedRays[i].rayId == rayId)
 		{
 			return i;
 		}
@@ -386,7 +398,7 @@ void CEntityAwarenessComponent::UpdateProximityQuery()
 	// Check each result.
 	for (int i = 0; i < qry.nCount; ++i)
 	{
-		IEntity* pEntity = qry.pEntities [i];
+		IEntity* pEntity = qry.pEntities[i];
 		EntityId entityId = pEntity ? pEntity->GetId() : INVALID_ENTITYID;
 
 		// Skip this entity.
@@ -396,8 +408,8 @@ void CEntityAwarenessComponent::UpdateProximityQuery()
 #if defined(_DEBUG)
 		if (g_cvars.m_componentAwarenessDebug & eDB_ProximalEntities)
 		{
-			if (strcmp(pEntity->GetName(), "TestMe") == 0)
-				int a = 1;
+			//if (strcmp(pEntity->GetName(), "TestMe") == 0)
+			//	int a = 1;
 
 			// DEBUG: Highlight each entity within the range.
 			AABB bbox;
@@ -590,13 +602,13 @@ const Entities& CEntityAwarenessComponent::GetNearDotFiltered(float minDot, floa
 
 	// Before returning the result we should swap the best result into the first element.
 	if ((m_entitiesNearDotFiltered.size() > 1) && (bestResultIndex != 0))
-		std::swap(m_entitiesNearDotFiltered [0], m_entitiesNearDotFiltered [bestResultIndex]);
+		std::swap(m_entitiesNearDotFiltered[0], m_entitiesNearDotFiltered[bestResultIndex]);
 
 #if defined(_DEBUG)
 	if (g_cvars.m_componentAwarenessDebug & eDB_DotFiltered)
 	{
 		IEntity *pEntity;
-		if ((m_entitiesNearDotFiltered.size() > 0) && (pEntity = gEnv->pEntitySystem->GetEntity(m_entitiesNearDotFiltered [0])))
+		if ((m_entitiesNearDotFiltered.size() > 0) && (pEntity = gEnv->pEntitySystem->GetEntity(m_entitiesNearDotFiltered[0])))
 		{
 			AABB bbox;
 			pEntity->GetWorldBounds(bbox);
@@ -608,4 +620,6 @@ const Entities& CEntityAwarenessComponent::GetNearDotFiltered(float minDot, floa
 
 	return m_entitiesNearDotFiltered;
 }
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterEntityAwarenessComponent)
 }

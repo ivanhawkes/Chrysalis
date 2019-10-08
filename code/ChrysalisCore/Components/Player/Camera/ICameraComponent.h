@@ -30,9 +30,6 @@ struct ICameraComponent
 	//, public IHmdDevice::IAsyncCameraCallback
 {
 protected:
-	friend CChrysalisCorePlugin;
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 	//// IAsyncCameraCallback
 	//virtual bool OnAsyncCameraCallback(const HmdTrackingState& state, IHmdDevice::AsyncCameraContext& context) final;
 	//// ~IAsyncCameraCallback

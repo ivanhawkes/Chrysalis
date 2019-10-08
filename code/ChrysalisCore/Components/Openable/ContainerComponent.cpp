@@ -1,6 +1,9 @@
 #include <StdAfx.h>
 
 #include "ContainerComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
 #include <Components/Interaction/EntityInteractionComponent.h>
 #include <DefaultComponents/Geometry/StaticMeshComponent.h>
 #include <Components/Animation/SimpleAnimationComponent.h>
@@ -9,8 +12,15 @@
 
 namespace Chrysalis
 {
-void CContainerComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterContainerComponent(Schematyc::IEnvRegistrar& registrar)
 {
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CContainerComponent));
+		// Functions
+		{
+		}
+	}
 }
 
 
@@ -21,7 +31,7 @@ void CContainerComponent::ReflectType(Schematyc::CTypeDesc<CContainerComponent>&
 	desc.SetLabel("Container");
 	desc.SetDescription("Chests, bags, etc.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
+	desc.SetComponentFlags({IEntityComponent::EFlags::Singleton});
 
 	// Mark the entity interaction component as a hard requirement.
 	desc.AddComponentInteraction(SEntityComponentRequirements::EType::HardDependency, CEntityInteractionComponent::IID());
@@ -56,4 +66,6 @@ void CContainerComponent::Initialize()
 void CContainerComponent::OnResetState()
 {
 }
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterContainerComponent)
 }

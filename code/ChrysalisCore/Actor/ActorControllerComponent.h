@@ -4,7 +4,7 @@
 #include "Actor/Animation/ActorAnimation.h"
 #include "Components/Player/Input/PlayerInputComponent.h"
 #include "DefaultComponents/Physics/CharacterControllerComponent.h"
-#include "DefaultComponents/Geometry/AdvancedAnimationComponent.h"
+#include <Components/Animation/ActorAnimationComponent.h>
 
 
 namespace Chrysalis
@@ -74,28 +74,24 @@ public:
 private:
 
 	/** The actor is currently in this stance, or moving into this stance. */
-	EActorStance m_stance { eAS_Standing };
+	EActorStance m_stance {eAS_Standing};
 
 	/** The actor's posture, which should indicate their state of mind, or game conditions they presently have e.g. sapped. */
-	EActorPosture m_posture { eAP_Neutral };
-}; 
+	EActorPosture m_posture {eAP_Neutral};
+};
 
 
 class CActorControllerComponent
 	: public IEntityComponent
 {
 protected:
-	friend CChrysalisCorePlugin;
-
 	// Declaration of the state machine that controls actor movement.
 	DECLARE_STATE_MACHINE(CActorControllerComponent, Movement);
-
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
 
 	// IEntityComponent
 	void Initialize() override;
 	void ProcessEvent(const SEntityEvent& event) override;
-	Cry::Entity::EntityEventMask GetEventMask() const override { return ENTITY_EVENT_BIT(ENTITY_EVENT_UPDATE) | ENTITY_EVENT_BIT(ENTITY_EVENT_PREPHYSICSUPDATE); }
+	Cry::Entity::EventFlags GetEventMask() const override { return EEntityEvent::Update | EEntityEvent::PrePhysicsUpdate; }
 	// ~IEntityComponent
 
 	virtual void Update(SEntityUpdateContext* pCtx);
@@ -222,62 +218,62 @@ public:
 
 private:
 	/** The actor component we are paired with. */
-	CActorComponent* m_pActorComponent { nullptr };
+	CActorComponent* m_pActorComponent {nullptr};
 
 	/** true if this object is controlled by an AI. */
 	bool m_isAIControlled;
 
 	/** The look target. */
-	Vec3 m_lookTarget { ZERO };
+	Vec3 m_lookTarget {ZERO};
 
 	/** true to use the look at target. */
-	bool m_useLookTarget { false };
+	bool m_useLookTarget {false};
 
 	/** true to look using IK. */
-	bool m_useLookIK { true };
+	bool m_useLookIK {true};
 
 	/** The aim target. */
-	Vec3 m_aimTarget { ZERO };
+	Vec3 m_aimTarget {ZERO};
 
 	/** true to using aim IK. */
-	bool m_useAimIK { true };
+	bool m_useAimIK {true};
 
 	/** Actor should try and jump this frame if allowed. */
-	bool m_shouldJump { false };
+	bool m_shouldJump {false};
 
 	/** Is the actor allowed to request a jump this frame? */
-	bool m_allowJump { false };
+	bool m_allowJump {false};
 
-	Cry::DefaultComponents::CAdvancedAnimationComponent* m_pAdvancedAnimationComponent { nullptr };
-	Cry::DefaultComponents::CCharacterControllerComponent* m_pCharacterControllerComponent { nullptr };
+	CActorAnimationComponent * m_pActorAnimationComponent {nullptr};
+	Cry::DefaultComponents::CCharacterControllerComponent* m_pCharacterControllerComponent {nullptr};
 
-	TagID m_rotateTagId { TAG_ID_INVALID };
+	TagID m_rotateTagId {TAG_ID_INVALID};
 
 	/** A vector representing the direction and distance the player has requested this actor to move. */
-	Vec3 m_movementRequest { ZERO };
+	Vec3 m_movementRequest {ZERO};
 
 	/** The direction the actor should be facing (pelvis) based on their movement inputs. */
-	Quat m_lookOrientation { IDENTITY };
+	Quat m_lookOrientation {IDENTITY};
 
 	/**	The yaw angular velocity - a measure of how quickly the actor is turning. **/
-	float m_yawAngularVelocity { 0.0f };
+	float m_yawAngularVelocity {0.0f};
 
 	/** The continuous amount of time the actor has been receiving movement requests (seconds). */
-	float m_movingDuration { 0.0f };
+	float m_movingDuration {0.0f};
 
 	/** The actor is sprinting. */
-	bool m_isSprinting { false };
+	bool m_isSprinting {false};
 
 	/** The actor is jogging. */
-	bool m_isJogging { false };
+	bool m_isJogging {false};
 
 	/** The actor's present stance and posture. */
 	CActorStance m_actorStance;
 
 	/** Clear these mannequin tags. */
-	TagState m_mannequinTagsClear { TAG_STATE_EMPTY };
+	TagState m_mannequinTagsClear {TAG_STATE_EMPTY};
 
 	/** Set these mannequin tags. */
-	TagState m_mannequinTagsSet { TAG_STATE_EMPTY };
+	TagState m_mannequinTagsSet {TAG_STATE_EMPTY};
 };
 }

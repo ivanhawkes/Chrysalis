@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 
+#include <CryCore/StaticInstanceList.h>
 #include <CrySchematyc/CoreAPI.h>
 #include <Cry3DEngine/I3DEngine.h>
 #include <Cry3DEngine/ITimeOfDay.h>

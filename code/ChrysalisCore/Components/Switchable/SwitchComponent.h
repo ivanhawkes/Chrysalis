@@ -11,9 +11,6 @@ class CSwitchComponent
 	, public IInteractionSwitch
 {
 protected:
-	friend CChrysalisCorePlugin;
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 	// IEntityComponent
 	virtual void Initialize() override final;
 	// ~IEntityComponent

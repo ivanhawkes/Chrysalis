@@ -1,0 +1,172 @@
+<CrySchematyc CryXmlVersion="2" version="105" guid="179d2622-3466-447c-a68b-b2321d4b2f44" scope="">
+ <root elementType="Class" guid="c984df3a-e8d6-4462-a9f8-5a4baff3ff33" name="workdesk">
+  <userDocumentation author="ivanh" description=""/>
+  <extensions />
+  <children>
+   <element elementType="Constructor" guid="e6ac7693-0536-459a-98b3-c9ecb98be8b0" name="ConstructionGraph">
+    <userDocumentation author="ivanh" description=""/>
+    <extensions>
+     <Graph>
+      <pos x="0" y="0"/>
+      <nodes>
+       <element key="124f11b5-e843-41c7-a1bb-6b47dee2de51" typeGUID="12bdfa06-ba95-4e48-bb2d-bb48a7080abc">
+        <value guid="124f11b5-e843-41c7-a1bb-6b47dee2de51">
+         <pos x="0" y="0"/>
+        </value>
+       </element>
+      </nodes>
+      <links />
+     </Graph>
+    </extensions>
+    <children />
+   </element>
+   <element elementType="SignalReceiver" guid="96c04b23-6d70-4388-9b0d-43a12b59a631" name="SignalGraph" type="Universal" signalGUID="">
+    <userDocumentation author="ivanh" description=""/>
+    <extensions>
+     <Graph>
+      <pos x="466" y="137"/>
+      <nodes>
+       <element key="d221e8f4-1584-4065-8a59-cba8f9422368" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="d221e8f4-1584-4065-8a59-cba8f9422368" objectGUID="">
+         <pos x="0" y="200"/>
+         <signalId domain="Env" guid="b2561caa-0753-458b-a91f-e8e38b0f0cdf"/>
+        </value>
+       </element>
+       <element key="3037dd99-0b99-40a6-bdd4-9e01228892e0" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="3037dd99-0b99-40a6-bdd4-9e01228892e0" objectGUID="7d4c3ea1-7ba1-4dca-82c0-3487a2babbec">
+         <pos x="273" y="-1"/>
+         <signalId domain="Env" guid="d7834d96-13fb-41c4-90d1-f3d977ca0ac7"/>
+        </value>
+       </element>
+       <element key="c8b39692-6014-461c-a374-d8e2f0165068" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="c8b39692-6014-461c-a374-d8e2f0165068" objectGUID="">
+         <pos x="0" y="0"/>
+         <signalId domain="Env" guid="a9279137-7c66-491d-b9a0-8752c24c8979"/>
+        </value>
+       </element>
+       <element key="dedfe3c1-0535-463f-88b1-5a155853bc4e" typeGUID="1bcfd811-b8b7-4032-a90c-311dfa4454c6">
+        <value guid="dedfe3c1-0535-463f-88b1-5a155853bc4e" objectGUID="5a10dcbc-be36-472e-abfe-cc9712e77da1">
+         <pos x="668" y="159"/>
+         <functionId domain="Env" guid="f3a04f87-9b9d-463d-aaff-d4b6621eded3"/>
+         <inputs>
+          <element value="Closing">
+           <key type="UInt32" value="1718772071"/>
+          </element>
+         </inputs>
+        </value>
+       </element>
+       <element key="a30598d2-9625-4b14-9a41-b6f21bd6edc7" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="a30598d2-9625-4b14-9a41-b6f21bd6edc7" objectGUID="7d4c3ea1-7ba1-4dca-82c0-3487a2babbec">
+         <pos x="313" y="165"/>
+         <signalId domain="Env" guid="6e153dff-b21b-4e92-8d50-976b17802556"/>
+        </value>
+       </element>
+       <element key="b10a3cba-f0fa-4b8c-861b-133a9b359720" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="b10a3cba-f0fa-4b8c-861b-133a9b359720" objectGUID="">
+         <pos x="0" y="100"/>
+         <signalId domain="Env" guid="52ad5add-7781-429b-b4a9-0cb6c905e353"/>
+        </value>
+       </element>
+       <element key="cc434c94-1c17-4cc6-91e3-09aa0ec675c2" typeGUID="1bcfd811-b8b7-4032-a90c-311dfa4454c6">
+        <value guid="cc434c94-1c17-4cc6-91e3-09aa0ec675c2" objectGUID="5a10dcbc-be36-472e-abfe-cc9712e77da1">
+         <pos x="624" y="-2"/>
+         <functionId domain="Env" guid="f3a04f87-9b9d-463d-aaff-d4b6621eded3"/>
+         <inputs>
+          <element value="Closing">
+           <key type="UInt32" value="1718772071"/>
+          </element>
+         </inputs>
+        </value>
+       </element>
+      </nodes>
+      <links>
+       <element srcNodeGUID="3037dd99-0b99-40a6-bdd4-9e01228892e0" dstNodeGUID="cc434c94-1c17-4cc6-91e3-09aa0ec675c2">
+        <srcOutputId type="Idx" value="0"/>
+        <dstInputId type="Idx" value="0"/>
+       </element>
+      </links>
+     </Graph>
+    </extensions>
+    <children />
+   </element>
+   <element elementType="Base" guid="19781a65-d0ba-4932-a679-f723988a4a51" name="Base [Entity]">
+    <classId domain="Env" guid="be845278-0dd2-409f-b8be-97895607c256"/>
+    <envClassProperties icon="%EDITOR%/objecticons/schematyc.bmp" bHideInEditor="false" bTriggerAreas="true" bCreatePerClient="false"/>
+    <extensions />
+    <children>
+     <element elementType="ComponentInstance" guid="8dea2450-31a8-467e-a04f-9ccc66f34293" name="Entity" accessor="Private" typeGUID="e88093df-904f-4c52-af38-911e26777cdc">
+      <properties />
+      <extensions />
+      <children />
+     </element>
+    </children>
+   </element>
+   <element elementType="ComponentInstance" guid="5a10dcbc-be36-472e-abfe-cc9712e77da1" name="Actor Animation" accessor="Public" typeGUID="ddbd2129-a579-466f-96a1-7b378a35cab3">
+    <transform>
+     <translation>
+      <position>
+       <element element="0"/>
+       <element element="0"/>
+       <element element="0"/>
+      </position>
+     </translation>
+     <rotation x="0" y="-0" z="0"/>
+     <scale>
+      <element element="1"/>
+      <element element="1"/>
+      <element element="1"/>
+     </scale>
+    </transform>
+    <properties Type="RenderAndCollider" Character="chrysalis/objects/desk/workdesk/workdesk.cdf" DatabasePath="chrysalis/objects/desk/workdesk/workdesk.adb" AnimDriven="false" GroundAlign="false">
+     <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
+     <DefaultScope ControllerDefPath="chrysalis/objects/desk/workdesk/controller_defs.xml" DefaultScope="SlaveCharacter" DefaultFragment="Closed"/>
+     <Physics WeightType="EWeightType::Mass" Density="9.9999997e-05" Mass="10"/>
+    </properties>
+    <extensions />
+    <children />
+   </element>
+   <element elementType="ComponentInstance" guid="dff42ac3-7323-4a05-81ef-cfa86048ac79" name="Rigidbody" accessor="Public" typeGUID="912c6ce8-56f7-4ffa-9134-f98d4e307bd6">
+    <properties Networked="false" EnabledByDefault="true" Resting="false" Type="Rigid" SendCollisionSignal="false">
+     <Buoyancy Damping="1" Density="1" Resistance="1"/>
+    </properties>
+    <extensions />
+    <children />
+   </element>
+   <element elementType="ComponentInstance" guid="7d4c3ea1-7ba1-4dca-82c0-3487a2babbec" name="Generic Interaction" accessor="Public" typeGUID="c03d46f4-d1c9-45be-aac6-2362efd3abcc">
+    <properties IsEnabled="true" IsSingleUseOnly="false" InteractVerb="">
+     <Tags />
+    </properties>
+    <extensions />
+    <children />
+   </element>
+   <element elementType="ComponentInstance" guid="76b25c54-a480-4cdb-a1f8-4bae2d41e5f6" name="Entity Interaction" accessor="Private" typeGUID="86e63bfb-ca1e-4365-8ad5-cd208f2a7010">
+    <properties />
+    <extensions />
+    <children />
+   </element>
+   <element elementType="StateMachine" guid="9773cc5e-2515-4006-a998-e6a75cb04e7b" name="DrawerControl" lifetime="persistent" contextGUID="" transition_graph_guid="" partnerGUID="">
+    <extensions>
+     <Graph>
+      <pos x="0" y="0"/>
+      <nodes>
+       <element key="93a1bfcc-6e56-4025-a2a8-32df0d07cf38" typeGUID="12bdfa06-ba95-4e48-bb2d-bb48a7080abc">
+        <value guid="93a1bfcc-6e56-4025-a2a8-32df0d07cf38">
+         <pos x="0" y="0"/>
+        </value>
+       </element>
+      </nodes>
+      <links />
+     </Graph>
+    </extensions>
+    <children />
+   </element>
+   <element elementType="ComponentInstance" guid="6eab3884-3d69-4a82-ae42-6845d25ba457" name="Lootable" accessor="Public" typeGUID="7b1ba680-df6d-433f-9cb9-fa14a55cf000">
+    <properties Active="true">
+     <LootTableEntry LootTable="quest.killed.troll"/>
+    </properties>
+    <extensions />
+    <children />
+   </element>
+  </children>
+ </root>
+</CrySchematyc>

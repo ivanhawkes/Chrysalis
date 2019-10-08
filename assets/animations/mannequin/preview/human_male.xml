@@ -1,13 +1,13 @@
 <MannequinPreview>
- <controllerDef filename="chrysalis/characters/human/male/human_male_controller_defs.xml"/>
+ <controllerDef filename="chrysalis/characters/human/male/male_controller_defs.xml"/>
  <contexts>
-  <contextData name="Char1P" enabled="1" database="chrysalis/characters/human/male/human_male.adb" context="Char1P" tags="Standing" model="chrysalis/characters/human/male/human_male.cdf"/>
-  <contextData name="SlaveCharacter" database="chrysalis/characters/human/male/human_male.adb" context="SlaveCharacter" tags="Standing+ScopeSlave" fragtags="ScopeSlave" model="chrysalis/characters/human/male/human_male.cdf" startPosition="2,0,0"/>
-  <contextData name="SlaveObject" database="chrysalis/characters/human/male/human_male.adb" context="SlaveObject" tags="Standing+ScopeSlave" fragtags="ScopeSlave" model="chrysalis/characters/human/male/human_male.cdf" startPosition="0,2,0"/>
-  <contextData name="Char3P" database="chrysalis/characters/human/male/human_male.adb" context="Char3P" tags="Standing" model="chrysalis/characters/human/male/human_male.cdf"/>
-  <contextData name="Audio" database="chrysalis/characters/human/male/human_male.adb" context="Audio" tags="Standing" model="chrysalis/characters/human/male/human_male.cdf"/>
-  <contextData name="LookPose" enabled="1" database="chrysalis/characters/human/male/human_male.adb" context="Char3P" tags="Standing" fragtags="ScopeLookPose" model="chrysalis/characters/human/male/human_male.cdf"/>
-  <contextData name="AimPose" database="chrysalis/characters/human/male/human_male.adb" context="Char3P" tags="Standing" fragtags="ScopeAimPose" model="chrysalis/characters/human/male/human_male.cdf"/>
+  <contextData name="Char1P" enabled="1" database="chrysalis/characters/human/male/male.adb" context="Char1P" tags="Standing" model="chrysalis/characters/human/male/male.cdf"/>
+  <contextData name="SlaveCharacter" database="chrysalis/characters/human/male/male.adb" context="SlaveCharacter" tags="Standing+ScopeSlave" fragtags="ScopeSlave" model="chrysalis/characters/human/male/male.cdf" startPosition="2,0,0"/>
+  <contextData name="SlaveObject" database="chrysalis/characters/human/male/male.adb" context="SlaveObject" tags="Standing+ScopeSlave" fragtags="ScopeSlave" model="chrysalis/characters/human/male/male.cdf" startPosition="0,2,0"/>
+  <contextData name="Char3P" database="chrysalis/characters/human/male/male.adb" context="Char3P" tags="Standing" model="chrysalis/characters/human/male/male.cdf"/>
+  <contextData name="Audio" database="chrysalis/characters/human/male/male.adb" context="Audio" tags="Standing" model="chrysalis/characters/human/male/male.cdf"/>
+  <contextData name="LookPose" enabled="1" database="chrysalis/characters/human/male/male.adb" context="Char3P" tags="Standing" fragtags="ScopeLookPose" model="chrysalis/characters/human/male/male.cdf"/>
+  <contextData name="AimPose" database="chrysalis/characters/human/male/male.adb" context="Char3P" tags="Standing" fragtags="ScopeAimPose" model="chrysalis/characters/human/male/male.cdf"/>
  </contexts>
  <History StartTime="-4.3160208e+008" EndTime="-4.3160208e+008"/>
 </MannequinPreview>

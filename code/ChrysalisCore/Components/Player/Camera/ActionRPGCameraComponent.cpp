@@ -1,6 +1,10 @@
 #include <StdAfx.h>
 
 #include "ActionRPGCameraComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
+#include <CryRenderer/IRenderAuxGeom.h>
 #include "Components/Player/PlayerComponent.h"
 #include <Components/Player/Input/PlayerInputComponent.h>
 #include <Utility/StringConversions.h>
@@ -11,8 +15,15 @@
 
 namespace Chrysalis
 {
-void CActionRPGCameraComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterActionRPGCameraComponent(Schematyc::IEnvRegistrar& registrar)
 {
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CActionRPGCameraComponent));
+		// Functions
+		{
+		}
+	}
 }
 
 
@@ -23,7 +34,7 @@ void CActionRPGCameraComponent::ReflectType(Schematyc::CTypeDesc<CActionRPGCamer
 	desc.SetLabel("Action RPG Camera");
 	desc.SetDescription("An action RPG style of camera that orbits around a target.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Socket, IEntityComponent::EFlags::Attach, IEntityComponent::EFlags::ClientOnly });
+	desc.SetComponentFlags({IEntityComponent::EFlags::Socket, IEntityComponent::EFlags::Attach, IEntityComponent::EFlags::ClientOnly});
 }
 
 
@@ -111,7 +122,7 @@ void CActionRPGCameraComponent::UpdateFirstPerson()
 		{
 			// It's possible there is no actor to query for eye position, in that case, return a safe default
 			// value for an average height person.
-			Vec3 localEyePosition { AverageEyePosition };
+			Vec3 localEyePosition {AverageEyePosition};
 
 			// If we are attached to an entity that is an actor we can use their eye position.
 			auto pActor = CActorComponent::GetActor(m_targetEntityID);
@@ -153,13 +164,6 @@ void CActionRPGCameraComponent::UpdateThirdPerson()
 
 	if (pPlayerInput)
 	{
-		//// If the player zoomed all the way in, switch to the first person camera.
-		//float tempZoomGoal = m_lastZoomGoal + m_pCameraManager->GetZoomDelta() * g_cvars.m_actionRPGCameraZoomStep;
-
-		//// Calculate the new zoom goal after asking the player input for zoom level deltas.
-		//m_zoomGoal = clamp_tpl(tempZoomGoal, g_cvars.m_actionRPGCameraZoomMin, g_cvars.m_actionRPGCameraZoomMax);
-		//m_lastZoomGoal = m_zoomGoal;
-
 		// Apply the player input rotation for this frame, and limit the pitch / yaw movement according to the set max and min values.
 		if (pPlayer->GetinteractionState().IsCameraMovementAllowed())
 		{
@@ -178,9 +182,6 @@ void CActionRPGCameraComponent::UpdateThirdPerson()
 		// running interpolation for the following frame. 
 		if ((pEntity) && (!gEnv->IsCutscenePlaying()))
 		{
-			//// Interpolate towards the desired zoom position.
-			//Interpolate(m_zoom, m_zoomGoal, g_cvars.m_actionRPGCameraZoomSpeed, gEnv->pTimer->GetFrameTime());
-
 			// Get the entity we are targeting.
 			auto pTargetEntity = gEnv->pEntitySystem->GetEntity(m_targetEntityID);
 			if (pTargetEntity)
@@ -324,7 +325,7 @@ void CActionRPGCameraComponent::AttachToEntity(EntityId entityId)
 
 void CActionRPGCameraComponent::OnActivate()
 {
-	m_EventMask |= EventToMask(EEntityEvent::Update);
+	m_EventFlags |= EEntityEvent::Update;
 	GetEntity()->UpdateComponentEventMask(this);
 	ResetCamera();
 
@@ -335,7 +336,7 @@ void CActionRPGCameraComponent::OnActivate()
 
 void CActionRPGCameraComponent::OnDeactivate()
 {
-	m_EventMask &= ~EventToMask(EEntityEvent::Update);
+	m_EventFlags &= ~EEntityEvent::Update;
 	GetEntity()->UpdateComponentEventMask(this);
 }
 
@@ -347,9 +348,6 @@ void CActionRPGCameraComponent::OnDeactivate()
 
 void CActionRPGCameraComponent::ResetCamera()
 {
-	// Zoom can default to it's mid-point.
-//	m_lastZoomGoal = m_zoomGoal = m_zoom = (g_cvars.m_actionRPGCameraZoomMax + g_cvars.m_actionRPGCameraZoomMin) / 2;
-
 	// Default is for zoom level to be as close as possible to fully zoomed in. When toggling from first to third
 	// person camera, this gives the least amount of jerking. 
 	m_lastZoomGoal = m_zoomGoal = m_zoom = g_cvars.m_actionRPGCameraZoomMin;
@@ -374,7 +372,7 @@ void CActionRPGCameraComponent::ResetCamera()
 
 Vec3 CActionRPGCameraComponent::GetTargetAimPosition(IEntity* const pEntity)
 {
-	Vec3 position { AverageEyePosition };
+	Vec3 position {AverageEyePosition};
 
 	if (pEntity)
 	{
@@ -406,8 +404,8 @@ bool CActionRPGCameraComponent::CollisionDetection(const Vec3& Goal, Vec3& Camer
 
 	// Skip the target actor for this.
 	ray_hit rayhit;
-	static IPhysicalEntity* pSkipEnts [10];
-	pSkipEnts [0] = gEnv->pEntitySystem->GetEntity(m_targetEntityID)->GetPhysics();
+	static IPhysicalEntity* pSkipEnts[10];
+	pSkipEnts[0] = gEnv->pEntitySystem->GetEntity(m_targetEntityID)->GetPhysics();
 
 	// Perform the ray cast.
 	int hits = gEnv->pPhysicalWorld->RayWorldIntersection(Goal,
@@ -425,4 +423,6 @@ bool CActionRPGCameraComponent::CollisionDetection(const Vec3& Goal, Vec3& Camer
 
 	return updatedCameraPosition;
 }
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterActionRPGCameraComponent)
 }

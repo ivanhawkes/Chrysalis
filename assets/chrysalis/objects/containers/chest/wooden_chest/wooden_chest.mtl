@@ -1,0 +1,15 @@
+<Material MtlFlags="524544" >
+   <SubMaterials>
+      <Material Name="proxy_mesh_sub" MtlFlags="1152" Shader="Nodraw" GenMask="0" SurfaceType="" MatTemplate="" Diffuse="1.000000,0.000000,0.000000" Specular="0.000000,0.000000,0.000000" Emissive="0.000000,0.000000,0.000000" Shininess="10" Opacity="1" >
+         <Textures>
+         </Textures>
+      </Material>
+      <Material Name="render_mesh_sub" MtlFlags="524416" Shader="Illum" GenMask="0" SurfaceType="" MatTemplate="" Diffuse="0.588235,0.811765,0.603922" Specular="0.000000,0.000000,0.000000" Emissive="0.000000,0.000000,0.000000" Shininess="10" Opacity="1" >
+         <Textures>
+   <Textures>
+    <Texture Map="Diffuse" File="chrysalis/textures/reference/macbeth.dds"/>
+   </Textures>
+         </Textures>
+      </Material>
+   </SubMaterials>
+</Material>

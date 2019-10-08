@@ -1,25 +1,33 @@
 #include <StdAfx.h>
 
 #include "GaugeComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
 
 
 namespace Chrysalis
 {
-void CGaugeComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterGaugeComponent(Schematyc::IEnvRegistrar& registrar)
 {
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
 	{
-		auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CGaugeComponent::SetMeshType, "{EAA0A8D8-2788-4E05-9D5B-DD458689DBF3}"_cry_guid, "SetType");
-		pFunction->BindInput(1, 'type', "Type");
-		pFunction->SetDescription("Changes the type of the object");
-		pFunction->SetFlags({ Schematyc::EEnvFunctionFlags::Member });
-		componentScope.Register(pFunction);
-	}
-	{
-		auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CGaugeComponent::SetNeedle, "{0F48EC15-72AC-4067-BF10-65F789D31C0B}"_cry_guid, "SetNeedle");
-		pFunction->SetDescription("Set the needle");
-		pFunction->SetFlags({ Schematyc::EEnvFunctionFlags::Member, Schematyc::EEnvFunctionFlags::Construction });
-		pFunction->BindInput(1, 'set', "Set");
-		componentScope.Register(pFunction);
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CGaugeComponent));
+		// Functions
+		{
+			auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CGaugeComponent::SetMeshType, "{EAA0A8D8-2788-4E05-9D5B-DD458689DBF3}"_cry_guid, "SetType");
+			pFunction->BindInput(1, 'type', "Type");
+			pFunction->SetDescription("Changes the type of the object");
+			pFunction->SetFlags({Schematyc::EEnvFunctionFlags::Member});
+			componentScope.Register(pFunction);
+		}
+		{
+			auto pFunction = SCHEMATYC_MAKE_ENV_FUNCTION(&CGaugeComponent::SetNeedle, "{0F48EC15-72AC-4067-BF10-65F789D31C0B}"_cry_guid, "SetNeedle");
+			pFunction->SetDescription("Set the needle");
+			pFunction->SetFlags({Schematyc::EEnvFunctionFlags::Member, Schematyc::EEnvFunctionFlags::Construction});
+			pFunction->BindInput(1, 'set', "Set");
+			componentScope.Register(pFunction);
+		}
 	}
 }
 
@@ -31,7 +39,7 @@ void CGaugeComponent::ReflectType(Schematyc::CTypeDesc<CGaugeComponent>& desc)
 	desc.SetLabel("Gauge");
 	desc.SetDescription("Watches, clocks and other time keeping devices.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform, IEntityComponent::EFlags::Socket, IEntityComponent::EFlags::Attach });
+	desc.SetComponentFlags({IEntityComponent::EFlags::Transform, IEntityComponent::EFlags::Socket, IEntityComponent::EFlags::Attach});
 
 	// Mesh related.
 	desc.AddMember(&CGaugeComponent::m_type, 'type', "Type", "Type", "Determines the behavior of the static mesh", Cry::DefaultComponents::EMeshType::RenderAndCollider);
@@ -66,7 +74,7 @@ void CGaugeComponent::ProcessEvent(const SEntityEvent& event)
 
 		case EEntityEvent::Update:
 		{
-			SEntityUpdateContext* pCtx = (SEntityUpdateContext*)event.nParam [0];
+			SEntityUpdateContext* pCtx = (SEntityUpdateContext*)event.nParam[0];
 			Update(pCtx);
 		}
 		break;
@@ -123,24 +131,26 @@ void CGaugeComponent::Update(SEntityUpdateContext* pCtx)
 }
 
 
-//bool CGaugeComponent::SetMaterial(int slotId, const char* szMaterial)
-//{
-//	if (slotId == GetEntitySlotId())
-//	{
-//		if (IMaterial* pMaterial = gEnv->p3DEngine->GetMaterialManager()->LoadMaterial(szMaterial, false))
-//		{
-//			m_materialPath = szMaterial;
-//			m_pEntity->SetSlotMaterial(GetEntitySlotId(), pMaterial);
-//		}
-//		else if (szMaterial [0] == '\0')
-//		{
-//			m_materialPath.value.clear();
-//			m_pEntity->SetSlotMaterial(GetEntitySlotId(), nullptr);
-//		}
-//
-//		return true;
-//	}
-//
-//	return false;
-//}
+bool CGaugeComponent::SetMaterial(int slotId, const char* szMaterial)
+{
+	if (slotId == GetEntitySlotId())
+	{
+		if (IMaterial* pMaterial = gEnv->p3DEngine->GetMaterialManager()->LoadMaterial(szMaterial, false))
+		{
+			m_materialPath = szMaterial;
+			m_pEntity->SetSlotMaterial(GetEntitySlotId(), pMaterial);
+		}
+		else if (szMaterial[0] == '\0')
+		{
+			m_materialPath.value.clear();
+			m_pEntity->SetSlotMaterial(GetEntitySlotId(), nullptr);
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterGaugeComponent)
 }

@@ -1,6 +1,10 @@
 #include <StdAfx.h>
 
 #include "FirstPersonCameraComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
+#include <CryRenderer/IRenderAuxGeom.h>
 #include "Components/Player/PlayerComponent.h"
 #include <Components/Player/Input/PlayerInputComponent.h>
 #include <Console/CVars.h>
@@ -8,8 +12,15 @@
 
 namespace Chrysalis
 {
-void CFirstPersonCameraComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterFirstPersonCameraComponent(Schematyc::IEnvRegistrar& registrar)
 {
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CFirstPersonCameraComponent));
+		// Functions
+		{
+		}
+	}
 }
 
 
@@ -20,7 +31,7 @@ void CFirstPersonCameraComponent::ReflectType(Schematyc::CTypeDesc<CFirstPersonC
 	desc.SetLabel("First Person Camera");
 	desc.SetDescription("A first person camera which attaches to a target.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Socket, IEntityComponent::EFlags::Attach, IEntityComponent::EFlags::ClientOnly });
+	desc.SetComponentFlags({IEntityComponent::EFlags::Socket, IEntityComponent::EFlags::Attach, IEntityComponent::EFlags::ClientOnly});
 }
 
 
@@ -66,7 +77,7 @@ void CFirstPersonCameraComponent::Update()
 		{
 			// It's possible there is no actor to query for eye position, in that case, return a safe default
 			// value for an average height person.
-			Vec3 localEyePosition { AverageEyePosition };
+			Vec3 localEyePosition {AverageEyePosition};
 
 			// If we are attached to an entity that is an actor we can use their eye position.
 			auto pActor = CActorComponent::GetActor(m_targetEntityID);
@@ -107,7 +118,7 @@ void CFirstPersonCameraComponent::Update()
 
 void CFirstPersonCameraComponent::OnActivate()
 {
-	m_EventMask |= EventToMask(EEntityEvent::Update);
+	m_EventFlags |= EEntityEvent::Update;
 	GetEntity()->UpdateComponentEventMask(this);
 	ResetCamera();
 }
@@ -115,7 +126,7 @@ void CFirstPersonCameraComponent::OnActivate()
 
 void CFirstPersonCameraComponent::OnDeactivate()
 {
-	m_EventMask &= ~EventToMask(EEntityEvent::Update);
+	m_EventFlags &= ~EEntityEvent::Update;
 	GetEntity()->UpdateComponentEventMask(this);
 }
 
@@ -124,4 +135,6 @@ void CFirstPersonCameraComponent::ResetCamera()
 {
 	m_viewPitch = (DEG2RAD(g_cvars.m_firstPersonCameraPitchMax) + DEG2RAD(g_cvars.m_firstPersonCameraPitchMin)) / 2;
 }
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterFirstPersonCameraComponent)
 }

@@ -1,0 +1,10 @@
+<AssetMetadata version="0" type="Character" guid="4de3f810-1839-7487-ad41-82e23bbc5650">
+ <Files>
+  <File path="female.cdf"/>
+ </Files>
+ <Details />
+ <Dependencies>
+  <Path>chrysalis/characters/human/female/female.chr</Path>
+  <Path>chrysalis/characters/human/female/female.mtl</Path>
+ </Dependencies>
+</AssetMetadata>

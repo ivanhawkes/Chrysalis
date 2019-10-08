@@ -168,7 +168,7 @@ void CActionPlayAnimation::UpdateAnimation(DRS::IResponseInstance* pResponseInst
 {
 	if (auto pResponseActor = pResponseInstance->GetCurrentActor())
 	{
-		IEntity* const pEntity = pResponseActor->GetLinkedEntity();
+		//IEntity* const pEntity = pResponseActor->GetLinkedEntity();
 		//bool tokenFound = false;
 		//bool almostDone = false;
 

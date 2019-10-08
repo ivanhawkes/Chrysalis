@@ -1,11 +1,22 @@
 #include <StdAfx.h>
 
 #include "Mount.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
+
 
 namespace Chrysalis
 {
-void CMountComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterMountComponent(Schematyc::IEnvRegistrar& registrar)
 {
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CMountComponent));
+		// Functions
+		{
+		}
+	}
 }
 
 
@@ -16,7 +27,7 @@ void CMountComponent::ReflectType(Schematyc::CTypeDesc<CMountComponent>& desc)
 	desc.SetLabel("Mount");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
+	desc.SetComponentFlags({IEntityComponent::EFlags::Singleton});
 }
 
 
@@ -32,17 +43,17 @@ void CMountComponent::ProcessEvent(const SEntityEvent& event)
 	switch (event.event)
 	{
 		// Physicalize on level start for Launcher
-		case EEntityEvent::LevelStarted:
+	case EEntityEvent::LevelStarted:
 
-			// Editor specific, physicalize on reset, property change or transform change
-		case EEntityEvent::Reset:
-		case EEntityEvent::EditorPropertyChanged:
-		case EEntityEvent::TransformChangeFinishedInEditor:
-			OnResetState();
-			break;
+		// Editor specific, physicalize on reset, property change or transform change
+	case EEntityEvent::Reset:
+	case EEntityEvent::EditorPropertyChanged:
+	case EEntityEvent::TransformChangeFinishedInEditor:
+		OnResetState();
+		break;
 
-		case EEntityEvent::Update:
-			break;
+	case EEntityEvent::Update:
+		break;
 	}
 }
 
@@ -50,4 +61,6 @@ void CMountComponent::ProcessEvent(const SEntityEvent& event)
 void CMountComponent::OnResetState()
 {
 }
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterMountComponent)
 }

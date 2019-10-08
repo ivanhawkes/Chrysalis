@@ -1,0 +1,14 @@
+<AssetMetadata version="0" type="Character" guid="512196a8-5392-35c3-3f65-6f5f6f4f828d">
+ <Files>
+  <File path="wooden_chest.cdf"/>
+ </Files>
+ <Details />
+ <Dependencies>
+  <Path>chrysalis/objects/containers/chest/wooden_chest/wooden_chest.chr</Path>
+  <Path>chrysalis/objects/containers/chest/wooden_chest/wooden_chest.mtl</Path>
+  <Path>chrysalis/objects/containers/chest/wooden_chest/lid_mesh.skin</Path>
+  <Path>chrysalis/materials/reference/zone_system.mtl</Path>
+  <Path>chrysalis/objects/containers/chest/wooden_chest/bottom_mesh.skin</Path>
+  <Path>chrysalis/materials/reference/zone_system.mtl</Path>
+ </Dependencies>
+</AssetMetadata>

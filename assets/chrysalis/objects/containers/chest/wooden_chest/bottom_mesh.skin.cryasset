@@ -1,0 +1,15 @@
+<AssetMetadata version="0" type="SkinnedMesh" guid="5f9f0c8c-9653-0947-3eee-f60eaffc0b8f" source="wooden_chest.dae.zip">
+ <Files>
+  <File path="bottom_mesh.skin"/>
+ </Files>
+ <Details>
+  <Detail name="materialCount">3</Detail>
+  <Detail name="triangleCount">116</Detail>
+  <Detail name="vertexCount">116</Detail>
+  <Detail name="16BitPrecision">false</Detail>
+  <Detail name="bonesCount">4</Detail>
+ </Details>
+ <Dependencies>
+  <Path usageCount="1">./wooden_chest.mtl</Path>
+ </Dependencies>
+</AssetMetadata>

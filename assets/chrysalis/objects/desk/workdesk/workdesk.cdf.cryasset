@@ -1,0 +1,12 @@
+<AssetMetadata version="0" type="Character" guid="225437cf-1485-1868-61e9-a85330c6765f">
+ <Files>
+  <File path="workdesk.cdf"/>
+ </Files>
+ <Details />
+ <Dependencies>
+  <Path>chrysalis/objects/desk/workdesk/desk.chr</Path>
+  <Path>chrysalis/objects/desk/workdesk/drawer_top.skin</Path>
+  <Path>chrysalis/objects/desk/workdesk/drawer_bottom.skin</Path>
+  <Path>chrysalis/objects/desk/workdesk/door.skin</Path>
+ </Dependencies>
+</AssetMetadata>

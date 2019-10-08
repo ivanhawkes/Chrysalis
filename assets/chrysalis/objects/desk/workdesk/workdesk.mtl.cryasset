@@ -1,0 +1,14 @@
+<AssetMetadata version="0" type="Material" guid="6bde1531-be13-e937-da21-20adc8824313">
+ <Files>
+  <File path="workdesk.mtl"/>
+ </Files>
+ <Details>
+  <Detail name="subMaterialCount">2</Detail>
+  <Detail name="textureCount">3</Detail>
+ </Details>
+ <Dependencies>
+  <Path usageCount="1">./textures/Workdesk_Albedo.dds</Path>
+  <Path usageCount="1">./textures/Workdesk_DDNA.dds</Path>
+  <Path usageCount="1">./textures/Workdesk_Spec.dds</Path>
+ </Dependencies>
+</AssetMetadata>

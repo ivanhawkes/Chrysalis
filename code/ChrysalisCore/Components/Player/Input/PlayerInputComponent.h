@@ -35,13 +35,10 @@ class CPlayerInputComponent
 	: public IEntityComponent
 {
 protected:
-	friend CChrysalisCorePlugin;
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 	// IEntityComponent
 	void Initialize() override;
 	void ProcessEvent(const SEntityEvent& event) override;
-	Cry::Entity::EntityEventMask GetEventMask() const override { return EventToMask(EEntityEvent::Update); }
+	Cry::Entity::EventFlags GetEventMask() const override { return EEntityEvent::Update; }
 	// ~IEntityComponent
 
 	void Update();

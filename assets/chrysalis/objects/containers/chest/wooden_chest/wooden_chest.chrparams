@@ -1,0 +1,10 @@
+<Params>
+  <AnimationList>
+    <Animation name="$AnimEventDatabase" path="chrysalis/objects/containers/chest/wooden_chest/animations/wooden_chest.animevents"/>
+    <Animation name="$TracksDatabase" path="chrysalis/objects/containers/chest/wooden_chest/animations/*.dba"/>
+    <Animation name="#filepath" path="chrysalis/objects/containers/chest/wooden_chest/animations"/>
+    <Animation name="*" path="*/*.caf"/>
+    <Animation name="*" path="*/*.bspace"/>
+    <Animation name="*" path="*/*.comb"/>
+  </AnimationList>
+</Params>

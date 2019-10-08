@@ -1,0 +1,24 @@
+<TagDefinition version="2">
+  <Tags>
+    <Group name="TopDrawer">
+      <Tag name="TopDrawerOpen"/>
+      <Tag name="TopDrawerOpening"/>
+      <Tag name="TopDrawerClosed"/>
+      <Tag name="TopDrawerClosing"/>
+    </Group>
+    <Group name="BottomDrawer">
+      <Tag name="BottomDrawerOpen"/>
+      <Tag name="BottomDrawerOpening"/>
+      <Tag name="BottomDrawerClosed"/>
+      <Tag name="BottomDrawerClosing"/>
+    </Group>
+    <Group name="Door">
+      <Tag name="DoorOpen"/>
+      <Tag name="DoorOpening"/>
+      <Tag name="DoorClosed"/>
+      <Tag name="DoorClosing"/>
+    </Group>
+    <Tag name="Looting"/>
+    <Tag name="ScopeSlave" priority="4"/>
+  </Tags>
+</TagDefinition>

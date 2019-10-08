@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="808b2a50-0291-54bc-bd31-c5c880217d82">
+ <Files>
+  <File path="objectives.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">Root</Detail>
+ </Details>
+</AssetMetadata>

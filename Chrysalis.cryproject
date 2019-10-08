@@ -1,149 +1,63 @@
 {
-    "console_commands": [],
-    "console_variables": [
-        {
-            "name": "ca_useIMG_CAF",
-            "value": "0"
-        },
-        {
-            "name": "ca_DrawAimIKVEGrid",
-            "value": "1"
-        },
-        {
-            "name": "ca_DrawAimPoses",
-            "value": "1"
-        },
-        {
-            "name": "ca_DrawLookIK",
-            "value": "1"
-        },
-        {
-            "name": "ca_UseAimIK",
-            "value": "1"
-        },
-        {
-            "name": "ca_UseLookIK",
-            "value": "1"
-        },
-        {
-            "name": "ca_useIMG_AIM",
-            "value": "0"
-        },
-        {
-            "name": "ca_useIMG_CAF",
-            "value": "0"
-        },
-        {
-            "name": "camera_manager_default_camera",
-            "value": "1"
-        },
-        {
-            "name": "component_awareness_debug",
-            "value": "0"
-        },
-        {
-            "name": "drs_dialogSubtitles",
-            "value": "1"
-        },
-        {
-            "name": "e_permanentrenderobjects",
-            "value": "0"
-        },
-        {
-            "name": "e_waterocean",
-            "value": "0"
-        },
-        {
-            "name": "ed_lowercasepaths",
-            "value": "1"
-        },
-        {
-            "name": "ed_usedevmanager",
-            "value": "0"
-        },
-        {
-            "name": "gfx_uiaction_folder",
-            "value": "assets/ui/default/uiactions"
-        },
-        {
-            "name": "r_Fullscreen",
-            "value": "0"
-        },
-        {
-            "name": "r_Height",
-            "value": "900"
-        },
-        {
-            "name": "r_ShadersEditing",
-            "value": "1"
-        },
-        {
-            "name": "r_Width",
-            "value": "1440"
-        },
-        {
-            "name": "r_displayinfo",
-            "value": "0"
-        },
-        {
-            "name": "s_AudioImplName",
-            "value": "CryAudioImplWwise"
-        },
-        {
-            "name": "sys_PakPriority",
-            "value": "0"
-        }
-    ],
-    "content": {
-        "assets": [
-            "assets"
-        ],
-        "code": [
-            "code/ChrysalisCore"
-        ],
-        "libs": [
-            {
-                "name": "Chrysalis",
-                "shared": {
-                    "any": "",
-                    "win_x64": "bin/win_x64/Chrysalis.dll",
-                    "win_x86": ""
-                }
-            }
-        ]
-    },
-    "info": {
-        "guid": "23e0b72f-7fe7-81f0-a47f-0d86971f957c",
-        "name": "Chrysalis"
-    },
-    "require": {
-        "engine": "{a09c02a9-b1de-43a6-80a4-297a23af761d}",
-        "plugins": [
-            {
-                "path": "CryDefaultEntities",
-                "type": "EPluginType::Native"
-            },
-            {
-                "path": "CrySensorSystem",
-                "type": "EPluginType::Native"
-            },
-            {
-                "path": "CryPerceptionSystem",
-                "type": "EPluginType::Native"
-            },
-            {
-                "path": "bin/win_x64/Chrysalis.dll",
-                "type": "EPluginType::Native"
-            },
-            {
-                "path": "CryGamePlatform",
-                "platforms": [
-                    "PS4"
-                ],
-                "type": "EPluginType::Native"
-            }
-        ]
-    },
-    "type": "",
-    "version": 3
+	"version": 4,
+	"type": "",
+	"info": { "name": "Chrysalis", "guid": "23e0b72f-7fe7-81f0-a47f-0d86971f957c" },
+	"content": {
+		"assets": [ "assets" ],
+		"code": [ "code/ChrysalisCore" ],
+		"libs": [
+			{
+				"name": "Chrysalis",
+				"shared": {
+					"any": "",
+					"win_x64": "bin/win_x64/Chrysalis.dll",
+					"win_x86": ""
+				}
+			}
+		]
+	},
+	"require": {
+		"engine": "engine-5.6",
+		"plugins": [
+			{ "guid": "", "type": "EType::Native", "path": "CryDefaultEntities" },
+			{ "guid": "", "type": "EType::Native", "path": "CrySensorSystem" },
+			{ "guid": "", "type": "EType::Native", "path": "CryPerceptionSystem" },
+			{
+				"guid": "",
+				"type": "EType::Native",
+				"path": "bin/win_x64/Chrysalis.dll"
+			},
+			{
+				"guid": "",
+				"type": "EType::Native",
+				"path": "CryGamePlatform",
+				"platforms": [ "PS4" ]
+			}
+		]
+	},
+	"console_variables": {
+		"ca_DrawAimIKVEGrid": "1",
+		"ca_DrawAimPoses": "1",
+		"ca_DrawLookIK": "1",
+		"ca_UseAimIK": "1",
+		"ca_UseLookIK": "1",
+		"ca_useIMG_AIM": "0",
+		"ca_useIMG_CAF": "0",
+		"camera_manager_default_camera": "1",
+		"component_awareness_debug": "0",
+		"drs_dialogSubtitles": "1",
+		"e_permanentrenderobjects": "0",
+		"e_waterocean": "0",
+		"ed_lowercasepaths": "1",
+		"ed_usedevmanager": "0",
+		"gfx_uiaction_folder": "assets/ui/default/uiactions",
+		"r_Fullscreen": "0",
+		"r_Height": "900",
+		"r_ShadersEditing": "1",
+		"r_Width": "1440",
+		"r_displayinfo": "0",
+		"s_AudioImplName": "CryAudioImplWwise",
+		"sys_PakPriority": "0"
+	},
+	"console_commands": { }
 }

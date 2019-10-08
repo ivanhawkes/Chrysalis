@@ -1,8 +1,0 @@
-<AssetMetadata version="0" type="Xml" guid="0569a33d-adc8-11ac-5bab-5501a74174c3">
- <Files>
-  <File path="human_female_controller_defs.xml"/>
- </Files>
- <Details>
-  <Detail name="rootTag">ControllerDef</Detail>
- </Details>
-</AssetMetadata>

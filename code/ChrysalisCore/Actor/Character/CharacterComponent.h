@@ -16,13 +16,10 @@ class CCharacterComponent
 	: public IEntityComponent
 {
 protected:
-	friend CChrysalisCorePlugin;
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 	// IEntityComponent
 	void Initialize() override;
 	void ProcessEvent(const SEntityEvent& event) override;
-	Cry::Entity::EntityEventMask GetEventMask() const override { return EventToMask(EEntityEvent::Update); }
+	Cry::Entity::EventFlags GetEventMask() const override { return EEntityEvent::Update; }
 	// ~IEntityComponent
 
 public:
@@ -35,8 +32,8 @@ public:
 	virtual void OnResetState();
 
 	/** Manage their equipment. */
-	CCharacterAttributesComponent* m_pCharacterAttributesComponent { nullptr };
+	CCharacterAttributesComponent* m_pCharacterAttributesComponent {nullptr};
 
-	CActorComponent* m_pActorComponent { nullptr };
+	CActorComponent* m_pActorComponent {nullptr};
 };
 }

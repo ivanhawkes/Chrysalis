@@ -1,6 +1,9 @@
 #pragma once
 
+#include <queue>
 #include <CryCore/CryFlags.h>
+#include <CryCore/Containers/CryFixedArray.h>
+#include <CryRenderer/IRenderAuxGeom.h>
 #include <CryString/StringUtils.h>
 #include <Utility/AutoEnum.h>
 #include <Utility/CryHash.h>
@@ -104,7 +107,7 @@ public:
 	}
 
 	void AddData(const SStateEventData& data) { m_data.push_back(data); }
-	const SStateEventData& GetData(uint8 index) const { return m_data [index]; }
+	const SStateEventData& GetData(uint8 index) const { return m_data[index]; }
 	ILINE int GetEventId() const { return m_eventType; }
 	const unsigned int GetDataSize() const { return m_data.size(); }
 	void ClearData() { m_data.clear(); }
@@ -153,10 +156,10 @@ struct SStateEventSerialize : public SStateEvent
 #ifdef STATE_DEBUG
 
 #include <CryRenderer/IRenderer.h>
-static const float state_white [4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-static const float state_red [4] = { 1.0f, 0.0f, 0.0f, 1.0f };
-static const float state_green [4] = { 0.0f, 1.0f, 0.0f, 1.0f };
-static const float state_blue [4] = { 0.0f, 0.0f, 1.0f, 1.0f };
+static const float state_white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+static const float state_red[4] = {1.0f, 0.0f, 0.0f, 1.0f};
+static const float state_green[4] = {0.0f, 1.0f, 0.0f, 1.0f};
+static const float state_blue[4] = {0.0f, 0.0f, 1.0f, 1.0f};
 
 struct SHistory
 {
@@ -183,24 +186,24 @@ struct SHistory
 
 	void AddToHistory(const char* subState, ...)
 	{
-		CRY_ASSERT((UINT_PTR) subState != 0xcdcdcdcd);
+		CRY_ASSERT((UINT_PTR)subState != 0xcdcdcdcd);
 
-		char tmp [128] = { 0 };
+		char tmp[128];
 		va_list args;
 		va_start(args, subState);
-		vsnprintf(tmp, 128, subState, args);
+		cry_vsprintf(tmp, subState, args);
 		va_end(args);
 
 		CryFixedStringT<256> finalStr;
 		finalStr.Format("%x %s", m_historyID++, tmp);
 
-		m_states [m_front] = finalStr.c_str();
-		m_front = (m_front < (int) (m_states.max_size() - 1)) ? m_front + 1 : 0;
+		m_states[m_front] = finalStr.c_str();
+		m_front = (m_front < (int)(m_states.max_size() - 1)) ? m_front + 1 : 0;
 	}
 
 	ILINE int GetFront() const { return m_front - 1; }
-	ILINE int GetBack() const { return (int) (m_states.size() - 1); }
-	ILINE const TDebugType& GetStateAt(int index) const { return m_states [index]; }
+	ILINE int GetBack() const { return (int)(m_states.size() - 1); }
+	ILINE const TDebugType& GetStateAt(int index) const { return m_states[index]; }
 
 private:
 
@@ -211,7 +214,7 @@ private:
 
 struct SStateDebugContext
 {
-	SStateDebugContext(IRenderer& renderer, IRenderAuxGeom& renderAuxGeom)
+	SStateDebugContext(IRenderer* renderer, IRenderAuxGeom* renderAuxGeom)
 		: m_renderer(renderer)
 		, m_rendererAuxGeom(renderAuxGeom)
 		, m_stateLevel(0)
@@ -219,8 +222,8 @@ struct SStateDebugContext
 		, m_currentVertical(50.0f)
 	{
 	}
-	IRenderer&			m_renderer;
-	IRenderAuxGeom&	m_rendererAuxGeom;
+	IRenderer*			m_renderer;
+	IRenderAuxGeom*	m_rendererAuxGeom;
 	uint32 m_stateLevel;
 	float  m_baseHorizontal;
 	mutable float  m_currentVertical;
@@ -234,12 +237,12 @@ struct SStateDebugContext
 #define STATE_DEBUG_LOG( n,m, ... )
 //#define STATE_DEBUG_LOG( n,m, ... ) CryLogAlways( m, __VA_ARGS__ );
 /*	#define STATE_DEBUG_LOG( colour, horz, vert, n, ... ) \
-{\
-va_list args; \
-va_start(args,n); \
-IRenderAuxText::Draw2dLabel(horz, vert, 1.5f, state_white, false, n, args ); \
-va_end(args); \
-}*/
+		{\
+			va_list args; \
+			va_start(args,n); \
+			IRenderAuxText::Draw2dLabel(horz, vert, 1.5f, state_white, false, n, args ); \
+			va_end(args); \
+		}*/
 
 #define STATE_DEBUG_EVENT_LOG( state, debugEvent, logit, colour, n, ... ) \
 		{\
@@ -267,16 +270,16 @@ const SStateEvent STATE_DEBUG_RAW_EVENT_LOG(CStateHierarchy<HOST>* pState, SStat
 }
 
 #define STATE_DEBUG_RAW_EVENT( state )\
-		SStateEvent( state, &SStateDebugContext( *gEnv->pRenderer, *gEnv->pRenderer->GetIRenderAuxGeom() ) )
+		SStateEvent( state, &SStateDebugContext( gEnv->pRenderer, gEnv->pAuxGeomRenderer ) )
 
 #define STATE_DEBUG_APPEND_EVENT( event )\
-		event.AddDebugContext( SStateDebugContext( *gEnv->pRenderer, *gEnv->pRenderer->GetIRenderAuxGeom() ) )
+		event.AddDebugContext( SStateDebugContext( gEnv->pRenderer, gEnv->pAuxGeomRenderer ) )
 
 #define STATE_DEBUG_EVENTONLY( name, e ) name, e
 
 #else
 #define DebugInit( n )
-#define STATE_DEBUG_LOG( n,m, ... ) 
+#define STATE_DEBUG_LOG( n,m, ... )
 #define STATE_DEBUG_EVENT_LOG( state, debugEvent, logit, colour, n, ... )
 #define STATE_DEBUG_EVENT_LOG_TO_HISTORY( state, colour, n, ... )
 #define STATE_DEBUG_APPEND_EVENT( e ) e
@@ -290,6 +293,7 @@ const SStateEvent STATE_DEBUG_RAW_EVENT_LOG(CStateHierarchy<HOST>* pState, SStat
 
 #endif
 
+#include "Utility/CryHash.h"
 
 struct SStateEvent;
 
@@ -362,7 +366,7 @@ public:
 		{
 			m_factories.resize(trueStateID + 1);
 		}
-		m_factories [trueStateID] = SStateFactory(createPtr, deletePtr);
+		m_factories[trueStateID] = SStateFactory(createPtr, deletePtr);
 	}
 
 	void UnRegisterState(const uint stateID)
@@ -399,22 +403,52 @@ struct SStateIndex
 	enum { UNDEFINED = -1 };
 
 	SStateIndex()
-		: m_name(CryHash(UNDEFINED)), m_func(0), m_stateID(UNDEFINED), m_hierarchy(UNDEFINED) {
+		: m_name(CryHash(UNDEFINED))
+		, m_func(0)
+		, m_parent(nullptr)
+		, m_stateID(UNDEFINED)
+		, m_hierarchy(UNDEFINED)
+	{
 		DebugInit("UNDEFINED_NEED_TO_ADD_STATE_TO_HIERARCHY_BEFORE_TRANSITIONING_TO_IT");
 	}
+
 	SStateIndex(CryHash hashName)
-		: m_name(hashName), m_func(0), m_parent(nullptr), m_stateID(0), m_hierarchy(0) {
+		: m_name(hashName)
+		, m_func(0)
+		, m_parent(nullptr)
+		, m_stateID(0)
+		, m_hierarchy(0)
+	{
 		DebugInit("UnknownHash");
 	}
+
 	explicit SStateIndex(const char* pName)
-		: m_name(CryStringUtils::HashString(pName)), m_func(), m_parent(nullptr), m_stateID(0), m_hierarchy(0) {
+		: m_name(CryStringUtils::HashString(pName))
+		, m_func(0)
+		, m_parent(nullptr)
+		, m_stateID(0)
+		, m_hierarchy(0)
+	{
 		DebugInit(pName);
 	}
+
 	SStateIndex(const char* pName, typename CStateProxy<HOST>::StatePtr func, const SStateIndex<HOST>* parent, uint stateID)
-		: m_name(CryStringUtils::HashString(pName)), m_func(func), m_parent(parent), m_stateID((1ULL << static_cast<uint64>(stateID))), m_hierarchy(0) {
-		DebugInit(pName); RecursiveGenerateHierarchy(*this, m_hierarchy);
+		: m_name(CryStringUtils::HashString(pName))
+		, m_func(func)
+		, m_parent(parent)
+		, m_stateID((1ULL << static_cast<uint64>(stateID)))
+		, m_hierarchy(0)
+	{
+		DebugInit(pName);
+		RecursiveGenerateHierarchy(*this, m_hierarchy);
 	}
-	SStateIndex(const SStateIndex& rhs) : m_name(rhs.m_name), m_func(rhs.m_func), m_parent(rhs.m_parent), m_stateID(rhs.m_stateID), m_hierarchy(rhs.m_hierarchy)
+
+	SStateIndex(const SStateIndex& rhs)
+		: m_name(rhs.m_name)
+		, m_func(rhs.m_func)
+		, m_parent(rhs.m_parent)
+		, m_stateID(rhs.m_stateID)
+		, m_hierarchy(rhs.m_hierarchy)
 #ifdef STATE_DEBUG
 		, m_pDebugName(rhs.m_pDebugName)
 #endif
@@ -540,8 +574,7 @@ public:
 				{
 					stateCurrent = *stateCurrent.m_parent;
 				}
-			}
-			while (stateCurrent.m_parent != nullptr);
+			} while (stateCurrent.m_parent != nullptr);
 		}
 		return stateCurrent.m_stateID;
 	}
@@ -634,8 +667,7 @@ public:
 					}
 					break;
 			}
-		}
-		while (stateResult.m_name != STATE_DONE && (currentState.m_parent != nullptr || stateResult.m_func != nullptr));
+		} while (stateResult.m_name != STATE_DONE && (currentState.m_parent != nullptr || stateResult.m_func != nullptr));
 
 		if (pState->m_pTransitionStateHierarchy)
 		{
@@ -704,18 +736,18 @@ protected:
 	friend class CStateHelper<HOST, CStateHierarchy<HOST> >;
 	friend class CStateMachine<HOST>;
 
+	CCryFlags<uint32> m_flags;
+
+	const TStateIndex State_Done;
+	const TStateIndex State_Continue;
+	int m_stateID;
+
 	// During a State Transition, we create the target State in order to initialize it.
 	CStateHierarchy* m_pTransitionStateHierarchy;
-
-	CCryFlags<uint32> m_flags;
-	int m_stateID;
 
 	TStateIndex m_currentState;
 	const TStateIndex& m_defaultState;
 	CStateMachineRegistration<HOST>& m_stateMachineReg;
-
-	const TStateIndex State_Done;
-	const TStateIndex State_Continue;
 
 	typedef std::vector<SStateIndex<HOST>*> TStateIndexContainer;
 	TStateIndexContainer m_stateIndexContainer;
@@ -725,14 +757,13 @@ protected:
 #endif
 
 	CStateHierarchy(int stateID, const SStateIndex<HOST>& defaultState, CStateMachineRegistration<HOST>& stateMachineReg)
-		:
-		State_Done(CryHash(STATE_DONE)),
-		State_Continue(CryHash(STATE_CONTINUE)),
-		m_stateID(stateID),
-		m_pTransitionStateHierarchy(nullptr),
-		m_currentState(CryHash(STATE_DONE)),
-		m_defaultState(defaultState),
-		m_stateMachineReg(stateMachineReg)
+		: State_Done(CryHash(STATE_DONE))
+		, State_Continue(CryHash(STATE_CONTINUE))
+		, m_stateID(stateID)
+		, m_pTransitionStateHierarchy(nullptr)
+		, m_currentState(State_Done)
+		, m_defaultState(defaultState)
+		, m_stateMachineReg(stateMachineReg)
 	{
 	}
 
@@ -790,10 +821,6 @@ private:
 	{
 		STATE_DEBUG_LOG(this, "TransitionFromCurrentToSubState: From: <%s> To: <%s>", m_currentState.m_pDebugName, toSubState.m_pDebugName);
 
-#if defined(STATE_DEBUG)
-		const char* debugFromStateName = m_currentState.m_pDebugName;
-		const char* debugIntoStateName = toSubState.m_pDebugName;
-#endif
 		const uint64 commonParent = CStateHelper<HOST, CStateHierarchy<HOST> >::GenerateCommonParent(m_currentState, toSubState);
 
 		CStateHierarchy* pState = this;
@@ -881,9 +908,9 @@ public:
 #ifdef STATE_DEBUG
 		if (debug)
 		{
-			SStateDebugContext debugCtx(*gEnv->pRenderer, *gEnv->pRenderer->GetIRenderAuxGeom());
+			SStateDebugContext debugCtx(gEnv->pRenderer, gEnv->pAuxGeomRenderer);
 
-			const float white [4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+			const float white[4] = {1.0f, 1.0f, 1.0f, 1.0f};
 
 			//History
 			debugCtx.m_baseHorizontal = 450.0f;
@@ -1034,12 +1061,12 @@ template<typename HOST>
 const SStateEvent SStateDebugContext::StateDebugAndLog(CStateHierarchy<HOST>* pState, const char* stateName, SStateEvent stateEvent)
 {
 	SStateEvent event(stateEvent);
-	static SStateDebugContext debugContext(*gEnv->pRenderer, *gEnv->pRenderer->GetIRenderAuxGeom());
+	static SStateDebugContext debugContext(gEnv->pRenderer, gEnv->pAuxGeomRenderer);
 	event.AddDebugContext(debugContext);
 	if (stateEvent.GetEventId() < STATE_EVENT_CUSTOM)
 	{
 		AUTOENUM_BUILDNAMEARRAY(events, eStateEvents);
-		STATE_DEBUG_EVENT_LOG_TO_HISTORY(pState, state_white, "State: %s; Event: %s", stateName, events [stateEvent.GetEventId() - 1]);
+		STATE_DEBUG_EVENT_LOG_TO_HISTORY(pState, state_white, "State: %s; Event: %s", stateName, events[stateEvent.GetEventId() - 1]);
 	}
 	else
 	{
@@ -1079,32 +1106,32 @@ const SStateEvent SStateDebugContext::StateDebugAndLog(CStateHierarchy<HOST>* pS
 		CStateMachineRegistration<host>* host::s_pStateMachineRegistration##name = nullptr; \
 		void host::StateMachineHandleEvent##name( const SStateEvent& event ) \
 		{\
-			CRY_ASSERT_TRACE( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is nullptr for the <%s> State Machine", #name) );\
+			CRY_ASSERT( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is nullptr for the <%s> State Machine", #name) );\
 			m_stateMachine##name.StateMachineHandleEvent( *this, *s_pStateMachineRegistration##name, event ); \
 		}\
 		void host::StateMachineInit##name()\
 		{\
-			CRY_ASSERT_TRACE( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is nullptr for the <%s> State Machine", #name) );\
+			CRY_ASSERT( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is nullptr for the <%s> State Machine", #name) );\
 			m_stateMachine##name.StateMachineInit( *this, *s_pStateMachineRegistration##name );\
 		}\
 		void host::StateMachineRelease##name()\
 		{\
-			CRY_ASSERT_TRACE( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is nullptr for the <%s> State Machine", #name) );\
+			CRY_ASSERT( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is nullptr for the <%s> State Machine", #name) );\
 			m_stateMachine##name.StateMachineRelease( *this, *s_pStateMachineRegistration##name );\
 		}\
 		void host::StateMachineReset##name()\
 		{\
-			CRY_ASSERT_TRACE( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is nullptr for the <%s> State Machine", #name) );\
+			CRY_ASSERT( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is nullptr for the <%s> State Machine", #name) );\
 			m_stateMachine##name.StateMachineReset( *this, *s_pStateMachineRegistration##name );\
 		}\
 		void host::StateMachineUpdate##name( const float frameTime, const bool bShouldDebug )\
 		{\
-			CRY_ASSERT_TRACE( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is nullptr for the <%s> State Machine", #name) );\
+			CRY_ASSERT( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is nullptr for the <%s> State Machine", #name) );\
 			m_stateMachine##name.StateMachineUpdateTime( *this, *s_pStateMachineRegistration##name, frameTime, bShouldDebug );\
 		}\
 		void host::StateMachineSerialize##name( const SStateEvent& event )\
 		{\
-			CRY_ASSERT_TRACE( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is nullptr for the <%s> State Machine", #name) );\
+			CRY_ASSERT( s_pStateMachineRegistration##name, ("HSM: Somehow the registration class is nullptr for the <%s> State Machine", #name) );\
 			m_stateMachine##name.StateMachineSerialize( *this, *s_pStateMachineRegistration##name, event );\
 		}
 
@@ -1122,10 +1149,10 @@ const SStateEvent SStateDebugContext::StateDebugAndLog(CStateHierarchy<HOST>* pS
 
 #define DECLARE_STATE_CLASS_ADD( host, stateName ) \
 		const TStateIndex stateName( host& blah, const SStateEvent& event ); \
-		TStateIndex State_##stateName; 
+		TStateIndex State_##stateName;
 
 #define DECLARE_STATE_CLASS_ADD_DUMMY( host, stateName ) \
-		TStateIndex State_##stateName; 
+		TStateIndex State_##stateName;
 
 #define DECLARE_STATE_CLASS_END( host ) \
 		DECLARE_STATE_CLASS_ADD( host, Root )
@@ -1147,17 +1174,18 @@ const SStateEvent SStateDebugContext::StateDebugAndLog(CStateHierarchy<HOST>* pS
 		, m_subStateIndex(1) \
 		{\
 			State_Root = SStateIndex<host> ("Root", (CStateProxy<host>::StatePtr)&stateClass::Root, nullptr, m_subStateIndex++ ); \
-			m_stateIndexContainer.push_back( &State_Root ); 
+			m_stateIndexContainer.push_back( &State_Root );
 
 #define DEFINE_STATE_CLASS_ADD( host, stateClass, stateFunc, parentState )\
 		  State_##stateFunc = SStateIndex<host> (#stateFunc, (CStateProxy<host>::StatePtr)&stateClass::stateFunc, &State_##parentState, m_subStateIndex++ );\
-			m_stateIndexContainer.push_back( &State_##stateFunc ); 
+			m_stateIndexContainer.push_back( &State_##stateFunc );
 
 #define DEFINE_STATE_CLASS_ADD_DUMMY( host, stateClass, stateDummy, stateFunc, parentState )\
 		  State_##stateDummy = SStateIndex<host> (#stateDummy, (CStateProxy<host>::StatePtr)&stateClass::stateFunc, &State_##parentState, m_subStateIndex++ );\
-			m_stateIndexContainer.push_back( &State_##stateDummy ); 
+			m_stateIndexContainer.push_back( &State_##stateDummy );
 
 #define DEFINE_STATE_CLASS_END( host, stateClass )\
 		}\
 		uint id##host##stateClass = stateClass::Register();
+
 }

@@ -4,12 +4,11 @@
  </Files>
  <Details>
   <Detail name="subMaterialCount">2</Detail>
-  <Detail name="textureCount">4</Detail>
+  <Detail name="textureCount">3</Detail>
  </Details>
  <Dependencies>
   <Path usageCount="1">./maglite_02d_diff.dds</Path>
   <Path usageCount="1">./maglite_02d_ddna.dds</Path>
-  <Path usageCount="1">textures/defaults/white.dds</Path>
-  <Path usageCount="1">Objects/pbs_reference/gloss0_ddna.dds</Path>
+  <Path usageCount="1">chrysalis/textures/defaults/white.dds</Path>
  </Dependencies>
 </AssetMetadata>

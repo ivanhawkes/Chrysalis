@@ -1,5 +1,5 @@
 <Material MtlFlags="524288" Shader="Referenceimage" GenMask="0" StringGenMask="" SurfaceType="mat_metal" MatTemplate="" Diffuse="1,1,1" Specular="0,0,0" Opacity="1" Shininess="10" vertModifType="0" LayerAct="1">
  <Textures>
-  <Texture Map="Diffuse" File="textures/reference/macbeth.dds"/>
+  <Texture Map="Diffuse" File="chrysalis/textures/reference/macbeth.dds"/>
  </Textures>
 </Material>

@@ -1,6 +1,0 @@
-<SkeletonList>
- <Skeleton name="human_male" file="chrysalis/characters/human/male/human_male.chr"/>
- <Skeleton name="human_female" file="chrysalis/characters/human/female/human_female.chr"/>
- <Skeleton name="clock" file="chrysalis/objects/office/wall_clock/wall_clock.skel"/>
- <Skeleton name="FlashlightDrop" file="chrysalis/objects/flashlightDrop/FlashlightNULL.chr"/>
-</SkeletonList>

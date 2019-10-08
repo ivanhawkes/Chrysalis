@@ -40,18 +40,18 @@ public:
 		m_duration(0.f),
 		m_interruptable(false)
 	{
-		IEntity* pLadder = gEnv->pEntitySystem->GetEntity(ladderState->GetLadderId());
+		/*IEntity* pLadder = gEnv->pEntitySystem->GetEntity(ladderState->GetLadderId());
 
-		/*		if (pLadder)
-				{
-				EntityScripts::GetEntityProperty (pLadder, "Camera", cameraAnimFactorAtStart, m_cameraAnimFactorAtStart);
-				EntityScripts::GetEntityProperty (pLadder, "Camera", cameraAnimFactorAtEnd, m_cameraAnimFactorAtEnd);
-				}
-				LadderLog ("Constructing %s instance for %s who's %s a ladder", GetName (), actorControllerComponent.GetEntity ()->GetEntityTextDescription (),actorControllerComponent.IsOnLadder () ? "on" : "not on");
+			if (pLadder)
+			{
+			EntityScripts::GetEntityProperty (pLadder, "Camera", cameraAnimFactorAtStart, m_cameraAnimFactorAtStart);
+			EntityScripts::GetEntityProperty (pLadder, "Camera", cameraAnimFactorAtEnd, m_cameraAnimFactorAtEnd);
+			}
+			LadderLog ("Constructing %s instance for %s who's %s a ladder", GetName (), actorControllerComponent.GetEntity ()->GetEntityTextDescription (),actorControllerComponent.IsOnLadder () ? "on" : "not on");
 
-				#ifndef _RELEASE
-				ladderState->UpdateNumActions (1);
-				#endif*/
+			#ifndef _RELEASE
+			ladderState->UpdateNumActions (1);
+			#endif*/
 	}
 
 #ifndef _RELEASE

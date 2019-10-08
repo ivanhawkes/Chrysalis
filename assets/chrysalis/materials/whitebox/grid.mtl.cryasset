@@ -7,6 +7,6 @@
   <Detail name="textureCount">1</Detail>
  </Details>
  <Dependencies>
-  <Path usageCount="1">textures/whitebox/grid.dds</Path>
+  <Path usageCount="1">chrysalis/textures/whitebox/grid.dds</Path>
  </Dependencies>
 </AssetMetadata>

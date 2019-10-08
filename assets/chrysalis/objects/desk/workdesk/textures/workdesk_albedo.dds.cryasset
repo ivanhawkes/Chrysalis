@@ -1,0 +1,10 @@
+<AssetMetadata version="0" type="Texture" guid="bc341fc0-4121-d77b-911e-efed68cc3f93" source="workdesk_albedo.tif">
+ <Files>
+  <File path="workdesk_albedo.dds"/>
+ </Files>
+ <Details>
+  <Detail name="width">1024</Detail>
+  <Detail name="height">1024</Detail>
+  <Detail name="mipCount">9</Detail>
+ </Details>
+</AssetMetadata>

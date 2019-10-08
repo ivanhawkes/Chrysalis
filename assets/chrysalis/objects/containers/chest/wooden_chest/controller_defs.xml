@@ -1,0 +1,18 @@
+<ControllerDef>
+ <Tags filename="chrysalis/objects/containers/chest/wooden_chest/tags.xml"/>
+ <Fragments filename="chrysalis/objects/containers/chest/wooden_chest/fragment_ids.xml"/>
+ <FragmentDefs>
+  <Closed scopes="SlaveCharacter+SlaveObject"/>
+  <Open scopes="SlaveCharacter+SlaveObject"/>
+  <Opening scopes="SlaveCharacter+SlaveObject"/>
+  <Closing scopes="SlaveCharacter+SlaveObject"/>
+ </FragmentDefs>
+ <ScopeContextDefs>
+  <SlaveCharacter />
+  <SlaveObject />
+ </ScopeContextDefs>
+ <ScopeDefs>
+  <SlaveCharacter layer="0" numLayers="3" context="SlaveCharacter" Tags="ScopeSlave"/>
+  <SlaveObject layer="0" numLayers="3" context="SlaveObject" Tags="ScopeSlave"/>
+ </ScopeDefs>
+</ControllerDef>

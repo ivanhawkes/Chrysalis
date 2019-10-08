@@ -1,6 +1,9 @@
 #include <StdAfx.h>
 
 #include "ActorComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
 #include <CryMath/Cry_Math.h>
 #include <CryCore/Assert/CryAssert.h>
 #include <ICryMannequin.h>
@@ -30,8 +33,15 @@
 
 namespace Chrysalis
 {
-void IActorComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterActorComponent(Schematyc::IEnvRegistrar& registrar)
 {
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CActorComponent));
+		// Functions
+		{
+		}
+	}
 }
 
 
@@ -42,12 +52,7 @@ void IActorComponent::ReflectType(Schematyc::CTypeDesc<IActorComponent>& desc)
 	desc.SetLabel("IActor");
 	desc.SetDescription("Actor base interface.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Transform });
-}
-
-
-void CActorComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
-{
+	desc.SetComponentFlags({IEntityComponent::EFlags::Transform});
 }
 
 
@@ -58,7 +63,7 @@ void CActorComponent::ReflectType(Schematyc::CTypeDesc<CActorComponent>& desc)
 	desc.SetLabel("Actor");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
+	desc.SetComponentFlags({IEntityComponent::EFlags::Singleton});
 
 	desc.AddMember(&CActorComponent::m_geometryFirstPerson, 'geof', "GeometryFirstPerson", "First Person Geometry", "", "");
 	desc.AddMember(&CActorComponent::m_geometryThirdPerson, 'geot', "GeometryThirdPerson", "Third Person Geometry", "", "");
@@ -73,7 +78,7 @@ CActorComponent::~CActorComponent()
 void CActorComponent::Initialize()
 {
 	// Mesh and animation.
-	m_pAdvancedAnimationComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CAdvancedAnimationComponent>();
+	m_pActorAnimationComponent = m_pEntity->GetOrCreateComponent<CActorAnimationComponent>();
 
 	// Character movement controller.
 	m_pCharacterControllerComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CCharacterControllerComponent>();
@@ -141,7 +146,7 @@ void CActorComponent::ProcessEvent(const SEntityEvent& event)
 		// Physicalize on level start for Launcher
 		case EEntityEvent::LevelStarted:
 
-		// Editor specific, physicalize on reset, property change or transform change
+			// Editor specific, physicalize on reset, property change or transform change
 		case EEntityEvent::Reset:
 		case EEntityEvent::EditorPropertyChanged:
 		case EEntityEvent::TransformChangeFinishedInEditor:
@@ -150,7 +155,7 @@ void CActorComponent::ProcessEvent(const SEntityEvent& event)
 
 		case EEntityEvent::Update:
 		{
-			SEntityUpdateContext* pCtx = (SEntityUpdateContext*)event.nParam [0];
+			SEntityUpdateContext* pCtx = (SEntityUpdateContext*)event.nParam[0];
 			Update(pCtx);
 		}
 		break;
@@ -167,25 +172,21 @@ void CActorComponent::Update(SEntityUpdateContext* pCtx)
 }
 
 
-// *** 
-// *** IActorComponent
-// *** 
-
-
 ICharacterInstance* CActorComponent::GetCharacter() const
 {
-	CRY_ASSERT(m_pAdvancedAnimationComponent);
-	return m_pAdvancedAnimationComponent->GetCharacter();
+	CRY_ASSERT(m_pActorAnimationComponent);
+
+	return m_pActorAnimationComponent->GetCharacter();
 }
 
 
 const Vec3 CActorComponent::GetLocalEyePos() const
 {
 	// The default, in case we can't find the actual eye position, will be to use an average male's height.
-	Vec3 eyePosition { 0.0f, 0.0f, 1.82f };
+	Vec3 eyePosition {0.0f, 0.0f, 1.82f};
 
 	// Get their character or bail early.
-	auto pCharacter = m_pAdvancedAnimationComponent->GetCharacter();
+	auto pCharacter = m_pActorAnimationComponent->GetCharacter();
 	if (!pCharacter)
 		return eyePosition;
 
@@ -224,7 +225,7 @@ const Vec3 CActorComponent::GetLocalEyePos() const
 			eyeFlags |= 0x02;
 		}
 
-		static bool alreadyWarned { false };
+		static bool alreadyWarned {false};
 		switch (eyeFlags)
 		{
 			case 0:
@@ -261,10 +262,10 @@ const Vec3 CActorComponent::GetLocalEyePos() const
 Vec3 CActorComponent::GetLocalLeftHandPos() const
 {
 	// A terrible default, in case we can't find the actual hand position.
-	const Vec3 handPosition { -0.2f, 0.3f, 1.3f };
+	const Vec3 handPosition {-0.2f, 0.3f, 1.3f};
 
 	// Get their character or bail early.
-	auto pCharacter = m_pAdvancedAnimationComponent->GetCharacter();
+	auto pCharacter = m_pActorAnimationComponent->GetCharacter();
 	if (pCharacter)
 	{
 		const IAttachmentManager* pAttachmentManager = pCharacter->GetIAttachmentManager();
@@ -288,10 +289,10 @@ Vec3 CActorComponent::GetLocalLeftHandPos() const
 Vec3 CActorComponent::GetLocalRightHandPos() const
 {
 	// A terrible default, in case we can't find the actual hand position.
-	const Vec3 handPosition { 0.2f, 0.3f, 1.3f };
+	const Vec3 handPosition {0.2f, 0.3f, 1.3f};
 
 	// Get their character or bail early.
-	auto pCharacter = m_pAdvancedAnimationComponent->GetCharacter();
+	auto pCharacter = m_pActorAnimationComponent->GetCharacter();
 	if (pCharacter)
 	{
 		const IAttachmentManager* pAttachmentManager = pCharacter->GetIAttachmentManager();
@@ -461,38 +462,34 @@ void CActorComponent::OnToggleFirstPerson()
 
 void CActorComponent::OnResetState()
 {
-	// HACK: the CAdvancedAnimation doesn't allow us access to the action controller. This is a workaround.
-	m_pActionController = gEnv->pGameFramework->GetMannequinInterface().FindActionController(*GetEntity());
-	
-	if (m_pActionController)
-	{
-		// HACK: This prevents a weird crash when getting the context a second time.
-		m_pProceduralContextLook = nullptr;
+	// HACK: This prevents a weird crash when getting the context a second time.
+	m_pProceduralContextLook = nullptr;
 
-		const auto& pContext = m_pActionController->GetContext();
+	if (m_pActorAnimationComponent && m_pActorAnimationComponent->HasActionController())
+	{
+		// The actor animation component is responsible for maintaining the context.
+		const auto& pContext = m_pActorAnimationComponent->GetContext();
 
 		// The mannequin tags for an actor will need to be loaded. Because these are found in the controller definition,
 		// they are potentially different for every actor. 
 		m_actorMannequinParams = GetMannequinUserParams<SActorMannequinParams>(pContext);
 
-	//	// NOTE: This is the main cause of the errors with handling character movement and the crashes.
-	//	// We're going to clear all the mannequin state, and set it all up again.
-	//	//m_pActionController->Reset();
-		m_pActionController->Flush();
-		m_pActionController->Resume();
+		// It's a good idea to flush out any current actions, then resume processing.
+		m_pActorAnimationComponent->FlushActions();
+		m_pActorAnimationComponent->ResumeActions();
 
-	//	// Select a character definition based on first / third person mode. Hard coding the default scope isn't a great
-	//	// idea, but it's good enough for now. 
-	//	if (IsViewFirstPerson())
-	//	{
-	//		m_pAdvancedAnimationComponent->SetDefaultScopeContextName("Char1P");
-	//		m_pAdvancedAnimationComponent->SetCharacterFile(m_geometryFirstPerson.value);
-	//	}
-	//	else
-	//	{
-	//		m_pAdvancedAnimationComponent->SetDefaultScopeContextName("Char3P");
-	//		m_pAdvancedAnimationComponent->SetCharacterFile(m_geometryThirdPerson.value);
-	//	}
+		// Select a character definition based on first / third person mode. Hard coding the default scope isn't a great
+		// idea, but it's good enough for now. 
+		if (IsViewFirstPerson())
+		{
+			m_pActorAnimationComponent->SetDefaultScopeContextName("Char1P");
+			//m_pActorAnimationComponent->SetCharacterFile(m_geometryFirstPerson.value);
+		}
+		else
+		{
+			m_pActorAnimationComponent->SetDefaultScopeContextName("Char3P");
+			//m_pActorAnimationComponent->SetCharacterFile(m_geometryThirdPerson.value);
+		}
 
 		// Queue the locomotion action, which switches fragments and tags as needed for actor locomotion.
 		auto locomotionAction = new CActorAnimationActionLocomotion();
@@ -501,34 +498,30 @@ void CActorComponent::OnResetState()
 		// Third person views allow a little extra control.
 		if (!IsViewFirstPerson())
 		{
-			//// Aim actions.
+			// Aim actions.
 			//if (CActorAnimationActionAimPose::IsSupported(pContext)
 			//	&& CActorAnimationActionAiming::IsSupported(pContext))
 			//{
-			//	m_pProceduralContextAim = static_cast<CProceduralContextAim*>(m_pActionController->FindOrCreateProceduralContext(CProceduralContextAim::GetCID()));
+			//	m_pProceduralContextAim = static_cast<CProceduralContextAim*>(m_pActorAnimationComponent->FindOrCreateProceduralContext(CProceduralContextAim::GetCID()));
 			//	QueueAction(*new CActorAnimationActionAimPose());
 			//	QueueAction(*new CActorAnimationActionAiming());
 			//}
 
-			// Set the scope tag for look pose.
-			auto& animContext = m_pActionController->GetContext();
-			animContext.state.Set(m_actorMannequinParams->tagIDs.ScopeLookPose, true);
+			//// Set the scope tag for look pose.
+			//auto& animContext = m_pActorAnimationComponent->GetContext();
+			//animContext.state.Set(m_actorMannequinParams->tagIDs.ScopeLookPose, true);
 
-			// Look actions.
-			//if (CActorAnimationActionLookPose::IsSupported(pContext) // HACK: These tests are causing crashes on the second run through.
-				//&& CActorAnimationActionLooking::IsSupported(pContext))
-			{
-				const auto pX = m_pActionController->FindOrCreateProceduralContext(CProceduralContextLook::GetCID());
-				m_pProceduralContextLook = static_cast<CProceduralContextLook*>(pX);
+			//// Look actions.
+			////if (CActorAnimationActionLookPose::IsSupported(pContext) // HACK: These tests are causing crashes on the second run through.
+			//	//&& CActorAnimationActionLooking::IsSupported(pContext))
+			//{
+			//	const auto pX = m_pActorAnimationComponent->FindOrCreateProceduralContext(CProceduralContextLook::GetCID());
+			//	m_pProceduralContextLook = static_cast<CProceduralContextLook*>(pX);
 
-				QueueAction(*new CActorAnimationActionLookPose());
-				QueueAction(*new CActorAnimationActionLooking());
-			}
+			//	QueueAction(*new CActorAnimationActionLookPose());
+			//	QueueAction(*new CActorAnimationActionLooking());
+			//}
 		}
-	}
-	else
-	{
-		CryLogAlways("Couldn't get a valid action controller.");
 	}
 }
 
@@ -544,7 +537,7 @@ void CActorComponent::SetIK()
 	else
 	{
 		// Don't allow look IK.
-		SetLookingIK(false, Vec3 { ZERO });
+		SetLookingIK(false, Vec3 {ZERO});
 	}
 }
 
@@ -630,7 +623,7 @@ void CActorComponent::OnActionBarUse(int actionBarId)
 		auto results = m_pAwareness->GetNearDotFiltered();
 		if (results.size() > 0)
 		{
-			auto pTargetEntity = gEnv->pEntitySystem->GetEntity(results [0]);
+			auto pTargetEntity = gEnv->pEntitySystem->GetEntity(results[0]);
 
 			if (auto pInteractor = pTargetEntity->GetComponent<CEntityInteractionComponent>())
 			{
@@ -638,7 +631,7 @@ void CActorComponent::OnActionBarUse(int actionBarId)
 				auto verbs = pInteractor->GetVerbs();
 				if (verbs.size() >= actionBarId)
 				{
-					auto verb = verbs [actionBarId - 1];
+					auto verb = verbs[actionBarId - 1];
 					auto pInteraction = pInteractor->GetInteraction(verb).lock();
 
 					pInteraction->OnInteractionStart(*this);
@@ -666,7 +659,7 @@ void CActorComponent::OnActionInspect()
 		auto results = m_pAwareness->GetNearDotFiltered();
 		if (results.size() > 0)
 		{
-			m_interactionEntityId = results [0];
+			m_interactionEntityId = results[0];
 			auto pInteractionEntity = gEnv->pEntitySystem->GetEntity(m_interactionEntityId);
 
 			if (auto pInteractor = pInteractionEntity->GetComponent<CEntityInteractionComponent>())
@@ -675,7 +668,7 @@ void CActorComponent::OnActionInspect()
 				auto verbs = pInteractor->GetVerbs();
 				if (verbs.size() > 0)
 				{
-					auto verb = verbs [0];
+					auto verb = verbs[0];
 
 					// HACK: TEST making a call to the DRS system
 					auto pDrsProxy = crycomponent_cast<IEntityDynamicResponseComponent*> (pInteractionEntity->CreateProxy(ENTITY_PROXY_DYNAMICRESPONSE));
@@ -700,7 +693,6 @@ void CActorComponent::OnActionInspectEnd()
 void CActorComponent::OnActionInteractionStart()
 {
 	// You shouldn't be allowed to start another interaction before the last one is completed.
-	//if (m_pInteraction != nullptr)
 	if (isBusyInInteraction)
 		return;
 
@@ -709,14 +701,8 @@ void CActorComponent::OnActionInteractionStart()
 		auto results = m_pAwareness->GetNearDotFiltered();
 		if (results.size() > 0)
 		{
-			m_interactionEntityId = results [0];
+			m_interactionEntityId = results[0];
 			auto pInteractionEntity = gEnv->pEntitySystem->GetEntity(m_interactionEntityId);
-
-			// HACK: Another test, this time of the slaved animation code.
-			//TagState tagState { TAG_STATE_EMPTY };
-			//auto pPlayerAction = new CActorAnimationActionCooperative(*this, m_interactionEntityId, m_actorMannequinParams->fragmentIDs.Interaction,
-			//	tagState, m_actorMannequinParams->tagIDs.ScopeSlave);
-			//QueueAction(*pPlayerAction);
 
 			// HACK: Another test - this time of setting an emote.
 			//auto emoteAction = new CActorAnimationActionEmote(g_emoteMannequinParams.tagIDs.Awe);
@@ -731,14 +717,14 @@ void CActorComponent::OnActionInteractionStart()
 				{
 					// Display the verbs in a cheap manner.
 					CryLogAlways("VERBS");
-					int index { 1 };
+					int index {1};
 					for (auto& verb : verbs)
 					{
 						CryLogAlways("%d) %s", index, verb);
 						index++;
 					}
 
-					auto verb = verbs [0];
+					auto verb = verbs[0];
 
 					// #HACK: Another test - just calling the interaction directly instead.
 					m_pInteraction = pInteractor->GetInteraction(verb).lock();
@@ -803,15 +789,10 @@ void CActorComponent::InteractionEnd(IInteraction* pInteraction)
 // *** Allow control of the actor's animations / fragments / etc.
 // ***
 
-//IActionController* CActorComponent::GetActionController() const
-//{
-//	return m_pActionController;
-//}
-
 
 TagID CActorComponent::GetStanceTagId(EActorStance actorStance)
 {
-	TagID tagId { TAG_ID_INVALID };
+	TagID tagId {TAG_ID_INVALID};
 
 	switch (actorStance)
 	{
@@ -874,7 +855,7 @@ TagID CActorComponent::GetStanceTagId(EActorStance actorStance)
 
 TagID CActorComponent::GetPostureTagId(EActorPosture actorPosture)
 {
-	TagID tagId { TAG_ID_INVALID };
+	TagID tagId {TAG_ID_INVALID};
 
 	switch (actorPosture)
 	{
@@ -929,4 +910,6 @@ TagID CActorComponent::GetPostureTagId(EActorPosture actorPosture)
 
 	return tagId;
 }
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterActorComponent)
 }

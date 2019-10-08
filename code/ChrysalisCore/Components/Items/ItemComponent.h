@@ -14,13 +14,10 @@ class CItemComponent
 	: public IEntityComponent
 {
 protected:
-	friend CChrysalisCorePlugin;
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 	// IEntityComponent
 	void Initialize() override;
 	void ProcessEvent(const SEntityEvent& event) override;
-	Cry::Entity::EntityEventMask GetEventMask() const override { return ENTITY_EVENT_BIT(ENTITY_EVENT_UPDATE) | ENTITY_EVENT_BIT(ENTITY_EVENT_PREPHYSICSUPDATE); }
+	Cry::Entity::EventFlags GetEventMask() const override { return EEntityEvent::Update | EEntityEvent::PrePhysicsUpdate; }
 	// ~IEntityComponent
 
 public:
@@ -247,26 +244,26 @@ public:
 			}
 		}
 
-		Vec3 mount_dir { 0.0f, 1.0f, 0.0f };
-		Vec3 mount_last_aimdir { 0.0f, 0.0f, 0.0f };
+		Vec3 mount_dir {0.0f, 1.0f, 0.0f};
+		Vec3 mount_last_aimdir {0.0f, 0.0f, 0.0f};
 
-		eItemAttachment attachment { eIA_None };
-		eGeometrySlot physicalisedSlot { eIGS_Last };
+		eItemAttachment attachment {eIA_None};
+		eGeometrySlot physicalisedSlot {eIGS_Last};
 
-		float health { 0.0f };
-		int hand { eIH_Right };
-		int viewmode { 0 };
-		bool fp { false };
-		bool mounted { false };
-		bool pickable { true };
-		bool selected { false };
-		bool dropped { false };
-		bool detached { false };
-		bool brandnew { true };
-		bool flying { false };
-		bool used { false };
-		bool sound_enabled { true };
-		bool first_selection { true };
+		float health {0.0f};
+		int hand {eIH_Right};
+		int viewmode {0};
+		bool fp {false};
+		bool mounted {false};
+		bool pickable {true};
+		bool selected {false};
+		bool dropped {false};
+		bool detached {false};
+		bool brandnew {true};
+		bool flying {false};
+		bool used {false};
+		bool sound_enabled {true};
+		bool first_selection {true};
 	};
 
 	SItemStatus m_itemStatus;
@@ -286,6 +283,6 @@ private:
 	SItemBaseParameterConstPtr m_itemBaseParameter;
 
 	/** A component that allows for management of snaplocks. */
-	CSnaplockComponent* m_pSnaplockComponent { nullptr };
+	CSnaplockComponent* m_pSnaplockComponent {nullptr};
 };
 }

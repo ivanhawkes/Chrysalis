@@ -1,0 +1,15 @@
+<AssetMetadata version="0" type="SkinnedMesh" guid="f26c3d34-3f1e-8912-afd7-52bfaf9de0cc">
+ <Files>
+  <File path="door.skin"/>
+ </Files>
+ <Details>
+  <Detail name="materialCount">3</Detail>
+  <Detail name="triangleCount">360</Detail>
+  <Detail name="vertexCount">296</Detail>
+  <Detail name="16BitPrecision">false</Detail>
+  <Detail name="bonesCount">5</Detail>
+ </Details>
+ <Dependencies>
+  <Path usageCount="1">./Workdesk.mtl</Path>
+ </Dependencies>
+</AssetMetadata>

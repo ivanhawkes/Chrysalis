@@ -1,0 +1,8 @@
+<MannequinPreview>
+ <controllerDef filename="chrysalis/objects/desk/workdesk/controller_defs.xml"/>
+ <contexts>
+  <contextData name="SlaveCharacter" database="chrysalis/objects/desk/workdesk/workdesk.adb" context="SlaveCharacter" tags="ScopeSlave" fragtags="ScopeSlave" model="chrysalis/objects/desk/workdesk/workdesk.cdf"/>
+  <contextData name="SlaveObject" database="chrysalis/objects/desk/workdesk/workdesk.adb" context="SlaveObject" tags="ScopeSlave" fragtags="ScopeSlave" model="chrysalis/objects/desk/workdesk/workdesk.cdf" startPosition="0,2,0"/>
+ </contexts>
+ <History StartTime="-4.3160208e+008" EndTime="-4.3160208e+008"/>
+</MannequinPreview>

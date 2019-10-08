@@ -9,6 +9,7 @@
 #include <ObjectID/ObjectId.h>
 #include <ObjectID/ObjectIdMasterFactory.h>
 #include <Plugin/ChrysalisCorePlugin.h>
+#include <CrySystem/ConsoleRegistration.h>
 
 
 namespace Chrysalis

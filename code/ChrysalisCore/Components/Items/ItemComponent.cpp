@@ -1,14 +1,24 @@
 #include <StdAfx.h>
 
 #include "ItemComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
 #include <Components/Snaplocks/SnaplockComponent.h>
 #include <Item/Parameters/ItemGeometryParameter.h>
 
 
 namespace Chrysalis
 {
-void CItemComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterItemComponent(Schematyc::IEnvRegistrar& registrar)
 {
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CItemComponent));
+		// Functions
+		{
+		}
+	}
 }
 
 
@@ -19,7 +29,7 @@ void CItemComponent::ReflectType(Schematyc::CTypeDesc<CItemComponent>& desc)
 	desc.SetLabel("Item");
 	desc.SetDescription("Base functionality for an item.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::None });
+	desc.SetComponentFlags({IEntityComponent::EFlags::None});
 }
 
 
@@ -43,7 +53,7 @@ void CItemComponent::ProcessEvent(const SEntityEvent& event)
 		// Physicalize on level start for Launcher
 		case EEntityEvent::LevelStarted:
 
-			// Editor specific, physicalize on reset, property change or transform change
+		// Editor specific, physicalize on reset, property change or transform change
 		case EEntityEvent::Reset:
 		case EEntityEvent::EditorPropertyChanged:
 		case EEntityEvent::TransformChangeFinishedInEditor:
@@ -308,4 +318,6 @@ void CItemComponent::GetSharedParameters(XmlNodeRef rootParams)
 	// Double check the shared parameter.
 	CRY_ASSERT(m_itemBaseParameter.get());
 }
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterItemComponent)
 }

@@ -7,6 +7,6 @@
   <Detail name="textureCount">1</Detail>
  </Details>
  <Dependencies>
-  <Path usageCount="1">objects/Weapons/equipment/medical_kit/textures/medical_kit_bag.dds</Path>
+  <Path usageCount="1">chrysalis/objects/Weapons/equipment/medical_kit/textures/medical_kit_bag.dds</Path>
  </Dependencies>
 </AssetMetadata>

@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="1ad4592f-31fb-7129-b5f7-180a5c404bb4">
+ <Files>
+  <File path="chest_wooden.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">MannequinPreview</Detail>
+ </Details>
+</AssetMetadata>

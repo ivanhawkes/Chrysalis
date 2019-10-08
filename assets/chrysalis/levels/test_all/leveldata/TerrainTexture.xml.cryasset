@@ -1,0 +1,8 @@
+<AssetMetadata version="0" type="Xml" guid="c4359aa2-433b-5d7c-53bd-98c40a866b10">
+ <Files>
+  <File path="TerrainTexture.xml"/>
+ </Files>
+ <Details>
+  <Detail name="rootTag">TerrainTexture</Detail>
+ </Details>
+</AssetMetadata>

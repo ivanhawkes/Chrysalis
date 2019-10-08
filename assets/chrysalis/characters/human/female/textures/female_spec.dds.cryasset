@@ -1,0 +1,10 @@
+<AssetMetadata version="0" type="Texture" guid="de31afa1-bd0a-cf39-666e-f0f281e4766c" source="female_spec.tif">
+ <Files>
+  <File path="female_spec.dds"/>
+ </Files>
+ <Details>
+  <Detail name="width">2048</Detail>
+  <Detail name="height">2048</Detail>
+  <Detail name="mipCount">10</Detail>
+ </Details>
+</AssetMetadata>

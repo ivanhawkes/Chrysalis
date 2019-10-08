@@ -1,6 +1,9 @@
 #include <StdAfx.h>
 
 #include "CharacterComponent.h"
+#include <CryCore/StaticInstanceList.h>
+#include "CrySchematyc/Env/Elements/EnvComponent.h"
+#include "CrySchematyc/Env/IEnvRegistrar.h"
 #include <Actor/ActorComponent.h>
 #include <Actor/Movement/StateMachine/ActorStateEvents.h>
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
@@ -9,8 +12,15 @@
 
 namespace Chrysalis
 {
-void CCharacterComponent::Register(Schematyc::CEnvRegistrationScope& componentScope)
+static void RegisterCharacterComponent(Schematyc::IEnvRegistrar& registrar)
 {
+	Schematyc::CEnvRegistrationScope scope = registrar.Scope(IEntity::GetEntityScopeGUID());
+	{
+		Schematyc::CEnvRegistrationScope componentScope = scope.Register(SCHEMATYC_MAKE_ENV_COMPONENT(CCharacterComponent));
+		// Functions
+		{
+		}
+	}
 }
 
 
@@ -21,7 +31,7 @@ void CCharacterComponent::ReflectType(Schematyc::CTypeDesc<CCharacterComponent>&
 	desc.SetLabel("Character");
 	desc.SetDescription("No description.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({ IEntityComponent::EFlags::Singleton });
+	desc.SetComponentFlags({IEntityComponent::EFlags::Singleton});
 }
 
 
@@ -61,4 +71,6 @@ void CCharacterComponent::ProcessEvent(const SEntityEvent& event)
 void CCharacterComponent::OnResetState()
 {
 }
+
+CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterCharacterComponent)
 }

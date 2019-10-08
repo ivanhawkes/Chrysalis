@@ -1,0 +1,17 @@
+<AssetMetadata version="0" type="Material" guid="e5001809-7ec5-970c-eec4-a295e14d0029" timestamp="1569912718">
+ <Files>
+  <File path="male.mtl"/>
+ </Files>
+ <Details>
+  <Detail name="subMaterialCount">4</Detail>
+  <Detail name="textureCount">6</Detail>
+ </Details>
+ <Dependencies>
+  <Path usageCount="1">./textures/male_diff.dds</Path>
+  <Path usageCount="1">./textures/male_ddna.dds</Path>
+  <Path usageCount="1">./textures/male_spec.dds</Path>
+  <Path usageCount="1">./textures/male_clothing_diff.dds</Path>
+  <Path usageCount="1">./textures/male_clothing_ddna.dds</Path>
+  <Path usageCount="1">./textures/male_clothing_spec.dds</Path>
+ </Dependencies>
+</AssetMetadata>

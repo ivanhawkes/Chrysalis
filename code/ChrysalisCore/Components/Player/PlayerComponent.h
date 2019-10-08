@@ -10,7 +10,6 @@ At present, entering game mode without being attached to an existing character e
 */
 #pragma once
 
-
 #include <DefaultComponents/Physics/CharacterControllerComponent.h>
 
 
@@ -29,13 +28,10 @@ class CPlayerComponent
 	: public IEntityComponent
 {
 protected:
-	friend CChrysalisCorePlugin;
-	static void Register(Schematyc::CEnvRegistrationScope& componentScope);
-
 	// IEntityComponent
 	void Initialize() override;
 	virtual void ProcessEvent(const SEntityEvent& event) override;
-	Cry::Entity::EntityEventMask GetEventMask() const override { return ENTITY_EVENT_BIT(ENTITY_EVENT_UPDATE) | ENTITY_EVENT_BIT(ENTITY_EVENT_START_GAME); }
+	Cry::Entity::EventFlags GetEventMask() const override { return EEntityEvent::Update | EEntityEvent::GameplayStarted; }
 	// ~IEntityComponent
 
 public:
@@ -97,20 +93,20 @@ public:
 		}
 
 	private:
-		EInteractionMode m_playerInteractionMode { EInteractionMode::eNoMode };
+		EInteractionMode m_playerInteractionMode {EInteractionMode::eNoMode};
 
 		void SetAllowCharacterMovement(bool val) { m_allowCharacterMovement = val; }
 		void SetAllowCharacterRotation(bool val) { m_allowCharacterRotation = val; }
 		void SetAllowCameraMovement(bool val) { m_allowCameraMovement = val; }
 
 		/** Is the player allowed to move their character? */
-		bool m_allowCharacterMovement { true };
+		bool m_allowCharacterMovement {true};
 
 		/** Is the player allowed to rotate their character? */
-		bool m_allowCharacterRotation { true };
+		bool m_allowCharacterRotation {true};
 
 		/** Is the player allowed to move the camera? */
-		bool m_allowCameraMovement { true };
+		bool m_allowCameraMovement {true};
 	};
 
 
@@ -245,20 +241,20 @@ public:
 
 private:
 	/** The camera that this instance uses. */
-	CCameraManagerComponent* m_pCameraManager { nullptr };
+	CCameraManagerComponent* m_pCameraManager {nullptr};
 
 	/**
 	EntityId for the character we are presently attached onto. This is the actor who will receive movement requests
 	as well as being the actor to query for position and rotation.
 	*/
-	EntityId m_attachedCharacterId { INVALID_ENTITYID };
+	EntityId m_attachedCharacterId {INVALID_ENTITYID};
 
 	/** EntityId for the camera target. This is the entity which the player camera is targeting currently. */
-	EntityId m_cameraTargetId { INVALID_ENTITYID };
+	EntityId m_cameraTargetId {INVALID_ENTITYID};
 
 	/** The player input handler. The player is responsible for ensuring the correct character entity / UI gets the input
 	as appropriate. */
-	CPlayerInputComponent* m_pPlayerInput { nullptr };
+	CPlayerInputComponent* m_pPlayerInput {nullptr};
 
 	/** Tracks interaction modes and allows you to query for conditions they impose e.g. no camera movement. */
 	SInteractionState m_playerInteractionState;
