@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.14)
-set(CRYENGINE_DIR "D:/Crytek/CRYENGINE Launcher/Crytek/CRYENGINE_5.6" CACHE STRING "CRYENGINE root directory.")
+set(CRYENGINE_DIR "D:/CRYENGINE-SOURCE" CACHE STRING "CRYENGINE root directory.")
 set(TOOLS_CMAKE_DIR "${CRYENGINE_DIR}/Tools/CMake")
 
 set(PROJECT_BUILD 1)
@@ -154,6 +154,12 @@ add_sources("Compass_uber.cpp"
     SOURCE_GROUP "Components\\\\Compass"
 		"Components/Compass/CompassComponent.cpp"
 		"Components/Compass/CompassComponent.h"
+)
+add_sources("Door_uber.cpp"
+    PROJECTS Chrysalis
+    SOURCE_GROUP "Components\\\\Door"
+		"Components/Door/DoorComponent.cpp"
+		"Components/Door/DoorComponent.h"
 )
 add_sources("Equipment_uber.cpp"
     PROJECTS Chrysalis
@@ -321,6 +327,12 @@ add_sources("Cache_uber.cpp"
     SOURCE_GROUP "Game\\\\Cache"
 		"Game/Cache/GameCache.cpp"
 		"Game/Cache/GameCache.h"
+)
+add_sources("Interfaces_uber.cpp"
+    PROJECTS Chrysalis
+    SOURCE_GROUP "Interfaces"
+		"Interfaces/IEquipment.h"
+		"Interfaces/IInventory.h"
 )
 add_sources("Item_uber.cpp"
     PROJECTS Chrysalis
@@ -494,26 +506,26 @@ if(OPTION_ENGINE)
         add_library(Editor STATIC "${CRYENGINE_DIR}/Code/CryEngine/CryCommon/CryCore/Platform/platform.h")
         set_target_properties(Editor PROPERTIES LINKER_LANGUAGE CXX)
         if (WIN32)
-            set_visual_studio_debugger_command(Editor "${CRYENGINE_DIR}/bin/win_x64/Sandbox.exe" "-project \"${PROJECT_DIR}Chrysalis.cryproject\"")
+            set_visual_studio_debugger_command(Editor "${CRYENGINE_DIR}/bin/win_x64/Sandbox.exe" "-project \"${PROJECT_DIR}/Chrysalis.cryproject\"")
         endif()
     endif()
 else()
     add_library(GameLauncher STATIC "${CRYENGINE_DIR}/Code/CryEngine/CryCommon/CryCore/Platform/platform.h")
     set_target_properties(GameLauncher PROPERTIES LINKER_LANGUAGE CXX)
     if (WIN32)
-        set_visual_studio_debugger_command(GameLauncher "${CRYENGINE_DIR}/bin/win_x64/GameLauncher.exe" "-project \"${PROJECT_DIR}Chrysalis.cryproject\"")
+        set_visual_studio_debugger_command(GameLauncher "${CRYENGINE_DIR}/bin/win_x64/GameLauncher.exe" "-project \"${PROJECT_DIR}/Chrysalis.cryproject\"")
     endif()
 
     add_library(Editor STATIC "${CRYENGINE_DIR}/Code/CryEngine/CryCommon/CryCore/Platform/platform.h")
     set_target_properties(Editor PROPERTIES LINKER_LANGUAGE CXX)
     if (WIN32)
-        set_visual_studio_debugger_command(Editor "${CRYENGINE_DIR}/bin/win_x64/Sandbox.exe" "-project \"${PROJECT_DIR}Chrysalis.cryproject\"")
+        set_visual_studio_debugger_command(Editor "${CRYENGINE_DIR}/bin/win_x64/Sandbox.exe" "-project \"${PROJECT_DIR}/Chrysalis.cryproject\"")
     endif()
 
     add_library(GameServer STATIC "${CRYENGINE_DIR}/Code/CryEngine/CryCommon/CryCore/Platform/platform.h")
     set_target_properties(GameServer PROPERTIES LINKER_LANGUAGE CXX)
     if (WIN32)
-        set_visual_studio_debugger_command(GameServer "${CRYENGINE_DIR}/bin/win_x64/Game_Server.exe" "-project \"${PROJECT_DIR}Chrysalis.cryproject\"")
+        set_visual_studio_debugger_command(GameServer "${CRYENGINE_DIR}/bin/win_x64/Game_Server.exe" "-project \"${PROJECT_DIR}/Chrysalis.cryproject\"")
     endif()
 endif()
 
@@ -521,7 +533,7 @@ endif()
 set_solution_startup_target(GameLauncher)
 
 if (WIN32)
-    set_visual_studio_debugger_command( ${THIS_PROJECT} "${CRYENGINE_DIR}/bin/win_x64/GameLauncher.exe" "-project \"${PROJECT_DIR}Chrysalis.cryproject\"" )
+    set_visual_studio_debugger_command( ${THIS_PROJECT} "${CRYENGINE_DIR}/bin/win_x64/GameLauncher.exe" "-project \"${PROJECT_DIR}/Chrysalis.cryproject\"" )
 endif()
 
 #BEGIN-CUSTOM

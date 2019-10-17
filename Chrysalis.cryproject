@@ -1,63 +1,84 @@
 {
-	"version": 4,
-	"type": "",
-	"info": { "name": "Chrysalis", "guid": "23e0b72f-7fe7-81f0-a47f-0d86971f957c" },
-	"content": {
-		"assets": [ "assets" ],
-		"code": [ "code/ChrysalisCore" ],
-		"libs": [
-			{
-				"name": "Chrysalis",
-				"shared": {
-					"any": "",
-					"win_x64": "bin/win_x64/Chrysalis.dll",
-					"win_x86": ""
-				}
-			}
-		]
-	},
-	"require": {
-		"engine": "engine-5.6",
-		"plugins": [
-			{ "guid": "", "type": "EType::Native", "path": "CryDefaultEntities" },
-			{ "guid": "", "type": "EType::Native", "path": "CrySensorSystem" },
-			{ "guid": "", "type": "EType::Native", "path": "CryPerceptionSystem" },
-			{
-				"guid": "",
-				"type": "EType::Native",
-				"path": "bin/win_x64/Chrysalis.dll"
-			},
-			{
-				"guid": "",
-				"type": "EType::Native",
-				"path": "CryGamePlatform",
-				"platforms": [ "PS4" ]
-			}
-		]
-	},
-	"console_variables": {
-		"ca_DrawAimIKVEGrid": "1",
-		"ca_DrawAimPoses": "1",
-		"ca_DrawLookIK": "1",
-		"ca_UseAimIK": "1",
-		"ca_UseLookIK": "1",
-		"ca_useIMG_AIM": "0",
-		"ca_useIMG_CAF": "0",
-		"camera_manager_default_camera": "1",
-		"component_awareness_debug": "0",
-		"drs_dialogSubtitles": "1",
-		"e_permanentrenderobjects": "0",
-		"e_waterocean": "0",
-		"ed_lowercasepaths": "1",
-		"ed_usedevmanager": "0",
-		"gfx_uiaction_folder": "assets/ui/default/uiactions",
-		"r_Fullscreen": "0",
-		"r_Height": "900",
-		"r_ShadersEditing": "1",
-		"r_Width": "1440",
-		"r_displayinfo": "0",
-		"s_AudioImplName": "CryAudioImplWwise",
-		"sys_PakPriority": "0"
-	},
-	"console_commands": { }
+    "console_commands": {},
+    "console_variables": {
+        "ca_DrawAimIKVEGrid": "1",
+        "ca_DrawAimPoses": "1",
+        "ca_DrawLookIK": "1",
+        "ca_UseAimIK": "1",
+        "ca_UseLookIK": "1",
+        "ca_useIMG_AIM": "0",
+        "ca_useIMG_CAF": "0",
+        "camera_manager_default_camera": "1",
+        "component_awareness_debug": "0",
+        "drs_dialogSubtitles": "1",
+        "e_permanentrenderobjects": "0",
+        "e_waterocean": "0",
+        "ed_lowercasepaths": "1",
+        "ed_usedevmanager": "0",
+        "gfx_uiaction_folder": "assets/ui/default/uiactions",
+        "r_Fullscreen": "0",
+        "r_Height": "900",
+        "r_ShadersEditing": "1",
+        "r_Width": "1440",
+        "r_displayinfo": "0",
+        "s_AudioImplName": "CryAudioImplWwise",
+        "sys_PakPriority": "0"
+    },
+    "content": {
+        "assets": [
+            "assets"
+        ],
+        "code": [
+            "code/ChrysalisCore"
+        ],
+        "libs": [
+            {
+                "name": "Chrysalis",
+                "shared": {
+                    "any": "",
+                    "win_x64": "bin/win_x64/Chrysalis.dll",
+                    "win_x86": ""
+                }
+            }
+        ]
+    },
+    "info": {
+        "guid": "23e0b72f-7fe7-81f0-a47f-0d86971f957c",
+        "name": "Chrysalis"
+    },
+    "require": {
+        "engine": "engine-5.6-github",
+        "plugins": [
+            {
+                "guid": "",
+                "path": "CryDefaultEntities",
+                "type": "EType::Native"
+            },
+            {
+                "guid": "",
+                "path": "CrySensorSystem",
+                "type": "EType::Native"
+            },
+            {
+                "guid": "",
+                "path": "CryPerceptionSystem",
+                "type": "EType::Native"
+            },
+            {
+                "guid": "",
+                "path": "bin/win_x64/Chrysalis.dll",
+                "type": "EType::Native"
+            },
+            {
+                "guid": "",
+                "path": "CryGamePlatform",
+                "platforms": [
+                    "PS4"
+                ],
+                "type": "EType::Native"
+            }
+        ]
+    },
+    "type": "",
+    "version": 4
 }
