@@ -9,10 +9,10 @@
 #include <GameObjects/GameObject.h>
 #include <IActorSystem.h>
 #include <IMovementController.h>
-#include "Components/Player/PlayerComponent.h"
 #include <Actor/Character/CharacterComponent.h>
 #include <Actor/ActorComponent.h>
 #include <Components/Player/Camera/ICameraComponent.h>
+#include <Components/Player/PlayerComponent.h>
 #include <Components/Interaction/EntityInteractionComponent.h>
 #include <Console/CVars.h>
 

@@ -6,7 +6,7 @@
 
 namespace Chrysalis
 {
-CActorAnimationActionCooperative::CActorAnimationActionCooperative(IActorComponent &sourceActor,
+CActorAnimationActionCooperative::CActorAnimationActionCooperative(IActor &sourceActor,
 	IActorAnimationControl* pActorAnimationControl,
 	EntityId targetEntityId, 
 	FragmentID fragmentID, TagState tagState, TagID targetTagID,

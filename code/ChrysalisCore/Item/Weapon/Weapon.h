@@ -1,6 +1,5 @@
 #pragma once
 
-#include <IItemSystem.h>
 #include <IWeapon.h>
 #include "Components/Items/ItemComponent.h"
 

@@ -3,7 +3,7 @@
 
 namespace Chrysalis
 {
-class CActorComponent;
+struct CActorComponent;
 class CCharacterAttributesComponent;
 
 /**

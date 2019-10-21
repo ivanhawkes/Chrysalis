@@ -71,7 +71,7 @@ void CSwitchComponent::OnResetState()
 }
 
 
-void CSwitchComponent::OnInteractionSwitchToggle(IInteraction& pInteraction, IActorComponent& actor)
+void CSwitchComponent::OnInteractionSwitchToggle(IInteraction& pInteraction, IActor& actor)
 {
 	CInteractComponent::OnInteractionInteractStart(pInteraction, actor);
 	
@@ -93,7 +93,7 @@ void CSwitchComponent::OnInteractionSwitchToggle(IInteraction& pInteraction, IAc
 }
 
 
-void CSwitchComponent::OnInteractionSwitchOn(IInteraction& pInteraction, IActorComponent& actor)
+void CSwitchComponent::OnInteractionSwitchOn(IInteraction& pInteraction, IActor& actor)
 {
 	if (m_isEnabled)
 	{
@@ -112,7 +112,7 @@ void CSwitchComponent::OnInteractionSwitchOn(IInteraction& pInteraction, IActorC
 }
 
 
-void CSwitchComponent::OnInteractionSwitchOff(IInteraction& pInteraction, IActorComponent& actor)
+void CSwitchComponent::OnInteractionSwitchOff(IInteraction& pInteraction, IActor& actor)
 {
 	if (m_isEnabled)
 	{

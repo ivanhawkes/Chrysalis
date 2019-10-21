@@ -38,13 +38,13 @@ public:
 	}
 
 	// IInteractionOpenable
-	void OnInteractionOpenableOpen(IActorComponent& actor) override { CryLogAlways("OnInteractionOpenableOpen fired."); };
-	void OnInteractionOpenableClose(IActorComponent& actor) override { CryLogAlways("OnInteractionOpenableClose fired."); };
+	void OnInteractionOpenableOpen(IActor& actor) override { CryLogAlways("OnInteractionOpenableOpen fired."); };
+	void OnInteractionOpenableClose(IActor& actor) override { CryLogAlways("OnInteractionOpenableClose fired."); };
 	// ~IInteractionOpenable
 
 	// IInteractionLockable
-	void OnInteractionLockableLock(IActorComponent& actor) override { CryLogAlways("OnInteractionLockableLock fired."); };
-	void OnInteractionLockableUnlock(IActorComponent& actor) override { CryLogAlways("OnInteractionLockableUnlock fired."); };
+	void OnInteractionLockableLock(IActor& actor) override { CryLogAlways("OnInteractionLockableLock fired."); };
+	void OnInteractionLockableUnlock(IActor& actor) override { CryLogAlways("OnInteractionLockableUnlock fired."); };
 	// ~IInteractionLockable
 
 	// Called on entity spawn, or when the state of the entity changes in Editor

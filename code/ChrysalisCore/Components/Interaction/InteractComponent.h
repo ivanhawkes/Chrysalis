@@ -136,9 +136,9 @@ public:
 
 
 	// IInteractionInteract
-	virtual void OnInteractionInteractStart(IInteraction& pInteraction, IActorComponent& actor) override;
-	virtual void OnInteractionInteractTick(IInteraction& pInteraction, IActorComponent& actor) override;
-	virtual void OnInteractionInteractComplete(IInteraction& pInteraction, IActorComponent& actor) override;
+	virtual void OnInteractionInteractStart(IInteraction& pInteraction, IActor& actor) override;
+	virtual void OnInteractionInteractTick(IInteraction& pInteraction, IActor& actor) override;
+	virtual void OnInteractionInteractComplete(IInteraction& pInteraction, IActor& actor) override;
 	// ~IInteractionInteract
 
 	// IAnimationEventListener
@@ -202,7 +202,7 @@ protected:
 
 	/** During the processing cycle for an interaction, this will hold the actor that initiated the interaction. It will
 	be invalid at all other times. */
-	IActorComponent* m_pInteractionActor {nullptr};
+	IActor* m_pInteractionActor {nullptr};
 
 	/** The interaction being run by this component. */
 	IInteraction* m_interaction {nullptr};

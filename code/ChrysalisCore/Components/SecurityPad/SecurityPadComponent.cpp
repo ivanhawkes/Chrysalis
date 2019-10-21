@@ -55,7 +55,7 @@ void CSecurityPadComponent::OnResetState()
 }
 
 
-void CSecurityPadComponent::OnInteractionExamineStart(IActorComponent& actor)
+void CSecurityPadComponent::OnInteractionExamineStart(IActor& actor)
 {
 	CryLogAlways("OnInteractionExamineStart fired.");
 
@@ -68,7 +68,7 @@ void CSecurityPadComponent::OnInteractionExamineStart(IActorComponent& actor)
 }
 
 
-void CSecurityPadComponent::OnInteractionExamineComplete(IActorComponent& actor)
+void CSecurityPadComponent::OnInteractionExamineComplete(IActor& actor)
 {
 	CryLogAlways("OnInteractionExamineComplete fired.");
 

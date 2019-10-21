@@ -10,7 +10,5 @@ namespace Chrysalis
 class IInventory
 {
 public:
-	//IInventory();
-	//~IInventory();
 };
 }

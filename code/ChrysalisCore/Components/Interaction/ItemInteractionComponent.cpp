@@ -68,7 +68,7 @@ void CItemInteractionComponent::ProcessEvent(const SEntityEvent& event)
 }
 
 
-void CItemInteractionComponent::OnInteractionItemInspect(IActorComponent& actor)
+void CItemInteractionComponent::OnInteractionItemInspect(IActor& actor)
 {
 	// We're already inspecting it, drop it instead.
 	if (m_inspectionState == InspectionState::eInspecting)
@@ -97,7 +97,7 @@ void CItemInteractionComponent::OnInteractionItemInspect(IActorComponent& actor)
 }
 
 
-void CItemInteractionComponent::OnInteractionItemPickup(IActorComponent& actor)
+void CItemInteractionComponent::OnInteractionItemPickup(IActor& actor)
 {
 	// We're already inspecting it, drop it instead.
 	if (m_inspectionState == InspectionState::ePickingUp)
@@ -125,7 +125,7 @@ void CItemInteractionComponent::OnInteractionItemPickup(IActorComponent& actor)
 }
 
 
-void CItemInteractionComponent::OnInteractionItemDrop(IActorComponent& actor)
+void CItemInteractionComponent::OnInteractionItemDrop(IActor& actor)
 {
 	CryLogAlways("OnInteractionItemDrop fired.");
 	m_inspectionState = InspectionState::eDroping;
@@ -148,7 +148,7 @@ void CItemInteractionComponent::OnInteractionItemDrop(IActorComponent& actor)
 }
 
 
-void CItemInteractionComponent::OnInteractionItemToss(IActorComponent& actor)
+void CItemInteractionComponent::OnInteractionItemToss(IActor& actor)
 {
 	CryLogAlways("OnInteractionItemToss fired.");
 	m_inspectionState = InspectionState::eTossing;

@@ -109,7 +109,7 @@ void CInteractComponent::OnResetState()
 }
 
 
-void CInteractComponent::OnInteractionInteractStart(IInteraction& pInteraction, IActorComponent& actor)
+void CInteractComponent::OnInteractionInteractStart(IInteraction& pInteraction, IActor& actor)
 {
 	if (m_isEnabled)
 	{
@@ -171,7 +171,7 @@ void CInteractComponent::OnInteractionInteractStart(IInteraction& pInteraction, 
 }
 
 
-void CInteractComponent::OnInteractionInteractTick(IInteraction& pInteraction, IActorComponent& actor)
+void CInteractComponent::OnInteractionInteractTick(IInteraction& pInteraction, IActor& actor)
 {
 	if (m_isEnabled)
 	{
@@ -185,7 +185,7 @@ void CInteractComponent::OnInteractionInteractTick(IInteraction& pInteraction, I
 }
 
 
-void CInteractComponent::OnInteractionInteractComplete(IInteraction& pInteraction, IActorComponent& actor)
+void CInteractComponent::OnInteractionInteractComplete(IInteraction& pInteraction, IActor& actor)
 {
 	if (m_isEnabled)
 	{

@@ -45,17 +45,6 @@ static void RegisterActorComponent(Schematyc::IEnvRegistrar& registrar)
 }
 
 
-void IActorComponent::ReflectType(Schematyc::CTypeDesc<IActorComponent>& desc)
-{
-	desc.SetGUID(IActorComponent::IID());
-	desc.SetEditorCategory("Actors");
-	desc.SetLabel("IActor");
-	desc.SetDescription("Actor base interface.");
-	desc.SetIcon("icons:ObjectTypes/light.ico");
-	desc.SetComponentFlags({IEntityComponent::EFlags::Transform});
-}
-
-
 void CActorComponent::ReflectType(Schematyc::CTypeDesc<CActorComponent>& desc)
 {
 	desc.SetGUID(CActorComponent::IID());
@@ -392,7 +381,7 @@ EntityId CActorComponent::GetCurrentItemId(bool includeVehicle) const
 }
 
 
-IItem* CActorComponent::GetCurrentItem(bool includeVehicle) const
+IItemReceipt* CActorComponent::GetCurrentItem(bool includeVehicle) const
 {
 	//if (EntityId itemId = GetCurrentItemId(includeVehicle))
 	//	return gEnv->pGameFramework->GetIItemSystem()->GetItem(itemId);

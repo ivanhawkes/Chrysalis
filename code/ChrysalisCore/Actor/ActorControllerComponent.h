@@ -9,7 +9,7 @@
 
 namespace Chrysalis
 {
-class CActorComponent;
+struct CActorComponent;
 
 
 struct SActorPhysics

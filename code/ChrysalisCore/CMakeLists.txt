@@ -331,8 +331,10 @@ add_sources("Cache_uber.cpp"
 add_sources("Interfaces_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Interfaces"
+		"Interfaces/IActor.h"
 		"Interfaces/IEquipment.h"
 		"Interfaces/IInventory.h"
+		"Interfaces/IItem.h"
 )
 add_sources("Item_uber.cpp"
     PROJECTS Chrysalis

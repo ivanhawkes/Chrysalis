@@ -7,7 +7,7 @@
 
 namespace Chrysalis
 {
-class IActorComponent;
+struct IActor;
 
 
 class CActorAnimationActionCooperative : public CAnimationAction, public IEntityEventListener
@@ -16,7 +16,7 @@ public:
 
 	DEFINE_ACTION("Cooperative")
 
-		explicit CActorAnimationActionCooperative(IActorComponent &sourceActor,
+		explicit CActorAnimationActionCooperative(IActor &sourceActor,
 			IActorAnimationControl* pActorAnimationControl,
 			EntityId targetEntityId,
 			FragmentID fragmentID, TagState tagState, TagID targetTagID,
@@ -55,7 +55,7 @@ protected:
 	void RemoveTargetFromSlaveContext();
 	void SendStateEventCoopAnim();
 
-	IActorComponent &m_sourceActor;
+	IActor &m_sourceActor;
 	EntityId m_targetEntityId { INVALID_ENTITYID };
 	IActorAnimationControl* m_pActorAnimationControl;
 	TagID m_targetTagID;

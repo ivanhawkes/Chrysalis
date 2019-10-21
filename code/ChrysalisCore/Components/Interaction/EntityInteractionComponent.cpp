@@ -118,21 +118,21 @@ void CEntityInteractionComponent::ClearInteractionVerb()
 }
 
 
-void CEntityInteractionComponent::OnInteractionStart(IActorComponent& actor)
+void CEntityInteractionComponent::OnInteractionStart(IActor& actor)
 {
 	CRY_ASSERT_MESSAGE(m_selectedInteraction, "Be sure to set an interaction before attempting to call it.");
 	m_selectedInteraction->OnInteractionStart(actor);
 }
 
 
-void CEntityInteractionComponent::OnInteractionTick(IActorComponent& actor)
+void CEntityInteractionComponent::OnInteractionTick(IActor& actor)
 {
 	CRY_ASSERT_MESSAGE(m_selectedInteraction, "Be sure to set an interaction before attempting to call it.");
 	m_selectedInteraction->OnInteractionTick(actor);
 }
 
 
-void CEntityInteractionComponent::OnInteractionComplete(IActorComponent& actor)
+void CEntityInteractionComponent::OnInteractionComplete(IActor& actor)
 {
 	CRY_ASSERT_MESSAGE(m_selectedInteraction, "Be sure to set an interaction before attempting to call it.");
 	m_selectedInteraction->OnInteractionComplete(actor);

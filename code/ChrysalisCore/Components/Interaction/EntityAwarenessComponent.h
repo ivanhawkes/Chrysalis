@@ -17,7 +17,7 @@ struct ray_hit;
 
 namespace Chrysalis
 {
-class IActorComponent;
+struct CActorComponent;
 
 typedef std::vector<EntityId> Entities;
 
@@ -310,8 +310,7 @@ private:
 
 	/** The actor associated with this instance. It's critical that this value is non-null or the queries
 	will fail to run correctly. */
-	// TODO: CRITICAL: HACK: BROKEN: !!
-	IActorComponent* m_pActor {nullptr};
+	CActorComponent* m_pActor {nullptr};
 
 	/** Did a raycast anything this frame? **/
 	bool m_isRayHit {false};

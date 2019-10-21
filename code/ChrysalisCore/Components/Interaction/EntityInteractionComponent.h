@@ -40,9 +40,9 @@ public:
 	IInteractionWeakPtr SelectInteractionVerb(string verb);
 	void ClearInteractionVerb();
 
-	void OnInteractionStart(IActorComponent& actor);
-	void OnInteractionTick(IActorComponent& actor);
-	void OnInteractionComplete(IActorComponent& actor);
+	void OnInteractionStart(IActor& actor);
+	void OnInteractionTick(IActor& actor);
+	void OnInteractionComplete(IActor& actor);
 
 private:
 	std::vector<IInteractionPtr> m_Interactions;

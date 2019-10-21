@@ -4,12 +4,12 @@
 #include <CryCore/StaticInstanceList.h>
 #include "CrySchematyc/Env/Elements/EnvComponent.h"
 #include "CrySchematyc/Env/IEnvRegistrar.h"
-#include <Components/Items/ItemComponent.h>
-#include <Item/Weapon/Weapon.h>
-#include <Actor/Character/CharacterComponent.h>
 #include "Camera/CameraManagerComponent.h"
+#include <Components/Items/ItemComponent.h>
 #include <Components/Player/Input/PlayerInputComponent.h>
+#include <Item/Weapon/Weapon.h>
 #include <Actor/ActorComponent.h>
+#include <Actor/Character/CharacterComponent.h>
 
 
 namespace Chrysalis
@@ -127,7 +127,7 @@ IEntity* CPlayerComponent::GetAttachedEntity() const
 }
 
 
-IActorComponent * CPlayerComponent::GetAttachedActor() const
+CActorComponent* CPlayerComponent::GetAttachedActor() const
 {
 	if (auto pAttachedEntity = GetAttachedEntity())
 	{
@@ -140,7 +140,7 @@ IActorComponent * CPlayerComponent::GetAttachedActor() const
 }
 
 
-IActorComponent* CPlayerComponent::GetLocalActor()
+CActorComponent* CPlayerComponent::GetLocalActor()
 {
 	// Try and find a local player on this client.
 	auto pPlayer = CPlayerComponent::GetLocalPlayer();

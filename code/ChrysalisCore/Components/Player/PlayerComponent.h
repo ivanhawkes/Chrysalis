@@ -17,8 +17,7 @@ namespace Chrysalis
 {
 struct ICameraComponent;
 class CCameraManagerComponent;
-class IActorComponent;
-class CActorComponent;
+struct CActorComponent;
 class CCharacterComponent;
 class CPlayerInputComponent;
 
@@ -161,11 +160,11 @@ public:
 
 
 	/**
-	Gets IActorComponent for the character / actor who is acting as our pawn.
+	Gets IActor for the character / actor who is acting as our pawn.
 
 	\return	The character identifier.
 	*/
-	IActorComponent* GetAttachedActor() const;
+	CActorComponent* GetAttachedActor() const;
 
 
 	/**
@@ -230,7 +229,7 @@ public:
 
 	\return	null if it fails, else the local character.
 	*/
-	static IActorComponent* GetLocalActor();
+	static CActorComponent* GetLocalActor();
 
 
 	/** Revives the atatched character, if there is one. */

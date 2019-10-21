@@ -48,7 +48,8 @@
     <LiveSLCommentUpdate value="true" />
     <InsertLocation value="AboveDecl" />
     <PreserveExceptions value="true" />
-    <GenerateInheritdoc />
+    <GenerateInheritdoc value="false" />
+    <ConvertSquigglies value="false" />
   </DocComment>
   <DocXml>
     <BlockFormatNew />
@@ -94,6 +95,8 @@
     <MultilineAutoProp value="false" />
     <MethodTemplate value="GetVarName,SetVarName" />
     <ParamTemplate value="varName" />
+    <UseThis value="false" />
+    <UseLambda value="false" />
   </AddAccessMethods>
   <ImplementMethod>
     <AddDocComment value="true" />
@@ -102,10 +105,19 @@
   <Columnise>
     <MinimiseWhitespace value="true" />
   </Columnise>
+  <Natural>
+    <TagPrefix value="" />
+    <TagSuffix value=":" />
+    <Casing value="Sentence" />
+  </Natural>
+  <DocBox>
+    <FillColour value="" />
+    <BorderColour value="" />
+    <Enabled value="false" />
+  </DocBox>
   <Misc>
     <RulesPath value="D:\Chrysalis\_wiki\standards\atomineer" />
     <UserName value="(Use login name)" />
-    <Language value="English (US)" />
     <MMAddDocComment value="true" />
     <MMDocThisScope value="true" />
     <MMDocThisFile value="true" />
@@ -116,6 +128,8 @@
     <MMShowDocWindow value="true" />
     <MMColumnise value="true" />
     <MMOutlineDocComments value="true" />
+    <MMOutlineAttributes value="true" />
+    <MMOpenSourceOrHeader value="true" />
     <MMImplementMethod value="true" />
     <MMAddAccessMethods value="true" />
     <MMAddProperty value="true" />
@@ -131,15 +145,8 @@
     <CMAddProperty value="false" />
     <CMAddAccessMethods value="false" />
     <CMImplementMethod value="false" />
+    <CMOpenSourceOrHeader value="false" />
+    <Language value="English (US)" />
+    <EditXmlWithVerb value="edit" />
   </Misc>
-  <Natural>
-    <TagPrefix value="" />
-    <TagSuffix value=":" />
-    <Casing value="Sentence" />
-  </Natural>
-  <DocBox>
-    <FillColour value="" />
-    <BorderColour value="" />
-    <Enabled value="false" />
-  </DocBox>
 </Prefs>

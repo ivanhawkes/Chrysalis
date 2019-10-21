@@ -29,10 +29,10 @@ public:
 	}
 
 	// IInteractionItem
-	void OnInteractionItemInspect(IActorComponent& actor) override { CryLogAlways("OnInteractionItemInspect fired."); };
-	void OnInteractionItemPickup(IActorComponent& actor) override { CryLogAlways("OnInteractionItemPickup fired."); };
-	void OnInteractionItemDrop(IActorComponent& actor) override { CryLogAlways("OnInteractionItemDrop fired."); };
-	void OnInteractionItemToss(IActorComponent& actor) override { CryLogAlways("OnInteractionItemToss fired."); };
+	void OnInteractionItemInspect(IActor& actor) override { CryLogAlways("OnInteractionItemInspect fired."); };
+	void OnInteractionItemPickup(IActor& actor) override { CryLogAlways("OnInteractionItemPickup fired."); };
+	void OnInteractionItemDrop(IActor& actor) override { CryLogAlways("OnInteractionItemDrop fired."); };
+	void OnInteractionItemToss(IActor& actor) override { CryLogAlways("OnInteractionItemToss fired."); };
 	// IInteractionItem
 
 	virtual void OnResetState() final;

@@ -51,9 +51,9 @@ public:
 
 
 	// IInteractionSwitch
-	virtual void OnInteractionSwitchToggle(IInteraction& pInteraction, IActorComponent& actor) override;
-	virtual void OnInteractionSwitchOn(IInteraction& pInteraction, IActorComponent& actor) override;
-	virtual void OnInteractionSwitchOff(IInteraction& pInteraction, IActorComponent& actor) override;
+	virtual void OnInteractionSwitchToggle(IInteraction& pInteraction, IActor& actor) override;
+	virtual void OnInteractionSwitchOn(IInteraction& pInteraction, IActor& actor) override;
+	virtual void OnInteractionSwitchOff(IInteraction& pInteraction, IActor& actor) override;
 	// ~IInteractionSwitch
 
 protected:

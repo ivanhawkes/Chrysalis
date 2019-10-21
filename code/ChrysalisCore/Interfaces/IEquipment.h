@@ -10,7 +10,5 @@ namespace Chrysalis
 class IEquipment
 {
 public:
-	//IEquipment();
-	//~IEquipment();
 };
 }
