@@ -30,6 +30,9 @@ void CItemComponent::ReflectType(Schematyc::CTypeDesc<CItemComponent>& desc)
 	desc.SetDescription("Base functionality for an item.");
 	desc.SetIcon("icons:ObjectTypes/light.ico");
 	desc.SetComponentFlags({IEntityComponent::EFlags::None});
+
+	desc.AddMember(&CItemComponent::m_item, 'item', "ItemProperties", "Item Properties", "desc", IItem());
+	desc.AddMember(&CItemComponent::m_itemClass, 'clss', "ItemClassProperties", "Item Class Properties", "desc", IItemClass());
 }
 
 

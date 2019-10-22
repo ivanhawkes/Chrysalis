@@ -3,6 +3,7 @@
 #include <Item/Parameters/ItemBaseParameter.h>
 #include <Entities/EntityEffects.h>
 #include <Actor/ActorComponent.h>
+#include <Interfaces/IItem.h>
 
 
 namespace Chrysalis
@@ -271,6 +272,10 @@ public:
 private:
 	// Who currently owns this item, if anyone?
 	COwnerInfo m_owner;
+
+	IItem m_item;
+
+	IItemClass m_itemClass;
 
 	/**
 	Determine if we should bind on initialise. This allows derived classes a chance to not bind on init by overriding

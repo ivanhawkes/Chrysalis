@@ -20,7 +20,7 @@ class CEntityAwarenessComponent;
 class CSnaplockComponent;
 class CInventoryComponent;
 class CEquipmentComponent;
-struct IItemReceipt;
+class IItemReceipt;
 
 
 /** Define a set of snaplock types that will be used by character entities e.g. equipment slots **/
@@ -77,7 +77,7 @@ protected:
 
 public:
 	CActorComponent() {};
-	virtual ~CActorComponent();
+	virtual ~CActorComponent() {};
 
 	static void ReflectType(Schematyc::CTypeDesc<CActorComponent>& desc);
 

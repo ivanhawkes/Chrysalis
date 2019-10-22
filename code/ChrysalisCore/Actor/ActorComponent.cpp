@@ -59,11 +59,6 @@ void CActorComponent::ReflectType(Schematyc::CTypeDesc<CActorComponent>& desc)
 }
 
 
-CActorComponent::~CActorComponent()
-{
-}
-
-
 void CActorComponent::Initialize()
 {
 	// Mesh and animation.
