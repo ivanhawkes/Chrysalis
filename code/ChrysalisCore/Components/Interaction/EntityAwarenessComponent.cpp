@@ -280,7 +280,7 @@ void CEntityAwarenessComponent::OnRayCast(const ray_hit & rayHit)
 	m_rayHitPosition = m_rayHitSolid.pt;
 
 	// Find out what we can about the type of surface it intersected. This is useful for determining which of several
-// proxies it hit, etc.
+	// proxies it hit, etc.
 	if (ISurfaceType* pSurfaceType = gEnv->p3DEngine->GetMaterialManager()->GetSurfaceType(m_rayHitSolid.surface_idx))
 	{
 		// TODO: Do something useful with this instead of it being a null op.

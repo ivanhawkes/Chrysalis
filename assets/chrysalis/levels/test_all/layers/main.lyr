@@ -1,5 +1,5 @@
 <ObjectLayer>
- <Layer Name="Main" FullName="Main" GUID="374a523a-e30d-4fff-b284-10fcbf81d9a7" Hidden="0" Frozen="0" Expanded="0" Type="0" Exportable="1" ExportLayerPak="1" DefaultLoaded="0" HavePhysics="1" IsDefaultColor="1" Color="4671303" Timestamp="1571754279">
+ <Layer Name="Main" FullName="Main" GUID="374a523a-e30d-4fff-b284-10fcbf81d9a7" Hidden="0" Frozen="0" Expanded="0" Type="0" Exportable="1" ExportLayerPak="1" DefaultLoaded="0" HavePhysics="1" IsDefaultColor="1" Color="4671303" Timestamp="1572008848">
   <LayerObjects>
    <Object Type="Entity" Layer="Main" LayerGUID="374a523a-e30d-4fff-b284-10fcbf81d9a7" Id="b72ed4ab-32c9-04f3-f4ae-2b556051cfd2" Name="Flashlight" Pos="66.75,62.375,33.055618" Rotate="1,0,0,0" Scale="1,1,1" ColorRGB="65535" UseCustomLevelLayerColor="0" MinSpec="0" MatLayersMask="0" OutdoorOnly="0" CastShadow="1" CastShadowMinspec="1" DynamicDistanceShadows="0" GIMode="0" LodRatio="100" ViewDistRatio="100" HiddenInGame="0" RecvWind="0" RenderNearest="0" NoStaticDecals="0" EntityClass="schematyc::schematyc::entities::flashlight" ClassGUID="2e4020c1-c446-4e1b-ba8e-44916aee74e4" HasEntity="1">
     <Properties />
@@ -133,7 +133,7 @@
    <Object Type="EnvironmentProbe" Layer="Main" LayerGUID="374a523a-e30d-4fff-b284-10fcbf81d9a7" Id="3e966bc9-65ed-15cb-1906-2c579cc4c9fe" Name="EnvironmentProbe-1" Pos="65.486526,62.54652,34.985748" Rotate="0.99999177,0,0,0" Scale="1,1,1" ColorRGB="65535" UseCustomLevelLayerColor="0" MinSpec="0" cubemap_resolution="256" preview_cubemap="0" OutdoorOnly="0" GIMode="0" ViewDistRatio="100" HiddenInGame="0" EntityClass="EnvironmentLight" HasEntity="1">
     <Properties />
     <Components>
-     <Component typeId="0d3d1840-d239-411e-8738-14c56cccee2c" guid="968a8106-e5ee-835f-8554-e1e29c17d89f" CryXmlVersion="2" Active="true" IgnoreVisAreas="false" SortPriority="0" AttentuationFalloffMax="1" VolumetricFogOnly="false" AffectsVolumetricFog="true" AffectsOnlyThisArea="true" LinkToSkyColor="false" DiffuseMultiplier="1" SpecularMultiplier="1" ProjectionActive="false" ProjectionHeight="1" ProjectionLength="1" ProjectionWidth="1" Cubemap="">
+     <Component typeId="0d3d1840-d239-411e-8738-14c56cccee2c" guid="facff671-565f-89da-035d-a7cecbaba761" CryXmlVersion="2" Active="true" IgnoreVisAreas="false" SortPriority="0" AttentuationFalloffMax="1" VolumetricFogOnly="false" AffectsVolumetricFog="true" AffectsOnlyThisArea="true" LinkToSkyColor="false" DiffuseMultiplier="1" SpecularMultiplier="1" ProjectionActive="false" ProjectionHeight="1" ProjectionLength="1" ProjectionWidth="1" Cubemap="">
       <BoxSize x="128" y="128" z="128"/>
       <Color r="1" g="1" b="1" a="1"/>
      </Component>
@@ -317,7 +317,13 @@
      <Component CryXmlVersion="2" TypeGUID="adf96e1c-fded-403b-a625-1d9fccfad68d" TypeName="Chrysalis::CItemComponent" GUID="d6c9a25a-c3e9-0077-4f27-305e667af929" Name="" UserAdded="true">
       <properties>
        <ItemProperties itemClass="Keycard" displayName="Red Key" quantity="1"/>
-       <ItemClassProperties ItemClass="Keycard" DisplayName="Key card" isSelectable="true" isUsable="true" isGiveable="true" isDroppable="true" isAutoDroppable="false" isPickable="true" isAutoPickable="true" isConsumable="false" mass="1" dropImpulse="2" shouldRemoveOnDrop="false" isUsableUnderWater="false" isWeapon="false" isUniqueInventory="true" isUniqueEquipment="true" canSupplyAmmo="false" annimationTag="key" isAttachedToBack="false"/>
+       <ItemClassCollection>
+        <ItemClasses>
+         <element ItemClass="Class01" DisplayName="Class01" isSelectable="true" isUsable="true" isGiveable="true" isDroppable="true" isAutoDroppable="false" isPickable="true" isAutoPickable="true" isConsumable="false" mass="1" dropImpulse="1" shouldRemoveOnDrop="false" isUsableUnderWater="false" isWeapon="false" isUniqueInventory="true" isUniqueEquipment="true" isAmmo="false" annimationTag="" isAttachedToBack="false"/>
+         <element ItemClass="Class02" DisplayName="Class02" isSelectable="true" isUsable="true" isGiveable="true" isDroppable="true" isAutoDroppable="false" isPickable="true" isAutoPickable="true" isConsumable="false" mass="1" dropImpulse="1" shouldRemoveOnDrop="false" isUsableUnderWater="false" isWeapon="false" isUniqueInventory="true" isUniqueEquipment="true" isAmmo="false" annimationTag="" isAttachedToBack="false"/>
+         <element ItemClass="Keycard" DisplayName="Keycard" isSelectable="true" isUsable="true" isGiveable="true" isDroppable="true" isAutoDroppable="false" isPickable="true" isAutoPickable="true" isConsumable="false" mass="1" dropImpulse="1" shouldRemoveOnDrop="false" isUsableUnderWater="false" isWeapon="false" isUniqueInventory="true" isUniqueEquipment="true" isAmmo="false" annimationTag="" isAttachedToBack="false"/>
+        </ItemClasses>
+       </ItemClassCollection>
       </properties>
      </Component>
      <Component CryXmlVersion="2" TypeGUID="a3c41456-80f1-4e0d-9b46-62685f2aee4a" TypeName="Chrysalis::CSnaplockComponent" GUID="587b77d5-2c7d-1109-b875-07a007e6aeb3" Name="" UserAdded="false">

@@ -23,7 +23,10 @@ protected:
 
 public:
 	CItemComponent() {}
-	virtual ~CItemComponent() {}
+	virtual ~CItemComponent() { 
+		// TEST: writing out classes test data.
+		//Serialization::SaveJsonFile("chrysalis/parameters/items/item-classes.json", m_itemClassCollection);
+	}
 
 	static void ReflectType(Schematyc::CTypeDesc<CItemComponent>& desc);
 
@@ -275,7 +278,7 @@ private:
 
 	IItem m_item;
 
-	IItemClass m_itemClass;
+	IItemClassCollection m_itemClassCollection;
 
 	/**
 	Determine if we should bind on initialise. This allows derived classes a chance to not bind on init by overriding

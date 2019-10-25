@@ -1,6 +1,8 @@
 #pragma once
 
 #include <CrySchematyc/Reflection/TypeDesc.h>
+#include <CrySystem/ISystem.h>
+#include <CrySerialization/IArchiveHost.h>
 
 
 /**
@@ -85,7 +87,8 @@ public:
 class IItemClass
 {
 public:
-	inline bool operator==(const IItemClass& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
+	//	inline bool operator==(const IItemClass& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
+	inline bool operator==(const IItemClass& rhs) const { return strcmp(itemClass, rhs.itemClass); }
 
 	static void ReflectType(Schematyc::CTypeDesc<IItemClass>& desc)
 	{
@@ -114,7 +117,7 @@ public:
 		ar(isWeapon, "isWeapon", "Weapon?");
 		ar(isUniqueInventory, "isUniqueInventory", "Unique in inventory?");
 		ar(isUniqueEquipment, "isUniqueEquipment", "Unique in equipment?");
-		ar(canSupplyAmmo, "canSupplyAmmo", "Supply ammo?");
+		ar(isAmmo, "isAmmo", "Ammo?");
 		ar(annimationTag, "annimationTag", "Animation tag");
 		ar(isAttachedToBack, "isAttachedToBack", "Attached to back?");
 	}
@@ -172,6 +175,18 @@ public:
 
 
 	// ***
+	// *** Inventory / Equipment Related
+	// ***
+
+
+	/** true if this item is unique within an inventory. */
+	bool isUniqueInventory {true};
+
+	/** true if this item is unique when equipped. */
+	bool isUniqueEquipment {true};
+
+
+	// ***
 	// *** Weapon Related
 	// ***
 
@@ -195,18 +210,11 @@ public:
 
 
 	// ***
-	// *** Inventory / Equipment Related
+	// *** Ammo Related
 	// ***
 
-
-	/** true if this item is unique within an inventory. */
-	bool isUniqueInventory {true};
-
-	/** true if this item is unique when equipped. */
-	bool isUniqueEquipment {true};
-
 	/** true if this supplies some form of ammo. */
-	bool canSupplyAmmo {false};
+	bool isAmmo {false};
 
 
 	// ***
@@ -218,6 +226,28 @@ public:
 
 	/** Visually attaches the item to the players back in third person view, when not in use. */
 	bool isAttachedToBack {false};
+};
+
+
+class IItemClassCollection
+{
+public:
+	inline bool operator==(const IItemClassCollection& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
+
+	static void ReflectType(Schematyc::CTypeDesc<IItemClassCollection>& desc)
+	{
+		desc.SetGUID("{1D99829B-BD17-4B90-8A21-E5EE060BAE18}"_cry_guid);
+		desc.SetLabel("Item Class Collection");
+		desc.SetDescription("Item Class Collection.");
+	}
+
+	virtual void Serialize(Serialization::IArchive& ar)
+	{
+		Serialization::SContext context(ar, this);
+		ar(m_itemClasses, "ItemClasses", "Item Classes");
+	}
+
+	std::vector<IItemClass> m_itemClasses;
 };
 
 

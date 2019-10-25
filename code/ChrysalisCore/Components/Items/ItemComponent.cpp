@@ -32,7 +32,7 @@ void CItemComponent::ReflectType(Schematyc::CTypeDesc<CItemComponent>& desc)
 	desc.SetComponentFlags({IEntityComponent::EFlags::None});
 
 	desc.AddMember(&CItemComponent::m_item, 'item', "ItemProperties", "Item Properties", "desc", IItem());
-	desc.AddMember(&CItemComponent::m_itemClass, 'clss', "ItemClassProperties", "Item Class Properties", "desc", IItemClass());
+	desc.AddMember(&CItemComponent::m_itemClassCollection, 'clsc', "ItemClassCollection", "ItemClassCollection", "A collection of item classes.", IItemClassCollection());
 }
 
 
