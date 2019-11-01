@@ -5,11 +5,14 @@
 #include <CrySerialization/IArchiveHost.h>
 
 
-/**
-Exposes the methods needed for management of items that can be added to an inventory.
+/** Exposes the methods needed for management of items that can be added to an inventory. We are looking
+to support just the bare minimum functionality needed for single player RPG games, but make it extensible
+enough to work for more complex game types. 
 
-**/
-
+NOTE: In the future we will need to add concepts of ownership, tradeability, repair levels, level restrictions,
+spells it can trigger, gems / enchants / enhancements / upgradeability / quality levels / vendor value / soul binding /
+set bonueses / stat allocation / transmog / disenchant value / broken / skill requirement / consumable
+*/
 namespace Chrysalis
 {
 struct IActor;
@@ -23,27 +26,14 @@ public:
 };
 
 
-/** Item receipt's allow for the storage and transfer of items between interested parties. */
-class IItemReceipt
+/**
+Functions required to be provided by any code wishing to manage items. NOTE: Need to think
+out how this is meant to work. What operations go on the inventory, and which are handled by the
+item, actor, etc.
+**/
+class IItemManagement
 {
 public:
-	inline bool operator==(const IItemReceipt& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
-
-	static void ReflectType(Schematyc::CTypeDesc<IItemReceipt>& desc)
-	{
-		desc.SetGUID("{520CBE44-98C8-4885-9F63-918E001F560C}"_cry_guid);
-		desc.SetLabel("Item Receipt Properties");
-		desc.SetDescription("Item Receipt.");
-	}
-
-	virtual void Serialize(Serialization::IArchive& ar)
-	{
-		Serialization::SContext context(ar, this);
-		ar(itemClass, "itemClass", "Item Class");
-		ar(quantity, "quantity", "quantity");
-	}
-
-
 	/**
 	Executes when an actor receives this receipt. This can be via pickup, trade, mail, auction house, etc.
 
@@ -67,21 +57,7 @@ public:
 	\param [in,out]	pActorOwner The owner of the actor.
 	**/
 	virtual void OnDestroy(IActor& pActorOwner) = 0;
-
-
-	/** A reference to the item's class, which holds common information for this sort of item. */
-	string itemClass;
-
-	/** The quantity */
-	uint32 quantity;
-
-	/**
-	Provides a means of customisation. NOTE: This is here as a reminder I need a way to customise
-	components. That will need to be polymorphic.
-	**/
-	IItemCustomisation ItemCustomisation;
 };
-
 
 
 class IItemClass
@@ -117,10 +93,12 @@ public:
 		ar(isWeapon, "isWeapon", "Weapon?");
 		ar(isUniqueInventory, "isUniqueInventory", "Unique in inventory?");
 		ar(isUniqueEquipment, "isUniqueEquipment", "Unique in equipment?");
+		ar(maxStackSize, "maxStackSize", "Max stack size");
 		ar(isAmmo, "isAmmo", "Ammo?");
 		ar(annimationTag, "annimationTag", "Animation tag");
 		ar(isAttachedToBack, "isAttachedToBack", "Attached to back?");
 	}
+
 
 	/** Resets this item to it's default state. */
 	virtual void OnResetState() { *this = IItemClass(); };
@@ -184,6 +162,9 @@ public:
 
 	/** true if this item is unique when equipped. */
 	bool isUniqueEquipment {true};
+
+	/** How many items may be placed into a stack. */
+	uint32 maxStackSize {1};
 
 
 	// ***
@@ -273,11 +254,20 @@ public:
 
 	/** Which class of item does this belong to? */
 	string itemClass;
-
-	/** The name to display in the UI. This should be a localised string. */
+	
+	/**
+	A potentionally unique name to display in the UI. This should be a localised string. If this
+	is blank then use the class display name.
+	**/
 	string displayName;
 
 	/** The quantity */
 	uint32 quantity {1};
+	
+	/**
+	Provides a means of customisation. NOTE: This is here as a reminder I need a way to customise
+	components. That will need to be polymorphic.
+	**/
+	IItemCustomisation* m_pItemCustomisation;
 };
 }
