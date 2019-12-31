@@ -11,6 +11,7 @@ include("${TOOLS_CMAKE_DIR}/CommonOptions.cmake")
 add_subdirectory("${CRYENGINE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/CRYENGINE")
 
 include("${TOOLS_CMAKE_DIR}/Configure.cmake")
+
 start_sources()
 
 sources_platform(ALL)
@@ -299,6 +300,36 @@ add_sources("DynamicResponseSystem_uber.cpp"
 		"DynamicResponseSystem/ActionUnlock.h"
 		"DynamicResponseSystem/ConditionDistanceToEntity.h"
 )
+add_sources("ECS_uber.cpp"
+    PROJECTS Chrysalis
+    SOURCE_GROUP "ECS"
+		"ECS/ECS.cpp"
+		"ECS/ECS.h"
+)
+add_sources("Components_uber.cpp"
+    PROJECTS Chrysalis
+    SOURCE_GROUP "ECS\\\\Components"
+		"ECS/Components/Components.cpp"
+		"ECS/Components/Components.h"
+		"ECS/Components/Health.h"
+		"ECS/Components/Inventory.h"
+		"ECS/Components/Items.h"
+		"ECS/Components/Qi.h"
+		"ECS/Components/Spell.h"
+		"ECS/Components/Spell.cpp"
+)
+add_sources("Systems_uber.cpp"
+    PROJECTS Chrysalis
+    SOURCE_GROUP "ECS\\\\Systems"
+		"ECS/Systems/ECSSimulation.h"
+		"ECS/Systems/ECSSimulation.cpp"
+		"ECS/Systems/ItemSystem.cpp"
+		"ECS/Systems/ItemSystem.h"
+		"ECS/Systems/Systems.h"
+		"ECS/Systems/Systems.cpp"
+		"ECS/Systems/XMLSerializer.h"
+		"ECS/Systems/XMLSerializer.cpp"
+)
 add_sources("Entities_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Entities"
@@ -341,6 +372,8 @@ add_sources("Item_uber.cpp"
     SOURCE_GROUP "Item"
 		"Item/ItemAccessory.cpp"
 		"Item/ItemEffect.cpp"
+		"Item/ItemSystem.cpp"
+		"Item/ItemSystem.h"
 )
 add_sources("Accessory_uber.cpp"
     PROJECTS Chrysalis
@@ -540,4 +573,9 @@ endif()
 
 #BEGIN-CUSTOM
 # Make any custom changes here, modifications outside of the block will be discarded on regeneration.
+
+include_directories("../SDK/EnTT/src")
+
+# I like to know which compiler I am using.
+message (STATUS "CMAKE_CXX_COMPILER_VERSION = ${CMAKE_CXX_COMPILER_VERSION}")
 #END-CUSTOM

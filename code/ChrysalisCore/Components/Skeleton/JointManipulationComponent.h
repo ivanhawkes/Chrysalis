@@ -25,7 +25,7 @@ public:
 	}
 
 
-	virtual void Serialize(Serialization::IArchive& ar)
+	virtual void Serialize(Serialization::IArchive& ar) override
 	{
 		Serialization::SContext context(ar, this);
 		ar(m_jointManipulationProperties, "Joints", "Joints");

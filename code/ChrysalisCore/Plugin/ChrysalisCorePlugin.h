@@ -22,16 +22,17 @@ class CChrysalisCorePlugin
 	: public Cry::IEnginePlugin
 	, public ISystemEventListener
 	, public INetworkedClientListener
+	, public IGameFrameworkListener
 {
 public:
 	CRYINTERFACE_SIMPLE(Cry::IEnginePlugin)
-	CRYGENERATE_SINGLETONCLASS_GUID(CChrysalisCorePlugin, "ChrysalisCore", "{CA15546E-9C8A-4554-9EE6-426DEEF423EA}"_cry_guid);
+		CRYGENERATE_SINGLETONCLASS_GUID(CChrysalisCorePlugin, "ChrysalisCore", "{CA15546E-9C8A-4554-9EE6-426DEEF423EA}"_cry_guid);
 	static CryGUID GetSchematycPackageGUID() { return "{A403DB90-2A16-434A-8603-9B35098F6364}"_cry_guid; }
 
 	void RegisterComponents(Schematyc::IEnvRegistrar& registrar);
 
 	PLUGIN_FLOWNODE_REGISTER
-	PLUGIN_FLOWNODE_UNREGISTER
+		PLUGIN_FLOWNODE_UNREGISTER
 
 	virtual ~CChrysalisCorePlugin();
 
@@ -44,6 +45,14 @@ public:
 	// ISystemEventListener
 	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
 	// ~ISystemEventListener
+
+	// IGameFrameworkListener
+	virtual void OnPostUpdate(float fDeltaTime) override;
+	virtual void OnSaveGame(ISaveGame* pSaveGame) override {};
+	virtual void OnLoadGame(ILoadGame* pLoadGame) override {};
+	virtual void OnLevelEnd(const char* nextLevel) override {};
+	virtual void OnActionEvent(const SActionEvent& event) override {};
+	// ~IGameFrameworkListener
 
 	// INetworkedClientListener
 	// Sent to the local client on disconnect
@@ -77,6 +86,6 @@ protected:
 
 private:
 	/** The object identifier master factory. */
-	CObjectIdMasterFactory* m_pObjectIdMasterFactory { nullptr };
+	CObjectIdMasterFactory* m_pObjectIdMasterFactory {nullptr};
 };
 }

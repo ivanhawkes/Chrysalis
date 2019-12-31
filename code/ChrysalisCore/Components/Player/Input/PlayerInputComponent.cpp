@@ -59,9 +59,9 @@ void CPlayerInputComponent::ProcessEvent(const SEntityEvent& event)
 {
 	switch (event.event)
 	{
-		case EEntityEvent::Update:
-			Update();
-			break;
+	case EEntityEvent::Update:
+		Update();
+		break;
 	}
 }
 
@@ -250,42 +250,42 @@ Vec3 CPlayerInputComponent::GetMovement(const Quat& baseRotation)
 	// camera direction. 
 	switch (m_inputFlags)
 	{
-		case (TInputFlags)EInputFlag::Forward:
-			quatRelativeDirection = Quat::CreateIdentity();
-			break;
+	case (TInputFlags)EInputFlag::Forward:
+		quatRelativeDirection = Quat::CreateIdentity();
+		break;
 
-		case ((TInputFlags)EInputFlag::Forward | (TInputFlags)EInputFlag::Right):
-			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(45.0f));
-			break;
+	case ((TInputFlags)EInputFlag::Forward | (TInputFlags)EInputFlag::Right):
+		quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(45.0f));
+		break;
 
-		case (TInputFlags)EInputFlag::Right:
-			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(90.0f));
-			break;
+	case (TInputFlags)EInputFlag::Right:
+		quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(90.0f));
+		break;
 
-		case ((TInputFlags)EInputFlag::Backward | (TInputFlags)EInputFlag::Right):
-			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(135.0f));
-			break;
+	case ((TInputFlags)EInputFlag::Backward | (TInputFlags)EInputFlag::Right):
+		quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(135.0f));
+		break;
 
-		case (TInputFlags)EInputFlag::Backward:
-			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(180.0f));
-			break;
+	case (TInputFlags)EInputFlag::Backward:
+		quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(180.0f));
+		break;
 
-		case ((TInputFlags)EInputFlag::Backward | (TInputFlags)EInputFlag::Left):
-			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(225.0f));
-			break;
+	case ((TInputFlags)EInputFlag::Backward | (TInputFlags)EInputFlag::Left):
+		quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(225.0f));
+		break;
 
-		case (TInputFlags)EInputFlag::Left:
-			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(270.0f));
-			break;
+	case (TInputFlags)EInputFlag::Left:
+		quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(270.0f));
+		break;
 
-		case ((TInputFlags)EInputFlag::Forward | (TInputFlags)EInputFlag::Left):
-			quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(315.0f));
-			break;
+	case ((TInputFlags)EInputFlag::Forward | (TInputFlags)EInputFlag::Left):
+		quatRelativeDirection = Quat::CreateRotationZ(DEG2RAD(315.0f));
+		break;
 
-		default:
-			quatRelativeDirection = Quat::CreateIdentity();
-			allowMovement = false;
-			break;
+	default:
+		quatRelativeDirection = Quat::CreateIdentity();
+		allowMovement = false;
+		break;
 	}
 
 	// Create a vector based on key direction. This is computed in local space for the base rotation.
@@ -300,28 +300,28 @@ void CPlayerInputComponent::HandleInputFlagChange(TInputFlags flags, int activat
 {
 	switch (type)
 	{
-		case EInputFlagType::Hold:
+	case EInputFlagType::Hold:
+	{
+		if (activationMode & eIS_Pressed)
 		{
-			if (activationMode & eIS_Pressed)
-			{
-				m_inputFlags |= flags;
-			}
-			else if (activationMode & eIS_Released)
-			{
-				m_inputFlags &= ~flags;
-			}
+			m_inputFlags |= flags;
 		}
-		break;
+		else if (activationMode & eIS_Released)
+		{
+			m_inputFlags &= ~flags;
+		}
+	}
+	break;
 
-		case EInputFlagType::Toggle:
+	case EInputFlagType::Toggle:
+	{
+		if (activationMode & eIS_Released)
 		{
-			if (activationMode & eIS_Released)
-			{
-				// Toggle the bit(s)
-				m_inputFlags ^= flags;
-			}
+			// Toggle the bit(s)
+			m_inputFlags ^= flags;
 		}
-		break;
+	}
+	break;
 	}
 }
 
@@ -492,7 +492,8 @@ void CPlayerInputComponent::OnActionItemToss(int activationMode, float value)
 
 void CPlayerInputComponent::OnActionBar(int activationMode, int buttonId)
 {
-	if (activationMode == eAAM_OnPress || activationMode == eAAM_OnHold)
+	//if (activationMode == eAAM_OnPress || activationMode == eAAM_OnHold)
+	if (activationMode == eAAM_OnPress)
 	{
 		CryLogAlways("OnActionBar");
 		if (auto pActorComponent = CPlayerComponent::GetLocalActor())
@@ -535,17 +536,17 @@ void CPlayerInputComponent::OnActionInteraction(int activationMode, float value)
 {
 	switch (activationMode)
 	{
-		case eAAM_OnPress:
-			IF_ACTOR_DO(OnActionInteractionStart);
-			break;
+	case eAAM_OnPress:
+		IF_ACTOR_DO(OnActionInteractionStart);
+		break;
 
-		case eAAM_OnHold:
-			IF_ACTOR_DO(OnActionInteractionTick);
-			break;
+	case eAAM_OnHold:
+		IF_ACTOR_DO(OnActionInteractionTick);
+		break;
 
-		case eAAM_OnRelease:
-			IF_ACTOR_DO(OnActionInteractionEnd);
-			break;
+	case eAAM_OnRelease:
+		IF_ACTOR_DO(OnActionInteractionEnd);
+		break;
 	}
 }
 

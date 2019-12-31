@@ -1,0 +1,52 @@
+<entities>
+ <entity>
+  <components>
+   <name CryXmlVersion="2" name="Villain" displayName="Villain"/>
+   <health CryXmlVersion="2">
+    <health base="100" baseModifiers="0" modifiers="0"/>
+   </health>
+   <qi CryXmlVersion="2">
+    <qi base="100" baseModifiers="0" modifiers="0"/>
+   </qi>
+  </components>
+ </entity>
+ <entity>
+  <components>
+   <name CryXmlVersion="2" name="Hero" displayName="Hero"/>
+   <health CryXmlVersion="2">
+    <health base="100" baseModifiers="0" modifiers="0"/>
+   </health>
+   <qi CryXmlVersion="2">
+    <qi base="100" baseModifiers="0" modifiers="0"/>
+   </qi>
+  </components>
+ </entity>
+ <entity>
+  <components>
+   <name CryXmlVersion="2" name="Flashlight" displayName="@Flashlight"/>
+   <item-class CryXmlVersion="2" maxStackSize="1" animationTag="flashlight" isUniqueInventory="true" isUniqueEquipment="true" isDroppable="true" isAutoDroppable="false" isPickable="true" isAutoPickable="true" isUsable="true" isTradable="true" isConsumable="false"/>
+  </components>
+ </entity>
+ <entity>
+  <components>
+   <name CryXmlVersion="2" name="Villain_xxx" displayName="Villain_xxx"/>
+   <health CryXmlVersion="2">
+    <health base="200" baseModifiers="0" modifiers="0"/>
+   </health>
+   <qi CryXmlVersion="2">
+    <qi base="200" baseModifiers="0" modifiers="0"/>
+   </qi>
+  </components>
+ </entity>
+ <entity>
+  <components>
+   <name CryXmlVersion="2" name="Hero_xxx" displayName="Hero_xxx"/>
+   <health CryXmlVersion="2">
+    <health base="100" baseModifiers="0" modifiers="0"/>
+   </health>
+   <qi CryXmlVersion="2">
+    <qi base="100" baseModifiers="0" modifiers="0"/>
+   </qi>
+  </components>
+ </entity>
+</entities>

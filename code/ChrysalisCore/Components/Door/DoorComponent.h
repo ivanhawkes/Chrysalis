@@ -24,7 +24,7 @@ public:
 	}
 
 
-	virtual void Serialize(Serialization::IArchive& ar)
+	virtual void Serialize(Serialization::IArchive& ar) override
 	{
 		Serialization::SContext context(ar, this);
 		ar(m_DoorProperties, "Joints", "Joints");
@@ -48,7 +48,7 @@ public:
 		//	desc.AddMember(&CDoorComponent::SDoorProperties::needleValue, 'need', "Needle", "Needle", nullptr, 0.0f);
 		//}
 
-
+		
 		virtual void Serialize(Serialization::IArchive& ar)
 		{
 			ICharacterInstance* pCharacterInstance { nullptr };

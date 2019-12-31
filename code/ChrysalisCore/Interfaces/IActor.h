@@ -1,6 +1,8 @@
 #pragma once
 
 #include <CrySchematyc/Reflection/TypeDesc.h>
+#include <entt/entt.hpp>
+
 
 struct IActionController;
 struct SActorMannequinParams;
@@ -21,7 +23,7 @@ code, as well as adding new functionality we require.
 struct IActor
 {
 	/**
-	Is this actor being controller by the local player?
+	Is this actor being controlled by the local player?
 
 	\returns A const bool.
 	**/
@@ -29,7 +31,7 @@ struct IActor
 
 
 	/**
-	Is this actor being controller by the local player?
+	Is this actor being controlled by the local player?
 
 	\return A const bool.
 	**/
@@ -50,6 +52,14 @@ struct IActor
 	\return Null if it fails, else the character.
 	**/
 	virtual ICharacterInstance* GetCharacter() const = 0;
+
+
+	/**
+	Gets the ECS entity identifier for this actor.
+
+	\return entt::null if it fails, else the entity identifier.
+	**/
+	virtual entt::entity GetECSEntity() const = 0;
 
 
 	/**

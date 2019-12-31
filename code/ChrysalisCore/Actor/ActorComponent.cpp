@@ -29,6 +29,12 @@
 #include <Components/Equipment/EquipmentComponent.h>
 #include <Components/Snaplocks/SnaplockComponent.h>
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
+#include <entt/entt.hpp>
+#include "ECS/Systems/ECSSimulation.h"
+#include "ECS/Components/Health.h"
+#include "ECS/Components/Qi.h"
+#include "ECS/Components/Spell.h"
+#include "ECS/ECS.h"
 
 
 namespace Chrysalis
@@ -103,6 +109,26 @@ void CActorComponent::Initialize()
 	m_pSnaplockComponent->AddSnaplock(ISnaplock(SLT_ACTOR_LEFTFOOT, false));
 	m_pSnaplockComponent->AddSnaplock(ISnaplock(SLT_ACTOR_RIGHTFOOT, false));
 
+	// Get the ECS actor registry.
+	auto actorRegistry = ECS::ecsSimulation.GetActorRegistry();
+
+	// Need a new entity bound to this one for both their lives.
+	m_ecsEntity = actorRegistry->create();
+
+	// Name component.
+	actorRegistry->assign<ECS::Name>(m_ecsEntity,
+		m_pEntity->GetName(), m_pEntity->GetName());
+
+	// Health component.
+	ECS::AttributeType<float> health {100.0f, 0.0f, 0.0f};
+	actorRegistry->assign<ECS::Health>(m_ecsEntity,
+		health);
+
+	// Qi component.
+	ECS::AttributeType<float> qi {100.0f, 0.0f, 0.0f};
+	actorRegistry->assign<ECS::Qi>(m_ecsEntity,
+		qi);
+
 	// Default is for a character to be controlled by AI.
 	//	m_isAIControlled = true;
 	//m_isAIControlled = false;
@@ -128,21 +154,29 @@ void CActorComponent::ProcessEvent(const SEntityEvent& event)
 	switch (event.event)
 	{
 		// Physicalize on level start for Launcher
-		case EEntityEvent::LevelStarted:
+	case EEntityEvent::LevelStarted:
 
-			// Editor specific, physicalize on reset, property change or transform change
-		case EEntityEvent::Reset:
-		case EEntityEvent::EditorPropertyChanged:
-		case EEntityEvent::TransformChangeFinishedInEditor:
-			OnResetState();
-			break;
-
-		case EEntityEvent::Update:
-		{
-			SEntityUpdateContext* pCtx = (SEntityUpdateContext*)event.nParam[0];
-			Update(pCtx);
-		}
+		// Editor specific, physicalize on reset, property change or transform change
+	case EEntityEvent::Reset:
+	case EEntityEvent::EditorPropertyChanged:
+	case EEntityEvent::TransformChangeFinishedInEditor:
+		OnResetState();
 		break;
+
+	case EEntityEvent::Update:
+	{
+		SEntityUpdateContext* pCtx = (SEntityUpdateContext*)event.nParam[0];
+		Update(pCtx);
+		break;
+	}
+
+	case EEntityEvent::Remove:
+	{
+		// Clean up the ECS entity, as it's no longer needed.
+		auto registry = ECS::ecsSimulation.GetActorRegistry();
+		registry->destroy(m_ecsEntity);
+		break;
+	}
 	}
 }
 
@@ -153,6 +187,13 @@ void CActorComponent::Update(SEntityUpdateContext* pCtx)
 
 	// HACK: This belongs in pre-physics...I think.
 	SetIK();
+
+	// DEBUG: Let's see some data.
+	auto registry = ECS::ecsSimulation.GetActorRegistry();
+	auto& health = registry->get<ECS::Health>(m_ecsEntity);
+	CryWatch("%s - health: %.2f", m_pEntity->GetName(), health.health.GetAttribute());
+	auto& qi = registry->get<ECS::Qi>(m_ecsEntity);
+	CryWatch("%s - qi: %.2f", m_pEntity->GetName(), qi.qi.GetAttribute());
 }
 
 
@@ -212,30 +253,30 @@ const Vec3 CActorComponent::GetLocalEyePos() const
 		static bool alreadyWarned {false};
 		switch (eyeFlags)
 		{
-			case 0:
-				// Failure, didn't find any eyes.
-				// This will most likely spam the log. Disable it if it's annoying.
-				if (!alreadyWarned)
-				{
-					CryLogAlways("Character does not have 'Camera', 'left_eye' or 'right_eye' defined.");
-					alreadyWarned = true;
-				}
-				break;
+		case 0:
+			// Failure, didn't find any eyes.
+			// This will most likely spam the log. Disable it if it's annoying.
+			if (!alreadyWarned)
+			{
+				CryLogAlways("Character does not have 'Camera', 'left_eye' or 'right_eye' defined.");
+				alreadyWarned = true;
+			}
+			break;
 
-			case 1:
-				// Left eye only.
-				eyePosition = eyeLeftPosition;
-				break;
+		case 1:
+			// Left eye only.
+			eyePosition = eyeLeftPosition;
+			break;
 
-			case 2:
-				// Right eye only.
-				eyePosition = eyeRightPosition;
-				break;
+		case 2:
+			// Right eye only.
+			eyePosition = eyeRightPosition;
+			break;
 
-			case 3:
-				// Both eyes, position between the two points.
-				eyePosition = (eyeLeftPosition + eyeRightPosition) / 2.0f;
-				break;
+		case 3:
+			// Both eyes, position between the two points.
+			eyePosition = (eyeLeftPosition + eyeRightPosition) / 2.0f;
+			break;
 		}
 	}
 
@@ -532,8 +573,8 @@ bool CActorComponent::SetLookingIK(const bool isLooking, const Vec3& lookTarget)
 
 	if (shouldHandle)
 	{
-		m_pProceduralContextLook->SetLookTarget(lookTarget);
-		m_pProceduralContextLook->SetIsLookingGame(isLooking);
+	m_pProceduralContextLook->SetLookTarget(lookTarget);
+	m_pProceduralContextLook->SetIsLookingGame(isLooking);
 	}
 
 	return shouldHandle;
@@ -600,6 +641,93 @@ void CActorComponent::OnActionItemToss()
 }
 
 
+//void CActorComponent::OnActionBarUse(int actionBarId)
+//{
+//	if (m_pAwareness)
+//	{
+//		auto results = m_pAwareness->GetNearDotFiltered();
+//		if (results.size() > 0)
+//		{
+//			auto pTargetEntity = gEnv->pEntitySystem->GetEntity(results[0]);
+//
+//			if (auto pInteractor = pTargetEntity->GetComponent<CEntityInteractionComponent>())
+//			{
+//				// There's an interactor component, so this is an interactive entity.
+//				auto verbs = pInteractor->GetVerbs();
+//				if (verbs.size() >= actionBarId)
+//				{
+//					auto verb = verbs[actionBarId - 1];
+//					auto pInteraction = pInteractor->GetInteraction(verb).lock();
+//
+//					pInteraction->OnInteractionStart(*this);
+//				}
+//				else
+//				{
+//					CryLogAlways("No action defined.");
+//				}
+//			}
+//		}
+//	}
+//}
+
+
+/** Super dirty and slow way to locate a spell from the registry. */
+entt::entity GetSpellByName(entt::registry* registry, const char* spellName)
+{
+	auto view = registry->view<ECS::Name>();
+
+	for (auto entity : view)
+	{
+		auto& name = view.get<ECS::Name>(entity);
+
+		if (strcmp(name.name, spellName) == 0)
+		{
+			return entity;
+		}
+	}
+
+	// Failed to find it.
+	return entt::null;
+}
+
+
+/** Takes a reference to a spell and applies the needed fixups. */
+void RewireSpell(entt::registry& registry, entt::entity spellEntity, entt::entity sourceEntity, entt::entity targetEntity)
+{
+	// The source and target for the spell need to be added to the entity.
+	registry.assign<ECS::SourceAndTarget>(spellEntity, sourceEntity, targetEntity);
+
+	//auto& spell = registry.get<ECS::Spell>(spellEntity);
+	//switch (spell.spellRewire)
+	//{
+	//case ECS::SpellRewire::custom:
+	//	break;
+
+	//default:
+	//	break;
+	//}
+}
+
+
+void CastSpellByName(const char* spellName, entt::entity sourceEntity, entt::entity targetEntity)
+{
+	auto actorRegistry = ECS::ecsSimulation.GetActorRegistry();
+	auto spellRegistry = ECS::ecsSimulation.GetSpellRegistry();
+
+	auto spellEntity = GetSpellByName(spellRegistry, spellName);
+	if (spellEntity != entt::null)
+	{
+		// Make use of the create feature to copy the spell prototype into the actor registry.
+		auto newEntity = actorRegistry->create<ECS::Name, ECS::Health, ECS::Damage, ECS::DamageOverTime, ECS::Heal, ECS::HealOverTime,
+			ECS::Qi, ECS::UtiliseQi, ECS::UtiliseQiOverTime, ECS::ReplenishQi, ECS::ReplenishQiOverTime,
+			ECS::Spell>(spellEntity, *spellRegistry);
+
+		// Do fixups.
+		RewireSpell(*actorRegistry, newEntity, sourceEntity, targetEntity);
+	}
+}
+
+
 void CActorComponent::OnActionBarUse(int actionBarId)
 {
 	if (m_pAwareness)
@@ -609,22 +737,56 @@ void CActorComponent::OnActionBarUse(int actionBarId)
 		{
 			auto pTargetEntity = gEnv->pEntitySystem->GetEntity(results[0]);
 
-			if (auto pInteractor = pTargetEntity->GetComponent<CEntityInteractionComponent>())
+			if (auto pTargetActor = pTargetEntity->GetComponent<CActorComponent>())
 			{
-				// There's an interactor component, so this is an interactive entity.
-				auto verbs = pInteractor->GetVerbs();
-				if (verbs.size() >= actionBarId)
+				switch (actionBarId)
 				{
-					auto verb = verbs[actionBarId - 1];
-					auto pInteraction = pInteractor->GetInteraction(verb).lock();
+				case 1:
+					CastSpellByName("Fireball", GetECSEntity(), pTargetActor->GetECSEntity());
+					break;
 
-					pInteraction->OnInteractionStart(*this);
-				}
-				else
-				{
-					CryLogAlways("No action defined.");
+				case 2:
+					CastSpellByName("Shadow Word Pain", GetECSEntity(), pTargetActor->GetECSEntity());
+					break;
+
+				case 3:
+					CastSpellByName("Scorch", GetECSEntity(), pTargetActor->GetECSEntity());
+					break;
+
+				case 4:
+					CastSpellByName("Heal", GetECSEntity(), pTargetActor->GetECSEntity());
+					break;
+
+				case 5:
+					CastSpellByName("Renew", GetECSEntity(), pTargetActor->GetECSEntity());
+					break;
+
+				case 6:
+					CastSpellByName("HealAndRenew", GetECSEntity(), pTargetActor->GetECSEntity());
+					break;
+
+				case 7:
+					CastSpellByName("Innervate", GetECSEntity(), pTargetActor->GetECSEntity());
+					break;
 				}
 			}
+
+			//if (auto pInteractor = pTargetEntity->GetComponent<CEntityInteractionComponent>())
+			//{
+			//	// There's an interactor component, so this is an interactive entity.
+			//	auto verbs = pInteractor->GetVerbs();
+			//	if (verbs.size() >= actionBarId)
+			//	{
+			//		auto verb = verbs[actionBarId - 1];
+			//		auto pInteraction = pInteractor->GetInteraction(verb).lock();
+
+			//		pInteraction->OnInteractionStart(*this);
+			//	}
+			//	else
+			//	{
+			//		CryLogAlways("No action defined.");
+			//	}
+			//}
 		}
 	}
 }
@@ -780,57 +942,57 @@ TagID CActorComponent::GetStanceTagId(EActorStance actorStance)
 
 	switch (actorStance)
 	{
-		case EActorStance::eAS_Crawling:
-			tagId = m_actorMannequinParams->tagIDs.Crawling;
-			break;
+	case EActorStance::eAS_Crawling:
+		tagId = m_actorMannequinParams->tagIDs.Crawling;
+		break;
 
-		case EActorStance::eAS_Prone:
-			tagId = m_actorMannequinParams->tagIDs.Prone;
-			break;
+	case EActorStance::eAS_Prone:
+		tagId = m_actorMannequinParams->tagIDs.Prone;
+		break;
 
-		case EActorStance::eAS_Crouching:
-			tagId = m_actorMannequinParams->tagIDs.Crouching;
-			break;
+	case EActorStance::eAS_Crouching:
+		tagId = m_actorMannequinParams->tagIDs.Crouching;
+		break;
 
-		case EActorStance::eAS_Falling:
-			tagId = m_actorMannequinParams->tagIDs.Falling;
-			break;
+	case EActorStance::eAS_Falling:
+		tagId = m_actorMannequinParams->tagIDs.Falling;
+		break;
 
-		case EActorStance::eAS_Flying:
-			tagId = m_actorMannequinParams->tagIDs.Flying;
-			break;
+	case EActorStance::eAS_Flying:
+		tagId = m_actorMannequinParams->tagIDs.Flying;
+		break;
 
-		case EActorStance::eAS_Kneeling:
-			tagId = m_actorMannequinParams->tagIDs.Kneeling;
-			break;
+	case EActorStance::eAS_Kneeling:
+		tagId = m_actorMannequinParams->tagIDs.Kneeling;
+		break;
 
-		case EActorStance::eAS_Landing:
-			tagId = m_actorMannequinParams->tagIDs.Landing;
-			break;
+	case EActorStance::eAS_Landing:
+		tagId = m_actorMannequinParams->tagIDs.Landing;
+		break;
 
-		case EActorStance::eAS_SittingChair:
-			tagId = m_actorMannequinParams->tagIDs.SittingChair;
-			break;
+	case EActorStance::eAS_SittingChair:
+		tagId = m_actorMannequinParams->tagIDs.SittingChair;
+		break;
 
-		case EActorStance::eAS_SittingFloor:
-			tagId = m_actorMannequinParams->tagIDs.SittingFloor;
-			break;
+	case EActorStance::eAS_SittingFloor:
+		tagId = m_actorMannequinParams->tagIDs.SittingFloor;
+		break;
 
-		case EActorStance::eAS_Sleeping:
-			tagId = m_actorMannequinParams->tagIDs.Sleeping;
-			break;
+	case EActorStance::eAS_Sleeping:
+		tagId = m_actorMannequinParams->tagIDs.Sleeping;
+		break;
 
-		case EActorStance::eAS_Spellcasting:
-			tagId = m_actorMannequinParams->tagIDs.Spellcasting;
-			break;
+	case EActorStance::eAS_Spellcasting:
+		tagId = m_actorMannequinParams->tagIDs.Spellcasting;
+		break;
 
-		case EActorStance::eAS_Standing:
-			tagId = m_actorMannequinParams->tagIDs.Standing;
-			break;
+	case EActorStance::eAS_Standing:
+		tagId = m_actorMannequinParams->tagIDs.Standing;
+		break;
 
-		case EActorStance::eAS_Swimming:
-			tagId = m_actorMannequinParams->tagIDs.Swimming;
-			break;
+	case EActorStance::eAS_Swimming:
+		tagId = m_actorMannequinParams->tagIDs.Swimming;
+		break;
 	}
 
 	return tagId;
@@ -843,53 +1005,53 @@ TagID CActorComponent::GetPostureTagId(EActorPosture actorPosture)
 
 	switch (actorPosture)
 	{
-		case EActorPosture::eAP_Aggressive:
-			tagId = m_actorMannequinParams->tagIDs.Aggressive;
-			break;
+	case EActorPosture::eAP_Aggressive:
+		tagId = m_actorMannequinParams->tagIDs.Aggressive;
+		break;
 
-		case EActorPosture::eAP_Alerted:
-			tagId = m_actorMannequinParams->tagIDs.Alerted;
-			break;
+	case EActorPosture::eAP_Alerted:
+		tagId = m_actorMannequinParams->tagIDs.Alerted;
+		break;
 
-		case EActorPosture::eAP_Bored:
-			tagId = m_actorMannequinParams->tagIDs.Bored;
-			break;
+	case EActorPosture::eAP_Bored:
+		tagId = m_actorMannequinParams->tagIDs.Bored;
+		break;
 
-		case EActorPosture::eAP_Dazed:
-			tagId = m_actorMannequinParams->tagIDs.Dazed;
-			break;
+	case EActorPosture::eAP_Dazed:
+		tagId = m_actorMannequinParams->tagIDs.Dazed;
+		break;
 
-		case EActorPosture::eAP_Depressed:
-			tagId = m_actorMannequinParams->tagIDs.Depressed;
-			break;
+	case EActorPosture::eAP_Depressed:
+		tagId = m_actorMannequinParams->tagIDs.Depressed;
+		break;
 
-		case EActorPosture::eAP_Distracted:
-			tagId = m_actorMannequinParams->tagIDs.Distracted;
-			break;
+	case EActorPosture::eAP_Distracted:
+		tagId = m_actorMannequinParams->tagIDs.Distracted;
+		break;
 
-		case EActorPosture::eAP_Excited:
-			tagId = m_actorMannequinParams->tagIDs.Excited;
-			break;
+	case EActorPosture::eAP_Excited:
+		tagId = m_actorMannequinParams->tagIDs.Excited;
+		break;
 
-		case EActorPosture::eAP_Interested:
-			tagId = m_actorMannequinParams->tagIDs.Interested;
-			break;
+	case EActorPosture::eAP_Interested:
+		tagId = m_actorMannequinParams->tagIDs.Interested;
+		break;
 
-		case EActorPosture::eAP_Neutral:
-			tagId = m_actorMannequinParams->tagIDs.Neutral;
-			break;
+	case EActorPosture::eAP_Neutral:
+		tagId = m_actorMannequinParams->tagIDs.Neutral;
+		break;
 
-		case EActorPosture::eAP_Passive:
-			tagId = m_actorMannequinParams->tagIDs.Passive;
-			break;
+	case EActorPosture::eAP_Passive:
+		tagId = m_actorMannequinParams->tagIDs.Passive;
+		break;
 
-		case EActorPosture::eAP_Suspicious:
-			tagId = m_actorMannequinParams->tagIDs.Suspicious;
-			break;
+	case EActorPosture::eAP_Suspicious:
+		tagId = m_actorMannequinParams->tagIDs.Suspicious;
+		break;
 
-		case EActorPosture::eAP_Unaware:
-			tagId = m_actorMannequinParams->tagIDs.Unaware;
-			break;
+	case EActorPosture::eAP_Unaware:
+		tagId = m_actorMannequinParams->tagIDs.Unaware;
+		break;
 	}
 
 	return tagId;

@@ -72,6 +72,9 @@ error*.*
 log.txt
 *.tmp
 
+# Cmake keeps setting this as the folder for binaries - so this keeps them out of the repo at least.
+code/bin/
+
 # All other things.
 /assets_source/
 /assets/animations/editor/

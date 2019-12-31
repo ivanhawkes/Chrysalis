@@ -70,7 +70,7 @@ protected:
 	// IEntityComponent
 	void Initialize() override;
 	void ProcessEvent(const SEntityEvent& event) override;
-	Cry::Entity::EventFlags GetEventMask() const override { return EEntityEvent::Update | EEntityEvent::PrePhysicsUpdate; }
+	Cry::Entity::EventFlags GetEventMask() const override { return EEntityEvent::Update | EEntityEvent::Remove; }
 	// ~IEntityComponent
 
 	virtual void Update(SEntityUpdateContext* pCtx);
@@ -186,6 +186,10 @@ public:
 
 	ICharacterInstance* GetCharacter() const override;
 
+	/** Get access to the ECS entity, which opens up access to the components it holds and allows you
+	to pass this handle around for reference purposes. */
+	entt::entity GetECSEntity() const override { return m_ecsEntity; };
+
 protected:
 	CActorAnimationComponent* m_pActorAnimationComponent {nullptr};
 	Cry::DefaultComponents::CCharacterControllerComponent* m_pCharacterControllerComponent {nullptr};
@@ -205,7 +209,7 @@ protected:
 
 private:
 	/** An component which is used to discover entities near the actor. */
-	CEntityAwarenessComponent * m_pAwareness {nullptr};
+	CEntityAwarenessComponent* m_pAwareness {nullptr};
 
 	/** A component that allows for management of snaplocks. */
 	CSnaplockComponent* m_pSnaplockComponent {nullptr};
@@ -228,6 +232,8 @@ private:
 	/** The pre-determined fate for this actor. */
 	CFate m_fate;
 
+	/** The identifier for this actor in the ECS */
+	entt::entity m_ecsEntity {entt::null};
 
 	// ***
 	// *** AI / Player Control
