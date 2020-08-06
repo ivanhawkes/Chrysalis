@@ -12,6 +12,11 @@ add_subdirectory("${CRYENGINE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/CRYENGINE")
 
 include("${TOOLS_CMAKE_DIR}/Configure.cmake")
 
+option(PLUGIN_IMGUI "Enable the imgui plugin" ON)
+if (NOT PLUGIN_IMGUI)
+	return()
+endif()
+
 start_sources()
 
 sources_platform(ALL)
@@ -21,11 +26,34 @@ add_sources("ChrysalisCore_uber.cpp"
 		"StdAfx.cpp"
 		"StdAfx.h"
 )
+
+add_sources("CryImgui_uber.cpp"
+    PROJECTS Chrysalis
+	SOURCE_GROUP "Imgui"
+		"Imgui/ImguiImpl.cpp"
+		"Imgui/ImguiImpl.h"
+		"Imgui/ImguiRenderer.h"
+		"Imgui/ImguiRenderer.cpp"
+		"Imgui/imconfig.h"
+		"Imgui/imgui.cpp"
+		"Imgui/imgui.h"
+		"Imgui/imgui_demo.cpp"
+		"Imgui/imgui_draw.cpp"
+		"Imgui/imgui_widgets.cpp"
+		"Imgui/imgui_internal.h"
+		"Imgui/imstb_rectpack.h"
+		"Imgui/imstb_textedit.h"
+		"Imgui/imstb_truetype.h"
+		"Imgui/PerfMonitor.cpp"
+		"Imgui/PerfMonitor.h"
+)
+
 add_sources("Actor_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Actor"
 		"Actor/Fate.h"
 )
+
 add_sources("Animation_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Actor\\\\Animation"
@@ -34,6 +62,7 @@ add_sources("Animation_uber.cpp"
 		"Actor/Animation/ActorAnimation.h"
 		"Actor/Animation/ActorAnimationEvents.h"
 )
+
 add_sources("Actions_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Actor\\\\Animation\\\\Actions"
@@ -54,10 +83,12 @@ add_sources("Actions_uber.cpp"
 		"Actor/Animation/Actions/ActorAnimationActionLooking.h"
 		"Actor/Animation/Actions/ActorAnimationActionLookPose.h"
 )
+
 add_sources("Movement_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Actor\\\\Movement"
 )
+
 add_sources("StateMachine_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Actor\\\\Movement\\\\StateMachine"
@@ -83,18 +114,21 @@ add_sources("StateMachine_uber.cpp"
 		"Actor/Movement/StateMachine/ActorStateSwimWaterTestProxy.h"
 		"Actor/Movement/StateMachine/ActorStateUtility.h"
 )
+
 add_sources("Animation_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Animation"
 		"Animation/Animation.cpp"
 		"Animation/Animation.h"
 )
+
 add_sources("ProceduralClip_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Animation\\\\ProceduralClip"
 		"Animation/ProceduralClip/ProceduralClipAiming.cpp"
 		"Animation/ProceduralClip/ProceduralClipLooking.cpp"
 )
+
 add_sources("ProceduralContext_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Animation\\\\ProceduralContext"
@@ -110,10 +144,12 @@ add_sources("ProceduralContext_uber.cpp"
 		"Animation/ProceduralContext/ProceduralContextMovementControlMethod.h"
 		"Animation/ProceduralContext/ProceduralContextRagdoll.h"
 )
+
 add_sources("Components_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components"
 )
+
 add_sources("Components_Actor_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Actor"
@@ -122,6 +158,7 @@ add_sources("Components_Actor_uber.cpp"
 		"Components/Actor/ActorComponent.h"
 		"Components/Actor/ActorControllerComponent.h"
 )
+
 add_sources("Animation_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Animation"
@@ -132,30 +169,35 @@ add_sources("Animation_uber.cpp"
 		"Components/Animation/ControlledAnimationComponent.h"
 		"Components/Animation/SimpleAnimationComponent.h"
 )
+
 add_sources("Compass_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Compass"
 		"Components/Compass/CompassComponent.cpp"
 		"Components/Compass/CompassComponent.h"
 )
+
 add_sources("Door_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Door"
 		"Components/Door/DoorComponent.cpp"
 		"Components/Door/DoorComponent.h"
 )
+
 add_sources("Equipment_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Equipment"
 		"Components/Equipment/EquipmentComponent.cpp"
 		"Components/Equipment/EquipmentComponent.h"
 )
+
 add_sources("Gauge_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Gauge"
 		"Components/Gauge/GaugeComponent.cpp"
 		"Components/Gauge/GaugeComponent.h"
 )
+
 add_sources("Interaction_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Interaction"
@@ -170,18 +212,21 @@ add_sources("Interaction_uber.cpp"
 		"Components/Interaction/ItemInteractionComponent.cpp"
 		"Components/Interaction/ItemInteractionComponent.h"
 )
+
 add_sources("Inventory_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Inventory"
 		"Components/Inventory/InventoryComponent.cpp"
 		"Components/Inventory/InventoryComponent.h"
 )
+
 add_sources("Items_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Items"
 		"Components/Items/ItemComponent.cpp"
 		"Components/Items/ItemComponent.h"
 )
+
 add_sources("Lockable_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Lockable"
@@ -190,24 +235,28 @@ add_sources("Lockable_uber.cpp"
 		"Components/Lockable/KeyringComponent.h"
 		"Components/Lockable/LockableComponent.h"
 )
+
 add_sources("Loot_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Loot"
 		"Components/Loot/LootableComponent.cpp"
 		"Components/Loot/LootableComponent.h"
 )
+
 add_sources("Openable_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Openable"
 		"Components/Openable/ContainerComponent.cpp"
 		"Components/Openable/ContainerComponent.h"
 )
+
 add_sources("Player_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Player"
 		"Components/Player/PlayerComponent.cpp"
 		"Components/Player/PlayerComponent.h"
 )
+
 add_sources("Camera_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Player\\\\Camera"
@@ -222,36 +271,42 @@ add_sources("Camera_uber.cpp"
 		"Components/Player/Camera/FirstPersonCameraComponent.h"
 		"Components/Player/Camera/ICameraComponent.h"
 )
+
 add_sources("Input_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Player\\\\Input"
 		"Components/Player/Input/PlayerInputComponent.cpp"
 		"Components/Player/Input/PlayerInputComponent.h"
 )
+
 add_sources("SecurityPad_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\SecurityPad"
 		"Components/SecurityPad/SecurityPadComponent.cpp"
 		"Components/SecurityPad/SecurityPadComponent.h"
 )
+
 add_sources("Skeleton_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Skeleton"
 		"Components/Skeleton/JointManipulationComponent.cpp"
 		"Components/Skeleton/JointManipulationComponent.h"
 )
+
 add_sources("Slidable_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Slidable"
 		"Components/Slidable/SlidableComponent.cpp"
 		"Components/Slidable/SlidableComponent.h"
 )
+
 add_sources("Snaplocks_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Snaplocks"
 		"Components/Snaplocks/SnaplockComponent.cpp"
 		"Components/Snaplocks/SnaplockComponent.h"
 )
+
 add_sources("Spells_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Spells"
@@ -260,24 +315,28 @@ add_sources("Spells_uber.cpp"
 		"Components/Spells/SpellParticipantComponent.cpp"
 		"Components/Spells/SpellParticipantComponent.h"
 )
+
 add_sources("Switchable_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Switchable"
 		"Components/Switchable/SwitchComponent.cpp"
 		"Components/Switchable/SwitchComponent.h"
 )
+
 add_sources("TimePiece_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\TimePiece"
 		"Components/TimePiece/TimePieceComponent.cpp"
 		"Components/TimePiece/TimePieceComponent.h"
 )
+
 add_sources("Console_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Console"
 		"Console/CVars.cpp"
 		"Console/CVars.h"
 )
+
 add_sources("DynamicResponseSystem_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "DynamicResponseSystem"
@@ -296,12 +355,14 @@ add_sources("DynamicResponseSystem_uber.cpp"
 		"DynamicResponseSystem/ActionUnlock.h"
 		"DynamicResponseSystem/ConditionDistanceToEntity.h"
 )
+
 add_sources("ECS_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "ECS"
 		"ECS/ECS.cpp"
 		"ECS/ECS.h"
 )
+
 add_sources("Components_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "ECS\\\\Components"
@@ -315,6 +376,7 @@ add_sources("Components_uber.cpp"
 		"ECS/Components/RenderLight.h"
 		"ECS/Components/Qi.h"
 )
+
 add_sources("Components_Spells_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "ECS\\\\Components\\\\Spells"
@@ -323,6 +385,7 @@ add_sources("Components_Spells_uber.cpp"
 		"ECS/Components/Spells/SpellActions.h"
 		"ECS/Components/Spells/SpellActions.cpp"
 )
+
 add_sources("Systems_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "ECS\\\\Systems"
@@ -335,6 +398,7 @@ add_sources("Systems_uber.cpp"
 		"ECS/Systems/XMLSerializer.h"
 		"ECS/Systems/XMLSerializer.cpp"
 )
+
 add_sources("Entities_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Entities"
@@ -342,22 +406,26 @@ add_sources("Entities_uber.cpp"
 		"Entities/EntityEffects.h"
 		"Entities/EntityScriptCalls.h"
 )
+
 add_sources("Interaction_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Entities\\\\Interaction"
 		"Entities/Interaction/IEntityInteraction.cpp"
 		"Entities/Interaction/IEntityInteraction.h"
 )
+
 add_sources("Ownership_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Entities\\\\Ownership"
 		"Entities/Ownership/IEntityOwnership.cpp"
 		"Entities/Ownership/IEntityOwnership.h"
 )
+
 add_sources("Game_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Game"
 )
+
 add_sources("Interfaces_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Interfaces"
@@ -367,6 +435,7 @@ add_sources("Interfaces_uber.cpp"
 		"Interfaces/IItem.h"
 		"Interfaces/ISpell.h"
 )
+
 add_sources("Item_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Item"
@@ -374,18 +443,21 @@ add_sources("Item_uber.cpp"
 		"Item/ItemSystem.cpp"
 		"Item/ItemSystem.h"
 )
+
 add_sources("Accessory_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Item\\\\Accessory"
 		"Item/Accessory/Accessory.cpp"
 		"Item/Accessory/Accessory.h"
 )
+
 add_sources("Weapon_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Item\\\\Weapon"
 		"Item/Weapon/Weapon.cpp"
 		"Item/Weapon/Weapon.h"
 )
+
 add_sources("ObjectID_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "ObjectID"
@@ -394,12 +466,14 @@ add_sources("ObjectID_uber.cpp"
 		"ObjectID/ObjectId.h"
 		"ObjectID/ObjectIdMasterFactory.h"
 )
+
 add_sources("Plugin_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Plugin"
 		"Plugin/ChrysalisCorePlugin.cpp"
 		"Plugin/ChrysalisCorePlugin.h"
 )
+
 add_sources("Schematyc_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Schematyc"
@@ -407,12 +481,14 @@ add_sources("Schematyc_uber.cpp"
 		"Schematyc/General.cpp"
 		"Schematyc/CoreEnv.h"
 )
+
 add_sources("Spells_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Spells"
 		"Spells/Spells.cpp"
 		"Spells/Spells.h"
 )
+
 add_sources("SpellActions_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Spells\\\\SpellActions"
@@ -421,17 +497,20 @@ add_sources("SpellActions_uber.cpp"
 		"Spells/SpellActions/SpellActionSwitch.cpp"
 		"Spells/SpellActions/SpellActionSwitch.h"
 )
+
 add_sources("Snaplocks_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Snaplocks"
 		"Snaplocks/Snaplock.cpp"
 		"Snaplocks/Snaplock.h"
 )
+
 add_sources("StateMachine_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "StateMachine"
 		"StateMachine/StateMachine.h"
 )
+
 add_sources("Utility_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Utility"
