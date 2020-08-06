@@ -4,7 +4,6 @@
 #include <IActionMapManager.h>
 #include <DefaultComponents/Input/InputComponent.h>
 #include "Components/Player/PlayerComponent.h"
-//#include "Utility/Listener.h"
 
 
 namespace Chrysalis
@@ -62,7 +61,7 @@ public:
 	\return True if movement requested, false if not.
 	**/
 	bool IsMovementRequested() const {
-		return m_inputFlags != 0; 
+		return m_inputFlags != 0;
 	}
 
 
@@ -147,21 +146,37 @@ public:
 	TInputFlags GetMovementDirectionFlags() const { return m_inputFlags; };
 
 
-	///** Listen for 'special' keys and be notified when they are input e.g. ESC, Examine. */
-	//struct IInputSpecialListener
-	//{
-	//	virtual ~IInputSpecialListener() = default;
+	/** Listen for important keys and be notified when they are input e.g. ESC, interact, spellcast. */
+	struct IInputEventListener
+	{
+		/** Escape key - generally means to exit an activity or UI panel. */
+		virtual void OnInputEscape(int activationMode) = 0;
 
-	//	virtual void OnInputSpecialEsc() = 0;
-	//	virtual void OnInputSpecialExamine() = 0;
-	//};
+		/** Generic key for an interaction. */
+		virtual void OnInputInteraction(int activationMode) = 0;
+
+		/** One of a handful of action keys grouped as a single action bar. */
+		virtual void OnInputActionBarUse(int activationMode, int buttonId) = 0;
+
+		/** One of a handful of function keys grouped as a single function bar. */
+		virtual void OnInputFunctionBarUse(int activationMode, int buttonId) = 0;
+	};
 
 
-	///** Get the manager for the listener.*/
-	//TListener<IInputSpecialListener*>GetListenerManager() { return m_listenersSpecial; }
+	void AddEventListener(IInputEventListener* pListener)
+	{
+		stl::push_back_unique(m_listeners, pListener);
+	}
+
+	void RemoveEventListener(IInputEventListener* pListener)
+	{
+		m_listeners.remove(pListener);
+	}
 
 protected:
 	void OnActionEscape(int activationMode, float value);
+	void OnActionInteraction(int activationMode, float value);
+
 	void OnActionExamine(int activationMode, float value);
 
 	void OnActionRotateYaw(int activationMode, float value);
@@ -180,7 +195,6 @@ protected:
 	void OnActionItemUse(int activationMode, float value);
 	void OnActionItemPickup(int activationMode, float value);
 	void OnActionItemDrop(int activationMode, float value);
-	void OnActionInteraction(int activationMode, float value);
 
 
 	/**
@@ -199,14 +213,23 @@ protected:
 	/**
 	Generic action bar action.
 
-	\param	entityId	   Identifier for the entity.
-	\param	actionId	   Identifier for the action.
 	\param	activationMode The activation mode.
-	\param	value		   Provides the Id number of the action bar clicked
+	\param	buttonId	   Identifier for which of this group of buttons was pressed.
 
 	\return true if it succeeds, false if it fails.
 	**/
-	void OnActionBar(int activationMode, int buttonId);
+	void OnActionBarUse(int activationMode, int buttonId);
+
+
+	/**
+	Generic function key action.
+
+	\param	activationMode The activation mode.
+	\param	buttonId	   Identifier for which of this group of buttons was pressed.
+
+	\return true if it succeeds, false if it fails.
+	**/
+	void OnFunctionBarUse(int activationMode, int buttonId);
 
 
 	/**
@@ -226,10 +249,10 @@ protected:
 	void OnActionInspectEnd(int activationMode, float value);
 
 	/** The player. */
-	CPlayerComponent* m_pPlayer { nullptr };
+	CPlayerComponent* m_pPlayer {nullptr};
 
 	/** The camera that this instance uses. */
-	CCameraManagerComponent* m_pCameraManager { nullptr };
+	CCameraManagerComponent* m_pCameraManager {nullptr};
 
 
 private:
@@ -239,71 +262,71 @@ private:
 	void HandleInputFlagChange(TInputFlags flags, int activationMode, EInputFlagType type = EInputFlagType::Hold);
 
 	/** The input component */
-	Cry::DefaultComponents::CInputComponent* m_pInputComponent { nullptr };
+	Cry::DefaultComponents::CInputComponent* m_pInputComponent {nullptr};
 
 	/** The movement mask. */
-	TInputFlags m_inputFlags { (TInputFlags)EInputFlag::None };
+	TInputFlags m_inputFlags {(TInputFlags)EInputFlag::None};
 
 	/**
 	Should we invert the Y axis for mouse camera movements? This is preferred by some players, particularly those
 	using a flight yoke.
 	*/
-	int m_mouseInvertPitch { 0 };
+	int m_mouseInvertPitch {0};
 
 	/** Mouse sensitivity for pitching and yawing. All pitch and yaw deltas will be factored by this value. */
-	float m_mousePitchYawSensitivity { 1.0f };
+	float m_mousePitchYawSensitivity {1.0f};
 
 	/** The delta (radians) of pitch requested via all inputs. This value is calculated when Update is called.*/
-	float m_lastPitchDelta { 0.0f };
+	float m_lastPitchDelta {0.0f};
 
 	/** The delta (radians) of yaw requested via all inputs.  This value is calculated when Update is called.*/
-	float m_lastYawDelta { 0.0f };
+	float m_lastYawDelta {0.0f};
 
 	/** The delta (radians) of pitch requested using a mouse input.*/
-	float m_mousePitchDelta { 0.0f };
-	float m_lastMousePitchDelta { 0.0f };
+	float m_mousePitchDelta {0.0f};
+	float m_lastMousePitchDelta {0.0f};
 
 	/** The delta (radians) of yaw requested using a mouse input. */
-	float m_mouseYawDelta { 0.0f };
-	float m_lastMouseYawDelta { 0.0f };
+	float m_mouseYawDelta {0.0f};
+	float m_lastMouseYawDelta {0.0f};
 
 	/**
 	This tracks the delta pitch (radians) from the XBox controller, if one is present.
 	*/
-	float m_xiPitchDelta { 0.0f };
-	float m_lastXiPitchDelta { 0.0f };
+	float m_xiPitchDelta {0.0f};
+	float m_lastXiPitchDelta {0.0f};
 
 	/**
 	This tracks the delta yaw (radians) from the XBox controller, if one is present.
 	*/
-	float m_xiYawDelta { 0.0f };
-	float m_lastXiYawDelta { 0.0f };
+	float m_xiYawDelta {0.0f};
+	float m_lastXiYawDelta {0.0f};
 
 	/**
 	Filter pitch adjustments below this threshold (radians). This is useful for removing slight amounts of jitter on
 	mouse movements and XBox controllers, making it easier to perform precise movements in only one axis.
 	*/
-	float m_pitchFilter { 0.0001f };
+	float m_pitchFilter {0.0001f};
 
 	/**
 	Filter yaw adjustments below this threshold (radians). This is useful for removing slight amounts of jitter on
 	mouse movements and XBox controllers, making it easier to perform precise movements in only one axis.
 	*/
-	float m_yawFilter { 0.0001f };
+	float m_yawFilter {0.0001f};
 
 	/**
 	Filter pitch adjustments below this threshold (radians). This is useful for removing slight amounts of jitter on
 	mouse movements and XBox controllers, making it easier to perform precise movements in only one axis.
 	*/
-	float m_xiPitchFilter { 0.0001f };
+	float m_xiPitchFilter {0.0001f};
 
 	/**
 	Filter yaw adjustments below this threshold (radians). This is useful for removing slight amounts of jitter on
 	mouse movements and XBox controllers, making it easier to perform precise movements in only one axis.
 	*/
-	float m_xiYawFilter { 0.0001f };
+	float m_xiYawFilter {0.0001f};
 
-	/** Listens for special keystrokes. */
-	//TListener<IInputSpecialListener*> m_listenersSpecial;
+	/** Listeners for animation events. */
+	std::list<IInputEventListener*> m_listeners;
 };
 }

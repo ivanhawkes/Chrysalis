@@ -91,7 +91,7 @@ void CDRSInteractionComponent::OnInteractionDRS()
 		pContextVariableCollection->CreateVariable("Verb", CHashedString(m_drsResponse.c_str()));
 
 		// Add each key, value to the DRS variable collection.
-		//for (auto it : m_drsProperties)
+		//for (auto& it : m_drsProperties)
 		//{
 		//	pContextVariableCollection->CreateVariable(CHashedString(it.key.c_str()), CHashedString(it.value.c_str()));
 		//}
@@ -102,15 +102,15 @@ void CDRSInteractionComponent::OnInteractionDRS()
 }
 
 
-bool Serialize(Serialization::IArchive& archive, CDRSInteractionComponent::SDRSProperties& value, const char* szName, const char* szLabel)
+bool Serialize(Serialization::IArchive& ar, CDRSInteractionComponent::SDRSProperties& value, const char* szName, const char* szLabel)
 {
-	archive(value.key, "key", "Key");
-	archive.doc("Key");
+	ar(value.key, "key", "Key");
+	ar.doc("Key");
 
 	// HACK: This is broken if there is more than one member added. I don't expect a working collection type until 5.5 or 5.6.
 	// Consider this broken until then and *don't use this collection to store values*.
-	//archive(value.value, "value", "Value");
-	//archive.doc("Value");
+	//ar(value.value, "value", "Value");
+	//ar.doc("Value");
 
 	return true;
 }

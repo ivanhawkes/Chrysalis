@@ -1,0 +1,8 @@
+<MannequinPreview>
+ <controllerDef filename="dark-vale/objects/interaction/generic/dongle/controller_defs.xml"/>
+ <contexts>
+  <contextData name="SlaveCharacter" database="dark-vale/objects/interaction/generic/dongle/dongle.adb" controllerDef="dark-vale/objects/interaction/generic/dongle/controller_defs.xml" slaveDatabase="dark-vale/objects/interaction/generic/dongle/dongle.adb" context="SlaveCharacter" fragtags="ScopeSlave" model="dark-vale/objects/interaction/generic/dongle/dongle.cdf"/>
+  <contextData name="SlaveObject" database="dark-vale/objects/interaction/generic/dongle/dongle.adb" controllerDef="dark-vale/objects/interaction/generic/dongle/controller_defs.xml" slaveDatabase="dark-vale/objects/interaction/generic/dongle/dongle.adb" context="SlaveObject" fragtags="ScopeSlave" model="dark-vale/objects/interaction/generic/dongle/dongle.cdf" startPosition="0,2,0"/>
+ </contexts>
+ <History StartTime="-4.3160208e+008" EndTime="-4.3160208e+008"/>
+</MannequinPreview>

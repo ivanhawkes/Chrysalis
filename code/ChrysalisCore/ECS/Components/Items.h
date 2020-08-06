@@ -1,54 +1,29 @@
 #pragma once
 
-#include "Components.h"
+#include <ECS/Components/Components.h>
 
 
 namespace Chrysalis::ECS
 {
-struct ItemClass : public IComponent
+struct ItemClass
 {
-	inline bool operator==(const ItemClass& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
+	ItemClass() = default;
+	virtual ~ItemClass() = default;
 
 
-	const CryGUID& GetGuid() const override final
+	void Serialize(Serialization::IArchive& ar)
 	{
-		static CryGUID guid = "{94DD7258-D128-4CAC-B1A5-EB1820A55751}"_cry_guid;
-
-		return guid;
-	}
-
-
-	virtual const entt::hashed_string& GetHashedName() const
-	{
-		static constexpr entt::hashed_string nameHS {"item-class"_hs};
-
-		return nameHS;
-	}
-
-
-	static void ReflectType(Schematyc::CTypeDesc<ItemClass>& desc)
-	{
-		desc.SetGUID(ItemClass().GetGuid());
-		desc.SetLabel("Item Class");
-		desc.SetDescription("");
-	}
-
-
-	bool Serialize(Serialization::IArchive& archive) override final
-	{
-		archive(maxStackSize, "maxStackSize", "maxStackSize");
-		archive(animationTag, "animationTag", "animationTag");
-		archive(isUniqueInventory, "isUniqueInventory", "isUniqueInventory");
-		archive(isUniqueEquipment, "isUniqueEquipment", "isUniqueEquipment");
-		archive(isDroppable, "isDroppable", "isDroppable");
-		archive(isAutoDroppable, "isAutoDroppable", "isAutoDroppable");
-		archive(isPickable, "isPickable", "isPickable");
-		archive(isAutoPickable, "isAutoPickable", "isAutoPickable");
-		archive(isUsable, "isUsable", "isUsable");
-		archive(isTradable, "isTradable", "isTradable");
-		archive(isConsumable, "isConsumable", "isConsumable");
-
-		return true;
+		ar(maxStackSize, "maxStackSize", "maxStackSize");
+		ar(animationTag, "animationTag", "animationTag");
+		ar(isUniqueInventory, "isUniqueInventory", "isUniqueInventory");
+		ar(isUniqueEquipment, "isUniqueEquipment", "isUniqueEquipment");
+		ar(isDroppable, "isDroppable", "isDroppable");
+		ar(isAutoDroppable, "isAutoDroppable", "isAutoDroppable");
+		ar(isPickable, "isPickable", "isPickable");
+		ar(isAutoPickable, "isAutoPickable", "isAutoPickable");
+		ar(isUsable, "isUsable", "isUsable");
+		ar(isTradable, "isTradable", "isTradable");
+		ar(isConsumable, "isConsumable", "isConsumable");
 	}
 
 

@@ -56,6 +56,7 @@ public:
 		eDB_RayCast = BIT(3),
 		eDB_InFront = BIT(4),
 		eDB_DotFiltered = BIT(5),
+		eDB_DotFilteredCleanup = BIT(6),
 	};
 
 

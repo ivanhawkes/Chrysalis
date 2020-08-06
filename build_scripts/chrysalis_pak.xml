@@ -5,7 +5,7 @@
 	 client_root - defines the output folder for PAK files (required for NAnt build system)
 	 -->
 	<DefaultProperties
-		cry_root="D:\CRYENGINE5\CRYTEK\CRYENGINE_5.3"
+		cry_root="D:\CRYENGINE-SOURCE"
 		game_root="D:\CHRYSALIS"
 		assets="assets"
 		engine="engine"

@@ -1,0 +1,111 @@
+<CrySchematyc CryXmlVersion="2" version="105" guid="42bd279e-dc79-48f6-a421-5085fd8239dd" scope="">
+ <root elementType="Class" guid="b7854f32-2f07-44df-b54b-6de91ad81e28" name="slideable">
+  <userDocumentation author="ivanh" description=""/>
+  <extensions />
+  <children>
+   <element elementType="Constructor" guid="392b1570-1661-4240-a17c-0a880c18bcc2" name="ConstructionGraph">
+    <userDocumentation author="ivanh" description=""/>
+    <extensions>
+     <Graph>
+      <pos x="0" y="0"/>
+      <nodes>
+       <element key="cf7c6c54-0d61-499d-9a23-d69ca7c4490d" typeGUID="12bdfa06-ba95-4e48-bb2d-bb48a7080abc">
+        <value guid="cf7c6c54-0d61-499d-9a23-d69ca7c4490d">
+         <pos x="0" y="0"/>
+        </value>
+       </element>
+      </nodes>
+      <links />
+     </Graph>
+    </extensions>
+    <children />
+   </element>
+   <element elementType="SignalReceiver" guid="2bc32191-fe2f-4884-b281-a962f3488eba" name="SignalGraph" type="Universal" signalGUID="">
+    <userDocumentation author="ivanh" description=""/>
+    <extensions>
+     <Graph>
+      <pos x="0" y="0"/>
+      <nodes>
+       <element key="d1dadd5b-3e31-4106-a16e-8827b6839b68" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="d1dadd5b-3e31-4106-a16e-8827b6839b68" objectGUID="">
+         <pos x="0" y="200"/>
+         <signalId domain="Env" guid="b2561caa-0753-458b-a91f-e8e38b0f0cdf"/>
+        </value>
+       </element>
+       <element key="702ccf3c-2ff3-446b-8a9e-37be8bb032ab" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="702ccf3c-2ff3-446b-8a9e-37be8bb032ab" objectGUID="5e2c7e20-c052-4e41-ac1e-77ecddeff8ee">
+         <pos x="-2" y="482"/>
+         <signalId domain="Env" guid="eacdd32d-ad66-4380-bac3-c65e9bae2bb4"/>
+        </value>
+       </element>
+       <element key="3682d8ad-6fe9-4716-892b-f2eeff5c4e5d" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="3682d8ad-6fe9-4716-892b-f2eeff5c4e5d" objectGUID="5e2c7e20-c052-4e41-ac1e-77ecddeff8ee">
+         <pos x="-12" y="381"/>
+         <signalId domain="Env" guid="3878f386-4a29-4a90-8437-030cbe59b82b"/>
+        </value>
+       </element>
+       <element key="ba19af30-1f50-48f8-a3f3-379b5d637752" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="ba19af30-1f50-48f8-a3f3-379b5d637752" objectGUID="">
+         <pos x="0" y="0"/>
+         <signalId domain="Env" guid="a9279137-7c66-491d-b9a0-8752c24c8979"/>
+        </value>
+       </element>
+       <element key="c10d207c-5591-4aa4-8d27-e0373592f2c5" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="c10d207c-5591-4aa4-8d27-e0373592f2c5" objectGUID="">
+         <pos x="0" y="100"/>
+         <signalId domain="Env" guid="52ad5add-7781-429b-b4a9-0cb6c905e353"/>
+        </value>
+       </element>
+       <element key="a7a3708b-5bf6-4c65-83da-0ec161fe3c17" typeGUID="ad2aee64-0a60-4469-8ec7-38b4b720d30c">
+        <value guid="a7a3708b-5bf6-4c65-83da-0ec161fe3c17" objectGUID="5e2c7e20-c052-4e41-ac1e-77ecddeff8ee">
+         <pos x="-3" y="301"/>
+         <signalId domain="Env" guid="be365365-3dda-43c7-ae43-28e9bca0aa47"/>
+        </value>
+       </element>
+      </nodes>
+      <links />
+     </Graph>
+    </extensions>
+    <children />
+   </element>
+   <element elementType="Base" guid="924fb3f2-045c-442f-8ebf-93c4c88c6e73" name="Base [Entity]">
+    <classId domain="Env" guid="be845278-0dd2-409f-b8be-97895607c256"/>
+    <envClassProperties icon="%EDITOR%/objecticons/schematyc.bmp" bHideInEditor="false" bTriggerAreas="true" bCreatePerClient="false"/>
+    <extensions />
+    <children>
+     <element elementType="ComponentInstance" guid="2666c012-1e58-4137-bc53-229f16e534fd" name="Entity" accessor="Private" typeGUID="e88093df-904f-4c52-af38-911e26777cdc">
+      <properties />
+      <extensions />
+      <children />
+     </element>
+    </children>
+   </element>
+   <element elementType="ComponentInstance" guid="73250031-77f7-40b5-a65e-fed93ce2d706" name="Rigidbody" accessor="Public" typeGUID="912c6ce8-56f7-4ffa-9134-f98d4e307bd6">
+    <properties Networked="false" EnabledByDefault="true" Resting="false" Type="Rigid" SendCollisionSignal="false">
+     <Buoyancy Damping="0" Density="1000" Resistance="1000"/>
+     <Simulation MaxTimeStep="0.02" SleepSpeed="0.039999999" Damping="0"/>
+    </properties>
+    <extensions />
+    <children />
+   </element>
+   <element elementType="ComponentInstance" guid="e45e1f25-59e8-4d07-b838-9b18360ec0dd" name="Spellbook" accessor="Public" typeGUID="654a1648-663e-414b-97c1-0a7b12d3072f">
+    <properties>
+     <SpellCollection>
+      <spells>
+       <element spellName="Open" isHidden="false" enabled="true"/>
+      </spells>
+     </SpellCollection>
+    </properties>
+    <extensions />
+    <children />
+   </element>
+   <element elementType="ComponentInstance" guid="5e2c7e20-c052-4e41-ac1e-77ecddeff8ee" name="Slideable" accessor="Public" typeGUID="64633992-4907-40da-9467-71791f14d8a9">
+    <properties>
+     <SliderProperties />
+    </properties>
+    <extensions />
+    <children />
+   </element>
+  </children>
+ </root>
+</CrySchematyc>

@@ -95,7 +95,7 @@
      </scale>
     </transform>
     <properties Type="RenderAndCollider" FilePath="%engine%/EngineAssets/Objects/Default.cgf" Material="">
-     <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
+     <Render ShadowSpec="Low" IgnoreVisArea="false" IgnoreTerrainLayerBlend="false" IgnoreDecalBlend="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
      <Physics WeightType="EWeightType::Mass" Density="0" Mass="10"/>
     </properties>
     <extensions />
@@ -104,6 +104,7 @@
    <element elementType="ComponentInstance" guid="3e44cfc0-a2e9-46a1-bc16-f84794329976" name="Rigidbody" accessor="Public" typeGUID="912c6ce8-56f7-4ffa-9134-f98d4e307bd6">
     <properties Networked="false" EnabledByDefault="true" Resting="false" Type="Rigid" SendCollisionSignal="false">
      <Buoyancy Damping="1" Density="1" Resistance="1"/>
+     <Simulation MaxTimeStep="0.02" SleepSpeed="0.039999999" Damping="0"/>
     </properties>
     <extensions />
     <children />

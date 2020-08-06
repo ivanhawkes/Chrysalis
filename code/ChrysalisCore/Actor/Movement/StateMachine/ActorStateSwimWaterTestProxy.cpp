@@ -1,7 +1,7 @@
 #include <StdAfx.h>
 
 #include "ActorStateSwimWaterTestProxy.h"
-#include <Actor/ActorControllerComponent.h>
+#include <Components/Actor/ActorControllerComponent.h>
 #include <CryAction.h>
 #include <CryActionPhysicQueues.h>
 

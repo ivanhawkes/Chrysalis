@@ -1,11 +1,13 @@
 #pragma once
 
-#include "Components.h"
+#include <ECS/Components/Components.h>
+#include <ECS/Components/Spells/Spell.h>
+#include <ECS/Components/Components.h>
 
 
 namespace Chrysalis::ECS
 {
-struct Qi : public IComponent
+struct Qi
 {
 	Qi() = default;
 	virtual ~Qi() = default;
@@ -19,43 +21,33 @@ struct Qi : public IComponent
 	inline bool operator==(const Qi& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
 
 
-	const CryGUID& GetGuid() const override final
-	{
-		static CryGUID guid = "{A5F65B14-983A-4BAA-BD59-381AFCEE6D76}"_cry_guid;
-
-		return guid;
-	}
-
-
-	virtual const entt::hashed_string& GetHashedName() const
-	{
-		static constexpr entt::hashed_string nameHS {"qi"_hs};
-
-		return nameHS;
-	}
-
-
 	static void ReflectType(Schematyc::CTypeDesc<Qi>& desc)
 	{
-		desc.SetGUID(Qi().GetGuid());
+		desc.SetGUID("{6C1E5EE5-B467-48BF-843E-5A8D54B51F52}"_cry_guid);
 		desc.SetLabel("Qi");
-		desc.SetDescription("Qi");
+		desc.SetDescription("Qi of an actor.");
 	}
 
 
-	bool Serialize(Serialization::IArchive& archive) override final
+	void Serialize(Serialization::IArchive& ar)
 	{
-		archive(qi, "qi", "qi");
-
-		return true;
+		ar(qi, "qi", "qi");
+		ar(timeSinceLastSpellcast, "timeSinceLastSpellcast", "Time since they last cast a spell.");
+		ar(qiRegenerationPerSecond, "qiRegenerationPerSecond", "Qi regeneration per second.");
 	}
 
 	/** Qi attribute. */
 	AttributeType<float> qi;
+
+	/** Time delta since the last spell cast. */
+	float timeSinceLastSpellcast {0.0f};
+
+	/** Qi regeneration per second. */
+	float qiRegenerationPerSecond {0.02f};
 };
 
 
-struct UtiliseQi : public IComponent
+struct UtiliseQi
 {
 	UtiliseQi() = default;
 	virtual ~UtiliseQi() = default;
@@ -65,46 +57,22 @@ struct UtiliseQi : public IComponent
 	{
 	}
 
-	inline bool operator==(const UtiliseQi& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
 
-
-	const CryGUID& GetGuid() const override final
+	void Serialize(Serialization::IArchive& ar)
 	{
-		static CryGUID guid = "{80E8F5BA-4765-4B81-BBF1-3ACAA6D6F596}"_cry_guid;
-
-		return guid;
+		ar(targetTargetType, "targetTargetType", "targetTargetType");
+		ar(quantity, "quantity", "quantity");
 	}
 
-
-	virtual const entt::hashed_string& GetHashedName() const
-	{
-		static constexpr entt::hashed_string nameHS {"utilise-qi"_hs};
-
-		return nameHS;
-	}
-
-
-	static void ReflectType(Schematyc::CTypeDesc<UtiliseQi>& desc)
-	{
-		desc.SetGUID(UtiliseQi().GetGuid());
-		desc.SetLabel("UtiliseQi");
-		desc.SetDescription("UtiliseQi");
-	}
-
-
-	bool Serialize(Serialization::IArchive& archive) override final
-	{
-		archive(quantity, "quantity", "quantity");
-
-		return true;
-	}
+	/** Use the spell's target or source for this component's target. */
+	TargetTargetType targetTargetType {TargetTargetType::target};
 
 	/** Modify an attribute by this amount. */
-	float quantity;
+	float quantity {0.0f};
 };
 
 
-struct UtiliseQiOverTime : public IComponent
+struct UtiliseQiOverTime
 {
 	UtiliseQiOverTime() = default;
 	virtual ~UtiliseQiOverTime() = default;
@@ -115,44 +83,20 @@ struct UtiliseQiOverTime : public IComponent
 	{
 	}
 
-	inline bool operator==(const UtiliseQiOverTime& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
 
-
-	const CryGUID& GetGuid() const override final
+	void Serialize(Serialization::IArchive& ar)
 	{
-		static CryGUID guid = "{0764C388-CE73-406B-9B49-6616D661129F}"_cry_guid;
-
-		return guid;
+		ar(targetTargetType, "targetTargetType", "targetTargetType");
+		ar(quantity, "quantity", "quantity");
+		ar(duration, "duration", "duration");
+		ar(interval, "interval", "interval");
 	}
 
-
-	virtual const entt::hashed_string& GetHashedName() const
-	{
-		static constexpr entt::hashed_string nameHS {"utilise-qi-over-time"_hs};
-
-		return nameHS;
-	}
-
-
-	static void ReflectType(Schematyc::CTypeDesc<UtiliseQiOverTime>& desc)
-	{
-		desc.SetGUID(UtiliseQiOverTime().GetGuid());
-		desc.SetLabel("UtiliseQiOverTime");
-		desc.SetDescription("UtiliseQiOverTime");
-	}
-
-
-	bool Serialize(Serialization::IArchive& archive) override final
-	{
-		archive(quantity, "quantity", "quantity");
-		archive(duration, "duration", "duration");
-		archive(interval, "interval", "interval");
-
-		return true;
-	}
+	/** Use the spell's target or source for this component's target. */
+	TargetTargetType targetTargetType {TargetTargetType::target};
 
 	/** Modify an attribute by this amount. */
-	float quantity;
+	float quantity {0.0f};
 
 	/** Limit the duration for this modifier. Given as remaining time in seconds. */
 	float duration {10.0f};
@@ -168,7 +112,7 @@ struct UtiliseQiOverTime : public IComponent
 };
 
 
-struct ReplenishQi : public IComponent
+struct ReplenishQi
 {
 	ReplenishQi() = default;
 	virtual ~ReplenishQi() = default;
@@ -178,46 +122,22 @@ struct ReplenishQi : public IComponent
 	{
 	}
 
-	inline bool operator==(const ReplenishQi& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
 
-
-	const CryGUID& GetGuid() const override final
+	void Serialize(Serialization::IArchive& ar)
 	{
-		static CryGUID guid = "{BA94E0D1-890C-421E-995F-0B548818EDDA}"_cry_guid;
-
-		return guid;
+		ar(targetTargetType, "targetTargetType", "targetTargetType");
+		ar(quantity, "quantity", "quantity");
 	}
 
-
-	virtual const entt::hashed_string& GetHashedName() const
-	{
-		static constexpr entt::hashed_string nameHS {"replenish-qi"_hs};
-
-		return nameHS;
-	}
-
-
-	static void ReflectType(Schematyc::CTypeDesc<ReplenishQi>& desc)
-	{
-		desc.SetGUID(ReplenishQi().GetGuid());
-		desc.SetLabel("ReplenishQi");
-		desc.SetDescription("ReplenishQi");
-	}
-
-
-	bool Serialize(Serialization::IArchive& archive) override final
-	{
-		archive(quantity, "quantity", "quantity");
-
-		return true;
-	}
+	/** Use the spell's target or source for this component's target. */
+	TargetTargetType targetTargetType {TargetTargetType::target};
 
 	/** Modify an attribute by this amount. */
-	float quantity;
+	float quantity {0.0f};
 };
 
 
-struct ReplenishQiOverTime : public IComponent
+struct ReplenishQiOverTime
 {
 	ReplenishQiOverTime() = default;
 	virtual ~ReplenishQiOverTime() = default;
@@ -228,44 +148,20 @@ struct ReplenishQiOverTime : public IComponent
 	{
 	}
 
-	inline bool operator==(const ReplenishQiOverTime& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
 
-
-	const CryGUID& GetGuid() const override final
+	void Serialize(Serialization::IArchive& ar)
 	{
-		static CryGUID guid = "{4F1E267E-EEB3-4243-B36D-DE5CF1E25B9E}"_cry_guid;
-
-		return guid;
+		ar(targetTargetType, "targetTargetType", "targetTargetType");
+		ar(quantity, "quantity", "quantity");
+		ar(duration, "duration", "duration");
+		ar(interval, "interval", "interval");
 	}
 
-
-	virtual const entt::hashed_string& GetHashedName() const
-	{
-		static constexpr entt::hashed_string nameHS {"replenish-qi-over-time"_hs};
-
-		return nameHS;
-	}
-
-
-	static void ReflectType(Schematyc::CTypeDesc<ReplenishQiOverTime>& desc)
-	{
-		desc.SetGUID(ReplenishQiOverTime().GetGuid());
-		desc.SetLabel("ReplenishQiOverTime");
-		desc.SetDescription("ReplenishQiOverTime");
-	}
-
-
-	bool Serialize(Serialization::IArchive& archive) override final
-	{
-		archive(quantity, "quantity", "quantity");
-		archive(duration, "duration", "duration");
-		archive(interval, "interval", "interval");
-
-		return true;
-	}
+	/** Use the spell's target or source for this component's target. */
+	TargetTargetType targetTargetType {TargetTargetType::target};
 
 	/** Modify an attribute by this amount. */
-	float quantity;
+	float quantity {0.0f};
 
 	/** Limit the duration for this modifier. Given as remaining time in seconds. */
 	float duration {10.0f};

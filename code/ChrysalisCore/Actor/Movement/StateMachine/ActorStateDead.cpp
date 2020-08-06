@@ -1,7 +1,7 @@
 #include <StdAfx.h>
 
 #include "ActorStateDead.h"
-#include <Actor/ActorControllerComponent.h>
+#include <Components/Actor/ActorControllerComponent.h>
 /*#include "HitDeathReactions.h"
 #include "GameRules.h"
 #include "GameCodeCoverage/GameCodeCoverageTracker.h"

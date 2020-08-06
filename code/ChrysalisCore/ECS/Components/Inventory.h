@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Components.h"
+#include <ECS/Components/Components.h>
 
 
 namespace Chrysalis::ECS

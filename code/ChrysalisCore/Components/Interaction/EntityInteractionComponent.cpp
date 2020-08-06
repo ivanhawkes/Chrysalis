@@ -50,15 +50,15 @@ void CEntityInteractionComponent::Initialize()
 
 void CEntityInteractionComponent::AddInteraction(IInteractionPtr interaction)
 {
-	m_Interactions.push_back(interaction);
+	m_interactionQueue.push_back(interaction);
 }
 
 
 void CEntityInteractionComponent::RemoveInteraction(string verb)
 {
-	m_Interactions.erase(std::remove_if(m_Interactions.begin(), m_Interactions.end(),
+	m_interactionQueue.erase(std::remove_if(m_interactionQueue.begin(), m_interactionQueue.end(),
 		[&](IInteractionPtr i) { return i->GetVerb().compare(verb) == 0; }),
-		m_Interactions.end());
+		m_interactionQueue.end());
 }
 
 
@@ -66,7 +66,7 @@ std::vector<string> CEntityInteractionComponent::GetVerbs(bool includeHidden)
 {
 	std::vector<string> verbs;
 
-	for (auto& it : m_Interactions)
+	for (auto& it : m_interactionQueue)
 	{
 		if (it->IsEnabled())
 		{
@@ -83,7 +83,7 @@ std::vector<string> CEntityInteractionComponent::GetVerbs(bool includeHidden)
 
 IInteractionWeakPtr CEntityInteractionComponent::GetInteraction(string verb)
 {
-	for (auto& it : m_Interactions)
+	for (auto& it : m_interactionQueue)
 	{
 		if ((it->GetVerb().compare(verb) == 0) && (it->IsEnabled()))
 		{
@@ -91,7 +91,7 @@ IInteractionWeakPtr CEntityInteractionComponent::GetInteraction(string verb)
 		}
 	}
 
-	CryLogAlways("There's no interaction verb for %s", verb);
+	CryLogAlways("There's no interaction verb for %s", verb.c_str());
 
 	return std::weak_ptr<IInteraction>();
 }
@@ -99,7 +99,7 @@ IInteractionWeakPtr CEntityInteractionComponent::GetInteraction(string verb)
 
 IInteractionWeakPtr CEntityInteractionComponent::SelectInteractionVerb(string verb)
 {
-	for (auto& it : m_Interactions)
+	for (auto& it : m_interactionQueue)
 	{
 		if ((it->GetVerb().compare(verb) == 0) && (it->IsEnabled()))
 		{

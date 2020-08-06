@@ -7,7 +7,6 @@
 #include <Components/Interaction/EntityInteractionComponent.h>
 #include "Components/Player/PlayerComponent.h"
 #include <Components/Player/Input/PlayerInputComponent.h>
-#include <Actor/Character/CharacterComponent.h>
 
 
 namespace Chrysalis

@@ -1,141 +1,13 @@
 #pragma once
 
 #include <entt/entt.hpp>
+#include <CryExtension/CryGUID.h>
 
-/** Thinking about making this a single include header for convenience.
-*/
+
+/** Thinking about making this a single include header for convenience. */
 
 namespace Chrysalis::ECS
 {
-
-enum class DamageType
-{
-	acid,
-	bleed,
-	qi,
-	cold,
-	collision,
-	crush,
-	decay,
-	disease,
-	electricity,
-	energy,
-	entropy,
-	explosion,
-	fire,
-	holy,
-	ice,
-	nature,
-	pierce,
-	plasma,
-	poison,
-	radiation,
-	slash,
-	tear,
-	unholy
-};
-
-
-enum class TargetType
-{
-	none,
-
-	self,
-	singleTarget,
-	cone,
-	column,
-	chain,
-	sourceBasedAOE,
-	targetBasedAOE,
-	groundTargettedAOE,
-};
-
-
-enum class CrowdControlType
-{
-	none,
-
-	blind,						// Loss of sight, movement and rotation restricted, ambling around.
-	disarmed,					// Primary weapon disabled.
-	forcedActionCharm,			// Movement and rotation restricted.
-	forcedActionEntangled,		// Movement and rotation restricted.
-	forcedActionFear,			// Movement and rotation restricted, ambling around quaking in fear.
-	forcedActionFlee,			// Lose of movement control. Running around wildly.
-	forcedActionMindControl,	// Under the control of another entity.
-	forcedActionPulled,			// Pulled towards something with force.
-	forcedActionTaunt,			// Attacks are forced to be directed towards a specific entity.
-	forcedActionThrow,			// Thrown onto the ground. Fairly quick recovery.
-	knockback,					// Physically knocked back a step or two.
-	knockbackAOE,				// Physically knocked back a step or two.
-	knockdown,					// Physically knocked back a step or two and onto your arse.
-	knockdownAOE,				// Physically knocked back a step or two and onto your arse.
-	polymorph,					// Turned into a harmless critter.
-	silence,					// Restricts use of spells, shouts and other vocal abilities.
-	slow,						// Movement slowed.
-	snare,						// Movement and rotation restricted. Held in place with leg trapped in a snare.
-	stun,						// Movement and rotation restricted. Birds twitter about your head.
-};
-
-
-enum class BuffType
-{
-	none,
-
-	// Resistances.
-	acidResistance,
-	bleedResistance,
-	chiResistance,
-	coldResistance,
-	crushResistance,
-	decayResistance,
-	diseaseResistance,
-	electricityResistance,
-	energyResistance,
-	entropyResistance,
-	explosionResistance,
-	fireResistance,
-	holyResistance,
-	iceResistance,
-	natureResistance,
-	pierceResistance,
-	plasmaResistance,
-	poisonResistance,
-	radiationResistance,
-	slashResistance,
-	unholyResistance,
-
-	// General buffs.
-	//bleed, // Debuff - or could be more generic...mmm...not sure.
-	//haste, // buff only or negative values for debuffs
-	//disarmed, // stateful debuff
-};
-
-
-struct IComponent
-{
-	IComponent() = default;
-	virtual ~IComponent() = default;
-
-	// This should be pure virtual but the ECS needs to be able to instantiate the struct, so...here's nothing.
-	virtual bool Serialize(Serialization::IArchive& archive) { return true; };
-
-	virtual const CryGUID& GetGuid() const
-	{
-		static CryGUID guid = "{DEADDEAD-DEAD-DEAD-DEAD-DEADDEADDEAD}"_cry_guid;
-
-		return guid;
-	}
-
-
-	virtual const entt::hashed_string& GetHashedName() const
-	{
-		static constexpr entt::hashed_string nameHS {"icomponent"_hs};
-
-		return nameHS;
-	}
-};
-
-
 template<typename TYPE>
 struct AttributeType
 {
@@ -148,13 +20,11 @@ struct AttributeType
 	}
 
 
-	bool Serialize(Serialization::IArchive& archive)
+	void Serialize(Serialization::IArchive& ar)
 	{
-		archive(base, "base", "base");
-		archive(baseModifiers, "baseModifiers", "baseModifiers");
-		archive(modifiers, "modifiers", "modifiers");
-
-		return true;
+		ar(base, "base", "base");
+		ar(baseModifiers, "baseModifiers", "baseModifiers");
+		ar(modifiers, "modifiers", "modifiers");
 	}
 
 	/** Returns the current value for base, after it's modifiers have been applied. */
@@ -171,18 +41,67 @@ struct AttributeType
 	}
 
 	/** Represents the attribute without any modifiers applied to it. */
-	TYPE base;
+	TYPE base {100.0f};
 
-	/** This modifier makes changes to the base value, instead of the frame value. Typical use would be for a health / strength 
+	/** This modifier makes changes to the base value, instead of the frame value. Typical use would be for a health / strength
 	buff that increases the base value of the attribute. */
-	TYPE baseModifiers;
+	TYPE baseModifiers {0};
 
 	/** Modifiers for this frame. Should be calculated each frame prior to calculating the current value. */
-	TYPE modifiers;
+	TYPE modifiers {0};
 };
 
 
-struct Name : public IComponent
+template<entt::id_type label, entt::id_type description>
+struct FlagComponent
+{
+	void Serialize(Serialization::IArchive& ar) {  }
+
+private:
+	// Adding this member prevents EnTT from optomising this component out when saving and loading.
+	// TODO: Find out how to make these take no space but avoid being skipped by EnTT.
+	int wastedSpace {0};
+};
+
+
+template<entt::id_type label, entt::id_type description, uint64_t guidHi, uint64_t guidLo>
+struct FlagComponentWithGUID
+{
+	inline bool operator==(const FlagComponentWithGUID& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
+
+
+	static void ReflectType(Schematyc::CTypeDesc<FlagComponentWithGUID>& desc)
+	{
+		// Make a GUID from a hi, lo combination of 64 bit values.
+		desc.SetGUID(CryGUID {guidHi, guidLo});
+		
+		// TODO: They really need a label and description, but we're limited to passing in just integral types...
+		//desc.SetLabel(label);
+		//desc.SetDescription(description);
+	}
+
+
+	static const CryGUID GetGUID()
+	{
+		return CryGUID {guidHi, guidLo};
+	}
+
+
+	void Serialize(Serialization::IArchive& ar) { }
+
+private:
+	// Adding this member prevents EnTT from optomising this component out when saving and loading.
+	// TODO: Find out how to make these take no space but avoid being skipped by EnTT.
+	int wastedSpace {0};
+};
+
+
+using SaltComponent = FlagComponentWithGUID<"Salt"_hs, "Salt is life"_hs, 0xC0DFF277A5744EB2, 0x980B7E89C069A0A2>;
+using PepperComponent = FlagComponentWithGUID<"Pepper"_hs, "Pepper is hot"_hs, 0x0E783D91BDC64AA2, 0x9CE3D3444A688ABA>;
+using MintComponent = FlagComponentWithGUID<"Mint"_hs, "Mint"_hs, 0xD307661203044FC8, 0xBD4E01DF7411FC6E>;
+
+
+struct Name
 {
 	Name() = default;
 	virtual ~Name() = default;
@@ -191,44 +110,15 @@ struct Name : public IComponent
 		name(name), displayName(displayName)
 	{
 	}
-	
-
-	inline bool operator==(const Name& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
 
 
-	const CryGUID& GetGuid() const override final
+	void Serialize(Serialization::IArchive& ar)
 	{
-		static CryGUID guid = "{8BEB64DA-F589-4671-96E9-D136A5E5DED7}"_cry_guid;
-
-		return guid;
+		ar(name, "name", "The name of this entity. It should be unique.");
+		ar(displayName, "displayName", "The display name for this entity.");
 	}
 
-
-	virtual const entt::hashed_string& GetHashedName() const
-	{
-		static constexpr entt::hashed_string nameHS {"name"_hs};
-
-		return nameHS;
-	}
-
-
-	static void ReflectType(Schematyc::CTypeDesc<Name>& desc)
-	{
-		desc.SetGUID(Name().GetGuid());
-		desc.SetLabel("Name");
-		desc.SetDescription("Name");
-	}
-
-
-	bool Serialize(Serialization::IArchive& archive) override final
-	{
-		archive(name, "name", "name");
-		archive(displayName, "displayName", "displayName");
-
-		return true;
-	}
-
-	/** A unique name for this particular item class. */
+	/** A unique name. */
 	string name;
 
 	/** A name which can be used in the UI. */
@@ -236,53 +126,64 @@ struct Name : public IComponent
 };
 
 
-struct SourceAndTarget : public IComponent
+/**	A way of marking an entity and saying that is it based on the components of a different entity. The prototype entity
+	needs to have a matching name and must exist in a registry of the designer's choice.
+
+*/
+
+struct Prototype
+{
+	Prototype() = default;
+	virtual ~Prototype() = default;
+
+	Prototype(entt::entity prototypeEntityId) :
+		prototypeEntityId(prototypeEntityId)
+	{
+	}
+
+
+	void Serialize(Serialization::IArchive& ar)
+	{
+		ar(prototypeEntityId, "prototypeEntityId", "Entity Id for the prototype this entity uses as it's base.");
+	}
+
+	/** Unique Id for the prototye of this entiity. */
+	entt::entity prototypeEntityId {entt::null};
+};
+
+
+struct SourceAndTarget
 {
 	SourceAndTarget() = default;
 	virtual ~SourceAndTarget() = default;
 
-	SourceAndTarget(entt::entity sourceEntity, entt::entity targetEntity) :
-		sourceEntity(sourceEntity), targetEntity(targetEntity)
+	SourceAndTarget(entt::entity sourceEntity, entt::entity targetEntity,
+		EntityId crySourceEntityId, EntityId cryTargetEntityId) :
+		sourceEntity(sourceEntity), targetEntity(targetEntity), crySourceEntityId(crySourceEntityId), cryTargetEntityId(cryTargetEntityId)
 	{
 	}
 
-	inline bool operator==(const SourceAndTarget& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
-
-
-	const CryGUID& GetGuid() const override final
+	void Serialize(Serialization::IArchive& ar)
 	{
-		static CryGUID guid = "{CCE7B371-EF45-413F-B726-557A2EC427E5}"_cry_guid;
-
-		return guid;
+		// This is really meant to be an ephemeral structure, so it shouldn't need to serialise, but I
+		// am adding one just in case.
+		ar(sourceEntity, "sourceEntity", "Source Entity");
+		ar(targetEntity, "targetEntity", "Target Entity");
+		ar(crySourceEntityId, "crySourceEntityId", "Cry Source Entity ID");
+		ar(cryTargetEntityId, "cryTargetEntityId", "Cry Target Entity ID");
 	}
 
+	/** The source entity (EnTT). */
+	entt::entity sourceEntity {entt::null};
 
-	virtual const entt::hashed_string& GetHashedName() const
-	{
-		static constexpr entt::hashed_string nameHS {"source-and-target"_hs};
+	/** The target entity (EnTT).*/
+	entt::entity targetEntity {entt::null};
 
-		return nameHS;
-	}
+	/** The source entity (CRYENGINE). */
+	EntityId crySourceEntityId {INVALID_ENTITYID};
 
-
-	static void ReflectType(Schematyc::CTypeDesc<SourceAndTarget>& desc)
-	{
-		desc.SetGUID(SourceAndTarget().GetGuid());
-		desc.SetLabel("SourceAndTarget");
-		desc.SetDescription("SourceAndTarget");
-	}
-
-
-	bool Serialize(Serialization::IArchive& archive) override final
-	{
-		return true;
-	}
-
-	/** The source of the heal. */
-	entt::entity sourceEntity;
-
-	/** The target that will receive the heal - require a Health component. */
-	entt::entity targetEntity;
+	/** The target entity (CRYENGINE). */
+	EntityId cryTargetEntityId {INVALID_ENTITYID};
 };
 
 
@@ -334,8 +235,22 @@ struct Key
 
 struct Ownership
 {
-	/**  */
-	int owner;
+	Ownership() = default;
+	virtual ~Ownership() = default;
+
+	Ownership(entt::entity ownerId) :
+		ownerId(ownerId)
+	{
+	}
+
+
+	void Serialize(Serialization::IArchive& ar)
+	{
+		ar(ownerId, "ownerId", "Entity Id for the prototype this entity uses as it's base.");
+	}
+
+	/** Unique Id for the prototye of this entiity. */
+	entt::entity ownerId {entt::null};;
 };
 
 

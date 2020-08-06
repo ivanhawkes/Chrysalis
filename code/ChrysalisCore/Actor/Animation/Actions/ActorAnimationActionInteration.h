@@ -2,7 +2,6 @@
 
 #include "ICryMannequin.h"
 #include <Actor/Animation/ActorAnimation.h>
-#include <Utility/Listener.h>
 
 
 namespace Chrysalis
@@ -28,12 +27,12 @@ public:
 
 	void AddEventListener(IAnimationEventListener* pListener)
 	{
-		stl::push_back_unique(m_listenersList, pListener);
+		stl::push_back_unique(m_listeners, pListener);
 	}
 
 	void RemoveEventListener(IAnimationEventListener* pListener)
 	{
-		m_listenersList.remove(pListener);
+		m_listeners.remove(pListener);
 	}
 
 	static bool IsSupported(const SAnimationContext& context);
@@ -41,12 +40,12 @@ public:
 private:
 	static FragmentID FindFragmentId(const SAnimationContext& context);
 
-	const struct SMannequinInteractionParams* m_interactionParams;
+	const struct SMannequinInteractionParams* m_interactionParams {nullptr};
 
 	// Tags for controlling the animation.
 	std::vector<string> m_tags;
 
 	/** Listeners for animation events. */
-	std::list<IAnimationEventListener*> m_listenersList;
+	std::list<IAnimationEventListener*> m_listeners;
 };
 }

@@ -47,7 +47,7 @@
         "name": "Chrysalis"
     },
     "require": {
-        "engine": "engine-5.6-github",
+        "engine": "engine-5.6",
         "plugins": [
             {
                 "guid": "",

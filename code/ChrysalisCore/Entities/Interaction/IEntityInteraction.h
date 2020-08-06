@@ -1,7 +1,5 @@
 #pragma once
 
-#include <CryCore/Platform/platform.h>
-
 
 namespace Chrysalis
 {
@@ -13,7 +11,7 @@ struct IInteraction
 {
 	/**
 	Called at the start of an interaction. Generally called on a downward keypress.
-	
+
 	\param [in,out]	actor The actor who triggered this interaction.
 	**/
 	virtual void OnInteractionStart(IActor& actor) {};
@@ -22,7 +20,7 @@ struct IInteraction
 	/**
 	Called each game frame an interaction is ongoing. This will be called multiple times, as long as the player is
 	holding down the interaction key / button.
-	
+
 	\param [in,out]	actor The actor who triggered this interaction.
 	**/
 	virtual void OnInteractionTick(IActor& actor) {};
@@ -30,7 +28,7 @@ struct IInteraction
 
 	/**
 	Called when an interaction is completed normally. Generally called on an upward keypress.
-	
+
 	\param [in,out]	actor The actor who triggered this interaction.
 	**/
 	virtual void OnInteractionComplete(IActor& actor) {};
@@ -45,8 +43,8 @@ struct IInteraction
 	void SetHidden(bool isHidden) { m_isHidden = isHidden; };
 
 protected:
-	bool m_isEnabled { true };
-	bool m_isHidden { false };
+	bool m_isEnabled {true};
+	bool m_isHidden {false};
 };
 DECLARE_SHARED_POINTERS(IInteraction);
 
@@ -80,7 +78,7 @@ public:
 	void OnInteractionComplete(IActor& actor) override { m_subject->OnInteractionInteractComplete(*this, actor); };
 
 private:
-	IInteractionInteract* m_subject { nullptr };
+	IInteractionInteract* m_subject {nullptr};
 };
 DECLARE_SHARED_POINTERS(CInteractionInteract);
 
@@ -111,7 +109,7 @@ public:
 	void OnInteractionStart(IActor& actor) override { m_subject->OnInteractionSwitchToggle(*this, actor); };
 
 private:
-	IInteractionSwitch* m_subject { nullptr };
+	IInteractionSwitch* m_subject {nullptr};
 };
 DECLARE_SHARED_POINTERS(CInteractionSwitchToggle);
 
@@ -130,7 +128,7 @@ public:
 	void OnInteractionStart(IActor& actor) override { m_subject->OnInteractionSwitchOn(*this, actor); };
 
 private:
-	IInteractionSwitch* m_subject { nullptr };
+	IInteractionSwitch* m_subject {nullptr};
 };
 DECLARE_SHARED_POINTERS(CInteractionSwitchOn);
 
@@ -149,7 +147,7 @@ public:
 	void OnInteractionStart(IActor& actor) override { m_subject->OnInteractionSwitchOff(*this, actor); };
 
 private:
-	IInteractionSwitch* m_subject { nullptr };
+	IInteractionSwitch* m_subject {nullptr};
 };
 DECLARE_SHARED_POINTERS(CInteractionSwitchOff);
 
@@ -180,7 +178,7 @@ public:
 	void OnInteractionStart(IActor& actor) override { m_subject->OnInteractionOpenableOpen(actor); };
 
 private:
-	IInteractionOpenable* m_subject { nullptr };
+	IInteractionOpenable* m_subject {nullptr};
 };
 DECLARE_SHARED_POINTERS(CInteractionOpenableOpen);
 
@@ -199,7 +197,7 @@ public:
 	void OnInteractionStart(IActor& actor) override { m_subject->OnInteractionOpenableClose(actor); };
 
 private:
-	IInteractionOpenable* m_subject { nullptr };
+	IInteractionOpenable* m_subject {nullptr};
 };
 DECLARE_SHARED_POINTERS(CInteractionOpenableClose);
 
@@ -230,7 +228,7 @@ public:
 	void OnInteractionStart(IActor& actor) override { m_subject->OnInteractionLockableLock(actor); };
 
 private:
-	IInteractionLockable* m_subject { nullptr };
+	IInteractionLockable* m_subject {nullptr};
 };
 DECLARE_SHARED_POINTERS(CInteractionLockableLock);
 
@@ -249,7 +247,7 @@ public:
 	void OnInteractionStart(IActor& actor) override { m_subject->OnInteractionLockableUnlock(actor); };
 
 private:
-	IInteractionLockable* m_subject { nullptr };
+	IInteractionLockable* m_subject {nullptr};
 };
 DECLARE_SHARED_POINTERS(CInteractionLockableUnlock);
 
@@ -282,7 +280,7 @@ public:
 	void OnInteractionStart(IActor& actor) override { m_subject->OnInteractionItemInspect(actor); };
 
 private:
-	IInteractionItem* m_subject { nullptr };
+	IInteractionItem* m_subject {nullptr};
 };
 DECLARE_SHARED_POINTERS(CInteractionItemInspect);
 
@@ -301,7 +299,7 @@ public:
 	void OnInteractionStart(IActor& actor) override { m_subject->OnInteractionItemPickup(actor); };
 
 private:
-	IInteractionItem* m_subject { nullptr };
+	IInteractionItem* m_subject {nullptr};
 };
 DECLARE_SHARED_POINTERS(CInteractionItemPickup);
 
@@ -320,7 +318,7 @@ public:
 	void OnInteractionStart(IActor& actor) override { m_subject->OnInteractionItemDrop(actor); };
 
 private:
-	IInteractionItem* m_subject { nullptr };
+	IInteractionItem* m_subject {nullptr};
 };
 DECLARE_SHARED_POINTERS(CInteractionItemDrop);
 
@@ -339,7 +337,7 @@ public:
 	void OnInteractionStart(IActor& actor) override { m_subject->OnInteractionItemToss(actor); };
 
 private:
-	IInteractionItem* m_subject { nullptr };
+	IInteractionItem* m_subject {nullptr};
 };
 DECLARE_SHARED_POINTERS(CInteractionItemToss);
 
@@ -370,7 +368,7 @@ public:
 	void OnInteractionComplete(IActor& actor) override { m_subject->OnInteractionExamineComplete(actor); };
 
 private:
-	IInteractionExamine* m_subject { nullptr };
+	IInteractionExamine* m_subject {nullptr};
 };
 DECLARE_SHARED_POINTERS(CInteractionExamine);
 
@@ -399,7 +397,7 @@ public:
 	void OnInteractionStart(IActor& actor) override { m_subject->OnInteractionDRS(); };
 
 private:
-	IInteractionDRS* m_subject { nullptr };
+	IInteractionDRS* m_subject {nullptr};
 };
 DECLARE_SHARED_POINTERS(CInteractionDRS);
 }

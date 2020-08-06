@@ -1,8 +1,7 @@
 #pragma once
 
-#include <Item/Parameters/ItemBaseParameter.h>
 #include <Entities/EntityEffects.h>
-#include <Actor/ActorComponent.h>
+#include <Components/Actor/ActorComponent.h>
 #include <Interfaces/IItem.h>
 
 
@@ -25,7 +24,7 @@ public:
 	CItemComponent() {}
 	virtual ~CItemComponent() { 
 		// TEST: writing out classes test data.
-		//Serialization::SaveJsonFile("chrysalis/parameters/items/item-classes.json", m_itemClassCollection);
+		//Serialization::SaveJsonFile("chrysalis/parameters/items/item_classes.json", m_itemClassCollection);
 	}
 
 	static void ReflectType(Schematyc::CTypeDesc<CItemComponent>& desc);
@@ -136,29 +135,35 @@ private:
 	// ***
 
 public:
-	ILINE EntityEffects::CEffectsController& GetEffectsController() { return m_effectsController; }
+	ILINE CEffectsController& GetEffectsController() { return m_effectsController; }
+
+	///**
+	// Attach a light to this entity.
+
+	// \param	targetSlot   	Target slot.
+	// \param	helperName   	Name of the helper.
+	// \param	offset		 	The offset.
+	// \param	direction	 	The direction.
+	// \param	firstSafeSlot	The first safe slot.
+	// \param	attachParams 	Options for controlling the attach.
+
+	// \return	An TAttachedEffectId.
+	// */
+
+	//TAttachedEffectId AttachLight(const int targetSlot, const char* helperName, Vec3 offset, Vec3 direction, eGeometrySlot firstSafeSlot,
+	//	const ECS::RenderLight& renderLight, const ECS::ProjectorLight& projectorLight)
+	//{
+	//	return m_effectsController.AttachLight(targetSlot, helperName, offset, direction, firstSafeSlot, renderLight, projectorLight);
+	//}
 
 
-	/**
-	 Attach a light to this entity.
-
-	 \param	targetSlot   	Target slot.
-	 \param	helperName   	Name of the helper.
-	 \param	offset		 	The offset.
-	 \param	direction	 	The direction.
-	 \param	firstSafeSlot	The first safe slot.
-	 \param	attachParams 	Options for controlling the attach.
-
-	 \return	An EntityEffects::TAttachedEffectId.
-	 */
-
-	EntityEffects::TAttachedEffectId AttachLight(const int targetSlot, const char* helperName, Vec3 offset, Vec3 direction, eGeometrySlot firstSafeSlot,
-		const SDynamicLightConstPtr attachParams);
-
-	void DetachEffect(const EntityEffects::TAttachedEffectId effectId);
+	//void DetachEffect(const TAttachedEffectId effectId)
+	//{
+	//	m_effectsController.DetachEffect(effectId);
+	//}
 
 private:
-	EntityEffects::CEffectsController m_effectsController;
+	CEffectsController m_effectsController;
 
 
 	// ***
@@ -166,8 +171,6 @@ private:
 	// ***
 
 public:
-	void GetSharedParameters(XmlNodeRef rootParams);
-
 	enum eItemHand
 	{
 		eIH_Right = 0, // indicates the right hand of the actor
@@ -287,8 +290,6 @@ private:
 	\return	true if it succeeds, false if it fails.
 	*/
 	virtual bool ShouldBindOnInit() const { return true; }
-
-	SItemBaseParameterConstPtr m_itemBaseParameter;
 
 	/** A component that allows for management of snaplocks. */
 	CSnaplockComponent* m_pSnaplockComponent {nullptr};

@@ -8,8 +8,7 @@
 #include <Components/Items/ItemComponent.h>
 #include <Components/Player/Input/PlayerInputComponent.h>
 #include <Item/Weapon/Weapon.h>
-#include <Actor/ActorComponent.h>
-#include <Actor/Character/CharacterComponent.h>
+#include <Components/Actor/ActorComponent.h>
 
 
 namespace Chrysalis
@@ -92,6 +91,8 @@ void CPlayerComponent::AttachToCharacter(EntityId characterId)
 		{
 			// If the target was an actor then it's safe to complete the attachment.
 			m_attachedCharacterId = m_cameraTargetId = characterId;
+			
+			// TODO: We need to detach from any previous entity before we attach to the new one.
 			pActorComponent->OnPlayerAttach(*this);
 
 			// Inform the camera system we are now watching a different entity.

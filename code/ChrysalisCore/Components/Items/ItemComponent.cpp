@@ -5,7 +5,6 @@
 #include "CrySchematyc/Env/Elements/EnvComponent.h"
 #include "CrySchematyc/Env/IEnvRegistrar.h"
 #include <Components/Snaplocks/SnaplockComponent.h>
-#include <Item/Parameters/ItemGeometryParameter.h>
 
 
 namespace Chrysalis
@@ -292,35 +291,6 @@ void CItemComponent::PickUp(EntityId actorId, bool sound, bool select, bool keep
 // ***
 // *** CItemComponent
 // ***
-
-
-void CItemComponent::GetSharedParameters(XmlNodeRef rootParams)
-{
-	// Parameters get stored under a combination of the class name and the section name for the parameters.
-	CryFixedStringT<256> sharedName;
-	sharedName.Format("item::%s::%s", GetEntity()->GetClass()->GetName(), "itemBase");
-
-	ISharedParamsManager* pSharedParamsManager = gEnv->pGameFramework->GetISharedParamsManager();
-	CRY_ASSERT(pSharedParamsManager);
-	m_itemBaseParameter = CastSharedParamsPtr<SItemBaseParameter>(pSharedParamsManager->Get(sharedName));
-
-	// If no parameter set exists we should attempt to create and register one.
-	if (!m_itemBaseParameter)
-	{
-		SItemBaseParameter sharedParams;
-
-		// Load in the base item shared parameters.
-		XmlNodeRef itemBaseParams = rootParams->findChild("itemBase");
-		if (itemBaseParams)
-			sharedParams.Read(itemBaseParams);
-
-		// Register a new set of parameters and retrieve a shared pointer to them.
-		m_itemBaseParameter = CastSharedParamsPtr<SItemBaseParameter>(pSharedParamsManager->Register(sharedName, sharedParams));
-	}
-
-	// Double check the shared parameter.
-	CRY_ASSERT(m_itemBaseParameter.get());
-}
 
 CRY_STATIC_AUTO_REGISTER_FUNCTION(&RegisterItemComponent)
 }

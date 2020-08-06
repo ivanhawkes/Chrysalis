@@ -48,13 +48,13 @@ protected:
 	CEntityInteractionComponent* m_interactor {nullptr};
 
 	/** Speed at which object 'jump' towards player when being inspected (m/sec). */
-	const float kJumpToPlayerSpeed = 4.0f;
+	const float kJumpToPlayerSpeed {4.0f};
 
 	/** Factor the speed at which inspected items are rotated, in comparison to player character rotation. */
-	const float kInspectionRotationFactor = 5.0f;
+	const float kInspectionRotationFactor {5.0f};
 
 	/** The number of newtons of force applied when items are tossed from inventory. */
-	const float kTossNewtons = 10.0f;
+	const float kTossNewtons {10.0f};
 
 	enum class InspectionState
 	{
@@ -67,8 +67,8 @@ protected:
 	};
 
 	InspectionState m_inspectionState {InspectionState::eNone};
-	float m_timeInAirRequired;
-	float m_timeInAir;
+	float m_timeInAirRequired {0.0f};
+	float m_timeInAir {0.0f};
 	Vec3 m_initialPosition;
 	Vec3 m_targetPosition;
 	Quat m_initialRotation;

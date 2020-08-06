@@ -8,7 +8,7 @@ Use "OnSetStance" if you need this functionality!
 
 #include <StateMachine/StateMachine.h>
 #include <IAnimatedCharacter.h>
-#include <Actor/ActorComponent.h>
+#include <Components/Actor/ActorComponent.h>
 #include <Actor/Movement/StateMachine/ActorStateEvents.h>
 #include "ActorStateEvents.h"
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
@@ -816,7 +816,7 @@ const CActorStateMovement::TStateIndex CActorStateMovement::StateGroundInput(CAc
 {
 	switch (inputEvent.m_inputEvent)
 	{
-		case SInputEventData::EInputEvent_Sprint:
+		case SInputEventData::EInputEvent::sprint:
 			StateSprintInput(actorControllerComponent, inputEvent);
 			break;
 	}
@@ -827,7 +827,7 @@ const CActorStateMovement::TStateIndex CActorStateMovement::StateGroundInput(CAc
 
 void CActorStateMovement::StateSprintInput(CActorControllerComponent& actorControllerComponent, const SInputEventData& inputEvent)
 {
-	CRY_ASSERT(inputEvent.m_inputEvent == SInputEventData::EInputEvent_Sprint);
+	CRY_ASSERT(inputEvent.m_inputEvent == SInputEventData::EInputEvent::sprint);
 	inputEvent.m_activationMode == eAAM_OnPress ? m_flags.AddFlags(eActorStateFlags_SprintPressed)
 		: m_flags.ClearFlags(eActorStateFlags_SprintPressed);
 }

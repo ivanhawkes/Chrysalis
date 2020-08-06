@@ -2,7 +2,7 @@
 
 #include "ActorStateLadder.h"
 #include <Actor/Animation/ActorAnimation.h>
-#include <Actor/ActorControllerComponent.h>
+#include <Components/Actor/ActorControllerComponent.h>
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
 #include <Entities/EntityScriptCalls.h>
 #include "ActorStateEvents.h"
@@ -558,7 +558,7 @@ void CActorStateLadder::InterruptCurrentAnimation()
 
 void CActorStateLadder::QueueLadderAction(CActorControllerComponent& actorControllerComponent, CLadderAction* action)
 {
-	LadderLog("Queuing %s ladder anim '%s'", actorControllerComponent.GetEntity()->GetEntityTextDescription(), action ? action->GetName() : "nullptr");
+	LadderLog("Queuing %s ladder anim '%s'", actorControllerComponent.GetEntity()->GetEntityTextDescription().c_str(), action ? action->GetName() : "nullptr");
 	LadderLogIndent();
 
 	if (action)

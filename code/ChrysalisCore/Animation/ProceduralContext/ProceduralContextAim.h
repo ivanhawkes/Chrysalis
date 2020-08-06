@@ -32,9 +32,9 @@ public:
 private:
 	struct SPolarCoordinatesSmoothingParametersRequest
 	{
-		uint32 id;
+		uint32 id {0};
 		Vec2 maxSmoothRateRadiansPerSecond;
-		float smoothTimeSeconds;
+		float smoothTimeSeconds {0.0f};
 	};
 
 	typedef ProceduralContextHelpers::CRequestList<SPolarCoordinatesSmoothingParametersRequest> TPolarCoordinatesSmoothingParametersRequestList;

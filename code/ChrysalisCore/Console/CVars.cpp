@@ -2,10 +2,10 @@
 
 #include "CVars.h"
 #include <CrySystem/ISystem.h>
-#include "Components/Player/PlayerComponent.h"
-#include <Actor/ActorComponent.h>
+#include <Components/Actor/ActorComponent.h>
+#include <Components/Player/PlayerComponent.h>
+#include <Components/Player/Camera/ICameraComponent.h>
 #include <Actor/Animation/Actions/ActorAnimationActionEmote.h>
-#include <Actor/Character/CharacterComponent.h>
 #include <ObjectID/ObjectId.h>
 #include <ObjectID/ObjectIdMasterFactory.h>
 #include <Plugin/ChrysalisCorePlugin.h>
@@ -35,6 +35,9 @@ void CCVars::RegisterVariables()
 
 	// TODO: Deprecate this.
 	REGISTER_CVAR2("ladder_logVerbosity", &m_ladder_logVerbosity, 0, VF_CHEAT, "Ladder logging.");
+
+	// Camera general
+	//REGISTER_CVAR2("camera_fov", &m_cameraFoV, 75.0f, VF_CHEAT, "Present camera field of view.");
 
 	// Camera manager
 	m_cameraManagerDebugViewOffset = REGISTER_STRING("camera_manager_debug_view_offset", "0, 0, 0", VF_CHEAT, "A translation vector which is applied after the camera is initially positioned.");
@@ -84,6 +87,8 @@ void CCVars::RegisterVariables()
 		"Usage: createobjectid [class]");
 	REGISTER_COMMAND("emote", CCVars::OnEmote, VF_NULL, "Makes a request for the character under player command to perform an emote.\n"
 		"Usage: emote [emotion]");
+	REGISTER_COMMAND("camera_set_fov", CCVars::OnCameraSetFov, VF_NULL, "Set the field of view for the current camera.\n"
+		"Usage: camera_set_fov [fov]");
 }
 
 
@@ -254,6 +259,29 @@ void CCVars::OnEmote(IConsoleCmdArgs* pConsoleCommandArgs)
 	else
 	{
 		CryLogAlways("Please supply the name of the emote to play.");
+	}
+}
+
+
+void CCVars::OnCameraSetFov(IConsoleCmdArgs* pConsoleCommandArgs)
+{
+	if (pConsoleCommandArgs->GetArgCount() == 2)
+	{
+		auto clientActorId = gEnv->pGameFramework->GetClientActorId();
+		if (clientActorId)
+		{
+			if (auto pPlayer = CPlayerComponent::GetLocalPlayer())
+			{
+				// Convert parameter to required value.
+				auto pFov = pConsoleCommandArgs->GetArg(1);
+				float fov = static_cast<float>(atof(pFov));
+				pPlayer->GetCamera()->SetFieldOfView(fov);
+			}
+		}
+	}
+	else
+	{
+		CryLogAlways("Please supply a valid field of view value (integer).");
 	}
 }
 }

@@ -45,7 +45,7 @@ public:
 	void OnInteractionComplete(IActor& actor);
 
 private:
-	std::vector<IInteractionPtr> m_Interactions;
+	std::vector<IInteractionPtr> m_interactionQueue;
 	IInteractionPtr m_selectedInteraction {IInteractionPtr()};
 };
 }

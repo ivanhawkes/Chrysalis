@@ -1,6 +1,5 @@
-<AssetMetadata version="0" type="SchematycEntity" guid="60af62cb-0a5b-8e33-0657-95c94176e87a">
+<AssetMetadata version="0" type="SchematycEntity" guid="60af62cb-0a5b-8e33-0657-95c94176e87a" source="" timestamp="1595072563">
  <Files>
   <File path="generic_interaction.schematyc_ent"/>
  </Files>
- <Details />
 </AssetMetadata>

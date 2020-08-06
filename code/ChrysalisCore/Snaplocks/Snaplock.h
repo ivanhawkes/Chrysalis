@@ -86,7 +86,7 @@ private:
 	bool m_isRoot { false };
 
 	/** Males socket into females, this indicates if the snaplock is male or female. */
-	bool m_isMale;
+	bool m_isMale {false};
 
 	/** Is this snaplock currently in use? */
 	bool m_isInUse { false };

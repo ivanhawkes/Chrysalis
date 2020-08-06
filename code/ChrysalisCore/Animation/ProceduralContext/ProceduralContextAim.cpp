@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 
 #include "ProceduralContextAim.h"
-#include "Actor/ActorComponent.h"
+#include <Components/Actor/ActorComponent.h>
 
 
 namespace Chrysalis

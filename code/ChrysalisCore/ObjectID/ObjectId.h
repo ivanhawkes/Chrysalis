@@ -33,22 +33,22 @@ class CObjectIdFactory
 {
 public:
 	/** The number of bits allocated to store seconds since epoch. */
-	static const int SecondsSinceEpochBits = 32;
+	static const int SecondsSinceEpochBits {32};
 
 	/** The number of bits allocated to store the instance identifier. */
-	static const int InstanceIdBits = 18;
+	static const int InstanceIdBits {18};
 
 	/** The number of bits allocated to store the random variant bits. */
-	static const int RandomVariantBits = 14;
+	static const int RandomVariantBits {14};
 
 	/** Identifier for the maximum instance. */
-	static const uint32 MaxInstanceId = (1 << InstanceIdBits) - 1;
+	static const uint32 MaxInstanceId {(1 << InstanceIdBits) - 1};
 
 	/** The maximum random variant. */
-	static const uint32 MaxRandomVariant = (1 << RandomVariantBits) - 1;
+	static const uint32 MaxRandomVariant {(1 << RandomVariantBits) - 1};
 
 	/** Magic number to signify an invalid ID. */
-	static const ObjectId InvalidId = 0;
+	static const ObjectId InvalidId {0};
 
 
 	/**

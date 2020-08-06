@@ -9,7 +9,7 @@
 #include <Components/Player/Input/PlayerInputComponent.h>
 #include <Utility/StringConversions.h>
 #include <Console/CVars.h>
-#include <Actor/ActorComponent.h>
+#include <Components/Actor/ActorComponent.h>
 #include <CryGame/GameUtils.h>
 
 

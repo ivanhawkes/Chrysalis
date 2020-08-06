@@ -101,7 +101,7 @@ public:
 private:
 	static FragmentID FindFragmentId(const SAnimationContext& context);
 
-	const struct SMannequinEmoteParams* m_emoteParams;
+    const struct SMannequinEmoteParams* m_emoteParams {nullptr};
 
 	TagID m_emoteTagId;
 };

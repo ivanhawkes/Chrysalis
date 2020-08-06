@@ -79,7 +79,7 @@
      </scale>
     </transform>
     <properties Type="RenderAndCollider" FilePath="chrysalis/objects/items/flashlight/maglite_02d.cgf" Material="chrysalis/objects/items/flashlight/maglite_02d.mtl">
-     <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
+     <Render ShadowSpec="Low" IgnoreVisArea="false" IgnoreTerrainLayerBlend="false" IgnoreDecalBlend="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
      <Physics WeightType="EWeightType::Mass" Density="0" Mass="1.2"/>
     </properties>
     <extensions />
@@ -555,7 +555,7 @@
     </transform>
     <properties Active="true" Radius="10" Angle="0.34906584">
      <ProjectorOptions NearPlane="0.1" Texture="chrysalis/textures/lights/flashlight_projector.dds" Material=""/>
-     <Optics Enable="true" LensFlare="" AttachToSun="false" FlareFOV="360"/>
+     <Optics Enable="true" LensFlare="" AttachtToSun="false" FlareFOV="360"/>
      <Color DiffMult="5" SpecMult="1">
       <Color r="1" g="1" b="1" a="1"/>
      </Color>
@@ -574,6 +574,7 @@
    <element elementType="ComponentInstance" guid="8d560b47-611c-400d-958d-389a0e0dd622" name="Rigidbody" accessor="Public" typeGUID="912c6ce8-56f7-4ffa-9134-f98d4e307bd6">
     <properties Networked="false" EnabledByDefault="true" Resting="false" Type="Rigid" SendCollisionSignal="true">
      <Buoyancy Damping="1" Density="1" Resistance="1"/>
+     <Simulation MaxTimeStep="0.02" SleepSpeed="0.039999999" Damping="0"/>
     </properties>
     <extensions />
     <children />

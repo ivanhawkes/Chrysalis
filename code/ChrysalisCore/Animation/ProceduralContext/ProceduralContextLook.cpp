@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 
 #include "ProceduralContextLook.h"
-#include "Actor/ActorComponent.h"
+#include <Components/Actor/ActorComponent.h>
 
 
 namespace Chrysalis
@@ -79,7 +79,7 @@ void CProceduralContextLook::Update(float timePassedSeconds)
 			m_pPoseBlenderLook->SetTarget(m_gameLookTarget);
 
 #ifdef DEBUG
-			CryWatch("Looking at %0.2f, %0.2f, %0.2f", m_gameLookTarget.x, m_gameLookTarget.y, m_gameLookTarget.z);
+			//CryWatch("Looking at %0.2f, %0.2f, %0.2f", m_gameLookTarget.x, m_gameLookTarget.y, m_gameLookTarget.z);
 #endif
 		}
 	}

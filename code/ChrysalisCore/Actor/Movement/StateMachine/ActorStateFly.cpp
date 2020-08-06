@@ -4,7 +4,7 @@
 #include <CryRenderer/IRenderer.h>
 #include <CryPhysics/physinterface.h>
 #include "ActorStateFly.h"
-#include <Actor/ActorControllerComponent.h>
+#include <Components/Actor/ActorControllerComponent.h>
 #include <Actor/Movement/StateMachine/ActorStateUtility.h>
 //#include "CharacterInput.h"
 

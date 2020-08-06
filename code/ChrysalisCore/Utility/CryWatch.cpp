@@ -109,8 +109,8 @@ int CryWatchLogFunc(const char * message)
 struct SLingeringWatch3D
 {
 	char m_text [16];
-	float m_timeLeft;
-	float m_gravity;
+	float m_timeLeft {0.0f};
+	float m_gravity {0.0f};
 	Vec3 m_pos;
 	Vec3 m_vel;
 };

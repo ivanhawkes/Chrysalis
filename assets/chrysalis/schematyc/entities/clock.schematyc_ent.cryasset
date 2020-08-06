@@ -1,6 +1,5 @@
-<AssetMetadata version="0" type="SchematycEntity" guid="dbda5415-239d-e740-96e6-f0728443654c">
+<AssetMetadata version="0" type="SchematycEntity" guid="dbda5415-239d-e740-96e6-f0728443654c" source="" timestamp="1595072539">
  <Files>
   <File path="clock.schematyc_ent"/>
  </Files>
- <Details />
 </AssetMetadata>

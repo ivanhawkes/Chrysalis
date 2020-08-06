@@ -5,22 +5,21 @@
 namespace Chrysalis::ECS
 {
 // Health.
-void SystemApplyDamage(entt::registry& registry);
-
-void SystemApplyDamageOverTime(float dt, entt::registry& registry);
-
-void SystemApplyHeal(entt::registry& registry);
-
-void SystemApplyHealOverTime(float dt, entt::registry& registry);
-
-void SystemHealthCheck(entt::registry& registry);
+void SystemApplyDamage(entt::registry& spellRegistry, entt::registry& actorRegistry);
+void SystemApplyDamageOverTime(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry);
+void SystemApplyHeal(entt::registry& spellRegistry, entt::registry& actorRegistry);
+void SystemApplyHealOverTime(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry);
+void SystemHealthCheck(entt::registry& spellRegistry, entt::registry& actorRegistry);
 
 // Qi.
-void SystemApplyQiUtilisation(entt::registry& registry);
+void SystemApplyQiUtilisation(entt::registry& spellRegistry, entt::registry& actorRegistry);
+void SystemApplyQiUtilisationOverTime(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry);
+void SystemApplyQiReplenishment(entt::registry& spellRegistry, entt::registry& actorRegistry);
+void SystemApplyQiReplenishmentOverTime(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry);
 
-void SystemApplyQiUtilisationOverTime(float dt, entt::registry& registry);
+// World Spellcasts.
+void SystemWorldSpellCasts(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry);
 
-void SystemApplyQiReplenishment(entt::registry& registry);
-
-void SystemApplyQiReplenishmentOverTime(float dt, entt::registry& registry);
+// Actors.
+void SystemUpdateActors(float dt, entt::registry& actorRegistry);
 }

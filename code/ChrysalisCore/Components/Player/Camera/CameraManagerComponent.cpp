@@ -7,8 +7,6 @@
 #include "ActionRPGCameraComponent.h"
 #include "ExamineCameraComponent.h"
 #include "FirstPersonCameraComponent.h"
-#include <Actor/Character/CharacterComponent.h>
-#include "Components/Player/PlayerComponent.h"
 #include <Utility/StringConversions.h>
 #include <Console/CVars.h>
 

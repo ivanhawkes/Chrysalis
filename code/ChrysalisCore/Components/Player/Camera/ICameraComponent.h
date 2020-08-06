@@ -156,6 +156,11 @@ public:
 	CCamera& GetCamera() { return m_camera; }
 	const CCamera& GetCamera() const { return m_camera; }
 
+	/** Set the field of view for this camera. */
+	void SetFieldOfView(float fov) { 
+		m_fieldOfView = fov;
+	}
+
 	/** Called by an active camera during it's update to update the camera view. */
 	virtual void UpdateView();
 
@@ -172,8 +177,11 @@ protected:
 	Matrix34 m_cameraMatrix { ZERO, IDENTITY };
 
 	Schematyc::Range<0, 32768> m_nearPlane = 0.25f;
-	CryTransform::CClampedAngle<20, 360> m_fieldOfView = 75.0_degrees;
 	CCamera m_camera;
+
+	// TODO: Make this a schematyc range. Allow changing through schematyc functions.
+	//CryTransform::CClampedAngle<20, 120> m_fieldOfView = 75.0_degrees;
+	float m_fieldOfView {60.0f};
 
 	/** Is debugging allowed? */
 	bool m_isDebugEnabled { false };

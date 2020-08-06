@@ -22,8 +22,8 @@ public:
 
 	struct SAnimationTag
 	{
-		inline bool operator==(const SAnimationTag &rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
-		inline bool operator!=(const SAnimationTag &rhs) const { return 0 != memcmp(this, &rhs, sizeof(rhs)); }
+		inline bool operator==(const SAnimationTag& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
+		inline bool operator!=(const SAnimationTag& rhs) const { return 0 != memcmp(this, &rhs, sizeof(rhs)); }
 
 		Schematyc::CSharedString tag;
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Utility/AutoEnum.h>
-#include <Actor/ActorComponent.h>
+#include <Components/Actor/ActorComponent.h>
 #include <Actor/Movement/StateMachine/ActorStateEvents.h>
 
 

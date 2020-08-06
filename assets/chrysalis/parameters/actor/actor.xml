@@ -1,0 +1,29 @@
+<ecs>
+ <entities>
+  <entity entityId="0"/>
+ </entities>
+ <components>
+  <name CryXmlVersion="2" name="Schmuck" displayName="Hero" entityId="0"/>
+ </components>
+ <meta>
+  <component-types>
+   <component-type count="1"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
+  </component-types>
+  <entities count="1"/>
+ </meta>
+</ecs>

@@ -4,7 +4,7 @@
 #include <CryCore/StaticInstanceList.h>
 #include "CrySchematyc/Env/Elements/EnvComponent.h"
 #include "CrySchematyc/Env/IEnvRegistrar.h"
-#include "Actor/ActorComponent.h"
+#include <Components/Actor/ActorComponent.h>
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
 
 

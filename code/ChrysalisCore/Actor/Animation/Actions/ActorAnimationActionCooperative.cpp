@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 
 #include "ActorAnimationActionCooperative.h"
-#include <Actor/ActorComponent.h>
+#include <Components/Actor/ActorComponent.h>
 
 
 namespace Chrysalis
@@ -65,7 +65,7 @@ void CActorAnimationActionCooperative::Install()
 void CActorAnimationActionCooperative::OnAnimationEvent(ICharacterInstance* pCharacter, const AnimEventInstance& event)
 {
 	// Notify listeners.
-	for (auto it : m_listenersList)
+	for (auto it : m_listeners)
 		it->OnActionAnimationEvent(pCharacter, event);
 }
 
@@ -105,7 +105,7 @@ void CActorAnimationActionCooperative::Enter()
 	//}
 
 	// Notify listeners.
-	for (auto it : m_listenersList)
+	for (auto it : m_listeners)
 		it->OnActionAnimationEnter();
 }
 
@@ -115,7 +115,7 @@ void CActorAnimationActionCooperative::Fail(EActionFailure actionFailure)
 	CAnimationAction::Fail(actionFailure);
 
 	// Notify listeners.
-	for (auto it : m_listenersList)
+	for (auto it : m_listeners)
 		it->OnActionAnimationFail(actionFailure);
 }
 
@@ -157,7 +157,7 @@ void CActorAnimationActionCooperative::Exit()
 	RemoveTargetFromSlaveContext();
 
 	// Notify listeners.
-	for (auto it : m_listenersList)
+	for (auto it : m_listeners)
 		it->OnActionAnimationExit();
 }
 
@@ -219,19 +219,19 @@ void CActorAnimationActionCooperative::AddTargetToSlaveContext()
 {
 	if (const auto pSourceActionController = m_sourceActor.GetActionController())
 	{
-		IActionController* pTargetActionController{ nullptr };
+		//IActionController* pTargetActionController{ nullptr };
 
 		// Check which way we will enslave the target actor.
-		if ((m_pActorAnimationControl != nullptr) && (pTargetActionController = m_pActorAnimationControl->GetActionController()))
-		{
-			// There is an action controller on the target actor, so we directly slave that to our action controller.
-			pSourceActionController->SetSlaveController(*pTargetActionController,
-				m_scopeContextId, true, m_pTargetOptionalDatabase);
+		//if ((m_pActorAnimationControl != nullptr) && (pTargetActionController = m_pActorAnimationControl->GetActionController()))
+		//{
+		//	// There is an action controller on the target actor, so we directly slave that to our action controller.
+		//	//pSourceActionController->SetSlaveController(*pTargetActionController,
+		//	//	m_scopeContextId, true, m_pTargetOptionalDatabase);
 
-			// Set the target tag.
-			pTargetActionController->GetContext().state.Set(m_targetTagID, true);
-		}
-		else
+		//	// Set the target tag.
+		//	//pTargetActionController->GetContext().state.Set(m_targetTagID, true);
+		//}
+		//else
 		{
 			// No action controller, so instead we set the scope context to our slave character context.			
 			if (auto pTargetEntity = gEnv->pEntitySystem->GetEntity(m_targetEntityId))
@@ -246,20 +246,20 @@ void CActorAnimationActionCooperative::AddTargetToSlaveContext()
 
 void CActorAnimationActionCooperative::RemoveTargetFromSlaveContext()
 {
-	IActionController* pTargetActionController{ nullptr };
+	//IActionController* pTargetActionController{ nullptr };
 
-	if ((m_pActorAnimationControl != nullptr) && (pTargetActionController = m_pActorAnimationControl->GetActionController()))
-	{
-		// Remove the slave scope context.
-		if (const auto pSourceActionController = m_sourceActor.GetActionController())
-		{
-			pSourceActionController->SetSlaveController(*pTargetActionController, m_scopeContextId, false, m_pTargetOptionalDatabase);
+	//if ((m_pActorAnimationControl != nullptr) && (pTargetActionController = m_pActorAnimationControl->GetActionController()))
+	//{
+	//	// Remove the slave scope context.
+	//	if (const auto pSourceActionController = m_sourceActor.GetActionController())
+	//	{
+	//		//pSourceActionController->SetSlaveController(*pTargetActionController, m_scopeContextId, false, m_pTargetOptionalDatabase);
 
-			// Remove the target tag.
-			pTargetActionController->GetContext().state.Set(m_targetTagID, false);
-		}
-	}
-	else
+	//		//// Remove the target tag.
+	//		//pTargetActionController->GetContext().state.Set(m_targetTagID, false);
+	//	}
+	//}
+	//else
 	{
 		// Remove the slave scope context.
 		m_rootScope->GetActionController().ClearScopeContext(m_scopeContextId);
@@ -269,7 +269,7 @@ void CActorAnimationActionCooperative::RemoveTargetFromSlaveContext()
 
 void CActorAnimationActionCooperative::SendStateEventCoopAnim()
 {
-	// TODO: We have moved the state machine for movement up to derived classes, like CCharacterComponent. I need to investigate this code
+	// TODO: We have moved the state machine for movement up to derived classes. I need to investigate this code
 	// to determine if it's needed, and if so, add a method(s) to IActor to fire off events like these.
 	//m_sourceActor.StateMachineHandleEventMovement(SStateEventCoopAnim(m_targetEntityId));
 }

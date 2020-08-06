@@ -117,8 +117,8 @@
       <element element="1"/>
      </scale>
     </transform>
-    <properties Type="RenderAndCollider" Character="chrysalis/objects/desk/workdesk/workdesk.cdf" DatabasePath="chrysalis/objects/desk/workdesk/workdesk.adb" AnimDriven="false" GroundAlign="false">
-     <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
+    <properties Type="RenderAndCollider" Character="chrysalis/objects/desk/workdesk/workdesk.cdf" Material="" DatabasePath="chrysalis/objects/desk/workdesk/workdesk.adb" AnimDriven="false" GroundAlign="false">
+     <Render ShadowSpec="Low" IgnoreVisArea="false" IgnoreTerrainLayerBlend="false" IgnoreDecalBlend="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
      <DefaultScope ControllerDefPath="chrysalis/objects/desk/workdesk/controller_defs.xml" DefaultScope="SlaveCharacter" DefaultFragment="Closed"/>
      <Physics WeightType="EWeightType::Mass" Density="9.9999997e-05" Mass="10"/>
     </properties>
@@ -128,6 +128,7 @@
    <element elementType="ComponentInstance" guid="dff42ac3-7323-4a05-81ef-cfa86048ac79" name="Rigidbody" accessor="Public" typeGUID="912c6ce8-56f7-4ffa-9134-f98d4e307bd6">
     <properties Networked="false" EnabledByDefault="true" Resting="false" Type="Rigid" SendCollisionSignal="false">
      <Buoyancy Damping="1" Density="1" Resistance="1"/>
+     <Simulation MaxTimeStep="0.02" SleepSpeed="0.039999999" Damping="0"/>
     </properties>
     <extensions />
     <children />

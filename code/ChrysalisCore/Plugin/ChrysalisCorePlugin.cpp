@@ -116,9 +116,12 @@ void CChrysalisCorePlugin::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UI
 			// Need to listen for game framework events.
 			gEnv->pGameFramework->RegisterListener(this, "CChrysalisCore", FRAMEWORKLISTENERPRIORITY_GAME);
 
-			// Create a class to handle the simulation work for the ECS.
-			ECS::ecsSimulation.Init();
-			ECS::ecsSimulation.LoadSimulationData();
+			// Create a class to handle the Simulation work for the ECS.
+			ECS::Simulation.Init();
+			ECS::Simulation.LoadSimulationData();
+			
+			// HACK: Get an output version of the data immediately for inspection / testing.
+			ECS::Simulation.SaveSimulationData();
 
 			// Listen for client connection events, in order to create the local player
 			gEnv->pGameFramework->AddNetworkedClientListener(*this);
@@ -149,8 +152,8 @@ void CChrysalisCorePlugin::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UI
 		break;
 
 		case ESYSTEM_EVENT_LEVEL_LOAD_END:
-			// HACK: TEST: I need a convenient time to write back the simulation so I can examine it. This will do for now.
-			ECS::ecsSimulation.SaveSimulationData();
+			// HACK: TEST: I need a convenient time to write back the Simulation so I can examine it. This will do for now.
+			ECS::Simulation.SaveSimulationData();
 
 			// In the editor, we wait until now before attempting to connect to the local player. This is to ensure all the
 			// entities are already loaded and initialised. It works differently in game mode. 
@@ -246,7 +249,7 @@ void CChrysalisCorePlugin::OnClientDisconnected(int channelId, EDisconnectionCau
 
 void CChrysalisCorePlugin::OnPostUpdate(float deltaTime)
 {
-	ECS::ecsSimulation.Update(deltaTime);
+	ECS::Simulation.Update(deltaTime);
 }
 
 

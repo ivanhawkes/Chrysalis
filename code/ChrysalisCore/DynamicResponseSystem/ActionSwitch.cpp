@@ -3,7 +3,7 @@
 #include "ActionSwitch.h"
 #include <CryDynamicResponseSystem/IDynamicResponseSystem.h>
 #include "Components/Player/PlayerComponent.h"
-#include "Actor/ActorComponent.h"
+#include <Components/Actor/ActorComponent.h>
 #include "Utility/DRS.h"
 #include <Components/Interaction/EntityInteractionComponent.h>
 

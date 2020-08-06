@@ -11,7 +11,7 @@ namespace Chrysalis
 // *** Particle effects.
 // ***
 
-IParticleEmitter* EntityEffects::SpawnParticleFX(const char* effectName, const EntityEffects::SEffectSpawnParams& spawnParams, const char* requester /*= nullptr*/)
+IParticleEmitter* SpawnParticleFX(const char* effectName, const SEffectSpawnParams& spawnParams, const char* requester /*= nullptr*/)
 {
 	IParticleEffect* pParticleEffect = gEnv->pParticleManager->FindEffect(effectName, requester ? requester : "");
 
@@ -19,7 +19,7 @@ IParticleEmitter* EntityEffects::SpawnParticleFX(const char* effectName, const E
 }
 
 
-IParticleEmitter* EntityEffects::SpawnParticleFX(IParticleEffect* pParticleEffect, const EntityEffects::SEffectSpawnParams& spawnParams)
+IParticleEmitter* SpawnParticleFX(IParticleEffect* pParticleEffect, const SEffectSpawnParams& spawnParams)
 {
 	if (pParticleEffect)
 	{
@@ -41,7 +41,7 @@ IParticleEmitter* EntityEffects::SpawnParticleFX(IParticleEffect* pParticleEffec
 }
 
 
-void EntityEffects::SpawnParticleWithEntity(const IEntity* pTargetEntity, const int targetSlot, const char* effectName, const char* helperName, const EntityEffects::SEffectSpawnParams& spawnParams)
+void SpawnParticleWithEntity(const IEntity* pTargetEntity, const int targetSlot, const char* effectName, const char* helperName, const SEffectSpawnParams& spawnParams)
 {
 	IParticleEffect* pParticleEffect = gEnv->pParticleManager->FindEffect(effectName);
 
@@ -49,7 +49,7 @@ void EntityEffects::SpawnParticleWithEntity(const IEntity* pTargetEntity, const 
 }
 
 
-void EntityEffects::SpawnParticleWithEntity(const IEntity* pTargetEntity, const int targetSlot, IParticleEffect* pParticleEffect, const char* helperName, const EntityEffects::SEffectSpawnParams& spawnParams)
+void SpawnParticleWithEntity(const IEntity* pTargetEntity, const int targetSlot, IParticleEffect* pParticleEffect, const char* helperName, const SEffectSpawnParams& spawnParams)
 {
 	SEffectSpawnParams newSpawnParams = spawnParams;
 
@@ -67,9 +67,9 @@ void EntityEffects::SpawnParticleWithEntity(const IEntity* pTargetEntity, const 
 			else if (slotInfo.pCharacter)
 			{
 				// Get helper position from character.
-				IAttachmentManager *pAttachmentManager = slotInfo.pCharacter->GetIAttachmentManager();
+				IAttachmentManager* pAttachmentManager = slotInfo.pCharacter->GetIAttachmentManager();
 
-				if (IAttachment *pAttachment = pAttachmentManager->GetInterfaceByName(helperName))
+				if (IAttachment* pAttachment = pAttachmentManager->GetInterfaceByName(helperName))
 				{
 					newSpawnParams.position = pAttachment->GetAttWorldAbsolute().t;
 				}
@@ -99,8 +99,6 @@ void EntityEffects::SpawnParticleWithEntity(const IEntity* pTargetEntity, const 
 // *** 
 // ***
 
-namespace EntityEffects
-{
 CEffectsController::CEffectsController()
 	: m_effectGeneratorId(0)
 {
@@ -122,7 +120,7 @@ void CEffectsController::FreeAllEffects()
 	{
 		CRY_ASSERT(index < (int)m_attachedEffects.size());
 
-		DetachEffect(m_attachedEffects [index].id);
+		DetachEffect(m_attachedEffects[index].id);
 		index--;
 	}
 
@@ -186,7 +184,7 @@ TAttachedEffectId CEffectsController::AttachParticleEffect(const char* effectNam
 }
 
 
-TAttachedEffectId CEffectsController::AttachParticleEffect(IParticleEffect* pParticleEffect, const int targetSlot, const char *helperName, const SEffectAttachParams &attachParams)
+TAttachedEffectId CEffectsController::AttachParticleEffect(IParticleEffect* pParticleEffect, const int targetSlot, const char* helperName, const SEffectAttachParams& attachParams)
 {
 	auto pOwnerEntity = gEnv->pEntitySystem->GetEntity(m_ownerEntityId);
 	CRY_ASSERT(pOwnerEntity);
@@ -225,8 +223,8 @@ TAttachedEffectId CEffectsController::AttachParticleEffect(IParticleEffect* pPar
 		}
 		else if (slotInfo.pCharacter)
 		{
-			IAttachmentManager *pAttachmentManager = slotInfo.pCharacter->GetIAttachmentManager();
-			IAttachment *pAttachment = pAttachmentManager->GetInterfaceByName(helperName);
+			IAttachmentManager* pAttachmentManager = slotInfo.pCharacter->GetIAttachmentManager();
+			IAttachment* pAttachment = pAttachmentManager->GetInterfaceByName(helperName);
 
 			if (pAttachment)
 			{
@@ -254,7 +252,7 @@ TAttachedEffectId CEffectsController::AttachParticleEffect(IParticleEffect* pPar
 }
 
 
-TAttachedEffectId CEffectsController::AttachParticleEffect(const char *effectName, const int targetSlot, const char *helperName, const SEffectAttachParams &attachParams)
+TAttachedEffectId CEffectsController::AttachParticleEffect(const char* effectName, const int targetSlot, const char* helperName, const SEffectAttachParams& attachParams)
 {
 	auto pOwnerEntity = gEnv->pEntitySystem->GetEntity(m_ownerEntityId);
 	CRY_ASSERT(pOwnerEntity);
@@ -265,60 +263,169 @@ TAttachedEffectId CEffectsController::AttachParticleEffect(const char *effectNam
 }
 
 
-TAttachedEffectId CEffectsController::AttachLight(const int targetSlot, const char *helperName, Vec3 offset, Vec3 direction, eGeometrySlot firstSafeSlot,
-	const SDynamicLightConstPtr attachParams)
+TAttachedEffectId CEffectsController::AttachLight(const int targetSlot, const char* helperName, Vec3 offset, Vec3 direction, eGeometrySlot firstSafeSlot,
+	const ECS::RenderLight& renderLight)
 {
 	auto pOwnerEntity = gEnv->pEntitySystem->GetEntity(m_ownerEntityId);
 	CRY_ASSERT(pOwnerEntity);
 
 	SRenderLight light;
-	light.m_nEntityId = pOwnerEntity->GetId();
-	light.SetLightColor(ColorF(attachParams->diffuseColor.x * attachParams->diffuseMultiplier,
-		attachParams->diffuseColor.y * attachParams->diffuseMultiplier,
-		attachParams->diffuseColor.z * attachParams->diffuseMultiplier, 1.0f));
-	light.SetSpecularMult((float)__fsel(-attachParams->diffuseMultiplier, attachParams->specularMultiplier,
-		(attachParams->specularMultiplier / (attachParams->diffuseMultiplier + FLT_EPSILON))));
-	light.m_nLightStyle = attachParams->lightStyle;
-	light.SetAnimSpeed(attachParams->animationSpeed);
-	light.m_fLightFrustumAngle = 45.0f; // #TODO: look at this.
-	light.m_fRadius = attachParams->radius;
-	light.m_fLightFrustumAngle = attachParams->projectorFoV * 0.5f;
 
-	// #TODO: Plan a way to get bitsets from Articy to code.
-	light.m_Flags = DLF_DEFERRED_LIGHT | DLF_THIS_AREA_ONLY;
-	//light.m_Flags |= attachParams->deferred ? DLF_DEFERRED_LIGHT : 0;
-	//light.m_Flags |= attachParams->castShadows ? DLF_CASTSHADOW_MAPS : 0;
+	light.m_nLightStyle = renderLight.animations.m_style;
+	light.SetAnimSpeed(renderLight.animations.m_speed);
 
+	light.SetPosition(ZERO);
+	light.m_Flags = DLF_DEFERRED_LIGHT | DLF_PROJECT;
 
-	if (attachParams->projectorTexture && attachParams->projectorTexture [0])
+	light.m_fLightFrustumAngle = renderLight.fovAngle.ToDegrees();
+	light.m_fProjectorNearPlane = renderLight.projectorOptions.m_nearPlane;
+
+	light.SetLightColor(renderLight.color.m_color * renderLight.color.m_diffuseMultiplier);
+	light.SetSpecularMult(renderLight.color.m_specularMultiplier);
+
+	light.m_fHDRDynamic = 0.f;
+
+	if (renderLight.options.m_bAffectsOnlyThisArea)
+		light.m_Flags |= DLF_THIS_AREA_ONLY;
+
+	if (renderLight.options.m_bIgnoreVisAreas)
+		light.m_Flags |= DLF_IGNORES_VISAREAS;
+
+	if (renderLight.options.m_bVolumetricFogOnly)
+		light.m_Flags |= DLF_VOLUMETRIC_FOG_ONLY;
+
+	if (renderLight.options.m_bAffectsVolumetricFog)
+		light.m_Flags |= DLF_VOLUMETRIC_FOG;
+
+	if (renderLight.options.m_bLinkToSkyColor)
+		light.m_Flags |= DLF_LINK_TO_SKY_COLOR;
+
+	if (renderLight.options.m_bAmbient)
+		light.m_Flags |= DLF_AMBIENT;
+
+	// TODO: Automatically add DLF_FAKE when using beams or flares.
+
+	bool shouldCastShadows = false;
+	if (renderLight.shadows.m_castShadowSpec != Cry::DefaultComponents::EMiniumSystemSpec::Disabled)
 	{
-		light.m_pLightImage = gEnv->pRenderer->EF_LoadTexture(attachParams->projectorTexture, FT_DONT_STREAM);
-
-		if (!light.m_pLightImage || !light.m_pLightImage->IsTextureLoaded())
+		const int sysSpec = gEnv->pSystem->GetConfigSpec();
+		if (sysSpec != CONFIG_CUSTOM)
 		{
-			GameWarning("[EntityEffects] Entity '%s' failed to load projecting light texture '%s'!", pOwnerEntity->GetName(), attachParams->projectorTexture.c_str());
-			return EFFECTID_INVALID;
+			shouldCastShadows = sysSpec >= static_cast<int>(renderLight.shadows.m_castShadowSpec);
+		}
+		else
+		{
+			if (ICVar* const pSysSpecShadow = gEnv->pConsole->GetCVar("sys_spec_shadow"))
+				shouldCastShadows = pSysSpecShadow->GetIVal() >= static_cast<int>(renderLight.shadows.m_castShadowSpec);
 		}
 	}
 
-	if ((light.m_pLightImage != nullptr) && light.m_pLightImage->IsTextureLoaded())
+	if (shouldCastShadows)
 	{
-		light.m_Flags |= DLF_PROJECT;
+		light.m_Flags |= DLF_CASTSHADOW_MAPS;
+
+		light.SetShadowBiasParams(renderLight.shadows.m_shadowBias, renderLight.shadows.m_shadowSlopeBias);
+		light.m_fShadowUpdateMinRadius = light.m_fRadius;
+
+		float shadowUpdateRatio = 1.f;
+		light.m_nShadowUpdateRatio = max((uint16)1, (uint16)(shadowUpdateRatio * (1 << DL_SHADOW_UPDATE_SHIFT)));
 	}
 	else
 	{
-		if (light.m_pLightImage)
-		{
-			light.m_pLightImage->Release();
-		}
-		light.m_pLightImage = nullptr;
-		light.m_Flags |= DLF_POINT;
+		light.m_Flags &= ~DLF_CASTSHADOW_MAPS;
 	}
 
-	IMaterial* pMaterial = nullptr;
-	if (attachParams->material && attachParams->material [0])
+	light.SetRadius(renderLight.radius, renderLight.options.m_attenuationBulbSize);
+
+	light.m_fFogRadialLobe = renderLight.options.m_fogRadialLobe;
+
+	const char* szProjectorTexturePath = renderLight.projectorOptions.GetTexturePath();
+	if (szProjectorTexturePath[0] == '\0')
 	{
-		pMaterial = gEnv->p3DEngine->GetMaterialManager()->LoadMaterial(attachParams->material);
+		szProjectorTexturePath = "%ENGINE%/EngineAssets/Textures/lights/softedge.dds";
+	}
+
+	const char* pExt = PathUtil::GetExt(szProjectorTexturePath);
+	if (!stricmp(pExt, "swf") || !stricmp(pExt, "gfx") || !stricmp(pExt, "usm") || !stricmp(pExt, "ui"))
+	{
+		light.m_pLightDynTexSource = gEnv->pRenderer->EF_LoadDynTexture(szProjectorTexturePath, false);
+	}
+	else
+	{
+		light.m_pLightImage = gEnv->pRenderer->EF_LoadTexture(szProjectorTexturePath, 0);
+	}
+
+	if ((light.m_pLightImage == nullptr || !light.m_pLightImage->IsTextureLoaded()) && light.m_pLightDynTexSource == nullptr)
+	{
+		CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_ERROR, "Light projector texture %s not found, disabling projector component for entity %s", szProjectorTexturePath, pOwnerEntity->GetName());
+		return EFFECTID_INVALID;
+	}
+
+	if (renderLight.flare.HasTexturePath())
+	{
+		int nLensOpticsId;
+
+		if (gEnv->pOpticsManager->Load(renderLight.flare.GetTexturePath(), nLensOpticsId))
+		{
+			IOpticsElementBase* pOptics = gEnv->pOpticsManager->GetOptics(nLensOpticsId);
+			CRY_ASSERT(pOptics != nullptr);
+
+			if (pOptics != nullptr)
+			{
+				light.SetLensOpticsElement(pOptics);
+
+				float flareAngle = renderLight.flare.m_angle.ToDegrees();
+
+				if (flareAngle != 0)
+				{
+					int modularAngle = ((int)flareAngle) % 360;
+					if (modularAngle == 0)
+						light.m_LensOpticsFrustumAngle = 255;
+					else
+						light.m_LensOpticsFrustumAngle = (uint8)(flareAngle * (255.0f / 360.0f));
+				}
+				else
+				{
+					light.m_LensOpticsFrustumAngle = 0;
+				}
+			}
+		}
+		else
+		{
+			CryWarning(VALIDATOR_MODULE_GAME, VALIDATOR_ERROR, "Flare lens optics %s for projector component in entity %s doesn't exist!", renderLight.flare.GetTexturePath(), pOwnerEntity->GetName());
+			light.SetLensOpticsElement(nullptr);
+		}
+	}
+
+	if (renderLight.optics.m_flareEnable && !renderLight.optics.m_lensFlareName.empty())
+	{
+		int32 opticsIndex = 0;
+		if (gEnv->pOpticsManager->Load(renderLight.optics.m_lensFlareName.c_str(), opticsIndex))
+		{
+			IOpticsElementBase* pOpticsElement = gEnv->pOpticsManager->GetOptics(opticsIndex);
+			light.SetLensOpticsElement(pOpticsElement);
+
+			const int32 modularAngle = renderLight.optics.m_flareFOV % 360;
+			if (modularAngle == 0)
+				light.m_LensOpticsFrustumAngle = 255;
+			else
+				light.m_LensOpticsFrustumAngle = (uint8)(renderLight.optics.m_flareFOV * (255.0f / 360.0f));
+
+			if (renderLight.optics.m_attachToSun)
+			{
+				light.m_Flags |= DLF_ATTACH_TO_SUN | DLF_FAKE | DLF_IGNORES_VISAREAS;
+				light.m_Flags &= ~DLF_THIS_AREA_ONLY;
+			}
+		}
+	}
+
+	pOwnerEntity->UpdateLightClipBounds(light);
+
+	// Need a custom material?
+	IMaterial* pMaterial = nullptr;
+	if (renderLight.effectSlotMaterial.value.length() > 0)
+	{
+		pMaterial = gEnv->p3DEngine->GetMaterialManager()->LoadMaterial(renderLight.effectSlotMaterial.value);
 	}
 
 	SEntitySlotInfo slotInfo;
@@ -373,9 +480,13 @@ TAttachedEffectId CEffectsController::AttachLight(const int targetSlot, const ch
 			pOwnerEntity->SetSlotMaterial(effectInfo.entityEffectSlot, pMaterial);
 		}
 
+		// HACK: I am applying a rotation to orient the light down the Y axis instead of the engine system of the X axis.
+		//Matrix34 localEffectMtx = Matrix34(Matrix33::CreateRotationVDir(direction));
+		//Matrix34 localEffectMtx = Matrix34(Matrix33::CreateRotationVDir(direction * Matrix33::CreateRotationZ(gf_PI * -0.5f)));
 		Matrix34 localEffectMtx = Matrix34(Matrix33::CreateRotationVDir(direction));
 		localEffectMtx.SetTranslation(localHelperPosition);
 		pOwnerEntity->SetSlotLocalTM(effectInfo.entityEffectSlot, localEffectMtx);
+
 
 		m_attachedEffects.push_back(effectInfo);
 
@@ -383,12 +494,12 @@ TAttachedEffectId CEffectsController::AttachLight(const int targetSlot, const ch
 	}
 	else if (slotInfo.pCharacter)
 	{
-		IAttachmentManager *pAttachmentManager = slotInfo.pCharacter->GetIAttachmentManager();
-		IAttachment *pAttachment = pAttachmentManager->GetInterfaceByName(helperName);
+		IAttachmentManager* pAttachmentManager = slotInfo.pCharacter->GetIAttachmentManager();
+		IAttachment* pAttachment = pAttachmentManager->GetInterfaceByName(helperName);
 
 		if (pAttachment)
 		{
-			CLightAttachment *pLightAttachment = new CLightAttachment();
+			CLightAttachment* pLightAttachment = new CLightAttachment();
 			pLightAttachment->LoadLight(light);
 
 			ILightSource* pLightSource = pLightAttachment->GetLightSource();
@@ -396,13 +507,16 @@ TAttachedEffectId CEffectsController::AttachLight(const int targetSlot, const ch
 			{
 				pLightSource->SetMaterial(pMaterial);
 				// #TODO: Find out what this does and how to get it.
-				// pLightSource->SetCastingException(attachParams->pCasterException);
+				// pLightSource->SetCastingException(renderLight.pCasterException);
 			}
 			pAttachment->AddBinding(pLightAttachment);
 
 			const bool customOffset = (offset != Vec3Constants<float>::fVec3_Zero) || (direction != Vec3Constants<float>::fVec3_OneY);
 			if (customOffset)
 			{
+				// HACK: I am applying a rotation to orient the light down the Y axis instead of the engine system of the X axis.
+				//pAttachment->SetAttRelativeDefault(QuatT(Quat::CreateRotationVDir(direction), offset));
+				//pAttachment->SetAttRelativeDefault(QuatT(Quat::CreateRotationVDir(direction * Matrix33::CreateRotationZ(gf_PI * -0.5f)), offset));
 				pAttachment->SetAttRelativeDefault(QuatT(Quat::CreateRotationVDir(direction), offset));
 			}
 		}
@@ -443,11 +557,11 @@ void CEffectsController::DetachEffect(const TAttachedEffectId effectId)
 		}
 		else
 		{
-			ICharacterInstance *pCharacter = pOwnerEntity->GetCharacter(effectInfo.characterEffectSlot);
+			ICharacterInstance* pCharacter = pOwnerEntity->GetCharacter(effectInfo.characterEffectSlot);
 			if (pCharacter)
 			{
-				IAttachmentManager *pAttachmentManager = pCharacter->GetIAttachmentManager();
-				IAttachment *pAttachment = pAttachmentManager->GetInterfaceByName(effectInfo.helperName.c_str());
+				IAttachmentManager* pAttachmentManager = pCharacter->GetIAttachmentManager();
+				IAttachment* pAttachment = pAttachmentManager->GetInterfaceByName(effectInfo.helperName.c_str());
 				if (pAttachment)
 				{
 					pAttachment->ClearBinding();
@@ -469,7 +583,7 @@ IParticleEmitter* CEffectsController::GetEffectEmitter(const TAttachedEffectId e
 
 	if (effectCit != m_attachedEffects.end())
 	{
-		const SEffectInfo &effectInfo = *effectCit;
+		const SEffectInfo& effectInfo = *effectCit;
 
 		if (effectInfo.entityEffectSlot >= 0)
 		{
@@ -485,14 +599,14 @@ IParticleEmitter* CEffectsController::GetEffectEmitter(const TAttachedEffectId e
 			SEntitySlotInfo slotInfo;
 			if (pOwnerEntity->GetSlotInfo(effectInfo.characterEffectSlot, slotInfo) && slotInfo.pCharacter)
 			{
-				IAttachmentManager *pAttachmentManager = slotInfo.pCharacter->GetIAttachmentManager();
-				IAttachment *pAttachment = pAttachmentManager->GetInterfaceByName(effectInfo.helperName.c_str());
+				IAttachmentManager* pAttachmentManager = slotInfo.pCharacter->GetIAttachmentManager();
+				IAttachment* pAttachment = pAttachmentManager->GetInterfaceByName(effectInfo.helperName.c_str());
 				if (pAttachment)
 				{
-					IAttachmentObject *pAttachmentObject = pAttachment->GetIAttachmentObject();
+					IAttachmentObject* pAttachmentObject = pAttachment->GetIAttachmentObject();
 					if (pAttachmentObject != nullptr && (pAttachmentObject->GetAttachmentType() == IAttachmentObject::eAttachment_Effect))
 					{
-						return static_cast<CEffectAttachment *>(pAttachmentObject)->GetEmitter();
+						return static_cast<CEffectAttachment*>(pAttachmentObject)->GetEmitter();
 					}
 				}
 			}
@@ -512,7 +626,7 @@ ILightSource* CEffectsController::GetLightSource(const TAttachedEffectId effectI
 
 	if (effectCit != m_attachedEffects.end())
 	{
-		const SEffectInfo &effectInfo = *effectCit;
+		const SEffectInfo& effectInfo = *effectCit;
 
 		if (effectInfo.entityEffectSlot >= 0)
 		{
@@ -528,14 +642,14 @@ ILightSource* CEffectsController::GetLightSource(const TAttachedEffectId effectI
 			SEntitySlotInfo slotInfo;
 			if (pOwnerEntity->GetSlotInfo(effectInfo.characterEffectSlot, slotInfo) && slotInfo.pCharacter)
 			{
-				IAttachmentManager *pAttachmentManager = slotInfo.pCharacter->GetIAttachmentManager();
-				IAttachment *pAttachment = pAttachmentManager->GetInterfaceByName(effectInfo.helperName.c_str());
+				IAttachmentManager* pAttachmentManager = slotInfo.pCharacter->GetIAttachmentManager();
+				IAttachment* pAttachment = pAttachmentManager->GetInterfaceByName(effectInfo.helperName.c_str());
 				if (pAttachment)
 				{
-					IAttachmentObject *pAttachmentObject = pAttachment->GetIAttachmentObject();
+					IAttachmentObject* pAttachmentObject = pAttachment->GetIAttachmentObject();
 					if (pAttachmentObject != nullptr && (pAttachmentObject->GetAttachmentType() == IAttachmentObject::eAttachment_Light))
 					{
-						return static_cast<CLightAttachment *>(pAttachmentObject)->GetLightSource();
+						return static_cast<CLightAttachment*>(pAttachmentObject)->GetLightSource();
 					}
 				}
 			}
@@ -561,7 +675,7 @@ void CEffectsController::SetEffectWorldTM(const TAttachedEffectId effectId, cons
 
 	if (effectCit != m_attachedEffects.end())
 	{
-		const SEffectInfo &effectInfo = *effectCit;
+		const SEffectInfo& effectInfo = *effectCit;
 		SEntitySlotInfo slotInfo;
 
 		if (effectInfo.entityEffectSlot >= 0)
@@ -585,7 +699,7 @@ void CEffectsController::UpdateEntitySlotEffectLocationsFromHelpers()
 	auto pOwnerEntity = gEnv->pEntitySystem->GetEntity(m_ownerEntityId);
 	for (int i = 0; i < numEffects; ++i)
 	{
-		SEffectInfo& effectInfo = m_attachedEffects [i];
+		SEffectInfo& effectInfo = m_attachedEffects[i];
 
 		if (effectInfo.entityEffectSlot >= 0 && effectInfo.characterEffectSlot >= 0 && !effectInfo.helperName.empty())
 		{
@@ -599,5 +713,4 @@ void CEffectsController::UpdateEntitySlotEffectLocationsFromHelpers()
 		}
 	}
 }
-};
 }

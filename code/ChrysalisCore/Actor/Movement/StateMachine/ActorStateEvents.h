@@ -251,12 +251,12 @@ struct SStateEventInteractiveAction : public SStateEvent
 
 struct SInputEventData
 {
-	enum EInputEvent
+	enum class EInputEvent
 	{
-		EInputEvent_Jump = 0,
-		EInputEvent_Slide,
-		EInputEvent_Sprint,
-		EInputEvent_ButtonMashingSequence,
+		jump,
+		slide,
+		sprint,
+		buttonMashingSequence,
 	};
 
 	SInputEventData(EInputEvent inputEvent)

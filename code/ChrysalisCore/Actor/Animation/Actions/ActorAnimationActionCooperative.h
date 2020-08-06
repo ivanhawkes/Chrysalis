@@ -2,7 +2,6 @@
 
 #include "ICryMannequin.h"
 #include <Actor/Animation/ActorAnimation.h>
-#include <Utility/Listener.h>
 
 
 namespace Chrysalis
@@ -27,12 +26,12 @@ public:
 
 	void AddEventListener(IAnimationEventListener* pListener)
 	{
-		stl::push_back_unique(m_listenersList, pListener);
+		stl::push_back_unique(m_listeners, pListener);
 	}
 
 	void RemoveEventListener(IAnimationEventListener* pListener)
 	{
-		m_listenersList.remove(pListener);
+		m_listeners.remove(pListener);
 	}
 
 protected:
@@ -66,7 +65,7 @@ protected:
 	std::vector<string> m_tags;
 
 	/** Listeners for animation events. */
-	std::list<IAnimationEventListener*> m_listenersList;
+	std::list<IAnimationEventListener*> m_listeners;
 
 private:
 	// Prevent implementation.

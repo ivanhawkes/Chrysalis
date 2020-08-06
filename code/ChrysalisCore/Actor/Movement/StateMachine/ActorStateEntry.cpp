@@ -1,7 +1,7 @@
 #include <StdAfx.h>
 
 #include "ActorStateEvents.h"
-#include <Actor/ActorControllerComponent.h>
+#include <Components/Actor/ActorControllerComponent.h>
 
 
 namespace Chrysalis

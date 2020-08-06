@@ -1,11 +1,40 @@
 #pragma once
 
-#include "Components.h"
+#include <ECS/Components/Spells/Spell.h>
 
 
 namespace Chrysalis::ECS
 {
-struct Health : public IComponent
+enum class DamageType
+{
+	acid,
+	bleed,
+	cold,
+	collision,
+	cleave,
+	crush,
+	decay,
+	disease,
+	electricity,
+	energy,
+	entropy,
+	explosion,
+	fire,
+	holy,
+	ice,
+	nature,
+	pierce,
+	plasma,
+	poison,
+	qi,
+	radiation,
+	slash,
+	tear,
+	unholy
+};
+
+
+struct Health
 {
 	Health() = default;
 	virtual ~Health() = default;
@@ -15,38 +44,23 @@ struct Health : public IComponent
 	{
 	}
 
+
 	inline bool operator==(const Health& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
-
-
-	const CryGUID& GetGuid() const override final
-	{
-		static CryGUID guid = "{8788DADD-08B8-4BE8-B519-E0BD5D61E932}"_cry_guid;
-
-		return guid;
-	}
-
-
-	virtual const entt::hashed_string& GetHashedName() const
-	{
-		static constexpr entt::hashed_string nameHS {"health"_hs};
-
-		return nameHS;
-	}
 
 
 	static void ReflectType(Schematyc::CTypeDesc<Health>& desc)
 	{
-		desc.SetGUID(Health().GetGuid());
+		desc.SetGUID("{2B292018-F820-42FA-AA5D-28681E814A4A}"_cry_guid);
 		desc.SetLabel("Health");
-		desc.SetDescription("Health");
+		desc.SetDescription("Health of an actor.");
 	}
 
 
-	bool Serialize(Serialization::IArchive& archive) override final
+	void Serialize(Serialization::IArchive& ar)
 	{
-		archive(health, "health", "health");
-
-		return true;
+		ar(health, "health", "The actor's current life force.");
+		ar(isDead, "isDead", "Are they dead?");
+		ar(isImmortal, "isImmortal", "Are they immortal or immune to damage?");
 	}
 
 	/** Health attribute. */
@@ -54,10 +68,13 @@ struct Health : public IComponent
 
 	/** Is the actor dead? */
 	bool isDead {false};
+
+	/** Is the actor immortal? */
+	bool isImmortal {false};
 };
 
 
-struct Damage : public IComponent
+struct Damage
 {
 	Damage() = default;
 	virtual ~Damage() = default;
@@ -67,50 +84,26 @@ struct Damage : public IComponent
 	{
 	}
 
-	inline bool operator==(const Damage& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
 
-
-	const CryGUID& GetGuid() const override final
+	void Serialize(Serialization::IArchive& ar)
 	{
-		static CryGUID guid = "{FD6F9B82-06A7-436E-9268-008A567ADF3C}"_cry_guid;
-
-		return guid;
+		ar(targetTargetType, "targetTargetType", "targetTargetType");
+		ar(quantity, "quantity", "quantity");
+		ar(damageType, "damageType", "Damage Type");
 	}
 
-
-	virtual const entt::hashed_string& GetHashedName() const
-	{
-		static constexpr entt::hashed_string nameHS {"damage"_hs};
-
-		return nameHS;
-	}
-
-
-	static void ReflectType(Schematyc::CTypeDesc<Damage>& desc)
-	{
-		desc.SetGUID(Damage().GetGuid());
-		desc.SetLabel("Damage");
-		desc.SetDescription("Damage");
-	}
-
-
-	bool Serialize(Serialization::IArchive& archive) override final
-	{
-		archive(quantity, "quantity", "quantity");
-		archive(damageType, "damageType", "Damage Type");
-
-		return true;
-	}
+	/** Use the spell's target or source for this component's target. */
+	TargetTargetType targetTargetType {TargetTargetType::target};
 
 	/** Modify an attribute by this amount. */
-	float quantity;
+	float quantity {0.0f};
 
 	/** The type of damage. */
-	DamageType damageType;
+	DamageType damageType {DamageType::acid};
 };
 
 
-struct DamageOverTime : public IComponent
+struct DamageOverTime
 {
 	DamageOverTime() = default;
 	virtual ~DamageOverTime() = default;
@@ -123,48 +116,24 @@ struct DamageOverTime : public IComponent
 		ticksRemaining = duration / interval;
 	}
 
-	inline bool operator==(const DamageOverTime& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
 
-
-	const CryGUID& GetGuid() const override final
+	void Serialize(Serialization::IArchive& ar)
 	{
-		static CryGUID guid = "{E0DC02B3-3BC8-4E72-99F3-B3D59CEC3433}"_cry_guid;
-
-		return guid;
+		ar(targetTargetType, "targetTargetType", "targetTargetType");
+		ar(quantity, "quantity", "quantity");
+		ar(damageType, "damageType", "damageType");
+		ar(duration, "duration", "duration");
+		ar(interval, "interval", "interval");
 	}
 
-
-	virtual const entt::hashed_string& GetHashedName() const
-	{
-		static constexpr entt::hashed_string nameHS {"damage-over-time"_hs};
-
-		return nameHS;
-	}
-
-
-	static void ReflectType(Schematyc::CTypeDesc<DamageOverTime>& desc)
-	{
-		desc.SetGUID(DamageOverTime().GetGuid());
-		desc.SetLabel("DamageOverTime");
-		desc.SetDescription("DamageOverTime");
-	}
-
-
-	bool Serialize(Serialization::IArchive& archive) override final
-	{
-		archive(quantity, "quantity", "quantity");
-		archive(damageType, "damageType", "Damage Type");
-		archive(duration, "duration", "duration");
-		archive(interval, "interval", "interval");
-
-		return true;
-	}
+	/** Use the spell's target or source for this component's target. */
+	TargetTargetType targetTargetType {TargetTargetType::target};
 
 	/** Modify an attribute by this amount. */
-	float quantity;
+	float quantity {0.0f};
 
 	/** The type of damage. */
-	DamageType damageType;
+	DamageType damageType {DamageType::acid};
 
 	/** Limit the duration for this modifier. Given as remaining time in seconds. */
 	float duration {10.0f};
@@ -180,7 +149,7 @@ struct DamageOverTime : public IComponent
 };
 
 
-struct Heal : public IComponent
+struct Heal
 {
 	Heal() = default;
 	virtual ~Heal() = default;
@@ -190,46 +159,22 @@ struct Heal : public IComponent
 	{
 	}
 
-	inline bool operator==(const Heal& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
 
-
-	const CryGUID& GetGuid() const override final
+	void Serialize(Serialization::IArchive& ar)
 	{
-		static CryGUID guid = "{1389ECC0-2BDF-492F-966A-2FC7C83CBA5F}"_cry_guid;
-
-		return guid;
+		ar(targetTargetType, "targetTargetType", "targetTargetType");
+		ar(quantity, "quantity", "quantity");
 	}
 
-
-	virtual const entt::hashed_string& GetHashedName() const
-	{
-		static constexpr entt::hashed_string nameHS {"heal"_hs};
-
-		return nameHS;
-	}
-
-
-	static void ReflectType(Schematyc::CTypeDesc<Heal>& desc)
-	{
-		desc.SetGUID(Heal().GetGuid());
-		desc.SetLabel("Heal");
-		desc.SetDescription("Heal");
-	}
-
-
-	bool Serialize(Serialization::IArchive& archive) override final
-	{
-		archive(quantity, "quantity", "quantity");
-
-		return true;
-	}
+	/** Use the spell's target or source for this component's target. */
+	TargetTargetType targetTargetType {TargetTargetType::target};
 
 	/** Modify an attribute by this amount. */
-	float quantity;
+	float quantity {0.0f};
 };
 
 
-struct HealOverTime : public IComponent
+struct HealOverTime
 {
 	HealOverTime() = default;
 	virtual ~HealOverTime() = default;
@@ -240,44 +185,20 @@ struct HealOverTime : public IComponent
 	{
 	}
 
-	inline bool operator==(const HealOverTime& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
 
-
-	const CryGUID& GetGuid() const override final
+	void Serialize(Serialization::IArchive& ar)
 	{
-		static CryGUID guid = "{B24CD70D-0D25-412D-93C9-072FE20736B4}"_cry_guid;
-
-		return guid;
+		ar(targetTargetType, "targetTargetType", "targetTargetType");
+		ar(quantity, "quantity", "quantity");
+		ar(duration, "duration", "duration");
+		ar(interval, "interval", "interval");
 	}
 
-
-	virtual const entt::hashed_string& GetHashedName() const
-	{
-		static constexpr entt::hashed_string nameHS {"heal-over-time"_hs};
-
-		return nameHS;
-	}
-
-
-	static void ReflectType(Schematyc::CTypeDesc<HealOverTime>& desc)
-	{
-		desc.SetGUID(HealOverTime().GetGuid());
-		desc.SetLabel("HealOverTime");
-		desc.SetDescription("HealOverTime");
-	}
-
-
-	bool Serialize(Serialization::IArchive& archive) override final
-	{
-		archive(quantity, "quantity", "quantity");
-		archive(duration, "duration", "duration");
-		archive(interval, "interval", "interval");
-
-		return true;
-	}
+	/** Use the spell's target or source for this component's target. */
+	TargetTargetType targetTargetType {TargetTargetType::target};
 
 	/** Modify an attribute by this amount. */
-	float quantity;
+	float quantity {0.0f};
 
 	/** Limit the duration for this modifier. Given as remaining time in seconds. */
 	float duration {10.0f};

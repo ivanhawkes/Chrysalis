@@ -18,7 +18,6 @@ namespace Chrysalis
 struct ICameraComponent;
 class CCameraManagerComponent;
 struct CActorComponent;
-class CCharacterComponent;
 class CPlayerInputComponent;
 
 

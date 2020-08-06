@@ -6,5 +6,5 @@
 namespace Chrysalis::ECS
 {
 // Filthy global ECS system.
-ECS::ECSSimulation ecsSimulation;
+CSimulation Simulation;
 }

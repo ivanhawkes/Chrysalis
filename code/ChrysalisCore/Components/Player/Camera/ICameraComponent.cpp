@@ -95,7 +95,9 @@ void ICameraComponent::UpdateView()
 {
 	const CCamera& systemCamera = gEnv->pSystem->GetViewCamera();
 
-	m_camera.SetFrustum(systemCamera.GetViewSurfaceX(), systemCamera.GetViewSurfaceZ(), m_fieldOfView.ToRadians(), m_nearPlane,
+	m_camera.SetFrustum(systemCamera.GetViewSurfaceX(), systemCamera.GetViewSurfaceZ(), 
+		DEG2RAD(m_fieldOfView), 
+		m_nearPlane,
 		gEnv->p3DEngine->GetMaxViewDistance(), systemCamera.GetPixelAspectRatio());
 	m_camera.SetMatrix(m_cameraMatrix);
 

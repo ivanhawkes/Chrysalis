@@ -7,7 +7,6 @@
 #include <CryRenderer/IRenderAuxGeom.h>
 #include "Components/Player/PlayerComponent.h"
 #include <Components/Player/Input/PlayerInputComponent.h>
-#include <Actor/Character/CharacterComponent.h>
 #include <Components/Interaction/EntityAwarenessComponent.h>
 #include <Console/CVars.h>
 

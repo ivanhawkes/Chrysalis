@@ -27,7 +27,7 @@ public:
 		m_context->SetIsLookingProcClip(true);
 
 #ifdef DEBUG
-		CryWatch("CProceduralClipLooking Update");
+		//CryWatch("CProceduralClipLooking Update");
 #endif
 	}
 };

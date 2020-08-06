@@ -9,8 +9,7 @@
 #include <GameObjects/GameObject.h>
 #include <IActorSystem.h>
 #include <IMovementController.h>
-#include <Actor/Character/CharacterComponent.h>
-#include <Actor/ActorComponent.h>
+#include <Components/Actor/ActorComponent.h>
 #include <Components/Player/Camera/ICameraComponent.h>
 #include <Components/Player/PlayerComponent.h>
 #include <Components/Interaction/EntityInteractionComponent.h>
@@ -119,7 +118,7 @@ void CEntityAwarenessComponent::Update()
 }
 
 
-void CEntityAwarenessComponent::GetMemoryUsage(ICrySizer *pSizer) const
+void CEntityAwarenessComponent::GetMemoryUsage(ICrySizer* pSizer) const
 {
 	pSizer->AddObject(this, sizeof(*this));
 	pSizer->AddObject(m_entitiesInProximity);
@@ -166,9 +165,9 @@ void CEntityAwarenessComponent::UpdateRaycastQuery()
 
 	if (m_eyeDirection.IsValid())
 	{
-		IEntity * pEntity = m_pActor->GetEntity();
-		IPhysicalEntity * pPhysEnt = pEntity ? pEntity->GetPhysics() : nullptr;
-		IPhysicalEntity *skipEntities[1];
+		IEntity* pEntity = m_pActor->GetEntity();
+		IPhysicalEntity* pPhysEnt = pEntity ? pEntity->GetPhysics() : nullptr;
+		IPhysicalEntity* skipEntities[1];
 		skipEntities[0] = pPhysEnt;
 
 		int raySlot = RequestRaySlotId();
@@ -267,7 +266,7 @@ void CEntityAwarenessComponent::OnRayCastDataReceived(const QueuedRayID& rayID, 
 }
 
 
-void CEntityAwarenessComponent::OnRayCast(const ray_hit & rayHit)
+void CEntityAwarenessComponent::OnRayCast(const ray_hit& rayHit)
 {
 	EntityId entityIdHit = INVALID_ENTITYID;
 
@@ -303,7 +302,7 @@ void CEntityAwarenessComponent::OnRayCast(const ray_hit & rayHit)
 #endif
 
 	// Figure out who the entity is, if there is one.
-	IEntity *pEntity = gEnv->pEntitySystem->GetEntityFromPhysics(m_rayHitSolid.pCollider);
+	IEntity* pEntity = gEnv->pEntitySystem->GetEntityFromPhysics(m_rayHitSolid.pCollider);
 
 	// Check if it's the child or not.
 	int partId = m_rayHitSolid.partid;
@@ -562,9 +561,21 @@ const Entities& CEntityAwarenessComponent::GetNearDotFiltered(float minDot, floa
 	// Check each entity to see which is the best fit.
 	for (auto& entityId : entities)
 	{
-		IEntity *pEntity = gEnv->pEntitySystem->GetEntity(entityId);
+		IEntity* pEntity = gEnv->pEntitySystem->GetEntity(entityId);
 		if (!pEntity)
 			continue;
+
+#if defined(_DEBUG)
+		if (g_cvars.m_componentAwarenessDebug & eDB_DotFilteredCleanup)
+		{
+			// NOTE: This is a brute force way to cleanup the highlights we used in eDB_DotFiltered mode.
+			if (IRenderNode* pItemRenderNode = pEntity->GetRenderNode())
+			{
+				// NOTE: Colour order is actually ALPHA, BLUE, GREEN, RED.
+				pItemRenderNode->m_nHUDSilhouettesParam = RGBA8(0.0f, 0.0f, 0.0f, 0.0f);
+			}
+		}
+#endif
 
 		AABB bbox;
 		pEntity->GetWorldBounds(bbox);
@@ -580,8 +591,13 @@ const Entities& CEntityAwarenessComponent::GetNearDotFiltered(float minDot, floa
 			if (g_cvars.m_componentAwarenessDebug & eDB_DotFiltered)
 			{
 				// DEBUG: Highlight the entity.
-				bbox.Expand(Vec3(0.03f, 0.03f, 0.03f));
-				gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(bbox, true, ColorB(0, 0, 64), EBoundingBoxDrawStyle::eBBD_Extremes_Color_Encoded);
+				// NOTE: There is no method to undo the highlight at present.
+				if (IRenderNode* pItemRenderNode = pEntity->GetRenderNode())
+				{
+					// NOTE: Colour order is actually ALPHA, BLUE, GREEN, RED.
+					pItemRenderNode->m_nHUDSilhouettesParam = RGBA8(1.0f, 255.0f, 0.0f, 0.0f);
+
+				}
 			}
 #endif
 
@@ -607,13 +623,16 @@ const Entities& CEntityAwarenessComponent::GetNearDotFiltered(float minDot, floa
 #if defined(_DEBUG)
 	if (g_cvars.m_componentAwarenessDebug & eDB_DotFiltered)
 	{
-		IEntity *pEntity;
+		IEntity* pEntity;
 		if ((m_entitiesNearDotFiltered.size() > 0) && (pEntity = gEnv->pEntitySystem->GetEntity(m_entitiesNearDotFiltered[0])))
 		{
-			AABB bbox;
-			pEntity->GetWorldBounds(bbox);
-			bbox.Expand(Vec3(0.04f, 0.04f, 0.04f));
-			gEnv->pRenderer->GetIRenderAuxGeom()->DrawAABB(bbox, true, ColorB(192, 0, 0), EBoundingBoxDrawStyle::eBBD_Extremes_Color_Encoded);
+			// DEBUG: Highlight the entity.
+			// NOTE: There is no method to undo the highlight at present.
+			if (IRenderNode* pItemRenderNode = pEntity->GetRenderNode())
+			{
+				// NOTE: Colour order is actually ALPHA, BLUE, GREEN, RED.
+				pItemRenderNode->m_nHUDSilhouettesParam = RGBA8(0.0f, 0.0f, 0.0f, 96.0f);
+			}
 		}
 	}
 #endif

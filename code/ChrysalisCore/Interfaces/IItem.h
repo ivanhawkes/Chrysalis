@@ -63,8 +63,9 @@ public:
 class IItemClass
 {
 public:
-	//	inline bool operator==(const IItemClass& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
+	//inline bool operator==(const IItemClass& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
 	inline bool operator==(const IItemClass& rhs) const { return strcmp(itemClass, rhs.itemClass); }
+
 
 	static void ReflectType(Schematyc::CTypeDesc<IItemClass>& desc)
 	{
@@ -72,6 +73,7 @@ public:
 		desc.SetLabel("Item Class Properties");
 		desc.SetDescription("Item Class Properties.");
 	}
+
 
 	virtual void Serialize(Serialization::IArchive& ar)
 	{
@@ -215,6 +217,7 @@ class IItemClassCollection
 public:
 	inline bool operator==(const IItemClassCollection& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
 
+
 	static void ReflectType(Schematyc::CTypeDesc<IItemClassCollection>& desc)
 	{
 		desc.SetGUID("{1D99829B-BD17-4B90-8A21-E5EE060BAE18}"_cry_guid);
@@ -222,11 +225,13 @@ public:
 		desc.SetDescription("Item Class Collection.");
 	}
 
+
 	virtual void Serialize(Serialization::IArchive& ar)
 	{
 		Serialization::SContext context(ar, this);
 		ar(m_itemClasses, "ItemClasses", "Item Classes");
 	}
+
 
 	std::vector<IItemClass> m_itemClasses;
 };
@@ -237,12 +242,14 @@ class IItem
 public:
 	inline bool operator==(const IItem& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
 
+
 	static void ReflectType(Schematyc::CTypeDesc<IItem>& desc)
 	{
 		desc.SetGUID("{222ECAC7-D041-43C0-B54A-F4355E98FA12}"_cry_guid);
 		desc.SetLabel("Item Properties");
 		desc.SetDescription("Item Properties.");
 	}
+
 
 	virtual void Serialize(Serialization::IArchive& ar)
 	{
@@ -268,6 +275,6 @@ public:
 	Provides a means of customisation. NOTE: This is here as a reminder I need a way to customise
 	components. That will need to be polymorphic.
 	**/
-	IItemCustomisation* m_pItemCustomisation;
+	IItemCustomisation* m_pItemCustomisation {nullptr};
 };
 }

@@ -150,11 +150,10 @@ void CInteractComponent::OnInteractionInteractStart(IInteraction& pInteraction, 
 		//pActorAnimationComponent->QueueFragment("Interact");
 
 		// We prefer to place the actor into a co-operative animation if possible.
-		TagState tagState {TAG_STATE_EMPTY}; // TODO: Is this needed? Does it duplicate the tag list we are passing in?
 		auto action = new CActorAnimationActionCooperative(actor,
 			pActorAnimationComponent,
 			GetEntityId(),
-			actor.GetMannequinParams()->fragmentIDs.Interaction, tagState, actor.GetMannequinParams()->tagIDs.ScopeSlave, tags);
+			actor.GetMannequinParams()->fragmentIDs.Interaction, TagState {TAG_STATE_EMPTY}, actor.GetMannequinParams()->tagIDs.ScopeSlave, tags);
 		action->AddEventListener(this);
 		actor.QueueAction(*action);
 
@@ -243,7 +242,7 @@ void CInteractComponent::OnActionAnimationExit()
 }
 
 
-void CInteractComponent::OnActionAnimationEvent(ICharacterInstance * pCharacter, const AnimEventInstance & event)
+void CInteractComponent::OnActionAnimationEvent(ICharacterInstance* pCharacter, const AnimEventInstance& event)
 {
 	CryLogAlways("CInteractComponent::AnimEvent: %s", event.m_EventName);
 
@@ -291,10 +290,10 @@ void CInteractComponent::InformAllLinkedEntities(string verb, bool isInteractedO
 }
 
 
-bool Serialize(Serialization::IArchive& archive, CInteractComponent::SAnimationTag& value, const char* szName, const char* szLabel)
+bool Serialize(Serialization::IArchive& ar, CInteractComponent::SAnimationTag& value, const char* szName, const char* szLabel)
 {
-	archive(value.tag, "tag", "Tag");
-	archive.doc("An animation tag for the fragment.");
+	ar(value.tag, "tag", "Tag");
+	ar.doc("An animation tag for the fragment.");
 
 	return true;
 }

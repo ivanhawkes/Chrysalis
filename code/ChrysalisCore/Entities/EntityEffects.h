@@ -1,24 +1,38 @@
 #pragma once
 
-#include <SharedParameters/DynamicLight.h>
-#include <SharedParameters/FogVolume.h>
-#include <Item/Parameters/ItemGeometryParameter.h>
+#include <entt/entt.hpp>
+#include <ECS/Components/RenderLight.h>
+
 #include <CryEntitySystem/IEntity.h>
 #include <CryParticleSystem\IParticles.h>
 
 
 namespace Chrysalis
 {
-namespace EntityEffects
+// #TODO: Dig into the code to find out what this does.
+enum eGeometrySlot
 {
+	eIGS_FirstPerson = 0,		// First person character.
+	eIGS_ThirdPerson,			// Third person character.
+	eIGS_Owner,					// Mostly used in item code. Appears in weapon code.
+	eIGS_OwnerAnimGraph,		// Deprecated (probably).
+	eIGS_OwnerAnimGraphLooped,	// Deprecated (probably).
+	eIGS_Aux0,					// Gun turrets and items.
+	eIGS_Destroyed,				// Gun turret and item resource.
+	eIGS_Aux1,					// Gun turret, item, laser.
+	eIGS_ThirdPersonAux,		// Item, JAW, laser.
+	eIGS_Last,					// End of reserved slot list.
+};
+
+
 typedef uint32 TAttachedEffectId;
 const TAttachedEffectId EFFECTID_INVALID = 0;
 
 /** An simple struct to help pass around parameters required to spawn a new effect. */
 struct SEffectSpawnParams
 {
-	SEffectSpawnParams(const Vec3& _position = Vec3(ZERO), const Vec3& _direction = FORWARD_DIRECTION, const float _scale = 1.0f,
-		const float _speed = -1.0, const bool _isPrime = false)
+	SEffectSpawnParams(const Vec3& _position = Vec3(ZERO), const Vec3& _direction = FORWARD_DIRECTION, 
+		const float _scale = 1.0f, const float _speed = -1.0, const bool _isPrime = false)
 		: position(_position), direction(_direction), scale(_scale), speed(_speed), isPrime(_isPrime)
 	{
 	}
@@ -114,10 +128,7 @@ public:
 	 \return	A TAttachedEffectId.
 	 */
 
-	 // #TODO: switch to using SEffectAttachParams for most these params.
-
-	TAttachedEffectId AttachLight(const int targetSlot, const char* helperName, Vec3 offset, Vec3 direction, eGeometrySlot firstSafeSlot,
-		const SDynamicLightConstPtr attachParams);
+	TAttachedEffectId AttachLight(const int targetSlot, const char* helperName, Vec3 offset, Vec3 direction, eGeometrySlot firstSafeSlot, const ECS::RenderLight& renderLight);
 
 
 	/**
@@ -145,6 +156,5 @@ private:
 	typedef std::vector<SEffectInfo> TAttachedEffects;
 	TAttachedEffects m_attachedEffects;
 	TAttachedEffectId m_effectGeneratorId;
-};
 };
 }

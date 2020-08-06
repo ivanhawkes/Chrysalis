@@ -24,10 +24,6 @@ add_sources("ChrysalisCore_uber.cpp"
 add_sources("Actor_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Actor"
-		"Actor/ActorComponent.cpp"
-		"Actor/ActorControllerComponent.cpp"
-		"Actor/ActorComponent.h"
-		"Actor/ActorControllerComponent.h"
 		"Actor/Fate.h"
 )
 add_sources("Animation_uber.cpp"
@@ -58,22 +54,6 @@ add_sources("Actions_uber.cpp"
 		"Actor/Animation/Actions/ActorAnimationActionLooking.h"
 		"Actor/Animation/Actions/ActorAnimationActionLookPose.h"
 )
-add_sources("Character_uber.cpp"
-    PROJECTS Chrysalis
-    SOURCE_GROUP "Actor\\\\Character"
-		"Actor/Character/CharacterAttributes.cpp"
-		"Actor/Character/CharacterAttributesComponent.cpp"
-		"Actor/Character/CharacterComponent.cpp"
-		"Actor/Character/CharacterAttributes.h"
-		"Actor/Character/CharacterAttributesComponent.h"
-		"Actor/Character/CharacterComponent.h"
-)
-add_sources("Mount_uber.cpp"
-    PROJECTS Chrysalis
-    SOURCE_GROUP "Actor\\\\Mount"
-		"Actor/Mount/Mount.cpp"
-		"Actor/Mount/Mount.h"
-)
 add_sources("Movement_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Actor\\\\Movement"
@@ -102,12 +82,6 @@ add_sources("StateMachine_uber.cpp"
 		"Actor/Movement/StateMachine/ActorStateSwim.h"
 		"Actor/Movement/StateMachine/ActorStateSwimWaterTestProxy.h"
 		"Actor/Movement/StateMachine/ActorStateUtility.h"
-)
-add_sources("Pet_uber.cpp"
-    PROJECTS Chrysalis
-    SOURCE_GROUP "Actor\\\\Pet"
-		"Actor/Pet/Pet.cpp"
-		"Actor/Pet/Pet.h"
 )
 add_sources("Animation_uber.cpp"
     PROJECTS Chrysalis
@@ -139,6 +113,14 @@ add_sources("ProceduralContext_uber.cpp"
 add_sources("Components_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components"
+)
+add_sources("Components_Actor_uber.cpp"
+    PROJECTS Chrysalis
+    SOURCE_GROUP "Components\\\\Actor"
+		"Components/Actor/ActorComponent.cpp"
+		"Components/Actor/ActorControllerComponent.cpp"
+		"Components/Actor/ActorComponent.h"
+		"Components/Actor/ActorControllerComponent.h"
 )
 add_sources("Animation_uber.cpp"
     PROJECTS Chrysalis
@@ -178,14 +160,14 @@ add_sources("Interaction_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Interaction"
 		"Components/Interaction/DRSInteractionComponent.cpp"
-		"Components/Interaction/EntityAwarenessComponent.cpp"
-		"Components/Interaction/EntityInteractionComponent.cpp"
-		"Components/Interaction/InteractComponent.cpp"
-		"Components/Interaction/ItemInteractionComponent.cpp"
 		"Components/Interaction/DRSInteractionComponent.h"
+		"Components/Interaction/EntityAwarenessComponent.cpp"
 		"Components/Interaction/EntityAwarenessComponent.h"
+		"Components/Interaction/EntityInteractionComponent.cpp"
 		"Components/Interaction/EntityInteractionComponent.h"
+		"Components/Interaction/InteractComponent.cpp"
 		"Components/Interaction/InteractComponent.h"
+		"Components/Interaction/ItemInteractionComponent.cpp"
 		"Components/Interaction/ItemInteractionComponent.h"
 )
 add_sources("Inventory_uber.cpp"
@@ -258,11 +240,25 @@ add_sources("Skeleton_uber.cpp"
 		"Components/Skeleton/JointManipulationComponent.cpp"
 		"Components/Skeleton/JointManipulationComponent.h"
 )
+add_sources("Slidable_uber.cpp"
+    PROJECTS Chrysalis
+    SOURCE_GROUP "Components\\\\Slidable"
+		"Components/Slidable/SlidableComponent.cpp"
+		"Components/Slidable/SlidableComponent.h"
+)
 add_sources("Snaplocks_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Snaplocks"
 		"Components/Snaplocks/SnaplockComponent.cpp"
 		"Components/Snaplocks/SnaplockComponent.h"
+)
+add_sources("Spells_uber.cpp"
+    PROJECTS Chrysalis
+    SOURCE_GROUP "Components\\\\Spells"
+		"Components/Spells/SpellbookComponent.cpp"
+		"Components/Spells/SpellbookComponent.h"
+		"Components/Spells/SpellParticipantComponent.cpp"
+		"Components/Spells/SpellParticipantComponent.h"
 )
 add_sources("Switchable_uber.cpp"
     PROJECTS Chrysalis
@@ -311,20 +307,29 @@ add_sources("Components_uber.cpp"
     SOURCE_GROUP "ECS\\\\Components"
 		"ECS/Components/Components.cpp"
 		"ECS/Components/Components.h"
+		"ECS/Components/Health.cpp"
 		"ECS/Components/Health.h"
 		"ECS/Components/Inventory.h"
 		"ECS/Components/Items.h"
+		"ECS/Components/RenderLight.cpp"
+		"ECS/Components/RenderLight.h"
 		"ECS/Components/Qi.h"
-		"ECS/Components/Spell.h"
-		"ECS/Components/Spell.cpp"
+)
+add_sources("Components_Spells_uber.cpp"
+    PROJECTS Chrysalis
+    SOURCE_GROUP "ECS\\\\Components\\\\Spells"
+		"ECS/Components/Spells/Spell.h"
+		"ECS/Components/Spells/Spell.cpp"
+		"ECS/Components/Spells/SpellActions.h"
+		"ECS/Components/Spells/SpellActions.cpp"
 )
 add_sources("Systems_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "ECS\\\\Systems"
-		"ECS/Systems/ECSSimulation.h"
-		"ECS/Systems/ECSSimulation.cpp"
 		"ECS/Systems/ItemSystem.cpp"
 		"ECS/Systems/ItemSystem.h"
+		"ECS/Systems/Simulation.h"
+		"ECS/Systems/Simulation.cpp"
 		"ECS/Systems/Systems.h"
 		"ECS/Systems/Systems.cpp"
 		"ECS/Systems/XMLSerializer.h"
@@ -353,12 +358,6 @@ add_sources("Game_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Game"
 )
-add_sources("Cache_uber.cpp"
-    PROJECTS Chrysalis
-    SOURCE_GROUP "Game\\\\Cache"
-		"Game/Cache/GameCache.cpp"
-		"Game/Cache/GameCache.h"
-)
 add_sources("Interfaces_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Interfaces"
@@ -366,12 +365,12 @@ add_sources("Interfaces_uber.cpp"
 		"Interfaces/IEquipment.h"
 		"Interfaces/IInventory.h"
 		"Interfaces/IItem.h"
+		"Interfaces/ISpell.h"
 )
 add_sources("Item_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Item"
 		"Item/ItemAccessory.cpp"
-		"Item/ItemEffect.cpp"
 		"Item/ItemSystem.cpp"
 		"Item/ItemSystem.h"
 )
@@ -380,20 +379,6 @@ add_sources("Accessory_uber.cpp"
     SOURCE_GROUP "Item\\\\Accessory"
 		"Item/Accessory/Accessory.cpp"
 		"Item/Accessory/Accessory.h"
-)
-add_sources("Parameters_uber.cpp"
-    PROJECTS Chrysalis
-    SOURCE_GROUP "Item\\\\Parameters"
-		"Item/Parameters/ItemAccessoryParameter.cpp"
-		"Item/Parameters/ItemBaseParameter.cpp"
-		"Item/Parameters/ItemGeometryParameter.cpp"
-		"Item/Parameters/ItemLaserParameter.cpp"
-		"Item/Parameters/ItemParameter.cpp"
-		"Item/Parameters/ItemAccessoryParameter.h"
-		"Item/Parameters/ItemBaseParameter.h"
-		"Item/Parameters/ItemGeometryParameter.h"
-		"Item/Parameters/ItemLaserParameter.h"
-		"Item/Parameters/ItemParameter.h"
 )
 add_sources("Weapon_uber.cpp"
     PROJECTS Chrysalis
@@ -422,14 +407,19 @@ add_sources("Schematyc_uber.cpp"
 		"Schematyc/General.cpp"
 		"Schematyc/CoreEnv.h"
 )
-add_sources("SharedParameters_uber.cpp"
+add_sources("Spells_uber.cpp"
     PROJECTS Chrysalis
-    SOURCE_GROUP "SharedParameters"
-		"SharedParameters/DynamicLight.cpp"
-		"SharedParameters/FogVolume.cpp"
-		"SharedParameters/DynamicLight.h"
-		"SharedParameters/FogVolume.h"
-		"SharedParameters/SharedParameters.h"
+    SOURCE_GROUP "Spells"
+		"Spells/Spells.cpp"
+		"Spells/Spells.h"
+)
+add_sources("SpellActions_uber.cpp"
+    PROJECTS Chrysalis
+    SOURCE_GROUP "Spells\\\\SpellActions"
+		"Spells/SpellActions/SpellActionOpenDoor.cpp"
+		"Spells/SpellActions/SpellActionOpenDoor.h"
+		"Spells/SpellActions/SpellActionSwitch.cpp"
+		"Spells/SpellActions/SpellActionSwitch.h"
 )
 add_sources("Snaplocks_uber.cpp"
     PROJECTS Chrysalis
@@ -456,7 +446,6 @@ add_sources("Utility_uber.cpp"
 		"Utility/CryWatch.h"
 		"Utility/DRS.h"
 		"Utility/ItemString.h"
-		"Utility/Listener.h"
 		"Utility/LocalizeUtility.h"
 		"Utility/StringConversions.h"
 		"Utility/StringUtils.h"
@@ -573,6 +562,10 @@ endif()
 
 #BEGIN-CUSTOM
 # Make any custom changes here, modifications outside of the block will be discarded on regeneration.
+
+# Force the compiler to c++17
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories("../SDK/EnTT/src")
 

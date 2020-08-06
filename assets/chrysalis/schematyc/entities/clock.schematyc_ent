@@ -97,30 +97,7 @@
    <element elementType="ComponentInstance" guid="41791516-376c-4320-80a3-94d188c099da" name="Rigidbody" accessor="Private" typeGUID="912c6ce8-56f7-4ffa-9134-f98d4e307bd6">
     <properties Networked="false" EnabledByDefault="true" Resting="false" Type="Rigid" SendCollisionSignal="false">
      <Buoyancy Damping="1" Density="1" Resistance="1"/>
-    </properties>
-    <extensions />
-    <children />
-   </element>
-   <element elementType="ComponentInstance" guid="f0d5d3b0-8d1c-40cf-bdb0-4b1636425281" name="JointManipulation" accessor="Public" typeGUID="a674648b-c54c-4c28-bace-e99e9ab403fa">
-    <transform>
-     <translation>
-      <position>
-       <element element="0"/>
-       <element element="0"/>
-       <element element="0"/>
-      </position>
-     </translation>
-     <rotation x="0" y="-0" z="0"/>
-     <scale>
-      <element element="1"/>
-      <element element="1"/>
-      <element element="1"/>
-     </scale>
-    </transform>
-    <properties Type="RenderAndCollider" FilePath="chrysalis/objects/desk/workdesk/workdesk.cdf">
-     <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
-     <Physics WeightType="EWeightType::Mass" Density="9.9999997e-05" Mass="10"/>
-     <Time JointName="" AttachmentName=""/>
+     <Simulation MaxTimeStep="0.02" SleepSpeed="0.039999999" Damping="0"/>
     </properties>
     <extensions />
     <children />
@@ -141,8 +118,8 @@
       <element element="1"/>
      </scale>
     </transform>
-    <properties Type="RenderAndCollider" Character="chrysalis/objects/desk/workdesk/workdesk.cdf" DatabasePath="" AnimDriven="true" GroundAlign="false">
-     <Render ShadowSpec="Low" IgnoreVisArea="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
+    <properties Type="RenderAndCollider" Character="chrysalis/objects/desk/workdesk/workdesk.cdf" Material="" DatabasePath="" AnimDriven="true" GroundAlign="false">
+     <Render ShadowSpec="Low" IgnoreVisArea="false" IgnoreTerrainLayerBlend="false" IgnoreDecalBlend="false" ViewDistRatio="100" LODDistance="100" GIMode="None"/>
      <DefaultScope ControllerDefPath="chrysalis/objects/desk/workdesk/controller_defs.xml" DefaultScope="SlaveCharacter" DefaultFragment="Open"/>
      <Physics WeightType="EWeightType::Mass" Density="9.9999997e-05" Mass="10"/>
     </properties>

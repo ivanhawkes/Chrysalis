@@ -1,7 +1,7 @@
 #include <StdAfx.h>
 
 #include "ActorAnimationActionInteration.h"
-#include <Actor/ActorComponent.h>
+#include <Components/Actor/ActorComponent.h>
 
 
 namespace Chrysalis
@@ -75,7 +75,7 @@ void CActorAnimationActionInteraction::Install()
 void CActorAnimationActionInteraction::OnAnimationEvent(ICharacterInstance* pCharacter, const AnimEventInstance& event)
 {
 	// Notify listeners.
-	for (auto it : m_listenersList)
+	for (auto it : m_listeners)
 		it->OnActionAnimationEvent(pCharacter, event);
 }
 
@@ -96,7 +96,7 @@ void CActorAnimationActionInteraction::Enter()
 	}
 
 	// Notify listeners.
-	for (auto it : m_listenersList)
+	for (auto it : m_listeners)
 		it->OnActionAnimationEnter();
 }
 
@@ -106,7 +106,7 @@ void CActorAnimationActionInteraction::Fail(EActionFailure actionFailure)
 	CAnimationAction::Fail(actionFailure);
 
 	// Notify listeners.
-	for (auto it : m_listenersList)
+	for (auto it : m_listeners)
 		it->OnActionAnimationFail(actionFailure);
 }
 
@@ -127,7 +127,7 @@ void CActorAnimationActionInteraction::Exit()
 	}
 
 	// Notify listeners.
-	for (auto it : m_listenersList)
+	for (auto it : m_listeners)
 		it->OnActionAnimationExit();
 }
 

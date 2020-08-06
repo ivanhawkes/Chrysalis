@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Actor/ActorComponent.h"
+#include <Components/Actor/ActorComponent.h>
 
 
 namespace Chrysalis

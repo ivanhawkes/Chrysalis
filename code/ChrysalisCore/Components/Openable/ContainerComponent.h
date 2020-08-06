@@ -3,7 +3,7 @@
 #include "Entities/Interaction/IEntityInteraction.h"
 #include <DefaultComponents/Geometry/StaticMeshComponent.h>
 
-class Cry::DefaultComponents::CStaticMeshComponent;
+class ::Cry::DefaultComponents::CStaticMeshComponent;
 
 namespace Chrysalis
 {
@@ -52,7 +52,7 @@ public:
 
 private:
 	/** Model for the geometry. */
-	Cry::DefaultComponents::CStaticMeshComponent* m_pGeometryComponent {nullptr};
+	::Cry::DefaultComponents::CStaticMeshComponent* m_pGeometryComponent {nullptr};
 
 	/** Animation for the geometry. */
 	CSimpleAnimationComponent* m_pSimpleAnimationComponent {nullptr};

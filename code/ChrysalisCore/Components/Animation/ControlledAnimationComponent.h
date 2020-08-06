@@ -3,9 +3,6 @@
 #include <DefaultComponents/Geometry/BaseMeshComponent.h>
 
 
-class CPlugin_CryDefaultEntities;
-
-
 namespace Chrysalis
 {
 class CControlledAnimationComponent
@@ -66,7 +63,7 @@ protected:
 	//Schematyc::CharacterFileName m_filePath;
 	Schematyc::GeomFileName m_filePath;
 	Schematyc::LowLevelAnimationName m_defaultAnimation;
-	_smart_ptr<ICharacterInstance> m_pCachedCharacter = nullptr;
-	float m_frameTime;
+	_smart_ptr<ICharacterInstance> m_pCachedCharacter {nullptr};
+	float m_frameTime {0.0f};
 };
 }

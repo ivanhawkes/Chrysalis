@@ -29,6 +29,8 @@ public:
 	struct SLootTableEntry
 	{
 		inline bool operator==(const SLootTableEntry& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
+
+
 		static void ReflectType(Schematyc::CTypeDesc<SLootTableEntry>& desc)
 		{
 			desc.SetGUID("{625EAC5E-143D-4C70-A0AE-100C32352DE7}"_cry_guid);
@@ -37,12 +39,10 @@ public:
 		}
 
 
-		bool Serialize(Serialization::IArchive& archive)
+		void Serialize(Serialization::IArchive& ar)
 		{
-			archive(m_lootTable, "LootTable", "Loot table entry.");
-			archive.doc("A uniquely identifiable entry on the master loot table.");
-
-			return true;
+			ar(m_lootTable, "LootTable", "Loot table entry.");
+			ar.doc("A uniquely identifiable entry on the master loot table.");
 		}
 
 		string m_lootTable;

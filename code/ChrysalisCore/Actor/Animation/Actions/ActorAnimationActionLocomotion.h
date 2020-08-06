@@ -2,7 +2,7 @@
 
 #include "ICryMannequin.h"
 #include <Actor/Animation/ActorAnimation.h>
-#include "Actor/ActorControllerComponent.h"
+#include <Components/Actor/ActorComponent.h>
 
 
 namespace Chrysalis
@@ -26,12 +26,12 @@ public:
 	// ~IAction
 
 private:
-	const struct SMannequinLocomotionParams* m_locomotionParams;
+	const struct SMannequinLocomotionParams* m_locomotionParams {nullptr};
 
 	FragmentID m_lastFragmentId { FRAGMENT_ID_INVALID };
 
-	EActorStance m_lastStance { EActorStance::eAS_Standing };
+	EActorStance m_lastStance { EActorStance::standing };
 
-	EActorPosture m_lastPosture { EActorPosture::eAP_Neutral };
+	EActorPosture m_lastPosture { EActorPosture::neutral };
 };
 }

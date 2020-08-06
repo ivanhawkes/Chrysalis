@@ -7,10 +7,10 @@ del last_fbx_scene.txt
 del assets\recent
 
 REM Can be regenerated.
-rd bin /q /s
+REM rd bin /q /s
 
 REM Keeps getting re-generated, but shouldn't ship.
-rd Solutions /q /s
+REM rd Solutions /q /s
 rd Editor /q /s
 rd logbackups /q /s
 rd Backup /q /s

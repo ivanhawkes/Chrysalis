@@ -46,7 +46,7 @@ public:
 	}
 
 private:
-	uint32 m_nextId;
+	uint32 m_nextId {0};
 	TRequestsVector m_requests;
 };
 }

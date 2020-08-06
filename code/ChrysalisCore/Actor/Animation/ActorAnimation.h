@@ -8,47 +8,47 @@ namespace Chrysalis
 {
 /** All valid actor stances. */
 
-enum EActorStance
+enum class EActorStance
 {
-	eAS_Standing,
-	eAS_Crouching,
-	eAS_Crawling,
-	eAS_Prone,
-	eAS_Falling,
-	eAS_Landing,
-	eAS_Swimming,
-	eAS_Flying,
-	eAS_Spellcasting,
-	eAS_SittingChair,
-	eAS_SittingFloor,
-	eAS_Kneeling,
-	eAS_Sleeping
+	standing,
+	crouching,
+	crawling,
+	prone,
+	falling,
+	landing,
+	swimming,
+	flying,
+	spellcasting,
+	sittingChair,
+	sittingFloor,
+	kneeling,
+	sleeping
 };
 
 
 /**
 The actor's posture extends the stance, giving more precise control over animating their state of mind. In
-general, these are applied to eAS_Standing, but some may also have application to sitting or other stances.
+general, these are applied to standing, but some may also have application to sitting or other stances.
 **/
-enum EActorPosture
+enum class EActorPosture
 {
 	// Alertness.
-	eAP_Unaware,
-	eAP_Distracted,
-	eAP_Suspicious,
-	eAP_Alerted,
+	unaware,
+	distracted,
+	suspicious,
+	alerted,
 
 	// Daze / sap effect on them.
-	eAP_Dazed,
+	dazed,
 
 	// Everyday postures.
-	eAP_Neutral,
-	eAP_Passive,
-	eAP_Aggressive,
-	eAP_Interested,
-	eAP_Bored,
-	eAP_Excited,
-	eAP_Depressed,
+	neutral,
+	passive,
+	aggressive,
+	interested,
+	bored,
+	excited,
+	depressed,
 };
 
 

@@ -10,6 +10,14 @@
 #include <Animation/PoseAligner/PoseAligner.h>
 #include <Actor/Animation/ActorAnimation.h>
 
+// TEST: entity effect adding a light.
+#include <Entities/EntityEffects.h>
+#include <entt/entt.hpp>
+#include <ECS/Systems/Simulation.h>
+#include <ECS/Components/RenderLight.h>
+#include <ECS/Components/Spells/Spell.h>
+#include <ECS/ECS.h>
+
 
 namespace Chrysalis
 {
@@ -50,6 +58,8 @@ public:
 	struct SDefaultScopeSettings
 	{
 		inline bool operator==(const SDefaultScopeSettings& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
+
+
 		static void ReflectType(Schematyc::CTypeDesc<SDefaultScopeSettings>& desc)
 		{
 			desc.SetGUID("{B032C89F-15FD-48A1-8B16-24CC9EAE011A}"_cry_guid);
@@ -58,15 +68,15 @@ public:
 		}
 
 
-		bool Serialize(Serialization::IArchive& archive)
+		void Serialize(Serialization::IArchive& ar)
 		{
-			archive(Serialization::MannequinControllerDefinitionPath(m_controllerDefinitionPath), "ControllerDefPath", "Controller Definition");
-			archive.doc("Path to the Mannequin controller definition");
+			ar(Serialization::MannequinControllerDefinitionPath(m_controllerDefinitionPath), "ControllerDefPath", "Controller Definition");
+			ar.doc("Path to the Mannequin controller definition");
 
 			std::shared_ptr<Serialization::SMannequinControllerDefResourceParams> pParams;
 
 			// Load controller definition for the context and fragment selectors.
-			if (archive.isEdit())
+			if (ar.isEdit())
 			{
 				pParams = std::make_shared<Serialization::SMannequinControllerDefResourceParams>();
 
@@ -77,13 +87,11 @@ public:
 				}
 			}
 
-			archive(Serialization::MannequinScopeContextName(m_contextName, pParams), "DefaultScope", "Default Scope Context Name");
-			archive.doc("The Mannequin scope context to activate by default");
+			ar(Serialization::MannequinScopeContextName(m_contextName, pParams), "DefaultScope", "Default Scope Context Name");
+			ar.doc("The Mannequin scope context to activate by default");
 
-			archive(Serialization::MannequinFragmentName(m_fragmentName, pParams), "DefaultFragment", "Default Fragment Name");
-			archive.doc("The fragment to play by default");
-
-			return true;
+			ar(Serialization::MannequinFragmentName(m_fragmentName, pParams), "DefaultFragment", "Default Fragment Name");
+			ar.doc("The fragment to play by default");
 		}
 
 		string m_controllerDefinitionPath;
@@ -353,6 +361,24 @@ public:
 
 			m_pEntity->UpdateComponentEventMask(this);
 		}
+
+		// TEST: entity effect adding a light.
+		// Provide them with an effects controller for this entity.
+		ECS::RenderLight renderLight;
+		renderLight.projectorOptions.m_texturePath = "chrysalis/textures/lights/flashlight_projector.dds";
+		m_effectsController.Init(GetEntityId());
+		
+		// HACK: Try and get the params from a spell for now.
+		entt::entity spellEntity = ECS::Simulation.GetSpellByName("Flashlight");
+		if (spellEntity != entt::null)
+		{
+			auto* spellRegistry = ECS::Simulation.GetSpellRegistry();
+			renderLight = spellRegistry->get<ECS::RenderLight>(spellEntity);
+		}
+
+		//int slotId = GetOrMakeEntitySlotId();
+		int slotId = 0;
+		m_effectsController.AttachLight(slotId, "Flashlight", Vec3(0.0f, 0.6f, 1.0f), Vec3(0.0f, 1.0f, 0.0f).normalized(), eGeometrySlot::eIGS_Aux0, renderLight);
 	}
 
 
@@ -423,5 +449,8 @@ protected:
 	float m_turnAngle {0.f};
 
 	bool m_bGroundAlignment {false};
+
+	// TEST: entity effect adding a light.
+	CEffectsController m_effectsController;
 };
 }
