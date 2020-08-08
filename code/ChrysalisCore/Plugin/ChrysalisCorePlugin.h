@@ -7,6 +7,8 @@
 #include <CryExtension/ClassWeaver.h>
 
 
+class CImguiImpl;
+
 namespace Chrysalis
 {
 class CObjectIdMasterFactory;
@@ -41,6 +43,10 @@ public:
 	virtual const char* GetCategory() const override { return "Game"; }
 	virtual bool Initialize(SSystemGlobalEnvironment& env, const SSystemInitParams& initParams) override;
 	// ~ICryPlugin
+
+	// IEnginePlugin
+	virtual void MainUpdate(float frameTime) override;
+	// ~IEnginePlugin
 
 	// ISystemEventListener
 	virtual void OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam) override;
@@ -78,6 +84,8 @@ public:
 	static CChrysalisCorePlugin* Get();
 
 	CObjectIdMasterFactory* GetObjectId() { return m_pObjectIdMasterFactory; }
+
+	CImguiImpl* GetImplementation();
 
 protected:
 	// Map containing player components, key is the channel id received in OnClientConnectionReceived

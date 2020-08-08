@@ -6,13 +6,12 @@
 
 #include <Imgui/imgui.h>
 #include "CryInput\IHardwareMouse.h"
-#include "CryRenderer/CustomPass.h"
-#include "Imgui/ImguiRenderer.h"
+#include "ImguiRenderer.h"
 //#include "CryAction/IActionMapManager.h"
 #include "CryGame/IGameFramework.h"
 #include "../CryAction/IActionMapManager.h"
 #include "CrySystem/ConsoleRegistration.h"
-#include "Imgui/PerfMonitor.h"
+#include "PerfMonitor.h"
 
 static CImguiImpl* g_pThis = nullptr;
 static bool bCaptured = false;
@@ -85,11 +84,7 @@ void CImguiImpl::InitImgui()
 	io.DisplaySize = { (float)dimensions.x, (float)dimensions.y };
 	io.RenderDrawListsFn = nullptr;
 
-	Cry::Renderer::CustomPass::ICustomPassRenderer* pPointer = nullptr;
-	Cry::Renderer::CustomPass::ICustomPassRenderer** ppPointer = &pPointer;
-	UINT_PTR ptr = reinterpret_cast<UINT_PTR>(ppPointer);
-	gEnv->pSystem->GetISystemEventDispatcher()->OnSystemEvent((ESystemEvent)9001, ptr, 0);
-	m_pRenderer = std::make_unique<CImguiRenderer>(pPointer, dimensions);
+	m_pRenderer = std::make_unique<CImguiRenderer>(dimensions);
 
 	auto keyMap = &ImGui::GetIO().KeyMap[0];
 
@@ -192,14 +187,14 @@ void CImguiImpl::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lpa
 {
 	if (event == ESYSTEM_EVENT_EDITOR_GAME_MODE_CHANGED)
 	{
-		if (wparam)
+		/*if (wparam)
 		{
 			gEnv->pHardwareMouse->IncrementCounter();
 		}
 		else
 		{
 			gEnv->pHardwareMouse->DecrementCounter();
-		}
+		}*/
 	}
 	else if (event == ESYSTEM_EVENT_CRYSYSTEM_INIT_DONE)
 	{

@@ -1,5 +1,7 @@
 #pragma once;
-#include <CryRenderer/CustomPass.h>
+#include <CryRenderer/Pipeline/IPipeline.h>
+
+
 #include "Imgui/imgui.h"
 
 struct SRTDrawList
@@ -20,25 +22,29 @@ struct SRTDrawData
 	ImVec2          FramebufferScale;       // Amount of pixels for each unit of DisplaySize. Based on io.DisplayFramebufferScale. Generally (1,1) on normal display, (2,2) on OSX with Retina display.
 };
 
-class CImguiRenderer : public Cry::Renderer::CustomPass::ICustomRendererImplementation
+class CImguiRenderer
 {
 public:
-	CImguiRenderer(Cry::Renderer::CustomPass::ICustomPassRenderer* pUIRenderer, Vec2i rtDimensions);
+	CImguiRenderer(Vec2i rtDimensions);
 
 	void RenderImgui();
 
-	virtual bool RT_Initalize(std::unique_ptr<Cry::Renderer::CustomPass::ICustomRendererInstance> pInstance) override;
 
 
-	virtual void RT_Shutdown() override;
 
 
-	virtual void RT_Update(bool bLoadingThread = false) override;
+	void RT_Initalize(const Cry::Renderer::Pipeline::StageCreationArguments& args);
 
 
-	virtual void RT_Render() override;
+	void RT_Shutdown(const Cry::Renderer::Pipeline::StageDestructionsArguments& args);
 
-	Cry::Renderer::CustomPass::ICustomPassRenderer* m_pUIRenderer;
+
+	void RT_Update(bool bLoadingThread = false);
+
+
+	void RT_Render(const Cry::Renderer::Pipeline::StageRenderArguments& args);
+
+	
 
 	struct SMvpMat
 	{
@@ -61,7 +67,7 @@ private:
 	void UpdateBuffers(const SRTDrawList &list, int meshIDX);
 	void DrawRenderCommand(const ImDrawCmd &cmd, int meshIDX);
 	void AdjustRenderMeshes();
-	void UpdatePassParams(Cry::Renderer::CustomPass::SPassParams &params);
+	void UpdatePassParams(Cry::Renderer::Pipeline::Pass::SPassParams &params);
 
 	_smart_ptr<IShader>		m_pImguiShader;
 	bool m_bInitialized = false;
@@ -88,9 +94,12 @@ private:
 	uint32		m_currentVtxOffset = 0;
 	uint32		m_currentIdxOffset = 0;
 
-	std::unique_ptr<Cry::Renderer::CustomPass::ICustomRendererInstance> m_pInstance;
-
-	uintptr_t m_mvpConstantBuffer = INVALID_BUFFER;
+	uintptr_t m_mvpConstantBuffer = Cry::Renderer::Buffers::CINVALID_BUFFER;
 
 	bool m_bClearOnEmpty;
+
+	Cry::Renderer::Pipeline::TStageBasePtr		m_pImguiStage;
+	Cry::Renderer::Pipeline::ICustomPipelinePtr m_pPipeline;
+
+	uint32										m_imguiPassId;
 };

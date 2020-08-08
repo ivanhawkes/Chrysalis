@@ -3,39 +3,50 @@
 #include "Imgui/imgui.h"
 #include "CryRenderer/IRenderAuxGeom.h"
 #include "CryEntitySystem/IEntitySystem.h"
+#include <CryRenderer/Pipeline/IStageResources.h>
 
-using namespace Cry::Renderer::CustomPass;
+using namespace Cry::Renderer;
+using namespace Cry::Renderer::Pipeline;
 
 static uint32 gPassCrc = CCrc32::Compute_CompileTime("ImguiPass");
 static uint32 gTechniqueCrc = CCrc32::ComputeLowercase_CompileTime("Imgui");
 
-static SInputElementDescription local_layout[] =
+static Shader::SInputElementDescription local_layout[] =
 {
-	{ "POSITION", 0, EInputElementFormat::FORMAT_R32G32_FLOAT,   0, 0, EInputSlotClassification::PER_VERTEX_DATA, 0 },
-	{ "TEXCOORD", 0, EInputElementFormat::FORMAT_R32G32_FLOAT,   0, 8,  EInputSlotClassification::PER_VERTEX_DATA, 0 },
-	{ "COLOR",    0, EInputElementFormat::R8G8B8A8_UNORM,		 0, 16, EInputSlotClassification::PER_VERTEX_DATA, 0 },
+	{ "POSITION", 0, Shader::EInputElementFormat::FORMAT_R32G32_FLOAT,   0, 0, Shader::EInputSlotClassification::PER_VERTEX_DATA, 0 },
+	{ "TEXCOORD", 0, Shader::EInputElementFormat::FORMAT_R32G32_FLOAT,   0, 8,  Shader::EInputSlotClassification::PER_VERTEX_DATA, 0 },
+	{ "COLOR",    0, Shader::EInputElementFormat::R8G8B8A8_UNORM,		 0, 16, Shader::EInputSlotClassification::PER_VERTEX_DATA, 0 },
 	
 };
 static int gLayoutID = 0;
 
 static auto gMvpConstant = std::make_pair("mvpMatrix", 0);
 
-CImguiRenderer::CImguiRenderer(ICustomPassRenderer* pUIRenderer, Vec2i rtDimensions)
-	: m_pUIRenderer(pUIRenderer)
-	, m_renderDimensions(rtDimensions)
+constexpr auto imguiHash = CCrc32::Compute_CompileTime("Imgui");
+
+CImguiRenderer::CImguiRenderer(Vec2i rtDimensions)
+	: m_renderDimensions(rtDimensions)
 {
-	m_pUIRenderer->CreateRendererInstance("ImGui", this, sizeof(Vec4) * 4);
+	m_pPipeline = Cry::Renderer::Pipeline::GetOrCreateCustomPipeline();
 
 	auto pShader = gEnv->pRenderer->EF_LoadShader("Imgui");
 	if (!pShader)
 		return;
 	m_pImguiShader.Assign_NoAddRef(pShader);
+
+	SStageCallbacks callbacks{
+		[this](StageRenderArguments& args) { RT_Render(args); },
+		[this](StageCreationArguments& args) { RT_Initalize(args); },
+		[this](StageDestructionsArguments& args) { RT_Shutdown(args); },
+	};
+
+	m_pPipeline->CreateRenderStage("Imgui", imguiHash, std::move(callbacks));
 }
 
 
-bool CImguiRenderer::RT_Initalize(std::unique_ptr<ICustomRendererInstance> pInstance)
+void CImguiRenderer::RT_Initalize(const Cry::Renderer::Pipeline::StageCreationArguments& args)
 {
-	m_pInstance = std::move(pInstance);
+	m_pImguiStage = args.pStage;
 
 	CryLogAlways("Initializing imgui renderer");
 	
@@ -43,13 +54,13 @@ bool CImguiRenderer::RT_Initalize(std::unique_ptr<ICustomRendererInstance> pInst
 	auto pShader = m_pImguiShader.get();
 	auto params = pShader->GetPublicParams();
 
-	gMvpConstant.second = m_pUIRenderer->RT_RegisterConstantName(gMvpConstant.first);
+	gMvpConstant.second = m_pPipeline->GetResourceProvider()->RegisterConstantName(gMvpConstant.first);
 
-	TArray<SInputElementDescription> layoutView(local_layout, 3);
+	TArray<Shader::SInputElementDescription> layoutView(local_layout, 3);
 #ifdef PRE_5_5
-	gLayoutID = m_pUIRenderer->RT_RegisterLayout(layoutView, pShader, gTechniqueCrc);
+	//gLayoutID = m_pUIRenderer->RT_RegisterLayout(layoutView, pShader, gTechniqueCrc);
 #else
-	gLayoutID = m_pUIRenderer->RT_RegisterLayout(layoutView);
+	gLayoutID = m_pPipeline->GetResourceProvider()->RegisterLayout(layoutView);
 #endif
 
 	//m_pMainRt = gEnv->pRenderer->EF_GetTextureByName("$SceneDiffuse");
@@ -75,30 +86,31 @@ bool CImguiRenderer::RT_Initalize(std::unique_ptr<ICustomRendererInstance> pInst
 
 	memcpy(&m_mvpConstant, mvp.GetData(), sizeof(Matrix44));
 
-	SPassCreationParams passParams;
+	Pass::SPassCreationParams passParams;
 	passParams.passName = "ImguiPass";
+	passParams.passCrc = gPassCrc;
 	UpdatePassParams(passParams);
 
-	m_pInstance->CreateCustomPass(passParams, gPassCrc);
+	m_imguiPassId = m_pPipeline->RT_AllocatePass(*m_pImguiStage, passParams);
 
 	m_bInitialized = true;
-	return true;
 }
 
-void CImguiRenderer::RT_Shutdown()
+void CImguiRenderer::RT_Shutdown(const Cry::Renderer::Pipeline::StageDestructionsArguments& args)
 {
 	m_bInitialized = false;
 	m_pRenderTarget.reset(nullptr);
 
 	for (auto &bfrs : m_bufferHandles)
 	{
-		m_pUIRenderer->RT_FreeBuffer(bfrs.first);
-		m_pUIRenderer->RT_FreeBuffer(bfrs.second);
+		m_pPipeline->GetResourceProvider()->FreeBuffer(bfrs.first);
+		m_pPipeline->GetResourceProvider()->FreeBuffer(bfrs.second);
 		
 	}
 
 	m_pImguiShader.reset();
-	m_pInstance.reset();
+	m_pImguiStage.reset();
+	m_pPipeline.reset();
 }
 
 void CImguiRenderer::RT_Update(bool bLoadingThread /*= false*/)
@@ -175,7 +187,7 @@ void CImguiRenderer::RenderImgui()
 }
 
 
-void CImguiRenderer::RT_Render()
+void CImguiRenderer::RT_Render(const Cry::Renderer::Pipeline::StageRenderArguments& args)
 {
 	if (!m_bInitialized)
 		return;
@@ -185,7 +197,9 @@ void CImguiRenderer::RT_Render()
 	{
 		if (m_bClearOnEmpty)
 		{
-			m_pUIRenderer->RT_ClearRenderTarget(m_pRenderTarget.get(), Col_Transparent);
+			//m_pUIRenderer->RT_ClearRenderTarget(m_pRenderTarget.get(), Col_Transparent);
+			m_pPipeline->RT_BeginPass(*m_pImguiStage, m_imguiPassId);
+			m_pPipeline->RT_EndPass(*m_pImguiStage, true);
 			m_bClearOnEmpty = false;
 		}
 		return;
@@ -193,15 +207,15 @@ void CImguiRenderer::RT_Render()
 		
 	bool rtUpdate = IsPassDataDirty();
 
-	SPassUpdateScope scope;
-
 	if (!rtUpdate)
-		scope = std::move(m_pInstance->RT_BeginScopedPass(gPassCrc));
+	{
+		m_pPipeline->RT_BeginPass(*m_pImguiStage, m_imguiPassId);
+	}
 	else
 	{
-		SPassParams passParams;
+		Pass::SPassParams passParams;
 		UpdatePassParams(passParams);
-		scope = std::move(m_pInstance->RT_BeginScopedPass(gPassCrc,passParams));
+		m_pPipeline->RT_BeginPass(*m_pImguiStage, m_imguiPassId, passParams);
 	}
 
 	AdjustRenderMeshes();
@@ -212,6 +226,8 @@ void CImguiRenderer::RT_Render()
 
 	m_blendModeRT = m_blendMode;
 	m_bClearOnEmpty = true;
+
+	m_pPipeline->RT_EndPass(*m_pImguiStage, true);
 }
 
 
@@ -227,9 +243,7 @@ void CImguiRenderer::UpdateRenderTarget()
 		ETEX_Format::eTF_R8G8B8A8
 	};
 
-	m_pRenderTarget = m_pUIRenderer->CreateRenderTarget(creationParams);
-
-	m_pUIRenderer->ExecuteRTCommand([this]() { m_pUIRenderer->RT_ClearRenderTarget(m_pRenderTarget, Col_Transparent); });
+	m_pRenderTarget = m_pPipeline->GetResourceProvider()->CreateRenderTarget(creationParams);
 }
 
 bool CImguiRenderer::IsPassDataDirty()
@@ -252,9 +266,9 @@ bool CImguiRenderer::IsPassDataDirty()
 		UpdateRenderTarget();	
 	}
 
-	if (m_mvpConstantBuffer == INVALID_BUFFER)
+	if (m_mvpConstantBuffer == Buffers::CINVALID_BUFFER)
 	{
-		m_mvpConstantBuffer = m_pUIRenderer->RT_CreateConstantBuffer(sizeof(SMvpMat));
+		m_mvpConstantBuffer = m_pPipeline->GetResourceProvider()->CreateConstantBuffer(sizeof(SMvpMat));
 	}
 		
 	return (bConstantWasDirty = bWidthChanged || bHeightChanged);
@@ -262,18 +276,18 @@ bool CImguiRenderer::IsPassDataDirty()
 
 void CImguiRenderer::UpdateBuffers(const SRTDrawList &list, int meshIDX)
 {
-	SBufferParams paramsVtx(list.VtxBuffer.size(), sizeof(ImDrawVert), EBufferBindType::Vertex, EBufferUsage::Dynamic);
+	Buffers::SBufferParams paramsVtx(list.VtxBuffer.size(), sizeof(ImDrawVert), Buffers::EBufferBindType::Vertex, Buffers::EBufferUsage::Dynamic);
 	paramsVtx.pData = list.VtxBuffer.Data;
-	m_bufferHandles[meshIDX].first = m_pUIRenderer->RT_CreateOrUpdateBuffer(paramsVtx, m_bufferHandles[meshIDX].first);
+	m_bufferHandles[meshIDX].first = m_pPipeline->GetResourceProvider()->CreateOrUpdateBuffer(paramsVtx, m_bufferHandles[meshIDX].first);
 
-	SBufferParams paramsIdx(list.IdxBuffer.size(), sizeof(ImDrawIdx), EBufferBindType::Index, EBufferUsage::Dynamic);
+	Buffers::SBufferParams paramsIdx(list.IdxBuffer.size(), sizeof(ImDrawIdx), Buffers::EBufferBindType::Index, Buffers::EBufferUsage::Dynamic);
 	paramsIdx.pData = list.IdxBuffer.Data;
-	m_bufferHandles[meshIDX].second = m_pUIRenderer->RT_CreateOrUpdateBuffer(paramsIdx, m_bufferHandles[meshIDX].second);
+	m_bufferHandles[meshIDX].second = m_pPipeline->GetResourceProvider()->CreateOrUpdateBuffer(paramsIdx, m_bufferHandles[meshIDX].second);
 }
 
 void CImguiRenderer::DrawRenderCommand(const ImDrawCmd &cmd, int meshIDX)
 {
-	SDrawParamsExternalBuffers drawParams;
+	Pass::SDrawParamsExternalBuffers drawParams;
 
 	drawParams.inputBuffer = m_bufferHandles[meshIDX].first;
 	drawParams.inputSize = cmd.ElemCount / 3;
@@ -285,20 +299,20 @@ void CImguiRenderer::DrawRenderCommand(const ImDrawCmd &cmd, int meshIDX)
 	drawParams.idxSize = cmd.ElemCount;
 	drawParams.idxOffset = m_currentIdxOffset;
 
-	drawParams.drawType = EDrawTypes::TriangleList;
+	drawParams.drawType = Shader::EDrawTypes::TriangleList;
 
-	SShaderParams shaderParams;
+	Pass::SShaderParams shaderParams;
 	shaderParams.pShader = m_pImguiShader;
 	shaderParams.techniqueLCCRC = gTechniqueCrc;
 
-	STextureParam texParam;
+	Pass::STextureParam texParam;
 	texParam.pTexture = cmd.TextureId;
 
-	SSamplerParam samplerParam;
+	Pass::SSamplerParam samplerParam;
 	samplerParam.handle = 12; // EDefaultSamplerStates::BilinearCompare ;
 
-	shaderParams.textures = TArray<STextureParam>(&texParam, 1);
-	shaderParams.samplerStates = TArray<SSamplerParam>(&samplerParam, 1);
+	shaderParams.textures = TArray<Pass::STextureParam>(&texParam, 1);
+	shaderParams.samplerStates = TArray<Pass::SSamplerParam>(&samplerParam, 1);
 
 	/*SNamedConstantArray mvpConstant;
 	mvpConstant.shaderClass = EShaderClass::Vertex;
@@ -309,17 +323,17 @@ void CImguiRenderer::DrawRenderCommand(const ImDrawCmd &cmd, int meshIDX)
 	constantParams.namedConstantArrays = TArray<SNamedConstantArray>(&mvpConstant, 1);*/
 
 
-	SConstantBuffer constantBuffer;
+	Pass::SConstantBuffer constantBuffer;
 	constantBuffer.externalBuffer = m_mvpConstantBuffer;
-	constantBuffer.newData = (uint8*)&m_mvpConstant;
-	constantBuffer.dataSize = sizeof(m_mvpConstant);
-	constantBuffer.stages = ssAllWithoutCompute;
-	constantBuffer.slot = EConstantSlot::PerPass;
+	constantBuffer.value.newData = (uint8*)&m_mvpConstant;
+	constantBuffer.value.dataSize = sizeof(m_mvpConstant);
+	constantBuffer.stages = Shader::EShaderStages::ssAllWithoutCompute;
+	constantBuffer.slot = Shader::EConstantSlot::PerPass;
 
-	SInlineConstantParams constantParams;
-	constantParams.buffers = TArray<SConstantBuffer>(&constantBuffer, 1);
+	Pass::SInlineConstantParams constantParams;
+	constantParams.buffers = TArray<Pass::SConstantBuffer>(&constantBuffer, 1);
 
-	SPrimitiveParams primitiveParams(shaderParams, constantParams, drawParams);
+	Pass::SPrimitiveParams primitiveParams(shaderParams, constantParams, drawParams);
 
 	/*primitiveParams.stencilState =
 		STENC_FUNC(STENCFUNC_ALWAYS) |
@@ -335,7 +349,7 @@ void CImguiRenderer::DrawRenderCommand(const ImDrawCmd &cmd, int meshIDX)
 	auto clipRect = cmd.ClipRect;
 	primitiveParams.scissorRect = Vec4_tpl<ulong>((ulong)clipRect.x, (ulong)clipRect.y, (ulong)clipRect.z, (ulong)clipRect.w);
 
-	m_pInstance->RT_ScopedAddPrimitive(primitiveParams);
+	m_pPipeline->RT_AddPrimitive(*m_pImguiStage,primitiveParams);
 
 }
 
@@ -345,7 +359,7 @@ void CImguiRenderer::AdjustRenderMeshes()
 	int numNewMeshes = (int)m_rtDrawLists.size() - (int)m_bufferHandles.size();
 	if (numNewMeshes > 0)
 	{
-		m_bufferHandles.resize(m_bufferHandles.size() + numNewMeshes, { INVALID_BUFFER,INVALID_BUFFER });
+		m_bufferHandles.resize(m_bufferHandles.size() + numNewMeshes, { Buffers::CINVALID_BUFFER, Buffers::CINVALID_BUFFER });
 	}
 	else if (numNewMeshes < 0)
 	{
@@ -353,15 +367,15 @@ void CImguiRenderer::AdjustRenderMeshes()
 		int newLastIdx = (m_bufferHandles.size() - numNewMeshes) - 1;
 		for (int i = newLastIdx; i < m_bufferHandles.size(); ++i)
 		{
-			m_pUIRenderer->RT_FreeBuffer(m_bufferHandles[i].first);
-			m_pUIRenderer->RT_FreeBuffer(m_bufferHandles[i].second);
+			m_pPipeline->GetResourceProvider()->FreeBuffer(m_bufferHandles[i].first);
+			m_pPipeline->GetResourceProvider()->FreeBuffer(m_bufferHandles[i].second);
 		}
 
 		m_bufferHandles.resize(m_rtDrawLists.size());
 	}
 }
 
-void CImguiRenderer::UpdatePassParams(SPassParams &params)
+void CImguiRenderer::UpdatePassParams(Pass::SPassParams &params)
 {
 	params.viewPort = SRenderViewport(0, 0, m_renderDimensions.x, m_renderDimensions.y);
 	params.pColorTarget = m_pRenderTarget.get();
@@ -372,6 +386,9 @@ void CImguiRenderer::UpdatePassParams(SPassParams &params)
 
 void CImguiRenderer::DrawCommandList(const SRTDrawList &list, int meshIDX)
 {
+	if (!m_pImguiStage)
+		return;
+
 	m_currentIdxOffset = 0;
 	UpdateBuffers(list, meshIDX);
 

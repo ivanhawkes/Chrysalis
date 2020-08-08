@@ -1,64 +1,13 @@
 <ecs>
  <entities>
   <entity entityId="0"/>
-  <entity entityId="1"/>
-  <entity entityId="2"/>
-  <entity entityId="3"/>
-  <entity entityId="4"/>
-  <entity entityId="1"/>
-  <entity entityId="2"/>
-  <entity entityId="3"/>
-  <entity entityId="4"/>
  </entities>
  <components>
   <name CryXmlVersion="2" name="Schmuck" displayName="Hero" entityId="0"/>
-  <name CryXmlVersion="2" name="Hero" displayName="Hero" entityId="1"/>
-  <name CryXmlVersion="2" name="Hero" displayName="Hero" entityId="2"/>
-  <name CryXmlVersion="2" name="Villain" displayName="Villain" entityId="3"/>
-  <name CryXmlVersion="2" name="Villain" displayName="Villain" entityId="4"/>
-  <health CryXmlVersion="2" isDead="false" isImmortal="false" entityId="1">
-   <health base="120" baseModifiers="0" modifiers="0"/>
-  </health>
-  <health CryXmlVersion="2" isDead="false" isImmortal="false" entityId="2">
-   <health base="120" baseModifiers="0" modifiers="0"/>
-  </health>
-  <health CryXmlVersion="2" isDead="false" isImmortal="false" entityId="3">
-   <health base="120" baseModifiers="0" modifiers="0"/>
-  </health>
-  <health CryXmlVersion="2" isDead="false" isImmortal="false" entityId="4">
-   <health base="120" baseModifiers="0" modifiers="0"/>
-  </health>
-  <qi CryXmlVersion="2" timeSinceLastSpellcast="0" qiRegenerationPerSecond="0.02" entityId="1">
-   <qi base="100" baseModifiers="0" modifiers="0"/>
-  </qi>
-  <qi CryXmlVersion="2" timeSinceLastSpellcast="0" qiRegenerationPerSecond="0.02" entityId="2">
-   <qi base="100" baseModifiers="0" modifiers="0"/>
-  </qi>
-  <qi CryXmlVersion="2" timeSinceLastSpellcast="0" qiRegenerationPerSecond="0.02" entityId="3">
-   <qi base="100" baseModifiers="0" modifiers="0"/>
-  </qi>
-  <qi CryXmlVersion="2" timeSinceLastSpellcast="0" qiRegenerationPerSecond="0.02" entityId="4">
-   <qi base="100" baseModifiers="0" modifiers="0"/>
-  </qi>
-  <salt CryXmlVersion="2" entityId="1"/>
-  <salt CryXmlVersion="2" entityId="2"/>
-  <salt CryXmlVersion="2" entityId="3"/>
-  <salt CryXmlVersion="2" entityId="4"/>
-  <pepper CryXmlVersion="2" entityId="1"/>
-  <pepper CryXmlVersion="2" entityId="2"/>
-  <pepper CryXmlVersion="2" entityId="3"/>
-  <pepper CryXmlVersion="2" entityId="4"/>
  </components>
  <meta>
   <component-types>
-   <component-type count="5"/>
-   <component-type count="0"/>
-   <component-type count="4"/>
-   <component-type count="0"/>
-   <component-type count="0"/>
-   <component-type count="0"/>
-   <component-type count="0"/>
-   <component-type count="4"/>
+   <component-type count="1"/>
    <component-type count="0"/>
    <component-type count="0"/>
    <component-type count="0"/>
@@ -66,10 +15,17 @@
    <component-type count="0"/>
    <component-type count="0"/>
    <component-type count="0"/>
-   <component-type count="4"/>
-   <component-type count="4"/>
-   <component-type count="4"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
+   <component-type count="0"/>
   </component-types>
-  <entities count="5"/>
+  <entities count="1"/>
  </meta>
 </ecs>
