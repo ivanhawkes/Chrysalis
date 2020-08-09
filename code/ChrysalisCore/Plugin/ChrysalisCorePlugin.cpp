@@ -20,17 +20,24 @@
 #include "ObjectID/ObjectIdMasterFactory.h"
 #include "Schematyc/CoreEnv.h"
 #include "ECS/ECS.h"
-
+#include "Imgui/ImguiImpl.h"
 
 // Testing functionality.
 #include "Item/ItemSystem.h"
-
 
 // Included only once per DLL module.
 #include <CryCore/Platform/platform_impl.inl>
 
 namespace Chrysalis
 {
+static CImguiImpl* g_pImguiImpl {nullptr};
+
+CImguiImpl* CChrysalisCorePlugin::GetImplementation()
+{
+	return g_pImguiImpl;
+}
+
+
 CChrysalisCorePlugin::~CChrysalisCorePlugin()
 {
 	// Remove any registered listeners before 'this' becomes invalid
@@ -42,6 +49,8 @@ CChrysalisCorePlugin::~CChrysalisCorePlugin()
 	{
 		gEnv->pSchematyc->GetEnvRegistry().DeregisterPackage(CChrysalisCorePlugin::GetCID());
 	}
+
+	delete g_pImguiImpl;
 
 	// Unregister all the cvars.
 	g_cvars.UnregisterVariables();
@@ -59,6 +68,10 @@ bool CChrysalisCorePlugin::Initialize(SSystemGlobalEnvironment& env, const SSyst
 	// Create a valid master factory which can provide instance unique Ids for us.
 	// #TODO: Get the InstanceId from the command line or cvars.
 	m_pObjectIdMasterFactory = new CObjectIdMasterFactory(0);
+
+	g_pImguiImpl = new CImguiImpl();
+
+	EnableUpdate(IEnginePlugin::EUpdateStep::MainUpdate, true);
 
 	return true;
 }
@@ -250,6 +263,16 @@ void CChrysalisCorePlugin::OnClientDisconnected(int channelId, EDisconnectionCau
 
 		m_players.erase(it);
 	}
+}
+
+
+void CChrysalisCorePlugin::MainUpdate(float frameTime)
+{
+	if (gEnv->IsDedicated())
+		return;
+
+	if (g_pImguiImpl)
+		g_pImguiImpl->Update();
 }
 
 

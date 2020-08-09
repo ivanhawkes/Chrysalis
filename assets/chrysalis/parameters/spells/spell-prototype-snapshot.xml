@@ -102,7 +102,7 @@
   <close CryXmlVersion="2" entityId="18"/>
   <unlock CryXmlVersion="2" entityId="19"/>
   <lock CryXmlVersion="2" entityId="20"/>
-  <render-light CryXmlVersion="2" lensFlareName="" attachToSun="false" flareEnable="true" flareFOV="360" attenuationBulbSize="0.1" ignoreVisAreas="false" affectVolumetricFog="true" volumetricFogOnly="false" onlyAffectThisArea="true" linkToSkyColor="false" ambient="false" fogRadialLobe="0" GIMode="none" diffuseMultiplier="12" specularMultiplier="12" shadowSpec="None" shadowBias="1" shadowSlopeBias="1" shadownResolution="1" shadowUpdateMin="4" shadowMinRes="0" shadowUpdateRatio="0" style="0" speed="1" shape="point" twoSided="false" texturePath="chrysalis/textures/lights/flashlight_projector.dds" width="1" height="1" nearPlane="0" materialPath="" angle="6.2831855" radius="13" fovAngle="0.30000001" effectSlotMaterial="" entityId="21">
+  <render-light CryXmlVersion="2" lensFlareName="" attachToSun="false" flareEnable="true" flareFOV="360" attenuationBulbSize="0.1" ignoreVisAreas="false" affectVolumetricFog="true" volumetricFogOnly="false" onlyAffectThisArea="true" linkToSkyColor="false" ambient="false" fogRadialLobe="0" GIMode="none" diffuseMultiplier="12" specularMultiplier="12" shadowSpec="disabled" shadowBias="1" shadowSlopeBias="1" shadownResolution="1" shadowUpdateMin="4" shadowMinRes="0" shadowUpdateRatio="0" style="0" speed="1" shape="point" twoSided="false" texturePath="chrysalis/textures/lights/flashlight_projector.dds" width="1" height="1" nearPlane="0" materialPath="" angle="6.2831855" radius="13" fovAngle="0.30000001" effectSlotMaterial="" entityId="21">
    <Color r="1" g="1" b="1" a="1"/>
   </render-light>
  </components>
