@@ -40,7 +40,7 @@ CChrysalisCorePlugin::~CChrysalisCorePlugin()
 
 	if (gEnv->pSchematyc)
 	{
-		gEnv->pSchematyc->GetEnvRegistry().DeregisterPackage(GetSchematycPackageGUID());
+		gEnv->pSchematyc->GetEnvRegistry().DeregisterPackage(CChrysalisCorePlugin::GetCID());
 	}
 
 	// Unregister all the cvars.
@@ -88,9 +88,9 @@ void CChrysalisCorePlugin::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UI
 			{
 				gEnv->pSchematyc->GetEnvRegistry().RegisterPackage(
 					stl::make_unique<Schematyc::CEnvPackage>(
-						GetSchematycPackageGUID(),
+						CChrysalisCorePlugin::GetCID(),
 						"EntityComponents",
-						"Chrysalis",
+						"Tau Radius",
 						"Components",
 						staticAutoRegisterLambda
 						)
@@ -104,7 +104,7 @@ void CChrysalisCorePlugin::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UI
 		{
 			// TEST: just seeing if the entt code works.
 			//CItemSystem itemSystem;
-			
+
 			// Search the file system to find XML files with definitions for game items.
 			// TODO: CRITICAL: HACK: BROKEN: !!
 			//gEnv->pGameFramework->GetIItemSystem()->Scan("Parameters/Items");
@@ -119,7 +119,7 @@ void CChrysalisCorePlugin::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UI
 			// Create a class to handle the Simulation work for the ECS.
 			ECS::Simulation.Init();
 			ECS::Simulation.LoadSimulationData();
-			
+
 			// HACK: Get an output version of the data immediately for inspection / testing.
 			ECS::Simulation.SaveSimulationData();
 
@@ -146,7 +146,7 @@ void CChrysalisCorePlugin::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UI
 			// Don't need to load the map in editor
 			if (!gEnv->IsEditor())
 			{
-				gEnv->pConsole->ExecuteString("map example", false, true);
+				gEnv->pConsole->ExecuteString("map test", false, true);
 			}
 		}
 		break;
@@ -163,6 +163,12 @@ void CChrysalisCorePlugin::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UI
 					pPlayer->NetworkClientConnect();
 			}
 			break;
+
+		case ESYSTEM_EVENT_LEVEL_UNLOAD:
+		{
+			m_players.clear();
+		}
+		break;
 	}
 }
 
@@ -236,7 +242,7 @@ bool CChrysalisCorePlugin::OnClientReadyForGameplay(int channelId, bool bIsReset
 
 void CChrysalisCorePlugin::OnClientDisconnected(int channelId, EDisconnectionCause cause, const char* description, bool bKeepClient)
 {
-	// Client disconnected, remove the entity and from map
+	// Client disconnected, remove the entity and from map.
 	auto it = m_players.find(channelId);
 	if (it != m_players.end())
 	{
@@ -253,17 +259,20 @@ void CChrysalisCorePlugin::OnPostUpdate(float deltaTime)
 }
 
 
-CChrysalisCorePlugin* CChrysalisCorePlugin::Get()
+void CChrysalisCorePlugin::IterateOverPlayers(std::function<void(CPlayerComponent& player)> func) const
 {
-	static CChrysalisCorePlugin* plugIn {nullptr};
-
-	if (!plugIn)
-		plugIn = gEnv->pSystem->GetIPluginManager()->QueryPlugin<CChrysalisCorePlugin>();
-
-	CRY_ASSERT_MESSAGE(plugIn, "Chrysalis Core plugin was not found.");
-
-	return plugIn;
+	for (const std::pair<int, EntityId>& playerPair : m_players)
+	{
+		if (IEntity* pPlayerEntity = gEnv->pEntitySystem->GetEntity(playerPair.second))
+		{
+			if (CPlayerComponent* pPlayer = pPlayerEntity->GetComponent<CPlayerComponent>())
+			{
+				func(*pPlayer);
+			}
+		}
+	}
 }
+
 
 CRYREGISTER_SINGLETON_CLASS(CChrysalisCorePlugin)
 }

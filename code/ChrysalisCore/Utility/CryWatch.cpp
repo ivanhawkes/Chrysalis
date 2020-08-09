@@ -76,7 +76,7 @@ static float GetWatchTextYPos()
 int CryWatchFunc(const char * message)
 {
 	// Fran: we need these guards for the testing framework to work
-	if (gEnv && gEnv->pRenderer && CChrysalisCorePlugin::Get() && g_cvars.m_watch_enabled)
+	if (gEnv && gEnv->pRenderer && CChrysalisCorePlugin::GetInstance() && g_cvars.m_watch_enabled)
 	{
 		float color [4] = { 1,1,1,1 };
 		IFFont* pFont = gEnv->pCryFont->GetFont("default");

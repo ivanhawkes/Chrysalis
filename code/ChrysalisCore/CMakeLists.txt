@@ -11,8 +11,20 @@ include("${TOOLS_CMAKE_DIR}/CommonOptions.cmake")
 add_subdirectory("${CRYENGINE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/CRYENGINE")
 
 include("${TOOLS_CMAKE_DIR}/Configure.cmake")
-
 start_sources()
+
+#BEGIN-CUSTOM
+# Make any custom changes here, modifications outside of the block will be discarded on regeneration.
+
+# Force the compiler to c++17
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+include_directories("../SDK/EnTT/src")
+
+# I like to know which compiler I am using.
+message (STATUS "CMAKE_CXX_COMPILER_VERSION = ${CMAKE_CXX_COMPILER_VERSION}")
+#END-CUSTOM
 
 sources_platform(ALL)
 add_sources("ChrysalisCore_uber.cpp"
@@ -114,7 +126,7 @@ add_sources("Components_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components"
 )
-add_sources("Components_Actor_uber.cpp"
+add_sources("Actor_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Actor"
 		"Components/Actor/ActorComponent.cpp"
@@ -160,14 +172,14 @@ add_sources("Interaction_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Interaction"
 		"Components/Interaction/DRSInteractionComponent.cpp"
-		"Components/Interaction/DRSInteractionComponent.h"
 		"Components/Interaction/EntityAwarenessComponent.cpp"
-		"Components/Interaction/EntityAwarenessComponent.h"
 		"Components/Interaction/EntityInteractionComponent.cpp"
-		"Components/Interaction/EntityInteractionComponent.h"
 		"Components/Interaction/InteractComponent.cpp"
-		"Components/Interaction/InteractComponent.h"
 		"Components/Interaction/ItemInteractionComponent.cpp"
+		"Components/Interaction/DRSInteractionComponent.h"
+		"Components/Interaction/EntityAwarenessComponent.h"
+		"Components/Interaction/EntityInteractionComponent.h"
+		"Components/Interaction/InteractComponent.h"
 		"Components/Interaction/ItemInteractionComponent.h"
 )
 add_sources("Inventory_uber.cpp"
@@ -256,8 +268,8 @@ add_sources("Spells_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Components\\\\Spells"
 		"Components/Spells/SpellbookComponent.cpp"
-		"Components/Spells/SpellbookComponent.h"
 		"Components/Spells/SpellParticipantComponent.cpp"
+		"Components/Spells/SpellbookComponent.h"
 		"Components/Spells/SpellParticipantComponent.h"
 )
 add_sources("Switchable_uber.cpp"
@@ -306,34 +318,34 @@ add_sources("Components_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "ECS\\\\Components"
 		"ECS/Components/Components.cpp"
-		"ECS/Components/Components.h"
 		"ECS/Components/Health.cpp"
+		"ECS/Components/RenderLight.cpp"
+		"ECS/Components/Components.h"
 		"ECS/Components/Health.h"
 		"ECS/Components/Inventory.h"
 		"ECS/Components/Items.h"
-		"ECS/Components/RenderLight.cpp"
-		"ECS/Components/RenderLight.h"
 		"ECS/Components/Qi.h"
+		"ECS/Components/RenderLight.h"
 )
-add_sources("Components_Spells_uber.cpp"
+add_sources("Spells_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "ECS\\\\Components\\\\Spells"
-		"ECS/Components/Spells/Spell.h"
 		"ECS/Components/Spells/Spell.cpp"
-		"ECS/Components/Spells/SpellActions.h"
 		"ECS/Components/Spells/SpellActions.cpp"
+		"ECS/Components/Spells/Spell.h"
+		"ECS/Components/Spells/SpellActions.h"
 )
 add_sources("Systems_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "ECS\\\\Systems"
 		"ECS/Systems/ItemSystem.cpp"
+		"ECS/Systems/Simulation.cpp"
+		"ECS/Systems/Systems.cpp"
+		"ECS/Systems/XMLSerializer.cpp"
 		"ECS/Systems/ItemSystem.h"
 		"ECS/Systems/Simulation.h"
-		"ECS/Systems/Simulation.cpp"
 		"ECS/Systems/Systems.h"
-		"ECS/Systems/Systems.cpp"
 		"ECS/Systems/XMLSerializer.h"
-		"ECS/Systems/XMLSerializer.cpp"
 )
 add_sources("Entities_uber.cpp"
     PROJECTS Chrysalis
@@ -353,10 +365,6 @@ add_sources("Ownership_uber.cpp"
     SOURCE_GROUP "Entities\\\\Ownership"
 		"Entities/Ownership/IEntityOwnership.cpp"
 		"Entities/Ownership/IEntityOwnership.h"
-)
-add_sources("Game_uber.cpp"
-    PROJECTS Chrysalis
-    SOURCE_GROUP "Game"
 )
 add_sources("Interfaces_uber.cpp"
     PROJECTS Chrysalis
@@ -407,6 +415,12 @@ add_sources("Schematyc_uber.cpp"
 		"Schematyc/General.cpp"
 		"Schematyc/CoreEnv.h"
 )
+add_sources("Snaplocks_uber.cpp"
+    PROJECTS Chrysalis
+    SOURCE_GROUP "Snaplocks"
+		"Snaplocks/Snaplock.cpp"
+		"Snaplocks/Snaplock.h"
+)
 add_sources("Spells_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Spells"
@@ -416,16 +430,12 @@ add_sources("Spells_uber.cpp"
 add_sources("SpellActions_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "Spells\\\\SpellActions"
+		"Spells/SpellActions/SpellAction.cpp"
 		"Spells/SpellActions/SpellActionOpenDoor.cpp"
-		"Spells/SpellActions/SpellActionOpenDoor.h"
 		"Spells/SpellActions/SpellActionSwitch.cpp"
+		"Spells/SpellActions/SpellAction.h"
+		"Spells/SpellActions/SpellActionOpenDoor.h"
 		"Spells/SpellActions/SpellActionSwitch.h"
-)
-add_sources("Snaplocks_uber.cpp"
-    PROJECTS Chrysalis
-    SOURCE_GROUP "Snaplocks"
-		"Snaplocks/Snaplock.cpp"
-		"Snaplocks/Snaplock.h"
 )
 add_sources("StateMachine_uber.cpp"
     PROJECTS Chrysalis
@@ -559,16 +569,3 @@ set_solution_startup_target(GameLauncher)
 if (WIN32)
     set_visual_studio_debugger_command( ${THIS_PROJECT} "${CRYENGINE_DIR}/bin/win_x64/GameLauncher.exe" "-project \"${PROJECT_DIR}/Chrysalis.cryproject\"" )
 endif()
-
-#BEGIN-CUSTOM
-# Make any custom changes here, modifications outside of the block will be discarded on regeneration.
-
-# Force the compiler to c++17
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-include_directories("../SDK/EnTT/src")
-
-# I like to know which compiler I am using.
-message (STATUS "CMAKE_CXX_COMPILER_VERSION = ${CMAKE_CXX_COMPILER_VERSION}")
-#END-CUSTOM

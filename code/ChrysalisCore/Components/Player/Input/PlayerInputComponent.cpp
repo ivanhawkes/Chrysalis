@@ -353,7 +353,7 @@ void CPlayerInputComponent::HandleInputFlagChange(TInputFlags flags, int activat
 
 void CPlayerInputComponent::OnActionRotateYaw(int activationMode, float value)
 {
-	float cl_mouseSensitivity = CChrysalisCorePlugin::Get() ? g_cvars.m_cl_mouseSensitivity : 1.0f;
+	float cl_mouseSensitivity = CChrysalisCorePlugin::GetInstance() ? g_cvars.m_cl_mouseSensitivity : 1.0f;
 
 	// Sensible scaling value for rotations in radians.
 	float mouseSensitivity = 0.00032f * max(0.01f, cl_mouseSensitivity * m_mousePitchYawSensitivity);
@@ -365,10 +365,10 @@ void CPlayerInputComponent::OnActionRotateYaw(int activationMode, float value)
 
 void CPlayerInputComponent::OnActionRotatePitch(int activationMode, float value)
 {
-	float cl_mouseSensitivity = CChrysalisCorePlugin::Get() ? g_cvars.m_cl_mouseSensitivity : 1.0f;
+	float cl_mouseSensitivity = CChrysalisCorePlugin::GetInstance() ? g_cvars.m_cl_mouseSensitivity : 1.0f;
 
 	// Have they inverted their mouse control?
-	if ((CChrysalisCorePlugin::Get()) && (g_cvars.m_cl_invertPitch))
+	if ((CChrysalisCorePlugin::GetInstance()) && (g_cvars.m_cl_invertPitch))
 		value *= -1.0f;
 
 	// Sensible scaling value for rotations in radians.

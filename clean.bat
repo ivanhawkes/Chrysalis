@@ -10,7 +10,7 @@ REM Can be regenerated.
 REM rd bin /q /s
 
 REM Keeps getting re-generated, but shouldn't ship.
-REM rd Solutions /q /s
+rd Solutions /q /s
 rd Editor /q /s
 rd logbackups /q /s
 rd Backup /q /s
@@ -20,4 +20,3 @@ rd assets\_tmp /q /s
 rd user /q /s
 rd user(1) /q /s
 rd user(2) /q /s
-

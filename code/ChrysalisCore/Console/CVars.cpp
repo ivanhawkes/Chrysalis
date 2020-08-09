@@ -143,19 +143,19 @@ void CCVars::OnCreateObjectId(IConsoleCmdArgs* pConsoleCommandArgs)
 
 		if (strcmp(pClass, "account") == 0)
 		{
-			objectId = CChrysalisCorePlugin::Get()->GetObjectId()->GetAccount()->CreateObjectId();
+			objectId = CChrysalisCorePlugin::GetInstance()->GetObjectId()->GetAccount()->CreateObjectId();
 		}
 		else if (strcmp(pClass, "character") == 0)
 		{
-			objectId = CChrysalisCorePlugin::Get()->GetObjectId()->GetCharacter()->CreateObjectId();
+			objectId = CChrysalisCorePlugin::GetInstance()->GetObjectId()->GetCharacter()->CreateObjectId();
 		}
 		else if (strcmp(pClass, "item") == 0)
 		{
-			objectId = CChrysalisCorePlugin::Get()->GetObjectId()->GetItem()->CreateObjectId();
+			objectId = CChrysalisCorePlugin::GetInstance()->GetObjectId()->GetItem()->CreateObjectId();
 		}
 		else if (strcmp(pClass, "faction") == 0)
 		{
-			objectId = CChrysalisCorePlugin::Get()->GetObjectId()->GetFaction()->CreateObjectId();
+			objectId = CChrysalisCorePlugin::GetInstance()->GetObjectId()->GetFaction()->CreateObjectId();
 		}
 
 		if (objectId != CObjectIdFactory::InvalidId)
