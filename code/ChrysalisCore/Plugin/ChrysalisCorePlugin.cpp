@@ -20,7 +20,10 @@
 #include "ObjectID/ObjectIdMasterFactory.h"
 #include "Schematyc/CoreEnv.h"
 #include "ECS/ECS.h"
-#include "Imgui/ImguiImpl.h"
+
+#ifdef IMGUI
+#include "Imgui/Panels/EntityEditor.h"
+#endif
 
 // Testing functionality.
 #include "Item/ItemSystem.h"
@@ -28,14 +31,14 @@
 // Included only once per DLL module.
 #include <CryCore/Platform/platform_impl.inl>
 
+
 namespace Chrysalis
 {
-static CImguiImpl* g_pImguiImpl {nullptr};
-
-CImguiImpl* CChrysalisCorePlugin::GetImplementation()
-{
-	return g_pImguiImpl;
-}
+#ifdef IMGUI
+static std::shared_ptr<CImguiImpl> g_pImguiImpl;
+static std::shared_ptr<CEntityEditor> g_pSpellPrototypeEditor;
+static std::shared_ptr<CEntityEditor> g_pActorEditor;
+#endif
 
 
 CChrysalisCorePlugin::~CChrysalisCorePlugin()
@@ -49,8 +52,6 @@ CChrysalisCorePlugin::~CChrysalisCorePlugin()
 	{
 		gEnv->pSchematyc->GetEnvRegistry().DeregisterPackage(CChrysalisCorePlugin::GetCID());
 	}
-
-	delete g_pImguiImpl;
 
 	// Unregister all the cvars.
 	g_cvars.UnregisterVariables();
@@ -69,7 +70,11 @@ bool CChrysalisCorePlugin::Initialize(SSystemGlobalEnvironment& env, const SSyst
 	// #TODO: Get the InstanceId from the command line or cvars.
 	m_pObjectIdMasterFactory = new CObjectIdMasterFactory(0);
 
-	g_pImguiImpl = new CImguiImpl();
+#ifdef IMGUI
+	g_pImguiImpl = std::make_shared<CImguiImpl>();
+	g_pSpellPrototypeEditor = std::make_shared<CEntityEditor>(ECS::Simulation.GetSpellRegistry(), "Spell Prototype Editor");
+	g_pActorEditor = std::make_shared<CEntityEditor>(ECS::Simulation.GetActorRegistry(), "Actor Editor");
+#endif
 
 	EnableUpdate(IEnginePlugin::EUpdateStep::MainUpdate, true);
 
@@ -131,10 +136,10 @@ void CChrysalisCorePlugin::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UI
 
 			// Create a class to handle the Simulation work for the ECS.
 			ECS::Simulation.Init();
-			ECS::Simulation.LoadSimulationData();
+			ECS::Simulation.LoadPrototypeData();
 
 			// HACK: Get an output version of the data immediately for inspection / testing.
-			ECS::Simulation.SaveSimulationData();
+			//ECS::Simulation.SavePrototypeData();
 
 			// Listen for client connection events, in order to create the local player
 			gEnv->pGameFramework->AddNetworkedClientListener(*this);
@@ -166,7 +171,7 @@ void CChrysalisCorePlugin::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UI
 
 		case ESYSTEM_EVENT_LEVEL_LOAD_END:
 			// HACK: TEST: I need a convenient time to write back the Simulation so I can examine it. This will do for now.
-			ECS::Simulation.SaveSimulationData();
+			//ECS::Simulation.SavePrototypeData();
 
 			// In the editor, we wait until now before attempting to connect to the local player. This is to ensure all the
 			// entities are already loaded and initialised. It works differently in game mode. 
@@ -271,8 +276,16 @@ void CChrysalisCorePlugin::MainUpdate(float frameTime)
 	if (gEnv->IsDedicated())
 		return;
 
+#ifdef IMGUI
 	if (g_pImguiImpl)
 		g_pImguiImpl->Update();
+
+	if (g_pSpellPrototypeEditor)
+		g_pSpellPrototypeEditor->Draw();
+
+	if (g_pActorEditor)
+		g_pActorEditor->Draw();
+#endif
 }
 
 

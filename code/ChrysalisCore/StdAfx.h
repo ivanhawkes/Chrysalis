@@ -10,6 +10,18 @@
 #include "Plugin/ChrysalisCorePlugin.h"
 #include "Utility/CryWatch.h"
 
+// Couldn't figure out how to do the includes using only constexpr.
+//#define IMGUI
+
+// TODO: Only include in a build when Imgui is allowed e.g. check for a cmake variable.
+#ifdef IMGUI
+#include "Imgui/imgui.h"
+#include "ImGui/ImguiImpl.h"
+
+#define IMGUI_DEBUG
+
+#endif
+
 
 namespace Chrysalis
 {

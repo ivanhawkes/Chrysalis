@@ -8,13 +8,15 @@
 
 namespace Chrysalis::ECS
 {
-template<typename TYPE>
+void RegisterComponentsWithMeta();
+
+
 struct AttributeType
 {
 	AttributeType() = default;
 	virtual ~AttributeType() = default;
 
-	AttributeType(TYPE base, TYPE baseModifiers, TYPE modifiers) :
+	AttributeType(float base, float baseModifiers, float modifiers) :
 		base(base), baseModifiers(baseModifiers), modifiers(modifiers)
 	{
 	}
@@ -27,78 +29,74 @@ struct AttributeType
 		ar(modifiers, "modifiers", "modifiers");
 	}
 
+
+#ifdef IMGUI
+	void ImGuiRender();
+#endif
+
+
 	/** Returns the current value for base, after it's modifiers have been applied. */
-	const TYPE GetBaseAttribute() const
+	const float GetBaseAttribute() const
 	{
 		return base + baseModifiers;
 	}
 
 
 	/** Returns the current value for the attribute, after it's modifiers have been applied. */
-	const TYPE GetAttribute() const
+	const float GetAttribute() const
 	{
 		return base + modifiers;
 	}
 
 	/** Represents the attribute without any modifiers applied to it. */
-	TYPE base {100.0f};
+	float base {100.0f};
 
 	/** This modifier makes changes to the base value, instead of the frame value. Typical use would be for a health / strength
 	buff that increases the base value of the attribute. */
-	TYPE baseModifiers {0};
+	float baseModifiers {0};
 
 	/** Modifiers for this frame. Should be calculated each frame prior to calculating the current value. */
-	TYPE modifiers {0};
+	float modifiers {0};
 };
 
 
-template<entt::id_type label, entt::id_type description>
+template<entt::id_type label>
 struct FlagComponent
 {
 	void Serialize(Serialization::IArchive& ar) {  }
 
+#ifdef IMGUI
+	void ImGuiRender() {};
+#endif
+
 private:
-	// Adding this member prevents EnTT from optomising this component out when saving and loading.
+	// Adding this member prevents EnTT from optimising this component out when saving and loading.
 	// TODO: Find out how to make these take no space but avoid being skipped by EnTT.
 	int wastedSpace {0};
 };
 
 
-template<entt::id_type label, entt::id_type description, uint64_t guidHi, uint64_t guidLo>
-struct FlagComponentWithGUID
+/** Template for a simple component that has only one member, and the name of that member can be 'value'. */
+template<typename TYPE, entt::id_type label>
+struct SimpleComponent
 {
-	inline bool operator==(const FlagComponentWithGUID& rhs) const { return 0 == memcmp(this, &rhs, sizeof(rhs)); }
+	SimpleComponent() = default;
+	virtual ~SimpleComponent() = default;
 
+	SimpleComponent(TYPE value) :value(value) {};
 
-	static void ReflectType(Schematyc::CTypeDesc<FlagComponentWithGUID>& desc)
+	void Serialize(Serialization::IArchive& ar)
 	{
-		// Make a GUID from a hi, lo combination of 64 bit values.
-		desc.SetGUID(CryGUID {guidHi, guidLo});
-		
-		// TODO: They really need a label and description, but we're limited to passing in just integral types...
-		//desc.SetLabel(label);
-		//desc.SetDescription(description);
+		ar(value, "value", "A value.");
 	}
 
-
-	static const CryGUID GetGUID()
-	{
-		return CryGUID {guidHi, guidLo};
-	}
-
-
-	void Serialize(Serialization::IArchive& ar) { }
+#ifdef IMGUI
+	void ImGuiRender() {};
+#endif
 
 private:
-	// Adding this member prevents EnTT from optomising this component out when saving and loading.
-	// TODO: Find out how to make these take no space but avoid being skipped by EnTT.
-	int wastedSpace {0};
+	TYPE value;
 };
-
-
-using SaltComponent = FlagComponentWithGUID<"Salt"_hs, "Salt is life"_hs, 0xC0DFF277A5744EB2, 0x980B7E89C069A0A2>;
-using PepperComponent = FlagComponentWithGUID<"Pepper"_hs, "Pepper is hot"_hs, 0x0E783D91BDC64AA2, 0x9CE3D3444A688ABA>;
-using MintComponent = FlagComponentWithGUID<"Mint"_hs, "Mint"_hs, 0xD307661203044FC8, 0xBD4E01DF7411FC6E>;
 
 
 struct Name
@@ -117,6 +115,12 @@ struct Name
 		ar(name, "name", "The name of this entity. It should be unique.");
 		ar(displayName, "displayName", "The display name for this entity.");
 	}
+
+
+#ifdef IMGUI
+	void ImGuiRender();
+#endif
+
 
 	/** A unique name. */
 	string name;
@@ -147,44 +151,114 @@ struct Prototype
 		ar(prototypeEntityId, "prototypeEntityId", "Entity Id for the prototype this entity uses as it's base.");
 	}
 
+
+#ifdef IMGUI
+	void ImGuiRender() {};
+#endif
+
+
 	/** Unique Id for the prototye of this entiity. */
 	entt::entity prototypeEntityId {entt::null};
 };
 
 
-struct SourceAndTarget
+struct SourceEntity
 {
-	SourceAndTarget() = default;
-	virtual ~SourceAndTarget() = default;
+	SourceEntity() = default;
+	virtual ~SourceEntity() = default;
 
-	SourceAndTarget(entt::entity sourceEntity, entt::entity targetEntity,
-		EntityId crySourceEntityId, EntityId cryTargetEntityId) :
-		sourceEntity(sourceEntity), targetEntity(targetEntity), crySourceEntityId(crySourceEntityId), cryTargetEntityId(cryTargetEntityId)
+	SourceEntity(entt::entity sourceEntity, EntityId crySourceEntityId) :
+		sourceEntityId(sourceEntity), crySourceEntityId(crySourceEntityId)
 	{
 	}
 
 	void Serialize(Serialization::IArchive& ar)
 	{
-		// This is really meant to be an ephemeral structure, so it shouldn't need to serialise, but I
-		// am adding one just in case.
-		ar(sourceEntity, "sourceEntity", "Source Entity");
-		ar(targetEntity, "targetEntity", "Target Entity");
+		ar(sourceEntityId, "sourceEntityId", "Source Entity");
 		ar(crySourceEntityId, "crySourceEntityId", "Cry Source Entity ID");
-		ar(cryTargetEntityId, "cryTargetEntityId", "Cry Target Entity ID");
 	}
 
-	/** The source entity (EnTT). */
-	entt::entity sourceEntity {entt::null};
 
-	/** The target entity (EnTT).*/
-	entt::entity targetEntity {entt::null};
+#ifdef IMGUI
+	void ImGuiRender() {};
+#endif
+
+
+	/** The source entity (EnTT). */
+	entt::entity sourceEntityId {entt::null};
 
 	/** The source entity (CRYENGINE). */
 	EntityId crySourceEntityId {INVALID_ENTITYID};
+};
+
+
+struct TargetEntity
+{
+	TargetEntity() = default;
+	virtual ~TargetEntity() = default;
+
+	TargetEntity(entt::entity targetEntity, EntityId cryTargetEntityId) :
+		targetEntityId(targetEntity), cryTargetEntityId(cryTargetEntityId)
+	{
+	}
+
+	void Serialize(Serialization::IArchive& ar)
+	{
+		ar(targetEntityId, "targetEntityId", "Target Entity");
+		ar(cryTargetEntityId, "cryTargetEntityId", "Cry Target Entity ID");
+	}
+
+
+#ifdef IMGUI
+	void ImGuiRender() {};
+#endif
+
+
+	/** The target entity (EnTT).*/
+	entt::entity targetEntityId {entt::null};
 
 	/** The target entity (CRYENGINE). */
 	EntityId cryTargetEntityId {INVALID_ENTITYID};
 };
+
+
+struct Range
+{
+	Range() = default;
+	virtual ~Range() = default;
+
+
+	void Serialize(Serialization::IArchive& ar)
+	{
+		ar(minRange, "minRange", "A minimum range in metres.");
+		ar(maxRange, "maxRange", "A maximum range in metres.");
+	}
+
+
+#ifdef IMGUI
+	void ImGuiRender();
+#endif
+
+
+	/** A minimum range (metres). */
+	float minRange {0.0f};
+
+	/** A maximum range (metres). */
+	float maxRange {30.0f};
+};
+
+
+// Simple components.
+using Timer = SimpleComponent<float, "Timer"_hs>;							// A timer for counting up or down.
+using Aura = FlagComponent<"Aura"_hs>;										// Indicates this is an aura.
+using Buff = FlagComponent<"Buff"_hs>;										// Indicates this is a buff.
+using Debuff = FlagComponent<"Debuff"_hs>;									// Indicates this is a debuff.
+using Channelled = SimpleComponent<bool, "Channelled"_hs>;					// Spellcast is channlled - this may just be a pair of crowd controls or might work with them.
+using AnimationFragment = SimpleComponent<string, "AnimationFragment"_hs>;	// A fragment to pass to mannequin.
+using AnimationTag = SimpleComponent<string, "AnimationTag"_hs>;			// A tag to pass to mannequin.
+using MovementFactor = SimpleComponent<float, "MovementFactor"_hs>;			// Apply factor to movement. You can stop, slow, or accelerate an entity.
+using CancelOnMovement = SimpleComponent<bool, "cancel-on-movement"_hs>;	// If you move, something gets cancelled.
+using AreaOfEffect = SimpleComponent<float, "AreaOfEffect"_hs>;				// Flags something as an AOE and provides a radius for that AOE.
 
 
 struct Requirement
@@ -249,11 +323,13 @@ struct Ownership
 		ar(ownerId, "ownerId", "Entity Id for the prototype this entity uses as it's base.");
 	}
 
+
+#ifdef IMGUI
+	void ImGuiRender() {};
+#endif
+
+
 	/** Unique Id for the prototye of this entiity. */
 	entt::entity ownerId {entt::null};;
 };
-
-
-void RegisterComponentsWithMeta();
-
 }

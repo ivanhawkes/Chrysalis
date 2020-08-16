@@ -17,15 +17,6 @@ namespace Chrysalis::ECS
 	dot stacks
 	max targets
 	damage reduction for multiple targets
-
-	*** use the meta to store a means of executing the spell components? maybe with their support for functions / properties / etc
-	will we need to use a flag component to let us know which entities need this special processing? this would allow us to queue them
-	up with the other spells e.g. damage and heals
-	
-	*** ISpellContainer - allows a component to contain a list of spells that can be cast when interacting with them. Players and NPCs
-	would need spells for things like trading, inspecting, ... or maybe that should just be intrinsic - will need to flesh that
-	out a little better.
-
 */
 
 
@@ -69,60 +60,47 @@ enum class TargetAggressionType
 };
 
 
-enum class SpellCastStyle
-{
-	immediate,			// Spell is cast instantly. Can't be interupted. Can be cast while moving.
-	movementAllowed,	// A cast time applies - may be cast while moving.
-	turret,				// A cast time applies. No movement allowed.
-	channelled			// Continuous concentration requirement. No movement allowed.
-};
+// Loss of sight, movement and rotation restricted, ambling around.
+using CrowdControlBlind = FlagComponent<"crowd-control-blind"_hs>;
 
+// Primary weapon disabled.
+using CrowdControlDisarm = FlagComponent<"crowd-control-disarm"_hs>;
 
-/** When spells are cast they require some changes from the prototype in order to function correctly.
-	In order to get this right we need to know what changes it expects, and apply those as required.
-	This should provide a high degree of flexibility, since we will be able to handle common spell
-	types without knowlegde of their specifics. */
+// Movement restricted.
+using CrowdControlMovementRestricted = SimpleComponent<float, "crowd-control-movement-restricted"_hs>;
 
-enum class SpellRewire
-{
-	none,				// Nothing special needs to be done.
-	damage,				// Apply source, target, update damage values and qi use.
-	heal,				// Apply source, target, update heal values and qi use.
-	regenerate,			// ** Special case - mana regen on another
-	crowdControl,		// Apply source, target - and whatever else...not sure yet.
-	custom				// Need custom logic and handling to make this work.
-};
+// Rotation restricted.
+using CrowdControlRotationRestricted = SimpleComponent<float, "crowd-control-rotation-restricted"_hs>;
 
+// Ambling around quaking in fear. Can be used with movement and rotation restrictions.
+using CrowdControlFlee = FlagComponent<"crowd-control-flee"_hs>;
 
-enum class CrowdControlType
-{
-	none,
+// Under the control of another entity.
+using CrowdControlMindControl = FlagComponent<"crowd-control-mind-control"_hs>;
 
-	blind,						// Loss of sight, movement and rotation restricted, ambling around.
-	disarmed,					// Primary weapon disabled.
-	forcedActionCharm,			// Movement and rotation restricted.
-	forcedActionEntangled,		// Movement and rotation restricted.
-	forcedActionFear,			// Movement and rotation restricted, ambling around quaking in fear.
-	forcedActionFlee,			// Lose of movement control. Running around wildly.
-	forcedActionMindControl,	// Under the control of another entity.
-	forcedActionPulled,			// Pulled towards something with force.
-	forcedActionTaunt,			// Attacks are forced to be directed towards a specific entity.
-	forcedActionThrow,			// Thrown onto the ground. Fairly quick recovery.
-	knockback,					// Physically knocked back a step or two.
-	knockbackAOE,				// Physically knocked back a step or two.
-	knockdown,					// Physically knocked back a step or two and onto your arse.
-	knockdownAOE,				// Physically knocked back a step or two and onto your arse.
-	polymorph,					// Turned into a harmless critter.
-	silence,					// Restricts use of spells, shouts and other vocal abilities.
-	slow,						// Movement slowed.
-	snare,						// Movement and rotation restricted. Held in place with leg trapped in a snare.
-	stun,						// Movement and rotation restricted. Birds twitter about your head.
-};
+// Pulled towards something with force.
+using CrowdControlPull = FlagComponent<"crowd-control-pull"_hs>;
 
-using CrowdControlNone = entt::tag<"crowd-control-none"_hs>;
-using CrowdControlBlind = entt::tag<"crowd-control-blind"_hs>;
-using CrowdControlDisarm = entt::tag<"crowd-control-disarm"_hs>;
-//using CrowdControl = entt::tag<"crowd-control-"_hs>;
+// Attacks are forced to be directed towards a specific entity.
+using CrowdControlTaunt = FlagComponent<"crowd-control-taunt"_hs>;
+
+// Thrown to the ground.
+using CrowdControlThrow = FlagComponent<"crowd-control-throw"_hs>;
+
+// Physically knocked back a step or two.
+using CrowdControlKockback = FlagComponent<"crowd-control-knockback"_hs>;
+
+// Physically knocked back a step or two and onto your arse.
+using CrowdControlKnockdown = FlagComponent<"crowd-control-knockdown"_hs>;
+
+// Turned into a harmless critter.
+using CrowdControlPolymorph = FlagComponent<"crowd-control-polymorph"_hs>;
+
+// Restricts use of spells, shouts and other vocal abilities.
+using CrowdControlSilence = FlagComponent<"crowd-control-silence"_hs>;
+
+// A timer for counting up or down.
+using Cooldown = SimpleComponent<float, "cooldown"_hs>;
 
 
 enum class BuffType
@@ -170,7 +148,7 @@ enum class SpellcastPayload
 
 enum class SpellCastExecutionStatus
 {
-	initialised,		// The spell is ready to start casting.
+	queued,				// The spell has been added to the processing queue.
 	casting,			// The spell is currently casting.
 	failed,				// The spell cast failed, whiffed or fizzled.
 	cancelled,			// The player requested a cancel of the spell cast.
@@ -186,38 +164,20 @@ struct Spell
 
 	void Serialize(Serialization::IArchive& ar)
 	{
-		ar(spellRewire, "spell-rewire", "Actions which need to be taken before spell can be fired.");
-		ar(minRange, "minRange", "Minimum range at which this can be cast.");
-		ar(maxRange, "maxRange", "Maximum range at which this can be cast.");
 		ar(castDuration, "castDuration", "The length of time it takes to cast this spell. Instant cast spells should be zero.");
-		ar(cooldown, "cooldown", "Cooldown. The number of seconds before this spell can be cast again.");
-		ar(globalCooldown, "globalCooldown", "Global cooldown. The number of seconds before *any* spell can be cast again.");
 		ar(sourceTargetType, "sourceTargetType", "Source of the spell - typically none or self.");
 		ar(targetTargetType, "targetTargetType", "Target for the spell. May target self, others, or even AoEs.");
 		ar(spellcastPayload, "spellcastPayload", "At what time should the spell payload be delivered?");
 	}
 
 
-	/** Code that needs to run after a spell is copied to fix up all the broken requirements e.g. source, target, spell bonuses */
-	SpellRewire spellRewire {SpellRewire::damage};
+#ifdef IMGUI
+	void ImGuiRender();
+#endif
 
-	/** Number of actions this spell will take before being removed. */
-	uint32 actions {0};
-
-	/** Minimum range at which this can be cast. */
-	float minRange {0.0f};
-
-	/** Maximum range at which this can be cast. */
-	float maxRange {30.0f};
 
 	/** The length of time it takes to cast this spell. Instant cast spells should be zero. */
 	float castDuration {2.0f};
-
-	/** Cooldown. The number of seconds before this spell can be cast again. */
-	float cooldown {2.0f};
-
-	/** Global cooldown. The number of seconds before *any* spell can be cast again. */
-	float globalCooldown {0.0f};
 
 	/** At what time should the spell payload be delivered? */
 	SpellcastPayload spellcastPayload {SpellcastPayload::onCompletion};
@@ -247,10 +207,15 @@ struct SpellcastExecution
 	}
 
 
+#ifdef IMGUI
+	void ImGuiRender();
+#endif
+
+
 	/** Duration the spell has been executing. */
 	float executionTime {0.0f};
 
 	/** Status of the casting mechanic. */
-	SpellCastExecutionStatus castExecutionStatus {SpellCastExecutionStatus::initialised};
+	SpellCastExecutionStatus castExecutionStatus {SpellCastExecutionStatus::queued};
 };
 }

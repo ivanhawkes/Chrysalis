@@ -24,6 +24,11 @@ include_directories("../SDK/EnTT/src")
 
 # I like to know which compiler I am using.
 message (STATUS "CMAKE_CXX_COMPILER_VERSION = ${CMAKE_CXX_COMPILER_VERSION}")
+
+option(PLUGIN_IMGUI "Enable the imgui plugin" ON)
+if (NOT PLUGIN_IMGUI)
+	return()
+endif()
 #END-CUSTOM
 
 sources_platform(ALL)
@@ -32,6 +37,32 @@ add_sources("ChrysalisCore_uber.cpp"
     SOURCE_GROUP "Root"
 		"StdAfx.cpp"
 		"StdAfx.h"
+)
+add_sources("CryImGui_uber.cpp"
+    PROJECTS Chrysalis
+    SOURCE_GROUP "ImGui"
+        "ImGui/ImguiImpl.cpp"
+        "ImGui/ImguiImpl.h"
+        "ImGui/ImguiRenderer.h"
+        "ImGui/ImguiRenderer.cpp"
+        "ImGui/imconfig.h"
+        "ImGui/imgui.cpp"
+        "ImGui/imgui.h"
+        "ImGui/imgui_demo.cpp"
+        "ImGui/imgui_draw.cpp"
+        "ImGui/imgui_widgets.cpp"
+        "ImGui/imgui_internal.h"
+        "ImGui/imstb_rectpack.h"
+        "ImGui/imstb_textedit.h"
+        "ImGui/imstb_truetype.h"
+        "ImGui/PerfMonitor.cpp"
+        "ImGui/PerfMonitor.h"
+)
+add_sources("CryImGui_Panels_uber.cpp"
+    PROJECTS Chrysalis
+    SOURCE_GROUP "ImGui\\\\Panels"
+        "ImGui/Panels/EntityEditor.cpp"
+        "ImGui/Panels/EntityEditor.h"
 )
 add_sources("Actor_uber.cpp"
     PROJECTS Chrysalis
@@ -317,15 +348,16 @@ add_sources("ECS_uber.cpp"
 add_sources("Components_uber.cpp"
     PROJECTS Chrysalis
     SOURCE_GROUP "ECS\\\\Components"
-		"ECS/Components/Components.cpp"
-		"ECS/Components/Health.cpp"
-		"ECS/Components/RenderLight.cpp"
 		"ECS/Components/Components.h"
+		"ECS/Components/Components.cpp"
 		"ECS/Components/Health.h"
+		"ECS/Components/Health.cpp"
 		"ECS/Components/Inventory.h"
 		"ECS/Components/Items.h"
 		"ECS/Components/Qi.h"
+		"ECS/Components/Qi.cpp"
 		"ECS/Components/RenderLight.h"
+		"ECS/Components/RenderLight.cpp"
 )
 add_sources("Spells_uber.cpp"
     PROJECTS Chrysalis
@@ -569,3 +601,21 @@ set_solution_startup_target(GameLauncher)
 if (WIN32)
     set_visual_studio_debugger_command( ${THIS_PROJECT} "${CRYENGINE_DIR}/bin/win_x64/GameLauncher.exe" "-project \"${PROJECT_DIR}/Chrysalis.cryproject\"" )
 endif()
+
+#BEGIN-CUSTOM
+# Make any custom changes here, modifications outside of the block will be discarded on regeneration.
+
+# Force the compiler to c++17
+#set(CMAKE_CXX_STANDARD 17)
+#set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+#include_directories("../SDK/EnTT/src")
+
+# I like to know which compiler I am using.
+#message (STATUS "CMAKE_CXX_COMPILER_VERSION = ${CMAKE_CXX_COMPILER_VERSION}")
+
+#option(PLUGIN_IMGUI "Enable the imgui plugin" ON)
+#if (NOT PLUGIN_IMGUI)
+#	return()
+#endif()
+#END-CUSTOM

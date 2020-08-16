@@ -22,23 +22,18 @@ namespace Chrysalis::ECS
 void SystemApplyDamage(entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Apply any damage to the damage modifiers.
-	auto view = spellRegistry.view<Damage, SourceAndTarget>();
-	for (auto& entity : view)
+	for (auto&& [entity, damage, sourceEntity, targetEntity] : spellRegistry.view<Damage, SourceEntity, TargetEntity>().each())
 	{
-		// Get the components.
-		auto& damage = view.get<Damage>(entity);
-		auto& sourceAndTarget = view.get<SourceAndTarget>(entity);
-
 		// Get the health component for the target entity and apply the damage to it's health modifier.
 		Health* targetHealth {nullptr};
 		if (damage.targetTargetType == TargetTargetType::target)
 		{
-			auto& health = actorRegistry.get<Health>(sourceAndTarget.targetEntity);
+			auto& health = actorRegistry.get<Health>(targetEntity.targetEntityId);
 			targetHealth = &health;
 		}
 		else
 		{
-			auto& health = actorRegistry.get<Health>(sourceAndTarget.sourceEntity);
+			auto& health = actorRegistry.get<Health>(sourceEntity.sourceEntityId);
 			targetHealth = &health;
 		}
 
@@ -53,13 +48,8 @@ void SystemApplyDamage(entt::registry& spellRegistry, entt::registry& actorRegis
 void SystemApplyDamageOverTime(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Apply any damage to the damage modifiers.
-	auto view = spellRegistry.view<DamageOverTime, SourceAndTarget>();
-	for (auto& entity : view)
+	for (auto&& [entity, damage, sourceEntity, targetEntity] : spellRegistry.view<DamageOverTime, SourceEntity, TargetEntity>().each())
 	{
-		// Get the components..
-		auto& damage = view.get<DamageOverTime>(entity);
-		auto& sourceAndTarget = view.get<SourceAndTarget>(entity);
-
 		damage.deltaSinceTick += dt;
 		if ((damage.deltaSinceTick >= damage.interval) && (damage.ticksRemaining >= 1.0f))
 		{
@@ -70,12 +60,12 @@ void SystemApplyDamageOverTime(float dt, entt::registry& spellRegistry, entt::re
 			Health* targetHealth {nullptr};
 			if (damage.targetTargetType == TargetTargetType::target)
 			{
-				auto& health = actorRegistry.get<Health>(sourceAndTarget.targetEntity);
+				auto& health = actorRegistry.get<Health>(targetEntity.targetEntityId);
 				targetHealth = &health;
 			}
 			else
 			{
-				auto& health = actorRegistry.get<Health>(sourceAndTarget.sourceEntity);
+				auto& health = actorRegistry.get<Health>(sourceEntity.sourceEntityId);
 				targetHealth = &health;
 			}
 			targetHealth->health.modifiers -= damage.quantity;
@@ -93,23 +83,18 @@ void SystemApplyDamageOverTime(float dt, entt::registry& spellRegistry, entt::re
 void SystemApplyHeal(entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Apply any heals to the health modifiers.
-	auto view = spellRegistry.view<Heal, SourceAndTarget>();
-	for (auto& entity : view)
+	for (auto&& [entity, heal, sourceEntity, targetEntity] : spellRegistry.view<Heal, SourceEntity, TargetEntity>().each())
 	{
-		// Get the components..
-		auto& heal = view.get<Heal>(entity);
-		auto& sourceAndTarget = view.get<SourceAndTarget>(entity);
-
 		// Get the health component for the target entity and apply the heal to it's health modifier.
 		Health* targetHealth {nullptr};
 		if (heal.targetTargetType == TargetTargetType::target)
 		{
-			auto& health = actorRegistry.get<Health>(sourceAndTarget.targetEntity);
+			auto& health = actorRegistry.get<Health>(targetEntity.targetEntityId);
 			targetHealth = &health;
 		}
 		else
 		{
-			auto& health = actorRegistry.get<Health>(sourceAndTarget.sourceEntity);
+			auto& health = actorRegistry.get<Health>(sourceEntity.sourceEntityId);
 			targetHealth = &health;
 		}
 
@@ -134,13 +119,8 @@ void SystemApplyHeal(entt::registry& spellRegistry, entt::registry& actorRegistr
 void SystemApplyHealOverTime(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Apply any heal to the health modifiers.
-	auto view = spellRegistry.view<HealOverTime, SourceAndTarget>();
-	for (auto& entity : view)
+	for (auto&& [entity, heal, sourceEntity, targetEntity] : spellRegistry.view<HealOverTime, SourceEntity, TargetEntity>().each())
 	{
-		// Get the components..
-		auto& heal = view.get<HealOverTime>(entity);
-		auto& sourceAndTarget = view.get<SourceAndTarget>(entity);
-
 		heal.deltaSinceTick += dt;
 		if ((heal.deltaSinceTick >= heal.interval) && (heal.ticksRemaining >= 1.0f))
 		{
@@ -151,12 +131,12 @@ void SystemApplyHealOverTime(float dt, entt::registry& spellRegistry, entt::regi
 			Health* targetHealth {nullptr};
 			if (heal.targetTargetType == TargetTargetType::target)
 			{
-				auto& health = actorRegistry.get<Health>(sourceAndTarget.targetEntity);
+				auto& health = actorRegistry.get<Health>(targetEntity.targetEntityId);
 				targetHealth = &health;
 			}
 			else
 			{
-				auto& health = actorRegistry.get<Health>(sourceAndTarget.sourceEntity);
+				auto& health = actorRegistry.get<Health>(sourceEntity.sourceEntityId);
 				targetHealth = &health;
 			}
 
@@ -187,12 +167,8 @@ void SystemHealthCheck(entt::registry& spellRegistry, entt::registry& actorRegis
 {
 	// Update each health component, applying the modifier to it's base to calculate the current health.
 	// Update death status if appropriate.
-	auto view = actorRegistry.view<Health, SourceAndTarget>();
-	for (auto& entity : view)
+	for (auto&& [entity, health, sourceEntity, targetEntity] : spellRegistry.view<Health, SourceEntity, TargetEntity>().each())
 	{
-		// Get the components..
-		auto& health = view.get<Health>(entity);
-
 		// Check for overkill.
 		float newHealth = health.health.GetBaseAttribute() + health.health.modifiers;
 		if (newHealth <= 0.0f)
@@ -213,23 +189,18 @@ void SystemHealthCheck(entt::registry& spellRegistry, entt::registry& actorRegis
 void SystemApplyQiUtilisation(entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Apply any qi usage to the modifiers.
-	auto view = spellRegistry.view<UtiliseQi, SourceAndTarget>();
-	for (auto& entity : view)
+	for (auto&& [entity, qiUse, sourceEntity, targetEntity] : spellRegistry.view<UtiliseQi, SourceEntity, TargetEntity>().each())
 	{
-		// Get the components..
-		auto& qiUse = view.get<UtiliseQi>(entity);
-		auto& sourceAndTarget = view.get<SourceAndTarget>(entity);
-
 		// Get the qi component for the target entity and apply the usage to it's modifier.
 		Qi* targetQi {nullptr};
 		if (qiUse.targetTargetType == TargetTargetType::target)
 		{
-			auto& qi = actorRegistry.get<Qi>(sourceAndTarget.targetEntity);
+			auto& qi = actorRegistry.get<Qi>(targetEntity.targetEntityId);
 			targetQi = &qi;
 		}
 		else
 		{
-			auto& qi = actorRegistry.get<Qi>(sourceAndTarget.sourceEntity);
+			auto& qi = actorRegistry.get<Qi>(sourceEntity.sourceEntityId);
 			targetQi = &qi;
 		}
 
@@ -245,13 +216,8 @@ void SystemApplyQiUtilisation(entt::registry& spellRegistry, entt::registry& act
 void SystemApplyQiUtilisationOverTime(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Apply any qi to the modifiers.
-	auto view = spellRegistry.view<UtiliseQiOverTime, SourceAndTarget>();
-	for (auto& entity : view)
+	for (auto&& [entity, qiUse, sourceEntity, targetEntity] : spellRegistry.view<UtiliseQiOverTime, SourceEntity, TargetEntity>().each())
 	{
-		// Get the components..
-		auto& qiUse = view.get<UtiliseQiOverTime>(entity);
-		auto& sourceAndTarget = view.get<SourceAndTarget>(entity);
-
 		qiUse.deltaSinceTick += dt;
 		if ((qiUse.deltaSinceTick >= qiUse.interval) && (qiUse.ticksRemaining >= 1.0f))
 		{
@@ -262,12 +228,12 @@ void SystemApplyQiUtilisationOverTime(float dt, entt::registry& spellRegistry, e
 			Qi* targetQi {nullptr};
 			if (qiUse.targetTargetType == TargetTargetType::target)
 			{
-				auto& qi = actorRegistry.get<Qi>(sourceAndTarget.targetEntity);
+				auto& qi = actorRegistry.get<Qi>(targetEntity.targetEntityId);
 				targetQi = &qi;
 			}
 			else
 			{
-				auto& qi = actorRegistry.get<Qi>(sourceAndTarget.sourceEntity);
+				auto& qi = actorRegistry.get<Qi>(sourceEntity.sourceEntityId);
 				targetQi = &qi;
 			}
 			targetQi->qi.modifiers -= qiUse.quantity;
@@ -285,23 +251,18 @@ void SystemApplyQiUtilisationOverTime(float dt, entt::registry& spellRegistry, e
 void SystemApplyQiReplenishment(entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Apply any replenishment to the qi modifiers.
-	auto view = spellRegistry.view<ReplenishQi, SourceAndTarget>();
-	for (auto& entity : view)
+	for (auto&& [entity, replenish, sourceEntity, targetEntity] : spellRegistry.view<ReplenishQi, SourceEntity, TargetEntity>().each())
 	{
-		// Get the components..
-		auto& replenish = view.get<ReplenishQi>(entity);
-		auto& sourceAndTarget = view.get<SourceAndTarget>(entity);
-
 		// Get the qi component for the target entity and apply the replenishment to it's modifier.
 		Qi* targetQi {nullptr};
 		if (replenish.targetTargetType == TargetTargetType::target)
 		{
-			auto& qi = actorRegistry.get<Qi>(sourceAndTarget.targetEntity);
+			auto& qi = actorRegistry.get<Qi>(targetEntity.targetEntityId);
 			targetQi = &qi;
 		}
 		else
 		{
-			auto& qi = actorRegistry.get<Qi>(sourceAndTarget.sourceEntity);
+			auto& qi = actorRegistry.get<Qi>(sourceEntity.sourceEntityId);
 			targetQi = &qi;
 		}
 
@@ -326,13 +287,8 @@ void SystemApplyQiReplenishment(entt::registry& spellRegistry, entt::registry& a
 void SystemApplyQiReplenishmentOverTime(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Apply any replenishment to the qi modifiers.
-	auto view = spellRegistry.view<ReplenishQiOverTime, SourceAndTarget>();
-	for (auto& entity : view)
+	for (auto&& [entity, replenish, sourceEntity, targetEntity] : spellRegistry.view<ReplenishQiOverTime, SourceEntity, TargetEntity>().each())
 	{
-		// Get the components..
-		auto& replenish = view.get<ReplenishQiOverTime>(entity);
-		auto& sourceAndTarget = view.get<SourceAndTarget>(entity);
-
 		replenish.deltaSinceTick += dt;
 		if ((replenish.deltaSinceTick >= replenish.interval) && (replenish.ticksRemaining >= 1.0f))
 		{
@@ -343,12 +299,12 @@ void SystemApplyQiReplenishmentOverTime(float dt, entt::registry& spellRegistry,
 			Qi* targetQi {nullptr};
 			if (replenish.targetTargetType == TargetTargetType::target)
 			{
-				auto& qi = actorRegistry.get<Qi>(sourceAndTarget.targetEntity);
+				auto& qi = actorRegistry.get<Qi>(targetEntity.targetEntityId);
 				targetQi = &qi;
 			}
 			else
 			{
-				auto& qi = actorRegistry.get<Qi>(sourceAndTarget.sourceEntity);
+				auto& qi = actorRegistry.get<Qi>(sourceEntity.sourceEntityId);
 				targetQi = &qi;
 			}
 
@@ -379,7 +335,7 @@ void SystemApplyQiReplenishmentOverTime(float dt, entt::registry& spellRegistry,
 // ***
 
 
-bool IsSpellCastable(const Spell& spell, const SourceAndTarget& sourceAndTarget)
+bool IsSpellCastable(const Spell& spell, const SourceEntity& sourceEntity, const TargetEntity& targetEntity)
 {
 	// TODO: Range and LoS checks, etc.
 
@@ -390,24 +346,17 @@ bool IsSpellCastable(const Spell& spell, const SourceAndTarget& sourceAndTarget)
 void SpellCastOpen(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Check for spell cast components.
-	auto view = spellRegistry.view<SpellActionOpen, Name, Spell, SpellcastExecution, SourceAndTarget>();
-	for (auto& entity : view)
+	for (auto&& [entity, spellActionOpen, name, spell, spellcastExecution, sourceEntity, targetEntity] : spellRegistry.view<SpellActionOpen, Name, Spell, SpellcastExecution, SourceEntity, TargetEntity>().each())
 	{
-		// Get the components.
-		auto& name = view.get<Name>(entity);
-		auto& spell = view.get<Spell>(entity);
-		auto& spellcastExecution = view.get<SpellcastExecution>(entity);
-		auto& sourceAndTarget = view.get<SourceAndTarget>(entity);
-
 		// Check validity of the spell cast request.
-		if (IsSpellCastable(spell, sourceAndTarget))
+		if (IsSpellCastable(spell, sourceEntity, targetEntity))
 		{
 			switch (spellcastExecution.castExecutionStatus)
 			{
-				case SpellCastExecutionStatus::initialised:
-					// The spell is now considered to be in a casting state.
+				case SpellCastExecutionStatus::queued:
+					// Move it from queued casting to casting.
 					spellcastExecution.castExecutionStatus = SpellCastExecutionStatus::casting;
-					CryLogAlways("Spellcast: %s, Source: %d, target: %d", name.displayName.c_str(), sourceAndTarget.sourceEntity, sourceAndTarget.targetEntity);
+					CryLogAlways("Starting: %s, Source: %d, target: %d", name.displayName.c_str(), sourceEntity.sourceEntityId, targetEntity.targetEntityId);
 					break;
 
 				case SpellCastExecutionStatus::casting:
@@ -416,12 +365,12 @@ void SpellCastOpen(float dt, entt::registry& spellRegistry, entt::registry& acto
 			}
 
 			// Does the source actor have a spellbook for this cast?
-			if (auto* pSourceEntity = gEnv->pEntitySystem->GetEntity(sourceAndTarget.crySourceEntityId))
+			if (auto* pSourceEntity = gEnv->pEntitySystem->GetEntity(sourceEntity.crySourceEntityId))
 			{
 				if (auto* pSpellbookComponent = pSourceEntity->GetComponent<CSpellbookComponent>())
 				{
 					// Toss the spell onto the source entity's queue.
-					auto spellcast = std::make_shared<Chrysalis::SpellCastOpen>(name, spell, sourceAndTarget);
+					auto spellcast = std::make_shared<Chrysalis::SpellCastOpen>(name, spell, sourceEntity, targetEntity);
 					pSpellbookComponent->QueueSpellCast(spellcast);
 				}
 			}
@@ -439,7 +388,7 @@ void SpellCastOpen(float dt, entt::registry& spellRegistry, entt::registry& acto
 		// Doing this here for convenience for now.
 		if (spellcastExecution.castExecutionStatus == SpellCastExecutionStatus::success)
 		{
-			CryLogAlways("Spellcast Finished: %s, Source: %d, target: %d", name.displayName.c_str(), sourceAndTarget.sourceEntity, sourceAndTarget.targetEntity);
+			CryLogAlways("Spellcast Finished: %s, Source: %d, target: %d", name.displayName.c_str(), sourceEntity.sourceEntityId, targetEntity.targetEntityId);
 			spellRegistry.destroy(entity);
 		}
 	}
@@ -449,20 +398,13 @@ void SpellCastOpen(float dt, entt::registry& spellRegistry, entt::registry& acto
 void SpellCastTake(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Check for spell cast components.
-	auto view = spellRegistry.view<SpellActionTake, Name, Spell, SpellcastExecution, SourceAndTarget>();
-	for (auto& entity : view)
+	for (auto&& [entity, spellActionTake, name, spell, spellcastExecution, sourceEntity, targetEntity] : spellRegistry.view<SpellActionTake, Name, Spell, SpellcastExecution, SourceEntity, TargetEntity>().each())
 	{
-		// Get the components.
-		auto& name = view.get<Name>(entity);
-		auto& spell = view.get<Spell>(entity);
-		//auto& spellcastExecution = view.get<SpellcastExecution>(entity);
-		auto& sourceAndTarget = view.get<SourceAndTarget>(entity);
-
 		// Check validity of the spell cast request.
-		if (IsSpellCastable(spell, sourceAndTarget))
+		if (IsSpellCastable(spell, sourceEntity, targetEntity))
 		{
 			// Do something.
-			CryLogAlways("Spellcast: %s, Source: %d, target: %d", name.displayName.c_str(), sourceAndTarget.sourceEntity, sourceAndTarget.targetEntity);
+			CryLogAlways("Spellcast: %s, Source: %d, target: %d", name.displayName.c_str(), sourceEntity.sourceEntityId, targetEntity.targetEntityId);
 		}
 
 		// Destroy the entity. Assumption is each entity only has one of these sorts of spell components on it. 
@@ -474,20 +416,13 @@ void SpellCastTake(float dt, entt::registry& spellRegistry, entt::registry& acto
 void SpellCastDrop(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Check for spell cast components.
-	auto view = spellRegistry.view<SpellActionDrop, Name, Spell, SpellcastExecution, SourceAndTarget>();
-	for (auto& entity : view)
+	for (auto&& [entity, spellActionDrop, name, spell, spellcastExecution, sourceEntity, targetEntity] : spellRegistry.view<SpellActionDrop, Name, Spell, SpellcastExecution, SourceEntity, TargetEntity>().each())
 	{
-		// Get the components.
-		auto& name = view.get<Name>(entity);
-		auto& spell = view.get<Spell>(entity);
-		//auto& spellcastExecution = view.get<SpellcastExecution>(entity);
-		auto& sourceAndTarget = view.get<SourceAndTarget>(entity);
-
 		// Check validity of the spell cast request.
-		if (IsSpellCastable(spell, sourceAndTarget))
+		if (IsSpellCastable(spell, sourceEntity, targetEntity))
 		{
 			// Do something.
-			CryLogAlways("Spellcast: %s, Source: %d, target: %d", name.displayName.c_str(), sourceAndTarget.sourceEntity, sourceAndTarget.targetEntity);
+			CryLogAlways("Spellcast: %s, Source: %d, target: %d", name.displayName.c_str(), sourceEntity.sourceEntityId, targetEntity.targetEntityId);
 		}
 
 		// Destroy the entity. Assumption is each entity only has one of these sorts of spell components on it. 
@@ -499,26 +434,17 @@ void SpellCastDrop(float dt, entt::registry& spellRegistry, entt::registry& acto
 void SpellCastSwitch(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Check for spell cast components.
-	auto view = spellRegistry.view<SpellActionSwitch, Name, Spell, SpellcastExecution, SourceAndTarget>();
-	for (auto& entity : view)
+	for (auto&& [entity, spellActionSwitch, name, spell, spellcastExecution, sourceEntity, targetEntity] : spellRegistry.view<SpellActionSwitch, Name, Spell, SpellcastExecution, SourceEntity, TargetEntity>().each())
 	{
-		// Get the components.
-		auto& name = view.get<Name>(entity);
-		auto& spell = view.get<Spell>(entity);
-		//auto& spellcastExecution = view.get<SpellcastExecution>(entity);
-		auto& sourceAndTarget = view.get<SourceAndTarget>(entity);
-
 		// Check validity of the spell cast request.
-		if (IsSpellCastable(spell, sourceAndTarget))
+		if (IsSpellCastable(spell, sourceEntity, targetEntity))
 		{
 			// Do something.
-			CryLogAlways("Spellcast: %s, Source: %d, Target: %d", name.displayName.c_str(), sourceAndTarget.sourceEntity, sourceAndTarget.targetEntity);
-			CryLogAlways("SourceId: %d, TargetId: %d", sourceAndTarget.crySourceEntityId, sourceAndTarget.cryTargetEntityId);
-
+			CryLogAlways("Spellcast: %s, Source: %d, Target: %d", name.displayName.c_str(), sourceEntity.sourceEntityId, targetEntity.targetEntityId);
+			CryLogAlways("SourceId: %d, TargetId: %d", sourceEntity.crySourceEntityId, targetEntity.cryTargetEntityId);
 
 			// TODO: All this really belongs somewhere else more related to what it's doing so it doesn't pollute the
 			// clean code for systems.
-
 
 			//m_pInteractionActor = &actor;
 			//m_interaction = &pInteraction;
@@ -534,7 +460,7 @@ void SpellCastSwitch(float dt, entt::registry& spellRegistry, entt::registry& ac
 			//	tags.push_back(m_tags.At(i).tag.c_str());
 			//}
 
-			if (auto* pSourceEntity = gEnv->pEntitySystem->GetEntity(sourceAndTarget.crySourceEntityId))
+			if (auto* pSourceEntity = gEnv->pEntitySystem->GetEntity(sourceEntity.crySourceEntityId))
 			{
 				// Animation is handled by this component for most things. If it exists we can use it to find the animation control we need.
 				if (auto* pActorAnimationComponent = pSourceEntity->GetComponent<CActorAnimationComponent>())
@@ -544,7 +470,7 @@ void SpellCastSwitch(float dt, entt::registry& spellRegistry, entt::registry& ac
 						// We prefer to place the actor into a co-operative animation if possible.
 						auto action = new CActorAnimationActionCooperative(*pActor,
 							pActorAnimationComponent,
-							sourceAndTarget.cryTargetEntityId,
+							targetEntity.cryTargetEntityId,
 							pActor->GetMannequinParams()->fragmentIDs.Interaction, TagState {TAG_STATE_EMPTY}, pActor->GetMannequinParams()->tagIDs.ScopeSlave, tags);
 						//action->AddEventListener(this);
 
@@ -579,7 +505,7 @@ void SystemUpdateActors(float dt, entt::registry& actorRegistry)
 	auto view = actorRegistry.view<Qi>();
 	for (auto& entity : view)
 	{
-		// Get the components..
+		// Get the components.
 		auto& qi = view.get<Qi>(entity);
 
 		// Accumulate the time since the last spell cast.

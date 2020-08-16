@@ -35,10 +35,6 @@ void CSpellParticipantComponent::ReflectType(Schematyc::CTypeDesc<CSpellParticip
 	desc.SetComponentFlags({IEntityComponent::EFlags::Singleton});
 
 	// Keep a collection of spells available for use.
-	
-	// TEST: Seeing how well components can work in the CRYENGINE interface.
-	desc.AddMember(&CSpellParticipantComponent::m_health, 'hlth', "Health", "Health", "Health", ECS::Health {});
-	desc.AddMember(&CSpellParticipantComponent::m_qi, 'qiqi', "Qi", "Qi", "Qi", ECS::Qi {});
 }
 
 
@@ -49,27 +45,28 @@ void CSpellParticipantComponent::ReflectType(Schematyc::CTypeDesc<CSpellParticip
 
 void CSpellParticipantComponent::Initialize()
 {
-	// Get the ECS actor registry.
-	auto actorRegistry = ECS::Simulation.GetActorRegistry();
+	if (!m_isInit)
+	{
+		// Get the ECS actor registry.
+		auto& actorRegistry = ECS::Simulation.GetActorRegistry();
 
-	// Need a new entity bound to this one for both their lives.
-	m_ecsEntity = actorRegistry->create();
+		// Need a new entity bound to this one for both their lives.
+		m_ecsEntity = actorRegistry.create();
 
-	// Name component.
-	actorRegistry->emplace<ECS::Name>(m_ecsEntity, m_pEntity->GetName(), m_pEntity->GetName());
+		// Name component.
+		actorRegistry.emplace<ECS::Name>(m_ecsEntity, m_pEntity->GetName(), m_pEntity->GetName());
 
-	// Health component.
-	ECS::AttributeType<float> health {120.0f, 0.0f, 0.0f};
-	m_health = actorRegistry->emplace<ECS::Health>(m_ecsEntity, health);
+		// Health component.
+		actorRegistry.emplace<ECS::Health>(m_ecsEntity, ECS::AttributeType {120.0f, 0.0f, 0.0f});
 
-	// Qi component.
-	ECS::AttributeType<float> qi {100.0f, 0.0f, 0.0f};
-	m_qi = actorRegistry->emplace<ECS::Qi>(m_ecsEntity, qi);
+		// Qi component.
+		actorRegistry.emplace<ECS::Qi>(m_ecsEntity, ECS::AttributeType {120.0f, 0.0f, 0.0f});
 
-	// TEST: adding a tag...
-	actorRegistry->emplace<ECS::CrowdControlNone>(m_ecsEntity);
-	actorRegistry->emplace<ECS::SaltComponent>(m_ecsEntity);
-	actorRegistry->emplace<ECS::PepperComponent>(m_ecsEntity);
+		// Movement factor will allow us to change their movement rate more easily with spells.
+		actorRegistry.emplace<ECS::MovementFactor>(m_ecsEntity, ECS::MovementFactor {1.0f});
+
+		m_isInit = true;
+	}
 }
 
 
@@ -80,8 +77,8 @@ void CSpellParticipantComponent::ProcessEvent(const SEntityEvent& event)
 		case EEntityEvent::Remove:
 		{
 			// Clean up the ECS entity, as it's no longer needed.
-			auto registry = ECS::Simulation.GetActorRegistry();
-			registry->destroy(m_ecsEntity);
+			auto& registry = ECS::Simulation.GetActorRegistry();
+			registry.destroy(m_ecsEntity);
 			break;
 		}
 	}

@@ -27,6 +27,11 @@ struct ItemClass
 	}
 
 
+#ifdef IMGUI
+	void ImGuiRender() {};
+#endif
+
+
 	/** How many items may be placed into a stack. */
 	uint32 maxStackSize {1};
 

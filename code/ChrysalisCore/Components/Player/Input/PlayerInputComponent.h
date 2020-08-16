@@ -175,6 +175,12 @@ public:
 
 protected:
 	void OnActionEscape(int activationMode, float value);
+	void OnCapslock(int activationMode, float value);
+	void OnNumlock(int activationMode, float value);
+	void OnPrintScreen(int activationMode, float value);
+	void OnScrolllock(int activationMode, float value);
+	void OnPauseBreak(int activationMode, float value);
+
 	void OnActionInteraction(int activationMode, float value);
 
 	void OnActionExamine(int activationMode, float value);

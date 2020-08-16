@@ -39,7 +39,7 @@ struct Health
 	Health() = default;
 	virtual ~Health() = default;
 
-	Health(AttributeType<float> health) :
+	Health(AttributeType health) :
 		health(health)
 	{
 	}
@@ -63,8 +63,14 @@ struct Health
 		ar(isImmortal, "isImmortal", "Are they immortal or immune to damage?");
 	}
 
+
+#ifdef IMGUI
+	void ImGuiRender();
+#endif
+
+
 	/** Health attribute. */
-	AttributeType<float> health;
+	AttributeType health;
 
 	/** Is the actor dead? */
 	bool isDead {false};
@@ -91,6 +97,12 @@ struct Damage
 		ar(quantity, "quantity", "quantity");
 		ar(damageType, "damageType", "Damage Type");
 	}
+
+
+#ifdef IMGUI
+	void ImGuiRender();
+#endif
+
 
 	/** Use the spell's target or source for this component's target. */
 	TargetTargetType targetTargetType {TargetTargetType::target};
@@ -126,6 +138,12 @@ struct DamageOverTime
 		ar(interval, "interval", "interval");
 	}
 
+
+#ifdef IMGUI
+	void ImGuiRender();
+#endif
+
+
 	/** Use the spell's target or source for this component's target. */
 	TargetTargetType targetTargetType {TargetTargetType::target};
 
@@ -149,6 +167,40 @@ struct DamageOverTime
 };
 
 
+struct SelfHarm
+{
+	SelfHarm() = default;
+	virtual ~SelfHarm() = default;
+
+	SelfHarm(float quantity, DamageType damageType) :
+		quantity(quantity), damageType(damageType)
+	{
+	}
+
+
+	void Serialize(Serialization::IArchive& ar)
+	{
+		ar(targetTargetType, "targetTargetType", "targetTargetType");
+		ar(quantity, "quantity", "quantity");
+		ar(damageType, "damageType", "Damage Type");
+	}
+
+#ifdef IMGUI
+		void ImGuiRender();
+#endif
+
+
+	/** Use the spell's target or source for this component's target. */
+	TargetTargetType targetTargetType {TargetTargetType::target};
+
+	/** Modify an attribute by this amount. */
+	float quantity {0.0f};
+
+	/** The type of damage. */
+	DamageType damageType {DamageType::acid};
+};
+
+
 struct Heal
 {
 	Heal() = default;
@@ -165,6 +217,12 @@ struct Heal
 		ar(targetTargetType, "targetTargetType", "targetTargetType");
 		ar(quantity, "quantity", "quantity");
 	}
+
+
+#ifdef IMGUI
+	void ImGuiRender();
+#endif
+
 
 	/** Use the spell's target or source for this component's target. */
 	TargetTargetType targetTargetType {TargetTargetType::target};
@@ -193,6 +251,12 @@ struct HealOverTime
 		ar(duration, "duration", "duration");
 		ar(interval, "interval", "interval");
 	}
+
+
+#ifdef IMGUI
+	void ImGuiRender();
+#endif
+
 
 	/** Use the spell's target or source for this component's target. */
 	TargetTargetType targetTargetType {TargetTargetType::target};

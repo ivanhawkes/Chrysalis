@@ -50,8 +50,7 @@ private:
 	/** The identifier for this spell participant in the ECS. */
 	entt::entity m_ecsEntity {entt::null};
 
-	// TODO: Need these to be references or have some way to sync with EnTT.
-	ECS::Health m_health;
-	ECS::Qi m_qi;
+	// HACK: Initialise is being called twice. Use this to filter it till I figure out why.
+	bool m_isInit {false};
 };
 }

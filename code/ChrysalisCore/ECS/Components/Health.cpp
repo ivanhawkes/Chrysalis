@@ -32,4 +32,49 @@ SERIALIZATION_ENUM(DamageType::slash, "slash", "slash")
 SERIALIZATION_ENUM(DamageType::tear, "tear", "tear")
 SERIALIZATION_ENUM(DamageType::unholy, "unholy", "unholy")
 SERIALIZATION_ENUM_END()
+
+
+#ifdef IMGUI
+void Health::ImGuiRender()
+{
+	health.ImGuiRender();
+	ImGui::Checkbox("Dead?:", &isDead);
+	ImGui::Checkbox("Immortal:", &isImmortal);
+}
+
+
+void Damage::ImGuiRender()
+{
+	ImGui::InputFloat("Quantity:", &quantity);
+}
+
+
+void DamageOverTime::ImGuiRender()
+{
+	ImGui::InputFloat("Quantity:", &quantity);
+	ImGui::InputFloat("Duration:", &duration);
+	ImGui::InputFloat("Interval:", &interval);
+}
+
+
+void SelfHarm::ImGuiRender()
+{
+	ImGui::InputFloat("Quantity:", &quantity);
+}
+
+
+void Heal::ImGuiRender()
+{
+	ImGui::InputFloat("Quantity:", &quantity);
+}
+
+
+void HealOverTime::ImGuiRender()
+{
+	ImGui::InputFloat("Quantity:", &quantity);
+	ImGui::InputFloat("Duration:", &duration);
+	ImGui::InputFloat("Interval:", &interval);
+}
+#endif
+
 }

@@ -7,8 +7,6 @@
 #include <CryExtension/ClassWeaver.h>
 
 
-class CImguiImpl;
-
 namespace Chrysalis
 {
 class CPlayerComponent;
@@ -79,12 +77,9 @@ public:
 
 	CObjectIdMasterFactory* GetObjectId() { return m_pObjectIdMasterFactory; }
 
-	CImguiImpl* GetImplementation();
-
 protected:
 	// Map containing player components, key is the channel id received in OnClientConnectionReceived
 	std::unordered_map<int, EntityId> m_players;
-
 
 private:
 	/** The object identifier master factory. */

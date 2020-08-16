@@ -364,23 +364,19 @@ public:
 
 		// TEST: entity effect adding a light.
 		// Provide them with an effects controller for this entity.
-		ECS::RenderLight renderLight;
-		renderLight.projectorOptions.m_texturePath = "chrysalis/textures/lights/flashlight_projector.dds";
 		m_effectsController.Init(GetEntityId());
 		
 		// HACK: Try and get the params from a spell for now.
 		entt::entity spellEntity = ECS::Simulation.GetSpellByName("Flashlight");
 		if (spellEntity != entt::null)
 		{
-			auto* spellRegistry = ECS::Simulation.GetSpellRegistry();
-			renderLight = spellRegistry->get<ECS::RenderLight>(spellEntity);
+			auto& spellRegistry = ECS::Simulation.GetSpellRegistry();
+			auto& renderLight = spellRegistry.get<ECS::RenderLight>(spellEntity);
+
+			int slotId = 0;
+			m_effectsController.AttachLight(slotId, "Flashlight", Vec3(0.0f, 0.6f, 1.0f), Vec3(0.0f, 1.0f, 0.0f).normalized(), eGeometrySlot::eIGS_Aux0, renderLight);
 		}
-
-		//int slotId = GetOrMakeEntitySlotId();
-		int slotId = 0;
-		m_effectsController.AttachLight(slotId, "Flashlight", Vec3(0.0f, 0.6f, 1.0f), Vec3(0.0f, 1.0f, 0.0f).normalized(), eGeometrySlot::eIGS_Aux0, renderLight);
 	}
-
 
 	// Enable / disable motion on entity being applied from animation on the root node.
 	virtual void SetAnimationDrivenMotion(bool bSet)

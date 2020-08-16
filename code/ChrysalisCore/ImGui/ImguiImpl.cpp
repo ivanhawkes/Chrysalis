@@ -3,63 +3,59 @@
 #include "ImguiImpl.h"
 #include "CrySystem\IConsole.h"
 #include <CrySystem\ISystem.h>
-
-#include <Imgui/imgui.h>
 #include "CryInput\IHardwareMouse.h"
 #include "ImguiRenderer.h"
-//#include "CryAction/IActionMapManager.h"
 #include "CryGame/IGameFramework.h"
 #include "../CryAction/IActionMapManager.h"
 #include "CrySystem/ConsoleRegistration.h"
 #include "PerfMonitor.h"
+#include <Imgui/imgui.h>
+#include "CryString/CryPath.h"
 
-static CImguiImpl* g_pThis = nullptr;
-static bool bCaptured = false;
 
-static void ImguiCaptureMouse(IConsoleCmdArgs* pArgs)
+CImguiImpl::CImguiImpl()
 {
-	if (!g_pThis)
-		return;
+	CryLogAlways("[CryImgui] Initializing implementation...");
 
-	if (!bCaptured)
+	ConsoleRegistrationHelper::AddCommand("imgui_captureInput", ImguiCaptureMouse, 0, "Capture input for imgui");
+	ConsoleRegistrationHelper::Register("imgui_showDemoWindow", &m_bShowDemoWindow, 0, 0, "Show imgui demo window");
+	ConsoleRegistrationHelper::Register("imgui_showPerfWidget", &m_showPerfWidget, 1, 0, "Show a small performance widget");
+
+	gEnv->pSystem->GetISystemEventDispatcher()->RegisterListener(this, "imguiimpl");
+}
+
+
+CImguiImpl::~CImguiImpl()
+{
+	gEnv->pRenderer->RemoveTexture(m_pFontTexture->GetTextureID());
+	gEnv->pConsole->RemoveCommand("imgui_captureMouse");
+	gEnv->pHardwareMouse->RemoveListener(this);
+	gEnv->pInput->RemoveEventListener(this);
+	gEnv->pSystem->GetISystemEventDispatcher()->RemoveListener(this);
+}
+
+
+void CImguiImpl::ImguiCaptureMouse(IConsoleCmdArgs* pArgs)
+{
+	if (!g_isImGuiMouseCaptured)
 	{
 		gEnv->pHardwareMouse->IncrementCounter();
 		gEnv->pGameFramework->GetIActionMapManager()->Enable(false);
-		bCaptured = true;
+		g_isImGuiMouseCaptured = true;
 	}
 	else
 	{
 		gEnv->pHardwareMouse->DecrementCounter();
 		gEnv->pGameFramework->GetIActionMapManager()->Enable(true);
-		bCaptured = false;
+		g_isImGuiMouseCaptured = false;
 	}
-	
 }
 
 
-CImguiImpl::CImguiImpl()
+void CImguiImpl::ToggleImGuiMouseCapture()
 {
-	g_pThis = this;
-
-	CryLogAlways("[CryImgui] Initializing implementation...");
-
-	ConsoleRegistrationHelper::AddCommand("imgui_captureInput", ImguiCaptureMouse, 0, "Capture input for imgui");
-	ConsoleRegistrationHelper::Register("imgui_showDemoWindow", &m_bShowDemoWindow, 0,0, "Show imgui demo window");
-	ConsoleRegistrationHelper::Register("imgui_showPerfWidget", &m_showPerfWidget, 0, 0, "Show a small performance widget");
-	
-	gEnv->pSystem->GetISystemEventDispatcher()->RegisterListener(this, "imguiimpl");
-}
-
-CImguiImpl::~CImguiImpl()
-{
-	gEnv->pRenderer->RemoveTexture(m_pFontTexture->GetTextureID());
-
-	g_pThis = nullptr;
-
-	gEnv->pConsole->RemoveCommand("imgui_captureMouse");
-	gEnv->pHardwareMouse->RemoveListener(this);
-	gEnv->pInput->RemoveEventListener(this);
-	gEnv->pSystem->GetISystemEventDispatcher()->RemoveListener(this);
+	//g_isImGuiMouseCaptured = g_isImGuiMouseCaptured ? false : true;
+	//ImguiCaptureMouse(nullptr);
 }
 
 
@@ -68,20 +64,22 @@ static void* Allocate(size_t size, void* data)
 	return CryModuleCRTMalloc(size);
 }
 
+
 static void Free(void* ptr, void* data)
 {
 	return CryModuleCRTFree(ptr);
 }
 
+
 void CImguiImpl::InitImgui()
 {
 	ImGui::CreateContext();
 	ImGui::SetAllocatorFunctions(Allocate, Free);
-	
+
 	ImGuiIO& io = ImGui::GetIO();
 	//io.DisplaySize = ImVec2(300, 200);
-	Vec2i dimensions(gEnv->pRenderer->GetWidth(),gEnv->pRenderer->GetHeight());
-	io.DisplaySize = { (float)dimensions.x, (float)dimensions.y };
+	Vec2i dimensions(gEnv->pRenderer->GetWidth(), gEnv->pRenderer->GetHeight());
+	io.DisplaySize = {(float)dimensions.x, (float)dimensions.y};
 	io.RenderDrawListsFn = nullptr;
 
 	m_pRenderer = std::make_unique<CImguiRenderer>(dimensions);
@@ -111,7 +109,10 @@ void CImguiImpl::InitImgui()
 	keyMap[ImGuiKey_Z] = EKeyId::eKI_Z;      // for text edit CTRL+Z: undo
 
 	m_pPerfMon = std::make_unique<Cry::Imgui::CPerformanceMonitor>();
+
+	g_isImGuiMouseCaptured = false;
 }
+
 
 void CImguiImpl::Update()
 {
@@ -127,21 +128,22 @@ void CImguiImpl::Update()
 		m_pRenderer->RenderImgui();
 
 	ImGuiIO& io = ImGui::GetIO();
+
 	io.DeltaTime = gEnv->pTimer->GetFrameTime() ? gEnv->pTimer->GetFrameTime() : 1;
 	io.DisplaySize = ImVec2((float)gEnv->pRenderer->GetWidth(), (float)gEnv->pRenderer->GetHeight());
-	if (bCaptured)
+
+	if (g_isImGuiMouseCaptured)
 		gEnv->pHardwareMouse->GetHardwareMouseClientPosition(&io.MousePos.x, &io.MousePos.y);
 
-
-	for (auto &entry : m_cachedInputEvents)
+	for (auto& entry : m_cachedInputEvents)
 		OnCachedInputEvent(entry);
 
 	m_cachedInputEvents.clear();
-	for (auto &entry : m_cachedMouseEvents)
+	for (auto& entry : m_cachedMouseEvents)
 		OnCachedMouseEvent(entry.iX, entry.iY, entry.eHardwareMouseEvent, entry.wheelDelta);
 
 	m_cachedMouseEvents.clear();
-	
+
 	ImGui::NewFrame();
 
 	bool show_test_window = m_bShowDemoWindow;
@@ -156,32 +158,62 @@ void CImguiImpl::Update()
 		m_pPerfMon->Update();
 }
 
+
 void CImguiImpl::InitImguiFontTexture()
 {
+	// No renderer, no font loading.
 	if (!gEnv->pRenderer)
 	{
 		CryLogAlways("[CryImgui] Renderer not present, cant initialize");
 		return;
 	}
 
+	// Get the paths for the engine and the project.
+	const string projectPath = PathUtil::GetProjectFolder();
+	const string enginePath = PathUtil::GetEnginePath();
+	const string gamePath = PathUtil::GetGameFolder();
+
 	ImGuiIO& io = ImGui::GetIO();
 	unsigned char* pixels;
 	int width, height;
-	io.Fonts->AddFontDefault();
-	//io.Fonts->AddFontFromFileTTF("Engine\\Fonts\\VeraMono.ttf");
-	io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
-	//io.Fonts->GetTexDataAsAlpha8(&pixels, &width, &height);
 
+	// Load several different sizes of the VeraMono font supplied by CryTek.
+	// NOTE: The first font loaded seems to be the default one used for the UI.
+	string droidSansPath;
+	droidSansPath.Format("%s\\%s\\fonts\\DroidSans.ttf", projectPath, gamePath);
+	io.Fonts->AddFontFromFileTTF(droidSansPath.c_str(), 20.0f);
+	io.Fonts->AddFontFromFileTTF(droidSansPath.c_str(), 23.0f);
+	io.Fonts->AddFontFromFileTTF(droidSansPath.c_str(), 26.0f);
+	io.Fonts->AddFontFromFileTTF(droidSansPath.c_str(), 29.0f);
+
+	string hackRegularPath;
+	hackRegularPath.Format("%s\\%s\\fonts\\Hack-Regular.ttf", projectPath, gamePath);
+	io.Fonts->AddFontFromFileTTF(hackRegularPath.c_str(), 20.0f);
+	io.Fonts->AddFontFromFileTTF(hackRegularPath.c_str(), 22.0f);
+	io.Fonts->AddFontFromFileTTF(hackRegularPath.c_str(), 23.0f);
+	io.Fonts->AddFontFromFileTTF(hackRegularPath.c_str(), 26.0f);
+	io.Fonts->AddFontFromFileTTF(hackRegularPath.c_str(), 29.0f);
+
+	string veraMonoPath;
+	veraMonoPath.Format("%s\\%s\\fonts\\VeraMono.ttf", projectPath, gamePath);
+	io.Fonts->AddFontFromFileTTF(veraMonoPath.c_str(), 20.0f);
+	io.Fonts->AddFontFromFileTTF(veraMonoPath.c_str(), 22.0f);
+	io.Fonts->AddFontFromFileTTF(veraMonoPath.c_str(), 23.0f);
+	io.Fonts->AddFontFromFileTTF(veraMonoPath.c_str(), 26.0f);
+	io.Fonts->AddFontFromFileTTF(veraMonoPath.c_str(), 29.0f);
+
+	io.Fonts->AddFontDefault();
+
+	// After the fonts are loaded...
+	io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
+
+	// Make the font atlas.
 	auto pFontTexture = gEnv->pRenderer->CreateTexture("ImguiFontAtlas", width, height, 1, pixels, eTF_R8G8B8A8, 0);
 	m_pFontTexture.Assign_NoAddRef(pFontTexture);
-	m_pRenderer->m_pFontTexture = pFontTexture;	
+	m_pRenderer->m_pFontTexture = pFontTexture;
 	io.Fonts->TexID = pFontTexture;
 }
 
-CImguiImpl* CImguiImpl::Get()
-{
-	return g_pThis;
-}
 
 void CImguiImpl::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lparam)
 {
@@ -207,13 +239,15 @@ void CImguiImpl::OnSystemEvent(ESystemEvent event, UINT_PTR wparam, UINT_PTR lpa
 	}
 }
 
+
 void CImguiImpl::OnHardwareMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEvent, int wheelDelta /*= 0*/)
 {
-	if (!bCaptured)
+	if (!g_isImGuiMouseCaptured)
 		return;
 
 	m_cachedMouseEvents.emplace_back(iX, iY, eHardwareMouseEvent, wheelDelta);
 }
+
 
 bool CImguiImpl::OnInputEvent(const SInputEvent& event)
 {
@@ -222,19 +256,20 @@ bool CImguiImpl::OnInputEvent(const SInputEvent& event)
 	if (event.keyId == eKI_F9 && event.state == eIS_Pressed)
 		ImguiCaptureMouse(nullptr);
 
-	if (!bCaptured || event.keyId == eKI_SYS_Commit)
+	if (!g_isImGuiMouseCaptured || event.keyId == eKI_SYS_Commit)
 		return false;
-	
+
 	m_cachedInputEvents.push_back(event);
-		
+
 	return true;
 }
 
-void CImguiImpl::OnCachedInputEvent(const SInputEvent &event)
-{
-	auto &io = ImGui::GetIO();
 
-	if (!bCaptured || event.keyId == eKI_SYS_Commit)
+void CImguiImpl::OnCachedInputEvent(const SInputEvent& event)
+{
+	auto& io = ImGui::GetIO();
+
+	if (!g_isImGuiMouseCaptured || event.keyId == eKI_SYS_Commit)
 		return;
 
 	bool isDown = false;
@@ -248,20 +283,23 @@ void CImguiImpl::OnCachedInputEvent(const SInputEvent &event)
 
 	switch (event.keyId)
 	{
-	case eKI_RAlt:
-	case eKI_LAlt:
-		io.KeyAlt = isDown;
-		break;
-	case eKI_RCtrl:
-	case eKI_LCtrl:
-		io.KeyCtrl = isDown;
-		break;
-	case eKI_RShift:
-	case eKI_LShift:
-		io.KeyShift = isDown;
-		break;
-	default:
-		break;
+		case eKI_RAlt:
+		case eKI_LAlt:
+			io.KeyAlt = isDown;
+			break;
+
+		case eKI_RCtrl:
+		case eKI_LCtrl:
+			io.KeyCtrl = isDown;
+			break;
+
+		case eKI_RShift:
+		case eKI_LShift:
+			io.KeyShift = isDown;
+			break;
+
+		default:
+			break;
 	}
 	if (event.deviceType == eIDT_Mouse || event.state == eIS_Released)
 		return;
@@ -270,64 +308,77 @@ void CImguiImpl::OnCachedInputEvent(const SInputEvent &event)
 	if (event.state == eIS_Pressed)
 	{
 		char key = keyName[0];
-		
-		if(event.keyId == eKI_Space)
+
+		if (event.keyId == eKI_Space)
 			key = ' ';
-		else if(event.keyId == eKI_Tab)
+		else if (event.keyId == eKI_Tab)
 			key = 9;
 		else if (strlen(keyName) != 1)
 			return;
 
-		io.AddInputCharacter(key);		
+		io.AddInputCharacter(key);
 	}
 }
 
+
 void CImguiImpl::OnCachedMouseEvent(int iX, int iY, EHARDWAREMOUSEEVENT eHardwareMouseEvent, int wheelDelta /*= 0*/)
 {
-	if (!bCaptured)
+	if (!g_isImGuiMouseCaptured)
 		return;
 
 	ImGuiIO& io = ImGui::GetIO();
 
 	switch (eHardwareMouseEvent)
 	{
-	case HARDWAREMOUSEEVENT_MOVE:
-		io.MousePos = ImVec2((float)iX, (float)iY);
-		break;
-	case HARDWAREMOUSEEVENT_LBUTTONDOWN:
-		io.MouseDown[0] = true;
-		break;
-	case HARDWAREMOUSEEVENT_LBUTTONUP:
-		io.MouseDown[0] = false;
-		break;
-	case HARDWAREMOUSEEVENT_LBUTTONDOUBLECLICK:
-		io.MouseDoubleClicked[0] = true;
-		break;
-	case HARDWAREMOUSEEVENT_RBUTTONDOWN:
-		io.MouseDown[1] = true;
-		break;
-	case HARDWAREMOUSEEVENT_RBUTTONUP:
-		io.MouseDown[1] = false;
-		break;
-	case HARDWAREMOUSEEVENT_RBUTTONDOUBLECLICK:
-		io.MouseDoubleClicked[1] = true;
-		break;
-	case HARDWAREMOUSEEVENT_MBUTTONDOWN:
-		io.MouseDown[2] = true;
-		break;
-	case HARDWAREMOUSEEVENT_MBUTTONUP:
-		io.MouseDown[2] = false;
-		break;
-	case HARDWAREMOUSEEVENT_MBUTTONDOUBLECLICK:
-		io.MouseDoubleClicked[2] = true;
-		break;
-	case HARDWAREMOUSEEVENT_WHEEL:
-		io.MouseWheel += wheelDelta / WHEEL_DELTA;
-		break;
-	default:
-		break;
+		case HARDWAREMOUSEEVENT_MOVE:
+			io.MousePos = ImVec2((float)iX, (float)iY);
+			break;
+
+		case HARDWAREMOUSEEVENT_LBUTTONDOWN:
+			io.MouseDown[0] = true;
+			break;
+
+		case HARDWAREMOUSEEVENT_LBUTTONUP:
+			io.MouseDown[0] = false;
+			break;
+
+		case HARDWAREMOUSEEVENT_LBUTTONDOUBLECLICK:
+			io.MouseDoubleClicked[0] = true;
+			break;
+
+		case HARDWAREMOUSEEVENT_RBUTTONDOWN:
+			io.MouseDown[1] = true;
+			break;
+
+		case HARDWAREMOUSEEVENT_RBUTTONUP:
+			io.MouseDown[1] = false;
+			break;
+
+		case HARDWAREMOUSEEVENT_RBUTTONDOUBLECLICK:
+			io.MouseDoubleClicked[1] = true;
+			break;
+
+		case HARDWAREMOUSEEVENT_MBUTTONDOWN:
+			io.MouseDown[2] = true;
+			break;
+
+		case HARDWAREMOUSEEVENT_MBUTTONUP:
+			io.MouseDown[2] = false;
+			break;
+
+		case HARDWAREMOUSEEVENT_MBUTTONDOUBLECLICK:
+			io.MouseDoubleClicked[2] = true;
+			break;
+
+		case HARDWAREMOUSEEVENT_WHEEL:
+			io.MouseWheel += wheelDelta / WHEEL_DELTA;
+			break;
+
+		default:
+			break;
 	}
 }
+
 
 void CImguiImpl::DrawPerformance()
 {
@@ -335,5 +386,3 @@ void CImguiImpl::DrawPerformance()
 	SDebugFPSInfo info;
 	gEnv->p3DEngine->FillDebugFPSInfo(info);
 }
-
-

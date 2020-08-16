@@ -12,7 +12,7 @@ struct Qi
 	Qi() = default;
 	virtual ~Qi() = default;
 
-	Qi(AttributeType<float> qi) :
+	Qi(AttributeType qi) :
 		qi(qi)
 	{
 	}
@@ -36,8 +36,14 @@ struct Qi
 		ar(qiRegenerationPerSecond, "qiRegenerationPerSecond", "Qi regeneration per second.");
 	}
 
+
+#ifdef IMGUI
+	void ImGuiRender();
+#endif
+
+
 	/** Qi attribute. */
-	AttributeType<float> qi;
+	AttributeType qi;
 
 	/** Time delta since the last spell cast. */
 	float timeSinceLastSpellcast {0.0f};
@@ -63,6 +69,12 @@ struct UtiliseQi
 		ar(targetTargetType, "targetTargetType", "targetTargetType");
 		ar(quantity, "quantity", "quantity");
 	}
+
+
+#ifdef IMGUI
+	void ImGuiRender();
+#endif
+
 
 	/** Use the spell's target or source for this component's target. */
 	TargetTargetType targetTargetType {TargetTargetType::target};
@@ -91,6 +103,12 @@ struct UtiliseQiOverTime
 		ar(duration, "duration", "duration");
 		ar(interval, "interval", "interval");
 	}
+
+
+#ifdef IMGUI
+	void ImGuiRender();
+#endif
+
 
 	/** Use the spell's target or source for this component's target. */
 	TargetTargetType targetTargetType {TargetTargetType::target};
@@ -129,6 +147,12 @@ struct ReplenishQi
 		ar(quantity, "quantity", "quantity");
 	}
 
+
+#ifdef IMGUI
+	void ImGuiRender();
+#endif
+
+
 	/** Use the spell's target or source for this component's target. */
 	TargetTargetType targetTargetType {TargetTargetType::target};
 
@@ -156,6 +180,12 @@ struct ReplenishQiOverTime
 		ar(duration, "duration", "duration");
 		ar(interval, "interval", "interval");
 	}
+
+
+#ifdef IMGUI
+	void ImGuiRender();
+#endif
+
 
 	/** Use the spell's target or source for this component's target. */
 	TargetTargetType targetTargetType {TargetTargetType::target};

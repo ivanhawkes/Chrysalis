@@ -1,20 +1,22 @@
 #include "StdAfx.h"
+
 #include "PerfMonitor.h"
-#include "Imgui/imgui.h"
 #include <numeric>
 
 
-void Cry::Imgui::CPerformanceMonitor::Update()
+namespace Cry::Imgui
 {
-	gEnv->p3DEngine->FillDebugFPSInfo(m_fpsInfo);
-	
-	
+void CPerformanceMonitor::Update()
+{
+	//gEnv->p3DEngine->FillDebugFPSInfo(m_fpsInfo);
+
 	float gpuFrameTime = gEnv->pRenderer->GetGPUFrameTime();
 	float frameTime = gEnv->pSystem->GetITimer()->GetRealFrameTime();
 	float fps = gEnv->pSystem->GetITimer()->GetFrameRate();
-	
 
-	auto queueValue = [](float value, size_t maxSamples, std::vector<float>& container) {
+
+	auto queueValue = [](float value, size_t maxSamples, std::vector<float>& container) 
+	{
 		if (container.size() >= maxSamples)
 			container.erase(container.begin());
 
@@ -28,9 +30,9 @@ void Cry::Imgui::CPerformanceMonitor::Update()
 	Draw();
 }
 
-void Cry::Imgui::CPerformanceMonitor::Draw()
+
+void CPerformanceMonitor::Draw()
 {
-	ImGui::SetNextWindowPos({ 0,0 });
 	ImGui::Begin("PerfMon", nullptr, ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoBackground);
 
 	float averageFPS = std::accumulate(m_fps.begin(), m_fps.end(), 0.0f) / static_cast<float>(m_fps.size());
@@ -43,10 +45,10 @@ void Cry::Imgui::CPerformanceMonitor::Draw()
 	ImGui::PlotHistogram("", m_frameTimes.data(), m_frameTimes.size(), 0, statString.c_str(), 0, 100);
 
 	statString.Format("%.1f ms (GPU)", m_gpuFrameTimes.back());
-	ImGui::PlotHistogram("", m_gpuFrameTimes.data(), m_gpuFrameTimes.size(), 0, statString.c_str(),0, 100);
-	
-	ImGui::Text("Drawcalls: %d",gEnv->pRenderer->GetCurrentNumberOfDrawCalls());
+	ImGui::PlotHistogram("", m_gpuFrameTimes.data(), m_gpuFrameTimes.size(), 0, statString.c_str(), 0, 100);
+
+	ImGui::Text("Drawcalls: %d", gEnv->pRenderer->GetCurrentNumberOfDrawCalls());
 
 	ImGui::End();
 }
-
+}

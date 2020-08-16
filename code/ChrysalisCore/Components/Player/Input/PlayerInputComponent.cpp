@@ -76,6 +76,26 @@ void CPlayerInputComponent::RegisterActionMaps()
 	m_pInputComponent->RegisterAction("player", "special_esc", [this](int activationMode, float value) { OnActionEscape(activationMode, value); });
 	m_pInputComponent->BindAction("player", "special_esc", eAID_KeyboardMouse, EKeyId::eKI_Escape);
 
+	// Capslock.
+	m_pInputComponent->RegisterAction("player", "special_capslock", [this](int activationMode, float value) { OnCapslock(activationMode, value); });
+	m_pInputComponent->BindAction("player", "special_capslock", eAID_KeyboardMouse, EKeyId::eKI_CapsLock);
+
+	// Numlock.
+	m_pInputComponent->RegisterAction("player", "special_numlock", [this](int activationMode, float value) { OnNumlock(activationMode, value); });
+	m_pInputComponent->BindAction("player", "special_numlock", eAID_KeyboardMouse, EKeyId::eKI_NumLock);
+
+	// PrintScreen.
+	m_pInputComponent->RegisterAction("player", "special_printscreen", [this](int activationMode, float value) { OnPrintScreen(activationMode, value); });
+	m_pInputComponent->BindAction("player", "special_printscreen", eAID_KeyboardMouse, EKeyId::eKI_Print);
+
+	// Scrolllock.
+	m_pInputComponent->RegisterAction("player", "special_scrolllock", [this](int activationMode, float value) { OnPrintScreen(activationMode, value); });
+	m_pInputComponent->BindAction("player", "special_scrolllock", eAID_KeyboardMouse, EKeyId::eKI_ScrollLock);
+
+	// PauseBreak.
+	m_pInputComponent->RegisterAction("player", "special_pausebreak", [this](int activationMode, float value) { OnPauseBreak(activationMode, value); });
+	m_pInputComponent->BindAction("player", "special_pausebreak", eAID_KeyboardMouse, EKeyId::eKI_Pause);
+
 	// Interaction.
 	m_pInputComponent->RegisterAction("player", "player_interaction", [this](int activationMode, float value) { OnActionInteraction(activationMode, value); });
 	m_pInputComponent->BindAction("player", "player_interaction", eAID_KeyboardMouse, EKeyId::eKI_Mouse1);
@@ -500,6 +520,63 @@ void CPlayerInputComponent::OnActionEscape(int activationMode, float value)
 }
 
 
+void CPlayerInputComponent::OnCapslock(int activationMode, float value)
+{
+	if (activationMode == eAAM_OnPress)
+	{
+		CryLogAlways("OnCapslock");
+	}
+}
+
+
+void CPlayerInputComponent::OnNumlock(int activationMode, float value)
+{
+	if (activationMode == eAAM_OnPress)
+	{
+		CryLogAlways("OnNumlock");
+	}
+}
+
+
+void CPlayerInputComponent::OnPrintScreen(int activationMode, float value)
+{
+	if (activationMode == eAAM_OnPress)
+	{
+		CryLogAlways("OnPrintScreen");
+#ifdef IMGUI
+		CImguiImpl::ToggleImGuiMouseCapture();
+#endif
+	}
+}
+
+
+void CPlayerInputComponent::OnScrolllock(int activationMode, float value)
+{
+	if (activationMode == eAAM_OnPress)
+	{
+		CryLogAlways("OnScrolllock");
+	}
+}
+
+
+void CPlayerInputComponent::OnPauseBreak(int activationMode, float value)
+{
+	if (activationMode == eAAM_OnPress)
+	{
+		CryLogAlways("OnPauseBreak");
+	}
+}
+
+
+void CPlayerInputComponent::OnNumpad(int activationMode, int buttonId)
+{
+	if (activationMode == eAAM_OnPress)
+	{
+		CryLogAlways("OnNumpad");
+	}
+}
+
+
 void CPlayerInputComponent::OnActionInteraction(int activationMode, float value)
 {
 	// Notify listeners.
@@ -533,15 +610,6 @@ void CPlayerInputComponent::OnActionExamine(int activationMode, float value)
 		//// Notify listeners.
 		//for (auto it : m_listenersSpecial.GetListeners())
 		//	it->OnInputSpecialExamine();
-	}
-}
-
-
-void CPlayerInputComponent::OnNumpad(int activationMode, int buttonId)
-{
-	if (activationMode == eAAM_OnPress || activationMode == eAAM_OnHold)
-	{
-		CryLogAlways("OnNumpad");
 	}
 }
 

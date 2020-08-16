@@ -47,16 +47,20 @@ struct RenderLight
 	}
 
 
+#ifdef IMGUI
+	void ImGuiRender();
+#endif
+
+
 	/** Using the default components CryTek provided. This will help with compatibility down the line. */
+	Cry::DefaultComponents::ILightComponent::SOptics optics;
 	Cry::DefaultComponents::ILightComponent::SOptions options;
 	Cry::DefaultComponents::ILightComponent::SColor color;
-	Cry::DefaultComponents::ILightComponent::SOptics optics;
 	Cry::DefaultComponents::ILightComponent::SShadows shadows;
 	Cry::DefaultComponents::ILightComponent::SAnimations animations;
 	Cry::DefaultComponents::ILightComponent::SShape shape;
 	Cry::DefaultComponents::CProjectorLightComponent::SProjectorOptions projectorOptions;
 	Cry::DefaultComponents::CProjectorLightComponent::SFlare flare;
-
 
 	/** Specifies how far from the source the light affects the surrounding area. */
 	Schematyc::Range<0, std::numeric_limits<int>::max()> radius = 10.f;

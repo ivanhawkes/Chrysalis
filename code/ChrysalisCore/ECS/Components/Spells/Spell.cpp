@@ -35,24 +35,6 @@ SERIALIZATION_ENUM(TargetAggressionType::neutral, "neutral", "neutral")
 SERIALIZATION_ENUM(TargetAggressionType::aggressive, "aggressive", "aggressive")
 SERIALIZATION_ENUM_END()
 
-// Spell Casting Style.
-SERIALIZATION_ENUM_BEGIN(SpellCastStyle, "Spell Cast Style")
-SERIALIZATION_ENUM(SpellCastStyle::immediate, "immediate", "immediate")
-SERIALIZATION_ENUM(SpellCastStyle::movementAllowed, "movementAllowed", "movementAllowed")
-SERIALIZATION_ENUM(SpellCastStyle::turret, "turret", "turret")
-SERIALIZATION_ENUM(SpellCastStyle::channelled, "channelled", "channelled")
-SERIALIZATION_ENUM_END()
-
-// Spell Rewire.
-SERIALIZATION_ENUM_BEGIN(SpellRewire, "Spell Rewire")
-SERIALIZATION_ENUM(SpellRewire::none, "none", "none")
-SERIALIZATION_ENUM(SpellRewire::damage, "damage", "damage")
-SERIALIZATION_ENUM(SpellRewire::heal, "heal", "heal")
-SERIALIZATION_ENUM(SpellRewire::regenerate, "regenerate", "regenerate")
-SERIALIZATION_ENUM(SpellRewire::crowdControl, "crowd-control", "crowd-control")
-SERIALIZATION_ENUM(SpellRewire::custom, "custom", "custom")
-SERIALIZATION_ENUM_END()
-
 // Spellcast Execution Status.
 SERIALIZATION_ENUM_BEGIN(SpellcastPayload, "Spellcast Payload")
 SERIALIZATION_ENUM(SpellcastPayload::immediate, "immediate", "immediate")
@@ -63,10 +45,23 @@ SERIALIZATION_ENUM_END()
 
 // Spellcast Execution Status.
 SERIALIZATION_ENUM_BEGIN(SpellCastExecutionStatus, "Spellcast Execution Status")
-SERIALIZATION_ENUM(SpellCastExecutionStatus::initialised, "initialised", "initialised")
+SERIALIZATION_ENUM(SpellCastExecutionStatus::queued, "queued", "queued")
 SERIALIZATION_ENUM(SpellCastExecutionStatus::casting, "casting", "casting")
 SERIALIZATION_ENUM(SpellCastExecutionStatus::failed, "failed", "failed")
 SERIALIZATION_ENUM(SpellCastExecutionStatus::cancelled, "cancelled", "cancelled")
 SERIALIZATION_ENUM(SpellCastExecutionStatus::success, "success", "success")
 SERIALIZATION_ENUM_END()
+
+
+#ifdef IMGUI
+void Spell::ImGuiRender()
+{
+}
+
+
+void SpellcastExecution::ImGuiRender()
+{
+	ImGui::InputFloat("Execution Time:", &executionTime);
+}
+#endif
 }

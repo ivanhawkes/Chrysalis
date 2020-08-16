@@ -86,7 +86,7 @@ void CActorComponent::Initialize()
 
 	// Spell participant.
 	m_pSpellParticipantComponent = m_pEntity->GetOrCreateComponent<CSpellParticipantComponent>();
-	
+
 	// Inventory management.
 	m_pInventoryComponent = m_pEntity->GetOrCreateComponent<CInventoryComponent>();
 
@@ -151,10 +151,10 @@ void CActorComponent::ProcessEvent(const SEntityEvent& event)
 			m_ecsEntity = m_pSpellParticipantComponent->GetECSEntity();
 			break;
 
-		// Physicalize on level start for Launcher
+			// Physicalize on level start for Launcher
 		case EEntityEvent::LevelStarted:
 
-		// Editor specific, physicalize on reset, property change or transform change
+			// Editor specific, physicalize on reset, property change or transform change
 		case EEntityEvent::Reset:
 		case EEntityEvent::EditorPropertyChanged:
 		case EEntityEvent::TransformChangeFinishedInEditor:
@@ -181,6 +181,7 @@ void CActorComponent::Update(SEntityUpdateContext* pCtx)
 	// Check for spellbook abilities that can be used by the player.
 	// TODO: Advertise this to the player through a decent UI.
 	// TODO: The test for being a player is clearly broken - need to fix player control testing.
+#ifdef IMGUI_DEBUG
 	if ((m_pAwarenessComponent) && (IsPlayer()))
 	{
 		auto results = m_pAwarenessComponent->GetNearDotFiltered();
@@ -192,23 +193,34 @@ void CActorComponent::Update(SEntityUpdateContext* pCtx)
 			if (auto pSpellbookComponent = pTargetEntity->GetComponent<CSpellbookComponent>())
 			{
 				auto spellCollection = pSpellbookComponent->GetSpellColllection();
-
 				int spellId {1};
+
+				ImGui::Begin("Target Spellbook", nullptr);
+				ImGui::Text("%s", pSpellbookComponent->GetEntity()->GetName());
+
 				for (auto& spell : spellCollection.spells)
 				{
-					CryWatch("Spell %d : %s", spellId, spell.spellName.c_str());
+					ImGui::Text("Spell %d : %s", spellId, spell.spellName.c_str());
 					spellId++;
 				}
+
+				ImGui::End();
 			}
 		}
 	}
 
-	// DEBUG: Let's see some data.
-	auto registry = ECS::Simulation.GetActorRegistry();
-	auto& health = registry->get<ECS::Health>(m_ecsEntity);
-	CryWatch("%s - health: %.2f", m_pEntity->GetName(), health.health.GetAttribute());
-	auto& qi = registry->get<ECS::Qi>(m_ecsEntity);
-	CryWatch("%s - qi: %.2f", m_pEntity->GetName(), qi.qi.GetAttribute());
+	// DEBUG: Have a look at their health and qi values.
+	string windowName;
+	windowName.Format("Actor Status: %s", m_pEntity->GetName());
+
+	auto& registry = ECS::Simulation.GetActorRegistry();
+	ImGui::Begin(windowName, nullptr);
+	auto& health = registry.get<ECS::Health>(m_ecsEntity);
+	ImGui::Text("Health: %.2f", health.health.GetAttribute());
+	auto& qi = registry.get<ECS::Qi>(m_ecsEntity);
+	ImGui::Text("Qi: %.2f", qi.qi.GetAttribute());
+	ImGui::End();
+#endif
 }
 
 

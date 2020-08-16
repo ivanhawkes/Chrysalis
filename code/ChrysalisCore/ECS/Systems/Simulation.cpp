@@ -68,7 +68,8 @@ void CSimulation::RewireSpell(entt::registry& spellcastingRegistry, entt::entity
 	}
 
 	// The source and target for the spell need to be added to the entity.
-	spellcastingRegistry.emplace<SourceAndTarget>(spellEntity, source, target, sourceEntityId, targetEntityId);
+	spellcastingRegistry.emplace<SourceEntity>(spellEntity, source, sourceEntityId);
+	spellcastingRegistry.emplace<TargetEntity>(spellEntity, target, targetEntityId);
 }
 
 
@@ -102,7 +103,7 @@ void CSimulation::CastSpellByName(const char* spellName, entt::entity sourceEnti
 		auto newEntity = m_spellcastingRegistry.create();
 
 		m_spellRegistry.visit(spellEntity, [this, spellEntity, newEntity](const auto type_id)
-			{ stampFunctionMap[type_id](m_spellRegistry, spellEntity, m_spellcastingRegistry, newEntity); });
+			{m_functionDispatchMap[type_id].stampFunction(m_spellRegistry, spellEntity, m_spellcastingRegistry, newEntity); });
 
 		// Do fixups.
 		RewireSpell(m_spellcastingRegistry, newEntity, sourceEntity, targetEntity, crySourceEntityId, cryTargetEntityId);
@@ -231,26 +232,10 @@ void CSimulation::UpdateActors(const float deltaTime)
 }
 
 
-void CSimulation::LoadSimulationData()
+void CSimulation::LoadActorData()
 {
-	// Spell prototypes.
-	SerialiseECSInput spellSerial;
-	spellSerial.LoadFromFile("chrysalis/parameters/spells/spell-prototype.xml");
-	entt::snapshot_loader {m_spellRegistry}
-		.entities(spellSerial)
-		.component<Name, Prototype,
-		Health, Damage, DamageOverTime, Heal, HealOverTime,
-		Qi, UtiliseQi, UtiliseQiOverTime, ReplenishQi, ReplenishQiOverTime,
-		Spell,
-		SpellActionSchematyc, SpellActionDRS,
-		SpellActionInspect, SpellActionExamine,
-		SpellActionTake, SpellActionDrop, SpellActionThrow,
-		SpellActionSwitch,
-		SpellActionOpen, SpellActionClose,
-		SpellActionUnlock, SpellActionLock,
-		RenderLight>(spellSerial);
-
 	// Actor related.
+	m_actorRegistry.clear();
 	SerialiseECSInput actorSerial;
 	actorSerial.LoadFromFile("chrysalis/parameters/actor/actor.xml");
 	entt::snapshot_loader {m_actorRegistry}
@@ -258,35 +243,13 @@ void CSimulation::LoadSimulationData()
 		.component<Name, Prototype,
 		Health, Damage, DamageOverTime, Heal, HealOverTime,
 		Qi, UtiliseQi, UtiliseQiOverTime, ReplenishQi, ReplenishQiOverTime,
-		Spell,
-		ItemClass,
-		RenderLight,
-		CrowdControlNone
+		Spell, ItemClass, RenderLight
 		>(actorSerial);
 }
 
 
-void CSimulation::SaveSimulationData()
+void CSimulation::SaveActorData()
 {
-	// Spell prototypes.
-	SerialiseECSOutput spellSerial;
-
-	entt::snapshot {m_spellRegistry}
-		.entities(spellSerial)
-		.component<Name, Prototype,
-		Health, Damage, DamageOverTime, Heal, HealOverTime,
-		Qi, UtiliseQi, UtiliseQiOverTime, ReplenishQi, ReplenishQiOverTime,
-		Spell,
-		SpellActionSchematyc, SpellActionDRS,
-		SpellActionInspect, SpellActionExamine,
-		SpellActionTake, SpellActionDrop, SpellActionThrow,
-		SpellActionSwitch,
-		SpellActionOpen, SpellActionClose,
-		SpellActionUnlock, SpellActionLock,
-		RenderLight>(spellSerial);
-
-	spellSerial.SaveToFile("chrysalis/parameters/spells/spell-prototype-snapshot.xml");
-
 	// Actor related.
 	SerialiseECSOutput actorSerial;
 
@@ -295,13 +258,69 @@ void CSimulation::SaveSimulationData()
 		.component<Name, Prototype,
 		Health, Damage, DamageOverTime, Heal, HealOverTime,
 		Qi, UtiliseQi, UtiliseQiOverTime, ReplenishQi, ReplenishQiOverTime,
-		Spell,
-		ItemClass,
-		RenderLight,
-		CrowdControlNone,
-		SaltComponent,
-		PepperComponent
+		Spell, ItemClass, RenderLight
 		>(actorSerial);
 	actorSerial.SaveToFile("chrysalis/parameters/actor/actor-snapshot.xml");
+}
+
+
+void CSimulation::LoadPrototypeData()
+{
+	// We might need to reload the data, so best to be sure and clear it's current data.
+	m_spellRegistry.clear();
+
+	// Load the definitions from disk into the serialiser.
+	SerialiseECSInput spellSerial;
+	spellSerial.LoadFromFile("chrysalis/parameters/spells/spell-prototype.xml");
+
+	// NOTE: The load and save must match in the order and components or things will break.
+	entt::snapshot_loader {m_spellRegistry}
+		.entities(spellSerial)
+		.component<Name, Prototype,
+		Health, Damage, DamageOverTime, SelfHarm, Heal, HealOverTime,
+		Qi, UtiliseQi, UtiliseQiOverTime, ReplenishQi, ReplenishQiOverTime,
+		Spell,
+		SpellActionSchematyc, SpellActionDRS,
+		SpellActionInspect, SpellActionExamine,
+		SpellActionTake, SpellActionDrop, SpellActionThrow,
+		SpellActionSwitch,
+		SpellActionOpen, SpellActionClose,
+		SpellActionUnlock, SpellActionLock,
+		RenderLight,
+		Timer, Range, Aura, Buff, Debuff, Cooldown,
+		Channelled, AnimationFragment, AnimationTag, MovementFactor, CancelOnMovement, AreaOfEffect,
+		CrowdControlBlind, CrowdControlDisarm, CrowdControlMovementRestricted, CrowdControlRotationRestricted, CrowdControlFlee, CrowdControlMindControl,
+		CrowdControlPull, CrowdControlTaunt, CrowdControlThrow, CrowdControlKockback, CrowdControlKnockdown, CrowdControlPolymorph, CrowdControlSilence
+		>(spellSerial);
+}
+
+
+void CSimulation::SavePrototypeData()
+{
+	// Spell prototypes.
+	SerialiseECSOutput spellSerial;
+
+	// NOTE: The load and save must match in the order and components or things will break.
+	entt::snapshot {m_spellRegistry}
+		.entities(spellSerial)
+		.component<Name, Prototype,
+		Health, Damage, DamageOverTime, SelfHarm, Heal, HealOverTime,
+		Qi, UtiliseQi, UtiliseQiOverTime, ReplenishQi, ReplenishQiOverTime,
+		Spell,
+		SpellActionSchematyc, SpellActionDRS,
+		SpellActionInspect, SpellActionExamine,
+		SpellActionTake, SpellActionDrop, SpellActionThrow,
+		SpellActionSwitch,
+		SpellActionOpen, SpellActionClose,
+		SpellActionUnlock, SpellActionLock,
+		RenderLight,
+		Timer, Range, Aura, Buff, Debuff, Cooldown,
+		Channelled, AnimationFragment, AnimationTag, MovementFactor, CancelOnMovement, AreaOfEffect,
+		CrowdControlBlind, CrowdControlDisarm, CrowdControlMovementRestricted, CrowdControlRotationRestricted, CrowdControlFlee, CrowdControlMindControl,
+		CrowdControlPull, CrowdControlTaunt, CrowdControlThrow, CrowdControlKockback, CrowdControlKnockdown, CrowdControlPolymorph, CrowdControlSilence
+		>(spellSerial);
+
+	// Push the contents of the serialiser out to disk.
+	spellSerial.SaveToFile("chrysalis/parameters/spells/spell-prototype.xml");
 }
 }
