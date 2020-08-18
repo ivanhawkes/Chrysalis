@@ -180,14 +180,14 @@ void CImguiImpl::InitImguiFontTexture()
 	// Load several different sizes of the VeraMono font supplied by CryTek.
 	// NOTE: The first font loaded seems to be the default one used for the UI.
 	string droidSansPath;
-	droidSansPath.Format("%s\\%s\\fonts\\DroidSans.ttf", projectPath, gamePath);
+	droidSansPath.Format("%s\\%s\\chrysalis\\fonts\\DroidSans.ttf", projectPath, gamePath);
 	io.Fonts->AddFontFromFileTTF(droidSansPath.c_str(), 20.0f);
 	io.Fonts->AddFontFromFileTTF(droidSansPath.c_str(), 23.0f);
 	io.Fonts->AddFontFromFileTTF(droidSansPath.c_str(), 26.0f);
 	io.Fonts->AddFontFromFileTTF(droidSansPath.c_str(), 29.0f);
 
 	string hackRegularPath;
-	hackRegularPath.Format("%s\\%s\\fonts\\Hack-Regular.ttf", projectPath, gamePath);
+	hackRegularPath.Format("%s\\%s\\chrysalis\\fonts\\Hack-Regular.ttf", projectPath, gamePath);
 	io.Fonts->AddFontFromFileTTF(hackRegularPath.c_str(), 20.0f);
 	io.Fonts->AddFontFromFileTTF(hackRegularPath.c_str(), 22.0f);
 	io.Fonts->AddFontFromFileTTF(hackRegularPath.c_str(), 23.0f);
@@ -195,7 +195,7 @@ void CImguiImpl::InitImguiFontTexture()
 	io.Fonts->AddFontFromFileTTF(hackRegularPath.c_str(), 29.0f);
 
 	string veraMonoPath;
-	veraMonoPath.Format("%s\\%s\\fonts\\VeraMono.ttf", projectPath, gamePath);
+	veraMonoPath.Format("%s\\%s\\chrysalis\\fonts\\VeraMono.ttf", projectPath, gamePath);
 	io.Fonts->AddFontFromFileTTF(veraMonoPath.c_str(), 20.0f);
 	io.Fonts->AddFontFromFileTTF(veraMonoPath.c_str(), 22.0f);
 	io.Fonts->AddFontFromFileTTF(veraMonoPath.c_str(), 23.0f);

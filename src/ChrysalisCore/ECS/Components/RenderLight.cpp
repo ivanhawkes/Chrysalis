@@ -23,8 +23,8 @@ SERIALIZATION_ENUM_END()
 
 
 SERIALIZATION_ENUM_BEGIN(EMiniumSystemSpec, "Minimum System Specification")
-SERIALIZATION_ENUM(EMiniumSystemSpec::Disabled, "disabled", "Disabled")
-SERIALIZATION_ENUM(EMiniumSystemSpec::Always, "always", "Always")
+SERIALIZATION_ENUM(EMiniumSystemSpec::Disabled, "none", "None")
+SERIALIZATION_ENUM(EMiniumSystemSpec::Always, "low", "Low")
 SERIALIZATION_ENUM(EMiniumSystemSpec::Medium, "medium", "Medium")
 SERIALIZATION_ENUM(EMiniumSystemSpec::High, "high", "High")
 SERIALIZATION_ENUM(EMiniumSystemSpec::VeryHigh, "veryHigh", "Very High")
