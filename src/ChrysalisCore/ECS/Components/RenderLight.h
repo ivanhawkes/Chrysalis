@@ -47,11 +47,6 @@ struct RenderLight final
 	}
 
 
-#ifdef IMGUI
-	void ImGuiRender();
-#endif
-
-
 	/** Using the default components CryTek provided. This will help with compatibility down the line. */
 	Cry::DefaultComponents::ILightComponent::SOptics optics;
 	Cry::DefaultComponents::ILightComponent::SOptions options;

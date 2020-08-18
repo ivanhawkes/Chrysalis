@@ -167,11 +167,6 @@ struct Spell final
 	}
 
 
-#ifdef IMGUI
-	void ImGuiRender();
-#endif
-
-
 	/** The length of time it takes to cast this spell. Instant cast spells should be zero. */
 	float castDuration {2.0f};
 
@@ -197,11 +192,6 @@ struct SpellcastExecution final
 		ar(executionTime, "execution-time", "Duration the spell has been executing.");
 		ar(castExecutionStatus, "cast-execution-status", "Status of the casting mechanic.");
 	}
-
-
-#ifdef IMGUI
-	void ImGuiRender();
-#endif
 
 
 	/** Duration the spell has been executing. */

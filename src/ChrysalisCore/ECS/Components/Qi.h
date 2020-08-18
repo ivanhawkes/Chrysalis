@@ -37,11 +37,6 @@ struct Qi final
 	}
 
 
-#ifdef IMGUI
-	void ImGuiRender();
-#endif
-
-
 	/** Qi attribute. */
 	AttributeType qi;
 
@@ -71,11 +66,6 @@ struct UtiliseQi final
 	}
 
 
-#ifdef IMGUI
-	void ImGuiRender();
-#endif
-
-
 	/** Use the spell's target or source for this component's target. */
 	TargetTargetType targetTargetType {TargetTargetType::target};
 
@@ -103,11 +93,6 @@ struct UtiliseQiOverTime final
 		ar(duration, "duration", "duration");
 		ar(interval, "interval", "interval");
 	}
-
-
-#ifdef IMGUI
-	void ImGuiRender();
-#endif
 
 
 	/** Use the spell's target or source for this component's target. */
@@ -148,11 +133,6 @@ struct ReplenishQi final
 	}
 
 
-#ifdef IMGUI
-	void ImGuiRender();
-#endif
-
-
 	/** Use the spell's target or source for this component's target. */
 	TargetTargetType targetTargetType {TargetTargetType::target};
 
@@ -180,11 +160,6 @@ struct ReplenishQiOverTime final
 		ar(duration, "duration", "duration");
 		ar(interval, "interval", "interval");
 	}
-
-
-#ifdef IMGUI
-	void ImGuiRender();
-#endif
 
 
 	/** Use the spell's target or source for this component's target. */

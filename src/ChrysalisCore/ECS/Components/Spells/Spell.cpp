@@ -51,17 +51,4 @@ SERIALIZATION_ENUM(SpellCastExecutionStatus::failed, "failed", "failed")
 SERIALIZATION_ENUM(SpellCastExecutionStatus::cancelled, "cancelled", "cancelled")
 SERIALIZATION_ENUM(SpellCastExecutionStatus::success, "success", "success")
 SERIALIZATION_ENUM_END()
-
-
-#ifdef IMGUI
-void Spell::ImGuiRender()
-{
-}
-
-
-void SpellcastExecution::ImGuiRender()
-{
-	ImGui::InputFloat("Execution Time:", &executionTime);
-}
-#endif
 }

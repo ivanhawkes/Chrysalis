@@ -64,11 +64,6 @@ struct Health final
 	}
 
 
-#ifdef IMGUI
-	void ImGuiRender();
-#endif
-
-
 	/** Health attribute. */
 	AttributeType health;
 
@@ -97,11 +92,6 @@ struct Damage final
 		ar(quantity, "quantity", "quantity");
 		ar(damageType, "damageType", "Damage Type");
 	}
-
-
-#ifdef IMGUI
-	void ImGuiRender();
-#endif
 
 
 	/** Use the spell's target or source for this component's target. */
@@ -137,11 +127,6 @@ struct DamageOverTime final
 		ar(duration, "duration", "duration");
 		ar(interval, "interval", "interval");
 	}
-
-
-#ifdef IMGUI
-	void ImGuiRender();
-#endif
 
 
 	/** Use the spell's target or source for this component's target. */
@@ -185,10 +170,6 @@ struct SelfHarm final
 		ar(damageType, "damageType", "Damage Type");
 	}
 
-#ifdef IMGUI
-		void ImGuiRender();
-#endif
-
 
 	/** Use the spell's target or source for this component's target. */
 	TargetTargetType targetTargetType {TargetTargetType::target};
@@ -219,11 +200,6 @@ struct Heal final
 	}
 
 
-#ifdef IMGUI
-	void ImGuiRender();
-#endif
-
-
 	/** Use the spell's target or source for this component's target. */
 	TargetTargetType targetTargetType {TargetTargetType::target};
 
@@ -251,11 +227,6 @@ struct HealOverTime final
 		ar(duration, "duration", "duration");
 		ar(interval, "interval", "interval");
 	}
-
-
-#ifdef IMGUI
-	void ImGuiRender();
-#endif
 
 
 	/** Use the spell's target or source for this component's target. */

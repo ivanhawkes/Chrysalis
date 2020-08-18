@@ -37,7 +37,7 @@ void ImGuiRenderComponent(entt::registry& registry, entt::entity entity)
 {
 	TYPE& component = registry.get<TYPE>(entity);
 
-	component.ImGuiRender();
+	ImGuiRenderComponent(component);
 }
 #endif
 

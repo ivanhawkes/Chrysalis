@@ -52,7 +52,7 @@ void RegisterComponentsWithMeta()
 	RegisterTypeWithMeta<ReplenishQi>("replenish-qi"_hs);
 	RegisterTypeWithMeta<ReplenishQiOverTime>("replenish-qi-over-time"_hs);
 
-	// Spell.
+	// Spellcasts.
 	RegisterTypeWithMeta<Spell>("spell"_hs);
 	RegisterTypeWithMeta<SpellcastExecution>("spellcast-execution"_hs);
 
@@ -76,9 +76,11 @@ void RegisterComponentsWithMeta()
 	// Items.
 	RegisterTypeWithMeta<ItemClass>("item-class"_hs);
 
-	// Simple components
-	RegisterTypeWithMeta<Timer>("timer"_hs);
+	// Range checking.
 	RegisterTypeWithMeta<Range>("range"_hs);
+
+	// Simple components.
+	RegisterTypeWithMeta<Timer>("timer"_hs);
 	RegisterTypeWithMeta<Aura>("aura"_hs);
 	RegisterTypeWithMeta<Buff>("buff"_hs);
 	RegisterTypeWithMeta<Debuff>("debuff"_hs);
@@ -104,30 +106,7 @@ void RegisterComponentsWithMeta()
 	RegisterTypeWithMeta<CrowdControlPolymorph>("crowd-control-polymorph"_hs);
 	RegisterTypeWithMeta<CrowdControlSilence>("crowd-control-silence"_hs);
 
-	// Spells.
+	// Cooldowns.
 	RegisterTypeWithMeta<Cooldown>("cooldown"_hs);
 }
-
-#ifdef IMGUI
-void AttributeType::ImGuiRender()
-{
-	ImGui::InputFloat("Base:", &base);
-	ImGui::InputFloat("Base Modifiers:", &baseModifiers);
-	ImGui::InputFloat("Modifiers:", &modifiers);
-}
-
-
-void Name::ImGuiRender()
-{
-	ImGui::Text(name);
-}
-
-
-void Range::ImGuiRender()
-{
-	ImGui::InputFloat("Minimum:", &minRange);
-	ImGui::InputFloat("Maximum:", &maxRange);
-}
-#endif
-
 }

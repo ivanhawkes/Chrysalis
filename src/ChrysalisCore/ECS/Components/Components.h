@@ -29,11 +29,6 @@ struct AttributeType final
 	}
 
 
-#ifdef IMGUI
-	void ImGuiRender();
-#endif
-
-
 	/** Returns the current value for base, after it's modifiers have been applied. */
 	const float GetBaseAttribute() const
 	{
@@ -64,10 +59,6 @@ struct FlagComponent final
 {
 	void Serialize(Serialization::IArchive& ar) {  }
 
-#ifdef IMGUI
-	void ImGuiRender() {};
-#endif
-
 private:
 	// Adding this member prevents EnTT from optimising this component out when saving and loading.
 	// TODO: Find out how to make these take no space but avoid being skipped by EnTT.
@@ -89,11 +80,6 @@ struct SimpleComponent final
 		ar(value, "value", "A value.");
 	}
 
-#ifdef IMGUI
-	void ImGuiRender() {};
-#endif
-
-private:
 	TYPE value;
 };
 
@@ -114,11 +100,6 @@ struct Name final
 		ar(name, "name", "The name of this entity. It should be unique.");
 		ar(displayName, "displayName", "The display name for this entity.");
 	}
-
-
-#ifdef IMGUI
-	void ImGuiRender();
-#endif
 
 
 	/** A unique name. */
@@ -151,11 +132,6 @@ struct Prototype final
 	}
 
 
-#ifdef IMGUI
-	void ImGuiRender() {};
-#endif
-
-
 	/** Unique Id for the prototye of this entiity. */
 	entt::entity prototypeEntityId {entt::null};
 };
@@ -176,11 +152,6 @@ struct SourceEntity final
 		ar(sourceEntityId, "sourceEntityId", "Source Entity");
 		ar(crySourceEntityId, "crySourceEntityId", "Cry Source Entity ID");
 	}
-
-
-#ifdef IMGUI
-	void ImGuiRender() {};
-#endif
 
 
 	/** The source entity (EnTT). */
@@ -208,11 +179,6 @@ struct TargetEntity final
 	}
 
 
-#ifdef IMGUI
-	void ImGuiRender() {};
-#endif
-
-
 	/** The target entity (EnTT).*/
 	entt::entity targetEntityId {entt::null};
 
@@ -232,11 +198,6 @@ struct Range final
 		ar(minRange, "minRange", "A minimum range in metres.");
 		ar(maxRange, "maxRange", "A maximum range in metres.");
 	}
-
-
-#ifdef IMGUI
-	void ImGuiRender();
-#endif
 
 
 	/** A minimum range (metres). */
@@ -321,11 +282,6 @@ struct Ownership final
 	{
 		ar(ownerId, "ownerId", "Entity Id for the prototype this entity uses as it's base.");
 	}
-
-
-#ifdef IMGUI
-	void ImGuiRender() {};
-#endif
 
 
 	/** Unique Id for the prototye of this entiity. */
