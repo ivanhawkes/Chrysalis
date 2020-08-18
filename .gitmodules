@@ -1,3 +1,3 @@
 [submodule "code/SDK/entt"]
 	path = code/SDK/entt
-	url = git@github.com:skypjack/entt.git
+	url = https://github.com/skypjack/entt.git
