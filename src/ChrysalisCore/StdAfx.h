@@ -11,7 +11,7 @@
 #include "Utility/CryWatch.h"
 
 // Couldn't figure out how to do the includes using only constexpr.
-//#define IMGUI
+#define IMGUI
 
 // TODO: Only include in a build when Imgui is allowed e.g. check for a cmake variable.
 #ifdef IMGUI

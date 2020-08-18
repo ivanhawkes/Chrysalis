@@ -29,7 +29,7 @@
             "assets"
         ],
         "code": [
-            "code/ChrysalisCore"
+            "src/ChrysalisCore"
         ],
         "libs": [
             {

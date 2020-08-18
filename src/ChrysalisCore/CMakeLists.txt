@@ -20,7 +20,8 @@ start_sources()
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include_directories("../SDK/EnTT/src")
+include_directories("../vendor/entt/src")
+include_directories("../vendor/imgui")
 
 # I like to know which compiler I am using.
 message (STATUS "CMAKE_CXX_COMPILER_VERSION = ${CMAKE_CXX_COMPILER_VERSION}")
@@ -609,7 +610,8 @@ endif()
 #set(CMAKE_CXX_STANDARD 17)
 #set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-#include_directories("../SDK/EnTT/src")
+include_directories("../vendor/entt/src")
+include_directories("../vendor/imgui")
 
 # I like to know which compiler I am using.
 #message (STATUS "CMAKE_CXX_COMPILER_VERSION = ${CMAKE_CXX_COMPILER_VERSION}")

@@ -1,3 +1,6 @@
 [submodule "code/SDK/entt"]
-	path = code/SDK/entt
+	path = src/vendor/entt
 	url = https://github.com/skypjack/entt.git
+[submodule "src/vendor/imgui"]
+	path = src/vendor/imgui
+	url = https://github.com/ocornut/imgui.git

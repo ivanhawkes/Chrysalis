@@ -1,7 +1,6 @@
 #pragma once
 
 #include <entt/entt.hpp>
-#include <CryExtension/CryGUID.h>
 
 
 /** Thinking about making this a single include header for convenience. */

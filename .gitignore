@@ -1,5 +1,5 @@
 # Ignores for our code.
-code/ChrysalisCore/.vs/
+src/ChrysalisCore/.vs/
 
 # Asset files.
 *.pak
@@ -73,7 +73,7 @@ log.txt
 *.tmp
 
 # Cmake keeps setting this as the folder for binaries - so this keeps them out of the repo at least.
-code/bin/
+src/bin/
 
 # All other things.
 /assets_source/
