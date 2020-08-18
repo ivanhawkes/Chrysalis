@@ -89,10 +89,23 @@ void CPlayerComponent::AttachToCharacter(EntityId characterId)
 	{
 		if (auto pActorComponent = pAttachedEntity->GetComponent<CActorComponent>())
 		{
+			// Remove any existing attachment.
+			if (m_attachedCharacterId != INVALID_ENTITYID)
+			{
+				if (auto pOldAttachedEntity = gEnv->pEntitySystem->GetEntity(m_attachedCharacterId))
+				{
+					if (auto pOldActorComponent = pOldAttachedEntity->GetComponent<CActorComponent>())
+					{
+						// Inform the previous actor we are no longer attached to it now.
+						pOldActorComponent->OnPlayerDetach();
+					}
+				}
+			}
+
 			// If the target was an actor then it's safe to complete the attachment.
 			m_attachedCharacterId = m_cameraTargetId = characterId;
 			
-			// TODO: We need to detach from any previous entity before we attach to the new one.
+			// Inform the actor we are attached to it now.
 			pActorComponent->OnPlayerAttach(*this);
 
 			// Inform the camera system we are now watching a different entity.

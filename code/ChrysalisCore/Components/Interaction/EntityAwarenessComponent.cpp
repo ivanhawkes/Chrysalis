@@ -170,9 +170,6 @@ void CEntityAwarenessComponent::UpdateRaycastQuery()
 		IPhysicalEntity* skipEntities[1];
 		skipEntities[0] = pPhysEnt;
 
-		int raySlot = RequestRaySlotId();
-		CRY_ASSERT(raySlot != -1);
-
 		ray_hit rayHit;
 
 		// Use a synchronous ray-cast.
@@ -189,17 +186,20 @@ void CEntityAwarenessComponent::UpdateRaycastQuery()
 		// HACK: Removed asynchronous raycasts because they were using CryAction and that had link problems with 5.3 and
 		// will be removed when 5.4 releases. 
 		// Use an asynchronous ray-cast.
-//		m_queuedRays [raySlot].rayId = static_cast<CCryAction*>(gEnv->pGameFramework)->GetPhysicQueues().GetRayCaster().Queue(
-//			RayCastRequest::HighPriority,
-//			RayCastRequest(m_eyePosition, m_eyeDirection * FORWARD_DIRECTION * forwardCastDistance,
-//				ent_all,
-//				rwi_pierceability(PIERCE_GLASS) | rwi_colltype_any,
-//				skipEntities,
-//				pPhysEnt ? 1 : 0,
-//				2),
-//			functor(*this, &CEntityAwarenessComponent::OnRayCastDataReceived));
-//
-//		m_queuedRays [raySlot].counter = ++m_requestCounter;
+		//int raySlot = RequestRaySlotId();
+		//CRY_ASSERT(raySlot != -1);
+
+		//m_queuedRays[raySlot].rayId = static_cast<CCryAction*>(gEnv->pGameFramework)->GetPhysicQueues().GetRayCaster().Queue(
+		//	RayCastRequest::HighPriority,
+		//	RayCastRequest(m_eyePosition, m_eyeDirection * FORWARD_DIRECTION * forwardCastDistance,
+		//		ent_all,
+		//		rwi_pierceability(PIERCE_GLASS) | rwi_colltype_any,
+		//		skipEntities,
+		//		pPhysEnt ? 1 : 0,
+		//		2),
+		//	functor(*this, &CEntityAwarenessComponent::OnRayCastDataReceived));
+
+		//m_queuedRays[raySlot].counter = ++m_requestCounter;
 
 #if defined(_DEBUG)
 		if (g_cvars.m_componentAwarenessDebug & eDB_RayCast)

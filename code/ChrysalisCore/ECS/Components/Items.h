@@ -5,10 +5,10 @@
 
 namespace Chrysalis::ECS
 {
-struct ItemClass
+struct ItemClass final
 {
 	ItemClass() = default;
-	virtual ~ItemClass() = default;
+	~ItemClass() = default;
 
 
 	void Serialize(Serialization::IArchive& ar)

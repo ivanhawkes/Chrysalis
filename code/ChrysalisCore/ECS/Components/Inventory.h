@@ -5,14 +5,14 @@
 
 namespace Chrysalis::ECS
 {
-struct Inventory
+struct Inventory final
 {
 	/** Maximum entries for this inventory. */
 	uint32 maxEntries {40};
 };
 
 
-struct InventoryEntry
+struct InventoryEntry final
 {
 	/** A reference to the item class this entry represents. */
 	string itemClassName;
@@ -22,7 +22,7 @@ struct InventoryEntry
 };
 
 
-struct InventoryEntryList
+struct InventoryEntryList final
 {
 	/** A container for all the entries. */
 	std::vector<InventoryEntry> entries;

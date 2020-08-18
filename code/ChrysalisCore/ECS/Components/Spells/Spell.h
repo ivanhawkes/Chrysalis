@@ -156,12 +156,8 @@ enum class SpellCastExecutionStatus
 };
 
 
-struct Spell
+struct Spell final
 {
-	Spell() = default;
-	virtual ~Spell() = default;
-
-
 	void Serialize(Serialization::IArchive& ar)
 	{
 		ar(castDuration, "castDuration", "The length of time it takes to cast this spell. Instant cast spells should be zero.");
@@ -194,12 +190,8 @@ struct Spell
 };
 
 
-struct SpellcastExecution
+struct SpellcastExecution final
 {
-	SpellcastExecution() = default;
-	virtual ~SpellcastExecution() = default;
-
-
 	void Serialize(Serialization::IArchive& ar)
 	{
 		ar(executionTime, "execution-time", "Duration the spell has been executing.");

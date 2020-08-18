@@ -11,10 +11,10 @@ namespace Chrysalis::ECS
 void RegisterComponentsWithMeta();
 
 
-struct AttributeType
+struct AttributeType final
 {
 	AttributeType() = default;
-	virtual ~AttributeType() = default;
+	~AttributeType() = default;
 
 	AttributeType(float base, float baseModifiers, float modifiers) :
 		base(base), baseModifiers(baseModifiers), modifiers(modifiers)
@@ -61,7 +61,7 @@ struct AttributeType
 
 
 template<entt::id_type label>
-struct FlagComponent
+struct FlagComponent final
 {
 	void Serialize(Serialization::IArchive& ar) {  }
 
@@ -78,10 +78,10 @@ private:
 
 /** Template for a simple component that has only one member, and the name of that member can be 'value'. */
 template<typename TYPE, entt::id_type label>
-struct SimpleComponent
+struct SimpleComponent final
 {
 	SimpleComponent() = default;
-	virtual ~SimpleComponent() = default;
+	~SimpleComponent() = default;
 
 	SimpleComponent(TYPE value) :value(value) {};
 
@@ -99,10 +99,10 @@ private:
 };
 
 
-struct Name
+struct Name final
 {
 	Name() = default;
-	virtual ~Name() = default;
+	~Name() = default;
 
 	Name(string name, string displayName) :
 		name(name), displayName(displayName)
@@ -135,10 +135,10 @@ struct Name
 
 */
 
-struct Prototype
+struct Prototype final
 {
 	Prototype() = default;
-	virtual ~Prototype() = default;
+	~Prototype() = default;
 
 	Prototype(entt::entity prototypeEntityId) :
 		prototypeEntityId(prototypeEntityId)
@@ -162,10 +162,10 @@ struct Prototype
 };
 
 
-struct SourceEntity
+struct SourceEntity final
 {
 	SourceEntity() = default;
-	virtual ~SourceEntity() = default;
+	~SourceEntity() = default;
 
 	SourceEntity(entt::entity sourceEntity, EntityId crySourceEntityId) :
 		sourceEntityId(sourceEntity), crySourceEntityId(crySourceEntityId)
@@ -192,10 +192,10 @@ struct SourceEntity
 };
 
 
-struct TargetEntity
+struct TargetEntity final
 {
 	TargetEntity() = default;
-	virtual ~TargetEntity() = default;
+	~TargetEntity() = default;
 
 	TargetEntity(entt::entity targetEntity, EntityId cryTargetEntityId) :
 		targetEntityId(targetEntity), cryTargetEntityId(cryTargetEntityId)
@@ -222,10 +222,10 @@ struct TargetEntity
 };
 
 
-struct Range
+struct Range final
 {
 	Range() = default;
-	virtual ~Range() = default;
+	~Range() = default;
 
 
 	void Serialize(Serialization::IArchive& ar)
@@ -261,7 +261,7 @@ using CancelOnMovement = SimpleComponent<bool, "cancel-on-movement"_hs>;	// If y
 using AreaOfEffect = SimpleComponent<float, "AreaOfEffect"_hs>;				// Flags something as an AOE and provides a radius for that AOE.
 
 
-struct Requirement
+struct Requirement final
 {
 	/**  */
 	// Need some way to have a list of requirements e.g. level, class, profession, skill, race
@@ -269,13 +269,13 @@ struct Requirement
 
 
 // A weapon is also an item, and thus must always have an ItemClass component in it's entity.
-struct WeaponClass
+struct WeaponClass final
 {
 	/**  */
 };
 
 
-struct Mesh
+struct Mesh final
 {
 	/** File path to a mesh. */
 	string modelFilePath;
@@ -285,7 +285,7 @@ struct Mesh
 };
 
 
-struct LootTableReference
+struct LootTableReference final
 {
 	/** A reference to the loot table which should be used when calculating loot. */
 	string lootTableReference;
@@ -293,24 +293,24 @@ struct LootTableReference
 
 
 // Should there be one of these for each sort of lock type? Do we remove them once the lock is opened / broken?
-struct LockedWithKey
+struct LockedWithKey final
 {
 	/**  */
 	string key;
 };
 
 
-struct Key
+struct Key final
 {
 	/**  */
 	string key;
 };
 
 
-struct Ownership
+struct Ownership final
 {
 	Ownership() = default;
-	virtual ~Ownership() = default;
+	~Ownership() = default;
 
 	Ownership(entt::entity ownerId) :
 		ownerId(ownerId)

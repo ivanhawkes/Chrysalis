@@ -175,6 +175,12 @@ void CActorComponent::Update(SEntityUpdateContext* pCtx)
 {
 	const float frameTime = pCtx->fFrameTime;
 
+	// Move the listening location to match the last known position of the camera.
+	if (m_pPlayer && m_pPlayer->IsLocalPlayer())
+	{	
+		m_pAudioListenerComponent->SetOffset(m_pPlayer->GetCamera()->GetPosition() - GetEntity()->GetWorldPos());
+	}
+
 	// HACK: This belongs in pre-physics...I think.
 	SetIK();
 
@@ -466,6 +472,9 @@ void CActorComponent::OnPlayerAttach(CPlayerComponent& player)
 	// Request player input messages be sent to us now.
 	m_pPlayer->GetPlayerInput()->AddEventListener(this);
 
+	// Create the audio listener component.
+	m_pAudioListenerComponent = m_pEntity->GetOrCreateComponent<Cry::Audio::DefaultComponents::CListenerComponent>();
+
 	// Default assumption is we now control the character.
 	//m_isAIControlled = false;
 
@@ -479,8 +488,8 @@ void CActorComponent::OnPlayerDetach()
 	// Request player input messages stop being sent to us now.
 	m_pPlayer->GetPlayerInput()->RemoveEventListener(this);
 
-	// That's it, make the player illegal to use again.
-	m_pPlayer = nullptr;
+	// Stop listening to this character.
+	m_pEntity->RemoveComponent<Cry::Audio::DefaultComponents::CListenerComponent>();
 
 	// #TODO: Detach the camera.
 
@@ -488,6 +497,9 @@ void CActorComponent::OnPlayerDetach()
 
 	// #TODO: handle transitioning this character back into the loving hands of the AI.
 	//m_isAIControlled = true;
+
+	// That's it, make the player illegal to use again.
+	m_pPlayer = nullptr;
 }
 
 

@@ -34,10 +34,10 @@ enum class DamageType
 };
 
 
-struct Health
+struct Health final
 {
 	Health() = default;
-	virtual ~Health() = default;
+	~Health() = default;
 
 	Health(AttributeType health) :
 		health(health)
@@ -80,10 +80,10 @@ struct Health
 };
 
 
-struct Damage
+struct Damage final
 {
 	Damage() = default;
-	virtual ~Damage() = default;
+	~Damage() = default;
 
 	Damage(float quantity, DamageType damageType) :
 		quantity(quantity), damageType(damageType)
@@ -115,10 +115,10 @@ struct Damage
 };
 
 
-struct DamageOverTime
+struct DamageOverTime final
 {
 	DamageOverTime() = default;
-	virtual ~DamageOverTime() = default;
+	~DamageOverTime() = default;
 
 	DamageOverTime(float quantity, DamageType damageType,
 		float duration, float interval) :
@@ -167,10 +167,10 @@ struct DamageOverTime
 };
 
 
-struct SelfHarm
+struct SelfHarm final
 {
 	SelfHarm() = default;
-	virtual ~SelfHarm() = default;
+	~SelfHarm() = default;
 
 	SelfHarm(float quantity, DamageType damageType) :
 		quantity(quantity), damageType(damageType)
@@ -201,10 +201,10 @@ struct SelfHarm
 };
 
 
-struct Heal
+struct Heal final
 {
 	Heal() = default;
-	virtual ~Heal() = default;
+	~Heal() = default;
 
 	Heal(float quantity) :
 		quantity(quantity)
@@ -232,10 +232,10 @@ struct Heal
 };
 
 
-struct HealOverTime
+struct HealOverTime final
 {
 	HealOverTime() = default;
-	virtual ~HealOverTime() = default;
+	~HealOverTime() = default;
 
 	HealOverTime(float quantity,
 		float duration, float interval) :

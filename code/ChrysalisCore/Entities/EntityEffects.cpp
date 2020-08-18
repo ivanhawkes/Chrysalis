@@ -175,8 +175,7 @@ TAttachedEffectId CEffectsController::AttachParticleEffect(IParticleEffect* pPar
 
 TAttachedEffectId CEffectsController::AttachParticleEffect(const char* effectName, const SEffectAttachParams& attachParams)
 {
-	auto pOwnerEntity = gEnv->pEntitySystem->GetEntity(m_ownerEntityId);
-	CRY_ASSERT(pOwnerEntity);
+	CRY_ASSERT(gEnv->pEntitySystem->GetEntity(m_ownerEntityId));
 
 	IParticleEffect* pParticleEffect = gEnv->pParticleManager->FindEffect(effectName);
 
@@ -254,8 +253,7 @@ TAttachedEffectId CEffectsController::AttachParticleEffect(IParticleEffect* pPar
 
 TAttachedEffectId CEffectsController::AttachParticleEffect(const char* effectName, const int targetSlot, const char* helperName, const SEffectAttachParams& attachParams)
 {
-	auto pOwnerEntity = gEnv->pEntitySystem->GetEntity(m_ownerEntityId);
-	CRY_ASSERT(pOwnerEntity);
+	CRY_ASSERT(gEnv->pEntitySystem->GetEntity(m_ownerEntityId));
 
 	IParticleEffect* pParticleEffect = gEnv->pParticleManager->FindEffect(effectName);
 

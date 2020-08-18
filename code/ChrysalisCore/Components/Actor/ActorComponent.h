@@ -3,6 +3,7 @@
 #include <Actor/Fate.h>
 #include <CryAISystem/IAgent.h>
 #include "DefaultComponents/Physics/CharacterControllerComponent.h"
+#include <DefaultComponents/Audio/ListenerComponent.h>
 #include <Components/Actor/ActorControllerComponent.h>
 #include <Components/Animation/ActorAnimationComponent.h>
 #include <Components/Player/Input/PlayerInputComponent.h>
@@ -245,6 +246,9 @@ private:
 
 	/** If a player is controlling this character, this pointer will be valid. */
 	CPlayerComponent* m_pPlayer {nullptr};
+
+	/** Listen to the audio from the character's perspective. */
+	Cry::Audio::DefaultComponents::CListenerComponent* m_pAudioListenerComponent {nullptr};
 
 	/** The pre-determined fate for this actor. */
 	CFate m_fate;

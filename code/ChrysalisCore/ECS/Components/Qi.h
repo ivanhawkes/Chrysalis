@@ -7,10 +7,10 @@
 
 namespace Chrysalis::ECS
 {
-struct Qi
+struct Qi final
 {
 	Qi() = default;
-	virtual ~Qi() = default;
+	~Qi() = default;
 
 	Qi(AttributeType qi) :
 		qi(qi)
@@ -53,10 +53,10 @@ struct Qi
 };
 
 
-struct UtiliseQi
+struct UtiliseQi final
 {
 	UtiliseQi() = default;
-	virtual ~UtiliseQi() = default;
+	~UtiliseQi() = default;
 
 	UtiliseQi(float quantity) :
 		quantity(quantity)
@@ -84,10 +84,10 @@ struct UtiliseQi
 };
 
 
-struct UtiliseQiOverTime
+struct UtiliseQiOverTime final
 {
 	UtiliseQiOverTime() = default;
-	virtual ~UtiliseQiOverTime() = default;
+	~UtiliseQiOverTime() = default;
 
 	UtiliseQiOverTime(float quantity,
 		float duration, float interval) :
@@ -130,10 +130,10 @@ struct UtiliseQiOverTime
 };
 
 
-struct ReplenishQi
+struct ReplenishQi final
 {
 	ReplenishQi() = default;
-	virtual ~ReplenishQi() = default;
+	~ReplenishQi() = default;
 
 	ReplenishQi(float quantity) :
 		quantity(quantity)
@@ -161,10 +161,10 @@ struct ReplenishQi
 };
 
 
-struct ReplenishQiOverTime
+struct ReplenishQiOverTime final
 {
 	ReplenishQiOverTime() = default;
-	virtual ~ReplenishQiOverTime() = default;
+	~ReplenishQiOverTime() = default;
 
 	ReplenishQiOverTime(float quantity,
 		float duration, float interval) :

@@ -22,8 +22,7 @@ namespace Chrysalis::ECS
 void SystemApplyDamage(entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Apply any damage to the damage modifiers.
-	for (auto&& [entity, damage, sourceEntity, targetEntity] : spellRegistry.view<Damage, SourceEntity, TargetEntity>().each())
-	{
+	spellRegistry.view<Damage, SourceEntity, TargetEntity>().each([&spellRegistry, &actorRegistry](auto entity, auto& damage, auto& sourceEntity, auto& targetEntity) {
 		// Get the health component for the target entity and apply the damage to it's health modifier.
 		Health* targetHealth {nullptr};
 		if (damage.targetTargetType == TargetTargetType::target)
@@ -41,15 +40,14 @@ void SystemApplyDamage(entt::registry& spellRegistry, entt::registry& actorRegis
 
 		// Remove just the component.
 		spellRegistry.remove<Damage>(entity);
-	}
+		});
 }
 
 
 void SystemApplyDamageOverTime(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Apply any damage to the damage modifiers.
-	for (auto&& [entity, damage, sourceEntity, targetEntity] : spellRegistry.view<DamageOverTime, SourceEntity, TargetEntity>().each())
-	{
+	spellRegistry.view<DamageOverTime, SourceEntity, TargetEntity>().each([dt, &spellRegistry, &actorRegistry](auto entity, auto& damage, auto& sourceEntity, auto& targetEntity) {
 		damage.deltaSinceTick += dt;
 		if ((damage.deltaSinceTick >= damage.interval) && (damage.ticksRemaining >= 1.0f))
 		{
@@ -76,15 +74,14 @@ void SystemApplyDamageOverTime(float dt, entt::registry& spellRegistry, entt::re
 			// Remove just the component.
 			spellRegistry.remove<DamageOverTime>(entity);
 		}
-	}
+		});
 }
 
 
 void SystemApplyHeal(entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Apply any heals to the health modifiers.
-	for (auto&& [entity, heal, sourceEntity, targetEntity] : spellRegistry.view<Heal, SourceEntity, TargetEntity>().each())
-	{
+	spellRegistry.view<Heal, SourceEntity, TargetEntity>().each([&spellRegistry, &actorRegistry](auto entity, auto& heal, auto& sourceEntity, auto& targetEntity) {
 		// Get the health component for the target entity and apply the heal to it's health modifier.
 		Health* targetHealth {nullptr};
 		if (heal.targetTargetType == TargetTargetType::target)
@@ -112,15 +109,14 @@ void SystemApplyHeal(entt::registry& spellRegistry, entt::registry& actorRegistr
 
 		// Remove just the component.
 		spellRegistry.remove<Heal>(entity);
-	}
+		});
 }
 
 
 void SystemApplyHealOverTime(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Apply any heal to the health modifiers.
-	for (auto&& [entity, heal, sourceEntity, targetEntity] : spellRegistry.view<HealOverTime, SourceEntity, TargetEntity>().each())
-	{
+	spellRegistry.view<HealOverTime, SourceEntity, TargetEntity>().each([dt, &spellRegistry, &actorRegistry](auto entity, auto& heal, auto& sourceEntity, auto& targetEntity) {
 		heal.deltaSinceTick += dt;
 		if ((heal.deltaSinceTick >= heal.interval) && (heal.ticksRemaining >= 1.0f))
 		{
@@ -159,7 +155,7 @@ void SystemApplyHealOverTime(float dt, entt::registry& spellRegistry, entt::regi
 				spellRegistry.remove<HealOverTime>(entity);
 			}
 		}
-	}
+		});
 }
 
 
@@ -167,8 +163,7 @@ void SystemHealthCheck(entt::registry& spellRegistry, entt::registry& actorRegis
 {
 	// Update each health component, applying the modifier to it's base to calculate the current health.
 	// Update death status if appropriate.
-	for (auto&& [entity, health, sourceEntity, targetEntity] : spellRegistry.view<Health, SourceEntity, TargetEntity>().each())
-	{
+	spellRegistry.view<Health, SourceEntity, TargetEntity>().each([&spellRegistry, &actorRegistry](auto entity, auto& health, auto& sourceEntity, auto& targetEntity) {
 		// Check for overkill.
 		float newHealth = health.health.GetBaseAttribute() + health.health.modifiers;
 		if (newHealth <= 0.0f)
@@ -177,7 +172,7 @@ void SystemHealthCheck(entt::registry& spellRegistry, entt::registry& actorRegis
 
 			// TODO: Inform them they died with -newHealth being the amount of overkill.
 		}
-	}
+		});
 }
 
 
@@ -189,8 +184,7 @@ void SystemHealthCheck(entt::registry& spellRegistry, entt::registry& actorRegis
 void SystemApplyQiUtilisation(entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Apply any qi usage to the modifiers.
-	for (auto&& [entity, qiUse, sourceEntity, targetEntity] : spellRegistry.view<UtiliseQi, SourceEntity, TargetEntity>().each())
-	{
+	spellRegistry.view<UtiliseQi, SourceEntity, TargetEntity>().each([&spellRegistry, &actorRegistry](auto entity, auto& qiUse, auto& sourceEntity, auto& targetEntity) {
 		// Get the qi component for the target entity and apply the usage to it's modifier.
 		Qi* targetQi {nullptr};
 		if (qiUse.targetTargetType == TargetTargetType::target)
@@ -209,15 +203,14 @@ void SystemApplyQiUtilisation(entt::registry& spellRegistry, entt::registry& act
 
 		// Remove just the component.
 		spellRegistry.remove<UtiliseQi>(entity);
-	}
+		});
 }
 
 
 void SystemApplyQiUtilisationOverTime(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Apply any qi to the modifiers.
-	for (auto&& [entity, qiUse, sourceEntity, targetEntity] : spellRegistry.view<UtiliseQiOverTime, SourceEntity, TargetEntity>().each())
-	{
+	spellRegistry.view<UtiliseQiOverTime, SourceEntity, TargetEntity>().each([dt, &spellRegistry, &actorRegistry](auto entity, auto& qiUse, auto& sourceEntity, auto& targetEntity) {
 		qiUse.deltaSinceTick += dt;
 		if ((qiUse.deltaSinceTick >= qiUse.interval) && (qiUse.ticksRemaining >= 1.0f))
 		{
@@ -244,15 +237,14 @@ void SystemApplyQiUtilisationOverTime(float dt, entt::registry& spellRegistry, e
 			// Remove just the component.
 			spellRegistry.remove<UtiliseQiOverTime>(entity);
 		}
-	}
+		});
 }
 
 
 void SystemApplyQiReplenishment(entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Apply any replenishment to the qi modifiers.
-	for (auto&& [entity, replenish, sourceEntity, targetEntity] : spellRegistry.view<ReplenishQi, SourceEntity, TargetEntity>().each())
-	{
+	spellRegistry.view<ReplenishQi, SourceEntity, TargetEntity>().each([&spellRegistry, &actorRegistry](auto entity, auto& replenish, auto& sourceEntity, auto& targetEntity) {
 		// Get the qi component for the target entity and apply the replenishment to it's modifier.
 		Qi* targetQi {nullptr};
 		if (replenish.targetTargetType == TargetTargetType::target)
@@ -280,15 +272,14 @@ void SystemApplyQiReplenishment(entt::registry& spellRegistry, entt::registry& a
 
 		// Remove just the component.
 		spellRegistry.remove<ReplenishQi>(entity);
-	}
+		});
 }
 
 
 void SystemApplyQiReplenishmentOverTime(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Apply any replenishment to the qi modifiers.
-	for (auto&& [entity, replenish, sourceEntity, targetEntity] : spellRegistry.view<ReplenishQiOverTime, SourceEntity, TargetEntity>().each())
-	{
+	spellRegistry.view<ReplenishQiOverTime, SourceEntity, TargetEntity>().each([dt, &spellRegistry, &actorRegistry](auto entity, auto& replenish, auto& sourceEntity, auto& targetEntity) {
 		replenish.deltaSinceTick += dt;
 		if ((replenish.deltaSinceTick >= replenish.interval) && (replenish.ticksRemaining >= 1.0f))
 		{
@@ -326,7 +317,7 @@ void SystemApplyQiReplenishmentOverTime(float dt, entt::registry& spellRegistry,
 				spellRegistry.remove<ReplenishQiOverTime>(entity);
 			}
 		}
-	}
+		});
 }
 
 
@@ -346,8 +337,8 @@ bool IsSpellCastable(const Spell& spell, const SourceEntity& sourceEntity, const
 void SpellCastOpen(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Check for spell cast components.
-	for (auto&& [entity, spellActionOpen, name, spell, spellcastExecution, sourceEntity, targetEntity] : spellRegistry.view<SpellActionOpen, Name, Spell, SpellcastExecution, SourceEntity, TargetEntity>().each())
-	{
+	spellRegistry.view<SpellActionOpen, Name, Spell, SpellcastExecution, SourceEntity, TargetEntity>().each
+	([dt, &spellRegistry, &actorRegistry](auto entity, auto& spellActionOpen, auto& name, auto& spell, auto& spellcastExecution, auto& sourceEntity, auto& targetEntity) {
 		// Check validity of the spell cast request.
 		if (IsSpellCastable(spell, sourceEntity, targetEntity))
 		{
@@ -391,15 +382,15 @@ void SpellCastOpen(float dt, entt::registry& spellRegistry, entt::registry& acto
 			CryLogAlways("Spellcast Finished: %s, Source: %d, target: %d", name.displayName.c_str(), sourceEntity.sourceEntityId, targetEntity.targetEntityId);
 			spellRegistry.destroy(entity);
 		}
-	}
+		});
 }
 
 
 void SpellCastTake(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Check for spell cast components.
-	for (auto&& [entity, spellActionTake, name, spell, spellcastExecution, sourceEntity, targetEntity] : spellRegistry.view<SpellActionTake, Name, Spell, SpellcastExecution, SourceEntity, TargetEntity>().each())
-	{
+	spellRegistry.view<SpellActionTake, Name, Spell, SpellcastExecution, SourceEntity, TargetEntity>().each
+	([dt, &spellRegistry, &actorRegistry](auto entity, auto& spellActionTake, auto& name, auto& spell, auto& spellcastExecution, auto& sourceEntity, auto& targetEntity) {
 		// Check validity of the spell cast request.
 		if (IsSpellCastable(spell, sourceEntity, targetEntity))
 		{
@@ -409,15 +400,15 @@ void SpellCastTake(float dt, entt::registry& spellRegistry, entt::registry& acto
 
 		// Destroy the entity. Assumption is each entity only has one of these sorts of spell components on it. 
 		spellRegistry.destroy(entity);
-	}
+		});
 }
 
 
 void SpellCastDrop(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Check for spell cast components.
-	for (auto&& [entity, spellActionDrop, name, spell, spellcastExecution, sourceEntity, targetEntity] : spellRegistry.view<SpellActionDrop, Name, Spell, SpellcastExecution, SourceEntity, TargetEntity>().each())
-	{
+	spellRegistry.view<SpellActionDrop, Name, Spell, SpellcastExecution, SourceEntity, TargetEntity>().each
+	([dt, &spellRegistry, &actorRegistry](auto entity, auto& spellActionDrop, auto& name, auto& spell, auto& spellcastExecution, auto& sourceEntity, auto& targetEntity) {
 		// Check validity of the spell cast request.
 		if (IsSpellCastable(spell, sourceEntity, targetEntity))
 		{
@@ -427,15 +418,15 @@ void SpellCastDrop(float dt, entt::registry& spellRegistry, entt::registry& acto
 
 		// Destroy the entity. Assumption is each entity only has one of these sorts of spell components on it. 
 		spellRegistry.destroy(entity);
-	}
+		});
 }
 
 
 void SpellCastSwitch(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Check for spell cast components.
-	for (auto&& [entity, spellActionSwitch, name, spell, spellcastExecution, sourceEntity, targetEntity] : spellRegistry.view<SpellActionSwitch, Name, Spell, SpellcastExecution, SourceEntity, TargetEntity>().each())
-	{
+	spellRegistry.view<SpellActionSwitch, Name, Spell, SpellcastExecution, SourceEntity, TargetEntity>().each
+	([dt, &spellRegistry, &actorRegistry](auto entity, auto& spellActionSwitch, auto& name, auto& spell, auto& spellcastExecution, auto& sourceEntity, auto& targetEntity) {
 		// Check validity of the spell cast request.
 		if (IsSpellCastable(spell, sourceEntity, targetEntity))
 		{
@@ -486,7 +477,7 @@ void SpellCastSwitch(float dt, entt::registry& spellRegistry, entt::registry& ac
 
 		// Destroy the entity. Assumption is each entity only has one of these sorts of spell components on it. 
 		spellRegistry.destroy(entity);
-	}
+		});
 }
 
 
@@ -502,12 +493,8 @@ void SystemWorldSpellCasts(float dt, entt::registry& spellRegistry, entt::regist
 void SystemUpdateActors(float dt, entt::registry& actorRegistry)
 {
 	// Allow the qi to regenerate naturally.
-	auto view = actorRegistry.view<Qi>();
-	for (auto& entity : view)
-	{
-		// Get the components.
-		auto& qi = view.get<Qi>(entity);
-
+	actorRegistry.view<Qi>().each
+	([dt, &actorRegistry](auto entity, auto& qi) {
 		// Accumulate the time since the last spell cast.
 		qi.timeSinceLastSpellcast += dt;
 
@@ -526,6 +513,6 @@ void SystemUpdateActors(float dt, entt::registry& actorRegistry)
 				qi.qi.modifiers = newModifier;
 			}
 		}
-	}
+		});
 }
 }
