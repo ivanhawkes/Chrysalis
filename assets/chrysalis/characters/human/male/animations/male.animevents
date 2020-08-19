@@ -4,4 +4,8 @@
   <event name="audio_trigger" time="0.2" endTime="0.9" parameter="Play_l_global_sfx_bird_fly_off" bone="RightHand" offset="0,0,0" dir="0,0,0" model=""/>
   <event name="Activate" time="0.80000001" endTime="0.95" parameter="23.4" bone="RightHand" offset="0,0,0" dir="0,0,0" model=""/>
  </animation>
+ <animation name="chrysalis/characters/human/male/animations/bspace/bspace_2d_move_strafe.bspace">
+  <event name="footstep" time="0.18625587" endTime="0.24520543" parameter="" bone="LeftFoot" offset="0,0,0" dir="0,0,0" model=""/>
+  <event name="footstep" time="0.69828457" endTime="0.73202866" parameter="" bone="RightFoot" offset="0,0,0" dir="0,0,0" model=""/>
+ </animation>
 </anim_event_list>

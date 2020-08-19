@@ -1,6 +1,6 @@
 <ParaGroup>
  <Dimensions>
-  <Param Name="MoveSpeed" Min="0.2" Max="6.5" Cells="23"/>
+  <Param Name="MoveSpeed" Min="0.5" Max="6.5" Cells="23"/>
   <Param Name="TravelAngle" Min="-3.1400001" Max="3.1400001" Cells="29"/>
  </Dimensions>
  <ExampleList>

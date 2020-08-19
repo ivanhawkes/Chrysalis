@@ -6,7 +6,7 @@
 	</SurfaceType>
 
 	<SurfaceType name="mat_nodraw">
-		<Physics sound_obstruction="0.5" />
+		<Physics friction="0" elasticity="0" pierceability="15" />
 	</SurfaceType>
 
 	<SurfaceType name="mat_obstruction">
@@ -19,7 +19,7 @@
 
 	<!-- Construction and man made materials -->
 	<SurfaceType name="mat_concrete">
-		<Physics sound_obstruction="0.5" />
+		<Physics friction="1" elasticity="0.2" pierceability="3" sound_obstruction="0.5" />
 	</SurfaceType>
 
 	<SurfaceType name="mat_metal">
@@ -27,7 +27,7 @@
 	</SurfaceType>
 
 	<SurfaceType name="mat_wood">
-		<Physics sound_obstruction="0.5" />
+		<Physics friction="0.5" elasticity="0.05" breakable_id="2" pierceability="7"  break_energy="7000" hole_size="1.4" hit_points="10" hit_radius="0.4" hit_maxdmg="10" can_shatter="1" sound_obstruction="0.5" />
 	</SurfaceType>
 
 	<SurfaceType name="mat_plaster">
@@ -55,23 +55,28 @@
 		<Physics sound_obstruction="0.5" />
 	</SurfaceType>
 
-	<SurfaceType name="mat_ice">
-		<Physics sound_obstruction="0.5" />
+	<SurfaceType name="mat_ice" type="ice_breakable">
+		<Physics friction="0.1" elasticity="0.1" pierceability="7" can_shatter="1" sound_obstruction="0.5" />
 	</SurfaceType>
 
 	<SurfaceType name="mat_rock">
-		<Physics sound_obstruction="0.5" />
+		<Physics friction="0.7" elasticity="0" pierceability="3" sound_obstruction="0.5" />
 	</SurfaceType>
 
 	<SurfaceType name="mat_rock_dusty">
-		<Physics sound_obstruction="0.5" />
+		<Physics friction="0.7" elasticity="0" pierceability="3" sound_obstruction="0.5" />
 	</SurfaceType>
 
 	<SurfaceType name="mat_soil">
-		<Physics sound_obstruction="0.5" />
+		<Physics friction="0.35" elasticity="0" pierceability="7" can_shatter="1" sound_obstruction="0.5" />
 	</SurfaceType>
 
 	<SurfaceType name="mat_grass">
+		<Physics friction="0.6" elasticity="-2"  pierceability="14" no_collide="1" can_shatter="1" sound_obstruction="0.5" />
+		<AI fImpactRadius="2.5" fImpactSoundRadius="20" fFootStepRadius="30" proneMult="0.2" crouchMult="0.5" movingMult="2.5" />
+	</SurfaceType>
+
+	<SurfaceType name="mat_gravel">
 		<Physics sound_obstruction="0.5" />
 	</SurfaceType>
 
@@ -81,47 +86,47 @@
 
 	<!-- Flesh, for body part damage. -->
 	<SurfaceType name="mat_flesh">
-		<Physics sound_obstruction="0.5" />
+		<Physics friction="0.6" elasticity="-2" pierceability="10" can_shatter="1" sound_obstruction="0.5" />
 	</SurfaceType>
 
 	<SurfaceType name="mat_flesh_head">
-		<Physics sound_obstruction="0.5" />
+		<Physics friction="1.1" elasticity="-2" pierceability="5" can_shatter="1" />
 	</SurfaceType>
 
 	<SurfaceType name="mat_flesh_torso">
-		<Physics sound_obstruction="0.5" />
+		<Physics friction="1.1" elasticity="-2" pierceability="5" can_shatter="1" />
 	</SurfaceType>
 
 	<SurfaceType name="mat_flesh_left_arm">
-		<Physics sound_obstruction="0.5" />
+		<Physics friction="1.1" elasticity="-2" pierceability="5" can_shatter="1" />
 	</SurfaceType>
 
 	<SurfaceType name="mat_flesh_left_hand">
-		<Physics sound_obstruction="0.5" />
+		<Physics friction="1.1" elasticity="-2" pierceability="5" can_shatter="1" />
 	</SurfaceType>
 
 	<SurfaceType name="mat_flesh_right_arm">
-		<Physics sound_obstruction="0.5" />
+		<Physics friction="1.1" elasticity="-2" pierceability="5" can_shatter="1" />
 	</SurfaceType>
 
 	<SurfaceType name="mat_flesh_right_hand">
-		<Physics sound_obstruction="0.5" />
+		<Physics friction="1.1" elasticity="-2" pierceability="5" can_shatter="1" />
 	</SurfaceType>
 
 	<SurfaceType name="mat_flesh_left_leg">
-		<Physics sound_obstruction="0.5" />
+		<Physics friction="0.4" elasticity="-2" pierceability="5" can_shatter="1" />
 	</SurfaceType>
 
 	<SurfaceType name="mat_flesh_left_foot">
-		<Physics sound_obstruction="0.5" />
+		<Physics friction="1.1" elasticity="-2" pierceability="5" can_shatter="1" />
 	</SurfaceType>
 
 	<SurfaceType name="mat_flesh_right_leg">
-		<Physics sound_obstruction="0.5" />
+		<Physics friction="0.4" elasticity="-2" pierceability="5" can_shatter="1" />
 	</SurfaceType>
 
 	<SurfaceType name="mat_flesh_right_foot">
-		<Physics sound_obstruction="0.5" />
+		<Physics friction="1.1" elasticity="-2" pierceability="5" can_shatter="1" />
 	</SurfaceType>
 
 	<!-- Projectiles -->

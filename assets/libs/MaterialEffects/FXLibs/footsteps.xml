@@ -1,0 +1,23 @@
+<FXLib>
+
+	<Effect name="default">
+		<Audio trigger="footsteps_surfacetype_concrete_left">
+		</Audio>
+	</Effect>
+
+	<Effect name="concrete">
+		<Audio trigger="footsteps_surfacetype_concrete_left">
+		</Audio>
+	</Effect>
+	
+	<Effect name="grass">
+		<Audio trigger="footstep_grass_left">
+		</Audio>
+	</Effect>
+
+	<Effect name="gravel">
+		<Audio trigger="footstep_gravel_left">
+		</Audio>
+	</Effect>
+
+</FXLib>

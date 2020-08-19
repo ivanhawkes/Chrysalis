@@ -21,7 +21,7 @@
         "r_ShadersEditing": "1",
         "r_Width": "1440",
         "r_displayinfo": "0",
-        "s_AudioImplName": "CryAudioImplWwise",
+        "s_ImplName": "CryAudioImplFmod",
         "sys_PakPriority": "0"
     },
     "content": {
