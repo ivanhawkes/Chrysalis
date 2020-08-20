@@ -49,6 +49,11 @@ void CActorControllerComponent::Initialize()
 	// Character movement controller.
 	m_pCharacterControllerComponent = m_pEntity->GetOrCreateComponent<Cry::DefaultComponents::CCharacterControllerComponent>();
 
+	// TODO: Noticed in Twitch stream they offset the controller by 1m in the +Z.
+	// BROKEN: Not sure what else is needed.
+	m_pCharacterControllerComponent->SetTransformMatrix(Matrix34::Create(Vec3(1.0f), IDENTITY, Vec3(0.0f, 0.0f, 1.0f)));
+
+
 	// We need to know which actor component we are paired with. The actor controller class is pretty worthless without this.
 	m_pActorComponent = m_pEntity->GetOrCreateComponent<CActorComponent>();
 	CRY_ASSERT_MESSAGE(m_pActorComponent, "The actor controller component must be paired with an actor component.");

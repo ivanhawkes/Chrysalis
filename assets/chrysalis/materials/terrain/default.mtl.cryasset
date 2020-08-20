@@ -1,0 +1,12 @@
+<AssetMetadata version="0" type="Material" guid="ca6cbd7c-9f36-2bbc-1031-5ccf1554c568" source="" timestamp="1597939169">
+ <Files>
+  <File path="default.mtl"/>
+ </Files>
+ <Details>
+  <Detail name="subMaterialCount">0</Detail>
+  <Detail name="textureCount">1</Detail>
+ </Details>
+ <Dependencies>
+  <Path usageCount="1">chrysalis/textures/terrain/cement.dds</Path>
+ </Dependencies>
+</AssetMetadata>

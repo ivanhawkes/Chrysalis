@@ -2,16 +2,11 @@
  <AssetMetadata version="0" type="Texture" guid="2ccd3352-a0c8-326a-716d-b263c56f4e45" source="flashlight_projector.tif">
   <Files>
    <File path="flashlight_projector.dds"/>
-   <File path="flashlight_projector.dds.1"/>
-   <File path="flashlight_projector.dds.2"/>
-   <File path="flashlight_projector.dds.3"/>
-   <File path="flashlight_projector.dds.4"/>
-   <File path="flashlight_projector.dds.5"/>
   </Files>
   <Details>
-   <Detail name="width">512</Detail>
-   <Detail name="height">512</Detail>
-   <Detail name="mipCount">8</Detail>
+   <Detail name="width">1024</Detail>
+   <Detail name="height">1024</Detail>
+   <Detail name="mipCount">9</Detail>
   </Details>
  </AssetMetadata>
 </cryasset>

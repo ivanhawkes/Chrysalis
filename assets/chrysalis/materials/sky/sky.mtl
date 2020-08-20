@@ -1,5 +1,8 @@
-<Material MtlFlags="524288" Shader="SkyHDR" GenMask="1" StringGenMask="" SurfaceType="" MatTemplate="" Diffuse="1,1,1" Specular="0,0,0" Emissive="0,0,0" Shininess="10" Opacity="1" LayerAct="1">
+<Material MtlFlags="524288" Shader="SkyHDR" GenMask="0" StringGenMask="" SurfaceType="" MatTemplate="" Diffuse="1,1,1" Specular="0,0,0" Opacity="1" Shininess="9.9450016" vertModifType="0" LayerAct="1">
  <Textures>
-  <Texture Map="Diffuse" File="textures/defaults/16_grey.dds"/>
+  <Texture Map="Diffuse" File="chrysalis/textures/reference/zone_system.dds">
+   <TexMod TexMod_RotateType="0" TexMod_TexGenType="0" TexMod_bTexGenProjected="0"/>
+  </Texture>
  </Textures>
+ <PublicParams SkyboxAngle="0"/>
 </Material>

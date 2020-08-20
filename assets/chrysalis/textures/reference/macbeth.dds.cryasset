@@ -1,12 +1,10 @@
-<cryasset>
- <AssetMetadata version="0" type="Texture" guid="c2a09013-e878-596d-1819-a8953e96dab1" source="macbeth.tif">
-  <Files>
-   <File path="macbeth.dds"/>
-  </Files>
-  <Details>
-   <Detail name="width">512</Detail>
-   <Detail name="height">512</Detail>
-   <Detail name="mipCount">1</Detail>
-  </Details>
- </AssetMetadata>
-</cryasset>
+<AssetMetadata version="0" type="Texture" guid="53bcdae7-035b-197c-2b20-8df13c31055d" source="macbeth.tif">
+ <Files>
+  <File path="macbeth.dds"/>
+ </Files>
+ <Details>
+  <Detail name="width">512</Detail>
+  <Detail name="height">512</Detail>
+  <Detail name="mipCount">8</Detail>
+ </Details>
+</AssetMetadata>

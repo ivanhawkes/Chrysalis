@@ -1,4 +1,4 @@
-<AssetMetadata version="0" type="Level" guid="9ccfc630-dfaa-366e-662a-277a9c30d194" source="" timestamp="1568289859">
+<AssetMetadata version="0" type="Level" guid="9ccfc630-dfaa-366e-662a-277a9c30d194" source="" timestamp="1597941137">
  <Files>
   <File path="empty/empty.level"/>
  </Files>
@@ -9,7 +9,7 @@
   <Path>%engine%/engineassets/icons/livepreview.dds</Path>
   <Path>%engine%/engineassets/icons/lowmemoryusage.dds</Path>
   <Path>%engine%/engineassets/textures/grey.dds</Path>
-  <Path>chrysalis/characters/human/male/animations/motus-mobility-pro/stand-relaxed/stand_relaxed_idle.caf</Path>
+  <Path>chrysalis/characters/human/male/animations/motus_mobility_pro/stand_relaxed/stand_relaxed_idle.caf</Path>
   <Path>chrysalis/characters/human/male/male.cdf</Path>
   <Path usageCount="1">libs/environmentpresets/chrysalis/levels/Empty.env</Path>
   <Path>scripts/network/compressionpolicy.xml</Path>

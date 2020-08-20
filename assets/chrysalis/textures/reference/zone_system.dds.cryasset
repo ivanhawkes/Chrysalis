@@ -1,12 +1,10 @@
-<cryasset>
- <AssetMetadata version="0" type="Texture" guid="d07cd8c5-0e93-34df-44f0-6403a33978d7" source="zone_system.tif">
-  <Files>
-   <File path="zone_system.dds"/>
-  </Files>
-  <Details>
-   <Detail name="width">512</Detail>
-   <Detail name="height">512</Detail>
-   <Detail name="mipCount">1</Detail>
-  </Details>
- </AssetMetadata>
-</cryasset>
+<AssetMetadata version="0" type="Texture" guid="bbf4308c-d6b8-617b-68b8-afd05a7689f4" source="zone_system.tif">
+ <Files>
+  <File path="zone_system.dds"/>
+ </Files>
+ <Details>
+  <Detail name="width">512</Detail>
+  <Detail name="height">512</Detail>
+  <Detail name="mipCount">8</Detail>
+ </Details>
+</AssetMetadata>

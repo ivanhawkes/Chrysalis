@@ -1,4 +1,4 @@
-<AssetMetadata version="0" type="Material" guid="50f0df7c-3625-0813-cf36-411b78a97dce">
+<AssetMetadata version="0" type="Material" guid="50f0df7c-3625-0813-cf36-411b78a97dce" timestamp="1597899274">
  <Files>
   <File path="sky.mtl"/>
  </Files>
@@ -7,6 +7,6 @@
   <Detail name="textureCount">1</Detail>
  </Details>
  <Dependencies>
-  <Path usageCount="1">textures/defaults/16_grey.dds</Path>
+  <Path usageCount="1">chrysalis/textures/reference/zone_system.dds</Path>
  </Dependencies>
 </AssetMetadata>

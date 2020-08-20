@@ -80,7 +80,7 @@ void CActorComponent::Initialize()
 
 	// Contoller.
 	m_pActorControllerComponent = m_pEntity->GetOrCreateComponent<CActorControllerComponent>();
-
+	
 	// Spell book.
 	m_pSpellbookComponent = m_pEntity->GetOrCreateComponent<CSpellbookComponent>();
 

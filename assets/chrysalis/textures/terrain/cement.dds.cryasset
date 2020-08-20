@@ -1,6 +1,6 @@
-<AssetMetadata version="0" type="Texture" guid="6bdc9364-cc9f-1762-1491-2d0d45ce761a" source="grid.tif">
+<AssetMetadata version="0" type="Texture" guid="ac3ccb5c-261f-171f-012d-837c23fe7446" source="cement.tif">
  <Files>
-  <File path="grid.dds"/>
+  <File path="cement.dds"/>
  </Files>
  <Details>
   <Detail name="width">1024</Detail>

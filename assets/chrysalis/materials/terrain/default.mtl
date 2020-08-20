@@ -1,0 +1,8 @@
+<Material MtlFlags="526336" Shader="Terrain.Layer" GenMask="200000000" StringGenMask="%TEMP_TERRAIN" SurfaceType="mat_concrete" MatTemplate="" Diffuse="1,1,1" Opacity="1" Shininess="9.9450016" CloakAmount="0" vertModifType="0" LayerAct="1">
+ <Textures>
+  <Texture Map="Diffuse" File="chrysalis/textures/terrain/cement.dds">
+   <TexMod TexMod_RotateType="0" TexMod_TexGenType="0" TexMod_bTexGenProjected="0"/>
+  </Texture>
+ </Textures>
+ <PublicParams BlendFactor="0" BlendFalloff="1" DetailTextureHighPassRange="15" DetailTextureStrength="1" DetailTextureStrengthFade="1" NormalMapBumpiness="1"/>
+</Material>

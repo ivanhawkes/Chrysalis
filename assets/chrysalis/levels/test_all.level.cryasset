@@ -1,4 +1,4 @@
-<AssetMetadata version="0" type="Level" guid="93671371-981b-923e-3d39-504372bc302b" source="" timestamp="1596290686">
+<AssetMetadata version="0" type="Level" guid="93671371-981b-923e-3d39-504372bc302b" source="" timestamp="1597940620">
  <Files>
   <File path="test_all/test_all.level"/>
  </Files>
@@ -14,6 +14,7 @@
   <Path>%engine%/engineassets/materials/fog/oceanoutof.mtl</Path>
   <Path>%engine%/engineassets/materials/fog/oceanoutoflowspec.mtl</Path>
   <Path>%engine%/engineassets/materials/lens_optics.mtl</Path>
+  <Path>%engine%/engineassets/materials/material_terrain_default.mtl</Path>
   <Path>%engine%/engineassets/materials/water/wateroceanbottom.mtl</Path>
   <Path>%engine%/engineassets/objects/editorprimitive.mtl</Path>
   <Path>%engine%/engineassets/objects/primitive_sphere.cgf</Path>
@@ -21,6 +22,7 @@
   <Path>%engine%/engineassets/texturemsg/defaultsolids.mtl</Path>
   <Path>%engine%/engineassets/texturemsg/replaceme.dds</Path>
   <Path>%engine%/engineassets/textures/skys/night/half_moon.dds</Path>
+  <Path>%engine%/engineassets/textures/white.dds</Path>
   <Path>chrysalis/characters/human/male/animations/interaction/picking_up_object.caf</Path>
   <Path>chrysalis/characters/human/male/animations/motus_mobility_pro/crouch/crouch_idle.caf</Path>
   <Path>chrysalis/characters/human/male/animations/motus_mobility_pro/crouch/crouch_idle_v2.caf</Path>
@@ -327,21 +329,10 @@
   <Path>chrysalis/characters/human/male/male_controller_defs.xml</Path>
   <Path>chrysalis/characters/human/male/male_fragment_ids.xml</Path>
   <Path>chrysalis/characters/human/male/male_tags.xml</Path>
-  <Path>chrysalis/objects/desk/workdesk/animations/door_close.caf</Path>
-  <Path>chrysalis/objects/desk/workdesk/animations/door_open.caf</Path>
-  <Path>chrysalis/objects/desk/workdesk/animations/drawer_bottom_close.caf</Path>
-  <Path>chrysalis/objects/desk/workdesk/animations/drawer_bottom_open.caf</Path>
-  <Path>chrysalis/objects/desk/workdesk/animations/drawer_top_close.caf</Path>
-  <Path>chrysalis/objects/desk/workdesk/animations/drawer_top_open.caf</Path>
-  <Path>chrysalis/objects/desk/workdesk/controller_defs.xml</Path>
-  <Path>chrysalis/objects/desk/workdesk/fragment_ids.xml</Path>
-  <Path>chrysalis/objects/desk/workdesk/tags.xml</Path>
-  <Path>chrysalis/objects/desk/workdesk/textures/workdesk_albedo.dds</Path>
-  <Path>chrysalis/objects/desk/workdesk/textures/workdesk_ddna.dds</Path>
-  <Path>chrysalis/objects/desk/workdesk/textures/workdesk_spec.dds</Path>
-  <Path>chrysalis/objects/desk/workdesk/workdesk.cdf</Path>
-  <Path>chrysalis/objects/desk/workdesk/workdesk.mtl</Path>
-  <Path>chrysalis/objects/items/books/book.mtl</Path>
+  <Path>chrysalis/materials/reference/macbeth.mtl</Path>
+  <Path>chrysalis/materials/reference/zone_system.mtl</Path>
+  <Path>chrysalis/materials/terrain/default.mtl</Path>
+  <Path>chrysalis/materials/whitebox/grid.mtl</Path>
   <Path>chrysalis/objects/items/flashlight/maglite_02d.cgf</Path>
   <Path>chrysalis/objects/items/flashlight/maglite_02d.mtl</Path>
   <Path>chrysalis/textures/lights/flashlight_projector.dds</Path>
@@ -351,16 +342,16 @@
   <Path>editor/resourcecache/chrysalis/characters/human/male/textures/male_ddna.dds</Path>
   <Path>editor/resourcecache/chrysalis/characters/human/male/textures/male_diff.dds</Path>
   <Path>editor/resourcecache/chrysalis/characters/human/male/textures/male_spec.dds</Path>
-  <Path>editor/resourcecache/chrysalis/objects/desk/workdesk/textures/workdesk_albedo.dds</Path>
-  <Path>editor/resourcecache/chrysalis/objects/desk/workdesk/textures/workdesk_ddna.dds</Path>
-  <Path>editor/resourcecache/chrysalis/objects/desk/workdesk/textures/workdesk_spec.dds</Path>
   <Path>editor/resourcecache/chrysalis/objects/items/flashlight/maglite_02d_ddna.dds</Path>
   <Path>editor/resourcecache/chrysalis/objects/items/flashlight/maglite_02d_diff.dds</Path>
-  <Path>editor/resourcecache/engineassets/textures/hex_ddn.dds</Path>
+  <Path>editor/resourcecache/chrysalis/textures/lights/flashlight_projector.dds</Path>
+  <Path>editor/resourcecache/chrysalis/textures/reference/macbeth.dds</Path>
+  <Path>editor/resourcecache/chrysalis/textures/reference/zone_system.dds</Path>
+  <Path>editor/resourcecache/chrysalis/textures/terrain/cement.dds</Path>
+  <Path>editor/resourcecache/chrysalis/textures/whitebox/grid.dds</Path>
   <Path>engineassets/materials/material_terrain_default.mtl</Path>
   <Path>engineassets/materials/water/ocean_default.mtl</Path>
   <Path>engineassets/texturemsg/defaultsolids.mtl</Path>
-  <Path>engineassets/textures/hex_ddn.dds</Path>
   <Path usageCount="1">libs/environmentpresets/test_all.env</Path>
  </Dependencies>
 </AssetMetadata>

@@ -1,5 +1,8 @@
-<Material MtlFlags="524288" Shader="Referenceimage" GenMask="0" StringGenMask="" SurfaceType="mat_metal" MatTemplate="" Diffuse="1,1,1" Specular="0,0,0" Opacity="1" Shininess="10" vertModifType="0" LayerAct="1">
+<Material MtlFlags="524288" Shader="Illum" GenMask="4000000000000" StringGenMask="%SUBSURFACE_SCATTERING" SurfaceType="mat_concrete" MatTemplate="" Diffuse="1,1,1" Specular="0,0,0" Opacity="1" Shininess="9.9450035" vertModifType="0" LayerAct="1">
  <Textures>
-  <Texture Map="Diffuse" File="chrysalis/textures/reference/macbeth.dds"/>
+  <Texture Map="Diffuse" File="chrysalis/textures/reference/macbeth.dds">
+   <TexMod TexMod_RotateType="0" TexMod_TexGenType="0" TexMod_bTexGenProjected="0"/>
+  </Texture>
  </Textures>
+ <PublicParams EmittanceMapGamma="1" SSSIndex="0"/>
 </Material>

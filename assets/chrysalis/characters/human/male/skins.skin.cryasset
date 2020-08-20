@@ -8,11 +8,6 @@
   <Detail name="vertexCount">18234</Detail>
   <Detail name="16BitPrecision">false</Detail>
   <Detail name="bonesCount">76</Detail>
-  <Detail name="materialCount">3</Detail>
-  <Detail name="triangleCount">31600</Detail>
-  <Detail name="vertexCount">18234</Detail>
-  <Detail name="16BitPrecision">false</Detail>
-  <Detail name="bonesCount">76</Detail>
  </Details>
  <Dependencies>
   <Path usageCount="1">./human_male.mtl</Path>

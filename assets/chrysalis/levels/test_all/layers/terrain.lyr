@@ -1,3 +1,9 @@
 <ObjectLayer>
- <Layer Name="Terrain" FullName="Terrain" GUID="838d61ea-b77a-43fd-1d47-42203202cc63" Hidden="0" Frozen="0" Expanded="0" Type="2" Exportable="1" ExportLayerPak="1" DefaultLoaded="0" HavePhysics="1" IsDefaultColor="1"/>
+ <Layer Name="Terrain" FullName="Terrain" GUID="838d61ea-b77a-43fd-1d47-42203202cc63" Hidden="0" Frozen="0" Expanded="0" Type="2" Exportable="1" ExportLayerPak="1" DefaultLoaded="0" HavePhysics="1" IsDefaultColor="1" Color="4671303" Timestamp="1597940409">
+  <Files>
+   <File path="LevelData/Heightmap.dat"/>
+   <File path="LevelData/TerrainTexture.xml"/>
+   <File path="TerrainTexture.pak"/>
+  </Files>
+ </Layer>
 </ObjectLayer>

@@ -59,13 +59,15 @@ Solutions/
 /assets/chrysalis/objects/items/compass/
 /assets/dark-vale/
 
+# Is some of this also generated?
+/assets/engineassets/
+/engineassets
+
 # Keep out the generated files and folders.
 /assets/_tmp/
-/assets/engineassets/
 /assets/textures/cubemaps/
 /assets/textures/reference/.mayaSwatches/
 /Backup/
-/engineassets
 /Editor/ResourceCache/
 _newpreview_.mtl
 error*.*
