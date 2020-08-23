@@ -10,6 +10,8 @@
 #include <Components/Animation/ActorAnimationComponent.h>
 #include <Components/Actor/ActorComponent.h>
 #include <Components/Spells/SpellbookComponent.h>
+#include <Actor/Animation/Actions/ActorAnimationActionEmote.h>
+#include <Actor/Animation/ActorAnimation.h>
 
 
 namespace Chrysalis::ECS
@@ -336,7 +338,7 @@ bool IsSpellCastable(const Spell& spell, const SourceEntity& sourceEntity, const
 
 void SpellCastOpen(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
-	// Check for spell cast components.
+	// Query the registry.
 	spellRegistry.view<SpellActionOpen, Name, Spell, SpellcastExecution, SourceEntity, TargetEntity>().each
 	([dt, &spellRegistry, &actorRegistry](auto entity, auto& spellActionOpen, auto& name, auto& spell, auto& spellcastExecution, auto& sourceEntity, auto& targetEntity) {
 		// Check validity of the spell cast request.
@@ -388,7 +390,7 @@ void SpellCastOpen(float dt, entt::registry& spellRegistry, entt::registry& acto
 
 void SpellCastTake(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
-	// Check for spell cast components.
+	// Query the registry.
 	spellRegistry.view<SpellActionTake, Name, Spell, SpellcastExecution, SourceEntity, TargetEntity>().each
 	([dt, &spellRegistry, &actorRegistry](auto entity, auto& spellActionTake, auto& name, auto& spell, auto& spellcastExecution, auto& sourceEntity, auto& targetEntity) {
 		// Check validity of the spell cast request.
@@ -406,7 +408,7 @@ void SpellCastTake(float dt, entt::registry& spellRegistry, entt::registry& acto
 
 void SpellCastDrop(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
-	// Check for spell cast components.
+	// Query the registry.
 	spellRegistry.view<SpellActionDrop, Name, Spell, SpellcastExecution, SourceEntity, TargetEntity>().each
 	([dt, &spellRegistry, &actorRegistry](auto entity, auto& spellActionDrop, auto& name, auto& spell, auto& spellcastExecution, auto& sourceEntity, auto& targetEntity) {
 		// Check validity of the spell cast request.
@@ -424,7 +426,7 @@ void SpellCastDrop(float dt, entt::registry& spellRegistry, entt::registry& acto
 
 void SpellCastSwitch(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
-	// Check for spell cast components.
+	// Query the registry.
 	spellRegistry.view<SpellActionSwitch, Name, Spell, SpellcastExecution, SourceEntity, TargetEntity>().each
 	([dt, &spellRegistry, &actorRegistry](auto entity, auto& spellActionSwitch, auto& name, auto& spell, auto& spellcastExecution, auto& sourceEntity, auto& targetEntity) {
 		// Check validity of the spell cast request.
@@ -481,12 +483,48 @@ void SpellCastSwitch(float dt, entt::registry& spellRegistry, entt::registry& ac
 }
 
 
+void SpellCastAnimationFragmentEmote(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
+{
+	// Query the registry.
+	spellRegistry.view<AnimationFragmentEmote, TargetEntity>().each
+	([dt, &spellRegistry, &actorRegistry](auto entity, auto& animationFragmentEmote, auto& targetEntity) {
+		if (auto pTargetEntity = gEnv->pEntitySystem->GetEntity(targetEntity.cryTargetEntityId))
+		{
+			if (auto pActorComponent = pTargetEntity->GetComponent<CActorComponent>())
+			{
+				// HACK: Shouldn't be needed but the tags aren't loaded yet...how do they get loaded?
+				//if (auto pActorAnimationComponent = pTargetEntity->GetComponent<CActorAnimationComponent>())
+				{
+					// The actor animation component is responsible for maintaining the context.
+					//const auto& pContext = pActorAnimationComponent->GetContext();
+
+					// The mannequin tags for an actor will need to be loaded. Because these are found in the controller definition,
+					// they are potentially different for every actor. 
+					//GetMannequinUserParams<SActorMannequinParams>(pContext);
+
+					// HACK: Hard coded for now.
+					auto emoteStr = string(animationFragmentEmote.value).MakeLower();
+					TagID emoteTagId = GetEmoteTagId(emoteStr);
+
+					auto emoteAction = new CActorAnimationActionEmote(emoteTagId);
+					pActorComponent->QueueAction(*emoteAction);
+				}
+			}
+		}
+
+		// Destroy the entity. Assumption is each entity only has one of these sorts of spell components on it. 
+		spellRegistry.destroy(entity);
+		});
+}
+
+
 void SystemWorldSpellCasts(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	SpellCastOpen(dt, spellRegistry, actorRegistry);
 	SpellCastTake(dt, spellRegistry, actorRegistry);
 	SpellCastDrop(dt, spellRegistry, actorRegistry);
 	SpellCastSwitch(dt, spellRegistry, actorRegistry);
+	SpellCastAnimationFragmentEmote(dt, spellRegistry, actorRegistry);
 }
 
 

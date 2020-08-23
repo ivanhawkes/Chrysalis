@@ -288,7 +288,9 @@ void CSimulation::LoadPrototypeData()
 		SpellActionUnlock, SpellActionLock,
 		RenderLight,
 		Timer, Range, Aura, Buff, Debuff, Cooldown,
-		Channelled, AnimationFragment, AnimationTag, MovementFactor, CancelOnMovement, AreaOfEffect,
+		Channelled, 
+		AnimationFragmentSpellCast, AnimationFragmentEmote, AnimationTag,
+		MovementFactor, CancelOnMovement, AreaOfEffect,
 		CrowdControlBlind, CrowdControlDisarm, CrowdControlMovementRestricted, CrowdControlRotationRestricted, CrowdControlFlee, CrowdControlMindControl,
 		CrowdControlPull, CrowdControlTaunt, CrowdControlThrow, CrowdControlKockback, CrowdControlKnockdown, CrowdControlPolymorph, CrowdControlSilence
 		>(spellSerial);
@@ -315,7 +317,9 @@ void CSimulation::SavePrototypeData()
 		SpellActionUnlock, SpellActionLock,
 		RenderLight,
 		Timer, Range, Aura, Buff, Debuff, Cooldown,
-		Channelled, AnimationFragment, AnimationTag, MovementFactor, CancelOnMovement, AreaOfEffect,
+		Channelled, 
+		AnimationFragmentSpellCast, AnimationFragmentEmote, AnimationTag,
+		MovementFactor, CancelOnMovement, AreaOfEffect,
 		CrowdControlBlind, CrowdControlDisarm, CrowdControlMovementRestricted, CrowdControlRotationRestricted, CrowdControlFlee, CrowdControlMindControl,
 		CrowdControlPull, CrowdControlTaunt, CrowdControlThrow, CrowdControlKockback, CrowdControlKnockdown, CrowdControlPolymorph, CrowdControlSilence
 		>(spellSerial);

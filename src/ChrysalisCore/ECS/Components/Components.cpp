@@ -79,14 +79,17 @@ void RegisterComponentsWithMeta()
 	// Range checking.
 	RegisterTypeWithMeta<Range>("range"_hs);
 
+	// Animation components.
+	RegisterTypeWithMeta<AnimationFragmentSpellCast>("animation-fragment-spellcast"_hs);
+	RegisterTypeWithMeta<AnimationFragmentEmote>("animation-fragment-emote"_hs);
+	RegisterTypeWithMeta<AnimationTag>("animation-tag"_hs);
+
 	// Simple components.
 	RegisterTypeWithMeta<Timer>("timer"_hs);
 	RegisterTypeWithMeta<Aura>("aura"_hs);
 	RegisterTypeWithMeta<Buff>("buff"_hs);
 	RegisterTypeWithMeta<Debuff>("debuff"_hs);
 	RegisterTypeWithMeta<Channelled>("channelled"_hs);
-	RegisterTypeWithMeta<AnimationFragment>("animation-fragment"_hs);
-	RegisterTypeWithMeta<AnimationTag>("animation-tag"_hs);
 	RegisterTypeWithMeta<MovementFactor>("movement-factor"_hs);
 	RegisterTypeWithMeta<CancelOnMovement>("cancel-on-movement"_hs);
 	RegisterTypeWithMeta<AreaOfEffect>("area-of-effect"_hs);

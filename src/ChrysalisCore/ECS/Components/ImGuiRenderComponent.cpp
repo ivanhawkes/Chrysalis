@@ -311,16 +311,6 @@ void ImGuiRenderComponent(Channelled ar)
 }
 
 
-void ImGuiRenderComponent(AnimationFragment ar)
-{
-}
-
-
-void ImGuiRenderComponent(AnimationTag ar)
-{
-}
-
-
 void ImGuiRenderComponent(MovementFactor ar)
 {
 	ImGui::InputFloat("Value:", &ar.value);

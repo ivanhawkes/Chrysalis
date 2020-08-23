@@ -25,6 +25,7 @@
   <entity entityId="22"/>
   <entity entityId="23"/>
   <entity entityId="24"/>
+  <entity entityId="25"/>
  </entities>
  <components>
   <name CryXmlVersion="2" name="Fireball" displayName="Fireball" entityId="0"/>
@@ -52,6 +53,7 @@
   <name CryXmlVersion="2" name="Hellfire" displayName="Hellfire" entityId="22"/>
   <name CryXmlVersion="2" name="Fear(Priest)" displayName="Fear(Priest)" entityId="23"/>
   <name CryXmlVersion="2" name="Truecast(Hunter)" displayName="Truecast(Hunter)" entityId="24"/>
+  <name CryXmlVersion="2" name="Emote Test" displayName="Emote Test" entityId="25"/>
   <damage CryXmlVersion="2" targetTargetType="target" quantity="14" damageType="fire" entityId="0"/>
   <damage CryXmlVersion="2" targetTargetType="target" quantity="12" damageType="fire" entityId="2"/>
   <damage CryXmlVersion="2" targetTargetType="target" quantity="8" damageType="qi" entityId="7"/>
@@ -104,6 +106,7 @@
   <spell CryXmlVersion="2" castDuration="2" sourceTargetType="self" targetTargetType="singleTarget" spellcastPayload="onCompletion" entityId="22"/>
   <spell CryXmlVersion="2" castDuration="2" sourceTargetType="self" targetTargetType="singleTarget" spellcastPayload="immediate" entityId="23"/>
   <spell CryXmlVersion="2" castDuration="2" sourceTargetType="self" targetTargetType="singleTarget" spellcastPayload="immediate" entityId="24"/>
+  <spell CryXmlVersion="2" castDuration="2" sourceTargetType="self" targetTargetType="singleTarget" spellcastPayload="onCompletion" entityId="25"/>
   <spell-action-schematyc CryXmlVersion="2" entityId="9"/>
   <spell-action-drs CryXmlVersion="2" entityId="10"/>
   <spell-action-inspect CryXmlVersion="2" entityId="11"/>
@@ -116,7 +119,7 @@
   <spell-action-close CryXmlVersion="2" entityId="18"/>
   <spell-action-unlock CryXmlVersion="2" entityId="19"/>
   <spell-action-lock CryXmlVersion="2" entityId="20"/>
-  <render-light CryXmlVersion="2" lensFlareName="" attachToSun="false" flareEnable="false" flareFOV="360" attenuationBulbSize="0.1" ignoreVisAreas="false" affectVolumetricFog="true" volumetricFogOnly="false" onlyAffectThisArea="true" linkToSkyColor="false" ambient="false" fogRadialLobe="0" GIMode="none" diffuseMultiplier="4" specularMultiplier="1.25" shadowSpec="high" shadowBias="1" shadowSlopeBias="1" shadownResolution="1" shadowUpdateMin="4" shadowMinRes="0" shadowUpdateRatio="0" style="0" speed="1" shape="point" twoSided="false" texturePath="chrysalis/textures/lights/flashlight_projector.dds" width="1" height="1" nearPlane="0" materialPath="" angle="6.2831855" radius="13" fovAngle="0.78539819" effectSlotMaterial="" entityId="21">
+  <render-light CryXmlVersion="2" lensFlareName="" attachToSun="false" flareEnable="false" flareFOV="360" attenuationBulbSize="0.1" ignoreVisAreas="false" affectVolumetricFog="true" volumetricFogOnly="false" onlyAffectThisArea="true" linkToSkyColor="false" ambient="false" fogRadialLobe="0" GIMode="none" diffuseMultiplier="4" specularMultiplier="1.25" shadowSpec="None" shadowBias="1" shadowSlopeBias="1" shadownResolution="1" shadowUpdateMin="4" shadowMinRes="0" shadowUpdateRatio="0" style="0" speed="1" shape="point" twoSided="false" texturePath="chrysalis/textures/lights/flashlight_projector.dds" width="1" height="1" nearPlane="0" materialPath="" angle="6.2831855" radius="13" fovAngle="0.78539819" effectSlotMaterial="" entityId="21">
    <Color r="1" g="1" b="1" a="1"/>
   </render-light>
   <timer CryXmlVersion="2" value="12" entityId="22"/>
@@ -125,16 +128,16 @@
   <range CryXmlVersion="2" minRange="0" maxRange="30" entityId="24"/>
   <range CryXmlVersion="2" minRange="0" maxRange="30" entityId="22"/>
   <range CryXmlVersion="2" minRange="0" maxRange="30" entityId="23"/>
-  <range CryXmlVersion="2" minRange="0.3" maxRange="1.2" entityId="20"/>
-  <range CryXmlVersion="2" minRange="0.3" maxRange="1.2" entityId="19"/>
-  <range CryXmlVersion="2" minRange="0.3" maxRange="1.2" entityId="18"/>
-  <range CryXmlVersion="2" minRange="0.3" maxRange="1.2" entityId="17"/>
-  <range CryXmlVersion="2" minRange="0.3" maxRange="1.2" entityId="16"/>
-  <range CryXmlVersion="2" minRange="0.3" maxRange="1.2" entityId="13"/>
-  <range CryXmlVersion="2" minRange="0.3" maxRange="1.2" entityId="12"/>
-  <range CryXmlVersion="2" minRange="0.3" maxRange="1.2" entityId="11"/>
-  <range CryXmlVersion="2" minRange="0.3" maxRange="1.2" entityId="10"/>
-  <range CryXmlVersion="2" minRange="0.3" maxRange="1.2" entityId="9"/>
+  <range CryXmlVersion="2" minRange="0.30000001" maxRange="1.2" entityId="20"/>
+  <range CryXmlVersion="2" minRange="0.30000001" maxRange="1.2" entityId="19"/>
+  <range CryXmlVersion="2" minRange="0.30000001" maxRange="1.2" entityId="18"/>
+  <range CryXmlVersion="2" minRange="0.30000001" maxRange="1.2" entityId="17"/>
+  <range CryXmlVersion="2" minRange="0.30000001" maxRange="1.2" entityId="16"/>
+  <range CryXmlVersion="2" minRange="0.30000001" maxRange="1.2" entityId="13"/>
+  <range CryXmlVersion="2" minRange="0.30000001" maxRange="1.2" entityId="12"/>
+  <range CryXmlVersion="2" minRange="0.30000001" maxRange="1.2" entityId="11"/>
+  <range CryXmlVersion="2" minRange="0.30000001" maxRange="1.2" entityId="10"/>
+  <range CryXmlVersion="2" minRange="0.30000001" maxRange="1.2" entityId="9"/>
   <range CryXmlVersion="2" minRange="0" maxRange="30" entityId="8"/>
   <range CryXmlVersion="2" minRange="0" maxRange="30" entityId="7"/>
   <range CryXmlVersion="2" minRange="0" maxRange="30" entityId="6"/>
@@ -164,6 +167,8 @@
   <cooldown CryXmlVersion="2" value="1.5" entityId="1"/>
   <cooldown CryXmlVersion="2" value="1.5" entityId="0"/>
   <channelled CryXmlVersion="2" value="true" entityId="22"/>
+  <animation-fragment-emote CryXmlVersion="2" value="anger" entityId="25"/>
+  <animation-tag CryXmlVersion="2" value="" entityId="25"/>
   <movement-factor CryXmlVersion="2" value="0.75" entityId="23"/>
   <cancel-on-movement CryXmlVersion="2" value="true" entityId="22"/>
   <area-of-effect CryXmlVersion="2" value="4" entityId="22"/>
@@ -175,7 +180,7 @@
  </components>
  <meta>
   <component-types>
-   <component-type count="25"/>
+   <component-type count="26"/>
    <component-type count="0"/>
    <component-type count="0"/>
    <component-type count="5"/>
@@ -188,7 +193,7 @@
    <component-type count="0"/>
    <component-type count="1"/>
    <component-type count="1"/>
-   <component-type count="25"/>
+   <component-type count="26"/>
    <component-type count="1"/>
    <component-type count="1"/>
    <component-type count="1"/>
@@ -210,7 +215,8 @@
    <component-type count="12"/>
    <component-type count="1"/>
    <component-type count="0"/>
-   <component-type count="0"/>
+   <component-type count="1"/>
+   <component-type count="1"/>
    <component-type count="1"/>
    <component-type count="1"/>
    <component-type count="3"/>
@@ -228,6 +234,6 @@
    <component-type count="0"/>
    <component-type count="0"/>
   </component-types>
-  <entities count="25"/>
+  <entities count="26"/>
  </meta>
 </ecs>

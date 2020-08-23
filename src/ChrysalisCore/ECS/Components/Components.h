@@ -208,14 +208,18 @@ struct Range final
 };
 
 
+// Animation components.
+using AnimationFragmentSpellCast = SimpleComponent<string, "AnimationFragmentSpellCast"_hs>;	// An animation used when casting a spell.
+using AnimationFragmentEmote = SimpleComponent<string, "AnimationFragmentEmote"_hs>;			// An animation used to emote.
+using AnimationTag = SimpleComponent<string, "AnimationTag"_hs>;								// A tag to pass to mannequin.
+
+
 // Simple components.
 using Timer = SimpleComponent<float, "Timer"_hs>;							// A timer for counting up or down.
 using Aura = FlagComponent<"Aura"_hs>;										// Indicates this is an aura.
 using Buff = FlagComponent<"Buff"_hs>;										// Indicates this is a buff.
 using Debuff = FlagComponent<"Debuff"_hs>;									// Indicates this is a debuff.
 using Channelled = SimpleComponent<bool, "Channelled"_hs>;					// Spellcast is channlled - this may just be a pair of crowd controls or might work with them.
-using AnimationFragment = SimpleComponent<string, "AnimationFragment"_hs>;	// A fragment to pass to mannequin.
-using AnimationTag = SimpleComponent<string, "AnimationTag"_hs>;			// A tag to pass to mannequin.
 using MovementFactor = SimpleComponent<float, "MovementFactor"_hs>;			// Apply factor to movement. You can stop, slow, or accelerate an entity.
 using CancelOnMovement = SimpleComponent<bool, "cancel-on-movement"_hs>;	// If you move, something gets cancelled.
 using AreaOfEffect = SimpleComponent<float, "AreaOfEffect"_hs>;				// Flags something as an AOE and provides a radius for that AOE.

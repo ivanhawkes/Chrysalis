@@ -82,6 +82,9 @@ namespace Chrysalis
 MANNEQUIN_USER_PARAMS(SMannequinEmoteParams, EMOTE_FRAGMENTS, EMOTE_TAGS, EMOTE_TAGGROUPS, EMOTE_SCOPES, EMOTE_CONTEXTS, EMOTE_FRAGMENT_TAGS);
 
 
+TagID GetEmoteTagId(const string emoteName);
+
+
 class CActorAnimationActionEmote : public CAnimationAction
 {
 public:

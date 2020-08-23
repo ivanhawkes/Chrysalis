@@ -62,14 +62,17 @@ void ImGuiRenderComponent(ItemClass ar);
 // Range checking.
 void ImGuiRenderComponent(Range ar);
 
+// Animation components.
+void ImGuiRenderComponent(AnimationFragmentSpellCast ar) {};
+void ImGuiRenderComponent(AnimationFragmentEmote ar) {};
+void ImGuiRenderComponent(AnimationTag ar) {};
+
 // Simple components.
 void ImGuiRenderComponent(Timer ar);
 void ImGuiRenderComponent(Aura ar);
 void ImGuiRenderComponent(Buff ar);
 void ImGuiRenderComponent(Debuff ar);
 void ImGuiRenderComponent(Channelled ar);
-void ImGuiRenderComponent(AnimationFragment ar);
-void ImGuiRenderComponent(AnimationTag ar);
 void ImGuiRenderComponent(MovementFactor ar);
 void ImGuiRenderComponent(CancelOnMovement ar);
 void ImGuiRenderComponent(AreaOfEffect ar);
