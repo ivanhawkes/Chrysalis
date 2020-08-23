@@ -92,9 +92,6 @@ CActorAnimationActionEmote::CActorAnimationActionEmote(string emoteTag) :
 	CAnimationAction(EActorActionPriority::eAAP_Action, FRAGMENT_ID_INVALID, TAG_STATE_EMPTY)
 {
 	m_emoteTag = emoteTag;
-	//m_rootScope->GetActionController().GetContext()
-	//m_emoteParams = GetMannequinUserParams<SMannequinEmoteParams>(*m_context);
-	//CRY_ASSERT(m_emoteParams);
 }
 
 

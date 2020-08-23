@@ -111,6 +111,5 @@ private:
 
 	TagID m_emoteTagId {TAG_ID_INVALID};
 	string m_emoteTag;
-
 };
 }
