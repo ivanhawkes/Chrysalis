@@ -772,7 +772,7 @@ void CActorComponent::OnFunctionBarUse(int actionBarId)
 				switch (actionBarId)
 				{
 					case 1:
-						ECS::Simulation.CastSpellByName("Fireball", GetECSEntity(), pTargetActor->GetECSEntity(),
+						ECS::Simulation.CastSpellByName("Emote Test", GetECSEntity(), pTargetActor->GetECSEntity(),
 							GetEntityId(), pTargetActor->GetEntityId());
 						break;
 
@@ -1015,6 +1015,7 @@ void CActorComponent::OnInputFunctionBarUse(int activationMode, int buttonId)
 	{
 		case eAAM_OnPress:
 			CryLogAlways("CActorComponent::OnInputFunctionBarUse - Press: %d", buttonId);
+			OnFunctionBarUse(buttonId);
 			break;
 
 		case eAAM_OnHold:

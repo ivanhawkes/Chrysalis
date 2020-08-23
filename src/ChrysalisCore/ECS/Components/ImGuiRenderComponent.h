@@ -63,9 +63,9 @@ void ImGuiRenderComponent(ItemClass ar);
 void ImGuiRenderComponent(Range ar);
 
 // Animation components.
-void ImGuiRenderComponent(AnimationFragmentSpellCast ar) {};
-void ImGuiRenderComponent(AnimationFragmentEmote ar) {};
-void ImGuiRenderComponent(AnimationTag ar) {};
+void ImGuiRenderComponent(AnimationFragmentSpellCast ar);
+void ImGuiRenderComponent(AnimationFragmentEmote ar);
+void ImGuiRenderComponent(AnimationTag ar);
 
 // Simple components.
 void ImGuiRenderComponent(Timer ar);

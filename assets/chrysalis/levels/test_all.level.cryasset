@@ -1,4 +1,4 @@
-<AssetMetadata version="0" type="Level" guid="93671371-981b-923e-3d39-504372bc302b" source="" timestamp="1598195995">
+<AssetMetadata version="0" type="Level" guid="93671371-981b-923e-3d39-504372bc302b" source="" timestamp="1598200487">
  <Files>
   <File path="test_all/test_all.level"/>
  </Files>
@@ -22,7 +22,6 @@
   <Path>%engine%/engineassets/texturemsg/replaceme.dds</Path>
   <Path>%engine%/engineassets/textures/skys/night/half_moon.dds</Path>
   <Path>%engine%/engineassets/textures/white.dds</Path>
-  <Path>animations/mannequin/preview/human_male.xml</Path>
   <Path>chrysalis/characters/human/male/animations/interaction/picking_up_object.caf</Path>
   <Path>chrysalis/characters/human/male/animations/motus_mobility_pro/crouch/crouch_idle.caf</Path>
   <Path>chrysalis/characters/human/male/animations/motus_mobility_pro/crouch/crouch_idle_v2.caf</Path>

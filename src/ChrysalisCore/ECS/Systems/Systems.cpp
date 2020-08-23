@@ -12,6 +12,8 @@
 #include <Components/Spells/SpellbookComponent.h>
 #include <Actor/Animation/Actions/ActorAnimationActionEmote.h>
 #include <Actor/Animation/ActorAnimation.h>
+#include <CryAnimation/ICryMannequin.h>
+
 
 
 namespace Chrysalis::ECS
@@ -486,8 +488,8 @@ void SpellCastSwitch(float dt, entt::registry& spellRegistry, entt::registry& ac
 void SpellCastAnimationFragmentEmote(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Query the registry.
-	spellRegistry.view<AnimationFragmentEmote, TargetEntity>().each
-	([dt, &spellRegistry, &actorRegistry](auto entity, auto& animationFragmentEmote, auto& targetEntity) {
+	spellRegistry.view<AnimationFragmentEmote, AnimationTag, TargetEntity>().each
+	([dt, &spellRegistry, &actorRegistry](auto entity, auto& animationFragmentEmote, auto& animationTag, auto& targetEntity) {
 		if (auto pTargetEntity = gEnv->pEntitySystem->GetEntity(targetEntity.cryTargetEntityId))
 		{
 			if (auto pActorComponent = pTargetEntity->GetComponent<CActorComponent>())
@@ -502,11 +504,14 @@ void SpellCastAnimationFragmentEmote(float dt, entt::registry& spellRegistry, en
 					// they are potentially different for every actor. 
 					//GetMannequinUserParams<SActorMannequinParams>(pContext);
 
-					// HACK: Hard coded for now.
-					auto emoteStr = string(animationFragmentEmote.value).MakeLower();
-					TagID emoteTagId = GetEmoteTagId(emoteStr);
 
-					auto emoteAction = new CActorAnimationActionEmote(emoteTagId);
+
+					// HACK: Hard coded for now.
+					auto emoteStr = string(animationTag.value).MakeLower();
+					//TagID emoteTagId = GetEmoteTagId(emoteStr);
+
+					//auto emoteAction = new CActorAnimationActionEmote(emoteTagId);
+					auto emoteAction = new CActorAnimationActionEmote(emoteStr);
 					pActorComponent->QueueAction(*emoteAction);
 				}
 			}

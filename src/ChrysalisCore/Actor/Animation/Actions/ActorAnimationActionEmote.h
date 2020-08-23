@@ -82,15 +82,16 @@ namespace Chrysalis
 MANNEQUIN_USER_PARAMS(SMannequinEmoteParams, EMOTE_FRAGMENTS, EMOTE_TAGS, EMOTE_TAGGROUPS, EMOTE_SCOPES, EMOTE_CONTEXTS, EMOTE_FRAGMENT_TAGS);
 
 
-TagID GetEmoteTagId(const string emoteName);
-
-
 class CActorAnimationActionEmote : public CAnimationAction
 {
 public:
 	DEFINE_ACTION("Emote");
 
+	CActorAnimationActionEmote() = default;
+	~CActorAnimationActionEmote() = default;
+
 	CActorAnimationActionEmote(TagID emoteTagId);
+	CActorAnimationActionEmote(string emoteTag);
 
 	// IAction
 	virtual void OnInitialise() override;
@@ -104,10 +105,12 @@ public:
 private:
 	static FragmentID FindFragmentId(const SAnimationContext& context);
 
-    const struct SMannequinEmoteParams* m_emoteParams {nullptr};
+	TagID GetEmoteTagId(const string emoteName);
 
-	TagID m_emoteTagId;
+	const struct SMannequinEmoteParams* m_emoteParams {nullptr};
+
+	TagID m_emoteTagId {TAG_ID_INVALID};
+	string m_emoteTag;
+
 };
-
-extern SMannequinEmoteParams g_emoteMannequinParams;
 }

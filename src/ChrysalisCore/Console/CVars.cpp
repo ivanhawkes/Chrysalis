@@ -181,18 +181,8 @@ void CCVars::OnEmote(IConsoleCmdArgs* pConsoleCommandArgs)
 		if (auto pActorComponent = CPlayerComponent::GetLocalActor())
 		{
 			auto emoteStr = string(pConsoleCommandArgs->GetArg(1)).MakeLower();
-			TagID emoteTagId = GetEmoteTagId(emoteStr);
-
-			// Queue an emote to play for that character.
-			if (emoteTagId != TAG_ID_INVALID)
-			{
-				auto emoteAction = new CActorAnimationActionEmote(emoteTagId);
-				pActorComponent->QueueAction(*emoteAction);
-			}
-			else
-			{
-				CryLogAlways("There is no emote by that name.");
-			}
+			auto emoteAction = new CActorAnimationActionEmote(emoteStr);
+			pActorComponent->QueueAction(*emoteAction);
 		}
 	}
 	else

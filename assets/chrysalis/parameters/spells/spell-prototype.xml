@@ -26,6 +26,7 @@
   <entity entityId="23"/>
   <entity entityId="24"/>
   <entity entityId="25"/>
+  <entity entityId="26"/>
  </entities>
  <components>
   <name CryXmlVersion="2" name="Fireball" displayName="Fireball" entityId="0"/>
@@ -53,7 +54,8 @@
   <name CryXmlVersion="2" name="Hellfire" displayName="Hellfire" entityId="22"/>
   <name CryXmlVersion="2" name="Fear(Priest)" displayName="Fear(Priest)" entityId="23"/>
   <name CryXmlVersion="2" name="Truecast(Hunter)" displayName="Truecast(Hunter)" entityId="24"/>
-  <name CryXmlVersion="2" name="Emote Test" displayName="Emote Test" entityId="25"/>
+  <name CryXmlVersion="2" name="Emote Anger" displayName="Emote Anger" entityId="25"/>
+  <name CryXmlVersion="2" name="Emote Fear" displayName="Emote Fear" entityId="26"/>
   <damage CryXmlVersion="2" targetTargetType="target" quantity="14" damageType="fire" entityId="0"/>
   <damage CryXmlVersion="2" targetTargetType="target" quantity="12" damageType="fire" entityId="2"/>
   <damage CryXmlVersion="2" targetTargetType="target" quantity="8" damageType="qi" entityId="7"/>
@@ -107,6 +109,7 @@
   <spell CryXmlVersion="2" castDuration="2" sourceTargetType="self" targetTargetType="singleTarget" spellcastPayload="immediate" entityId="23"/>
   <spell CryXmlVersion="2" castDuration="2" sourceTargetType="self" targetTargetType="singleTarget" spellcastPayload="immediate" entityId="24"/>
   <spell CryXmlVersion="2" castDuration="2" sourceTargetType="self" targetTargetType="singleTarget" spellcastPayload="onCompletion" entityId="25"/>
+  <spell CryXmlVersion="2" castDuration="2" sourceTargetType="self" targetTargetType="singleTarget" spellcastPayload="onCompletion" entityId="26"/>
   <spell-action-schematyc CryXmlVersion="2" entityId="9"/>
   <spell-action-drs CryXmlVersion="2" entityId="10"/>
   <spell-action-inspect CryXmlVersion="2" entityId="11"/>
@@ -167,8 +170,10 @@
   <cooldown CryXmlVersion="2" value="1.5" entityId="1"/>
   <cooldown CryXmlVersion="2" value="1.5" entityId="0"/>
   <channelled CryXmlVersion="2" value="true" entityId="22"/>
-  <animation-fragment-emote CryXmlVersion="2" value="anger" entityId="25"/>
-  <animation-tag CryXmlVersion="2" value="" entityId="25"/>
+  <animation-fragment-emote CryXmlVersion="2" value="" entityId="25"/>
+  <animation-fragment-emote CryXmlVersion="2" value="" entityId="26"/>
+  <animation-tag CryXmlVersion="2" value="anger" entityId="25"/>
+  <animation-tag CryXmlVersion="2" value="fear" entityId="26"/>
   <movement-factor CryXmlVersion="2" value="0.75" entityId="23"/>
   <cancel-on-movement CryXmlVersion="2" value="true" entityId="22"/>
   <area-of-effect CryXmlVersion="2" value="4" entityId="22"/>
@@ -180,7 +185,7 @@
  </components>
  <meta>
   <component-types>
-   <component-type count="26"/>
+   <component-type count="27"/>
    <component-type count="0"/>
    <component-type count="0"/>
    <component-type count="5"/>
@@ -193,7 +198,7 @@
    <component-type count="0"/>
    <component-type count="1"/>
    <component-type count="1"/>
-   <component-type count="26"/>
+   <component-type count="27"/>
    <component-type count="1"/>
    <component-type count="1"/>
    <component-type count="1"/>
@@ -215,8 +220,8 @@
    <component-type count="12"/>
    <component-type count="1"/>
    <component-type count="0"/>
-   <component-type count="1"/>
-   <component-type count="1"/>
+   <component-type count="2"/>
+   <component-type count="2"/>
    <component-type count="1"/>
    <component-type count="1"/>
    <component-type count="3"/>
@@ -234,6 +239,6 @@
    <component-type count="0"/>
    <component-type count="0"/>
   </component-types>
-  <entities count="26"/>
+  <entities count="27"/>
  </meta>
 </ecs>

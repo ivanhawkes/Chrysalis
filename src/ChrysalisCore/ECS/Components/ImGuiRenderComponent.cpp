@@ -24,6 +24,7 @@ void ImGuiRenderComponent(Name ar)
 	ImGui::Text(ar.name);
 }
 
+
 void ImGuiRenderComponent(Prototype ar)
 {
 	// TODO: Need conversion from the base entity type.
@@ -275,18 +276,40 @@ void ImGuiRenderComponent(ItemClass ar)
 }
 
 
-// Simple components.
-
-void ImGuiRenderComponent(Timer ar)
-{
-	ImGui::InputFloat("Value:", &ar.value);
-}
-
+// Range checking.
 
 void ImGuiRenderComponent(Range ar)
 {
 	ImGui::InputFloat("Minimum:", &ar.minRange);
 	ImGui::InputFloat("Maximum:", &ar.maxRange);
+}
+
+
+// Animation components.
+
+void ImGuiRenderComponent(AnimationFragmentSpellCast ar)
+{
+	ImGui::Text(ar.value);
+}
+
+
+void ImGuiRenderComponent(AnimationFragmentEmote ar)
+{
+	ImGui::Text(ar.value);
+}
+
+
+void ImGuiRenderComponent(AnimationTag ar)
+{
+	ImGui::Text(ar.value);
+}
+
+
+// Simple components.
+
+void ImGuiRenderComponent(Timer ar)
+{
+	ImGui::InputFloat("Value:", &ar.value);
 }
 
 
