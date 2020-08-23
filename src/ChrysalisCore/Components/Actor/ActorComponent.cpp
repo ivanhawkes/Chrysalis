@@ -880,10 +880,6 @@ void CActorComponent::OnActionInteractionStart()
 			m_interactionEntityId = results[0];
 			auto pInteractionEntity = gEnv->pEntitySystem->GetEntity(m_interactionEntityId);
 
-			// HACK: Another test - this time of setting an emote.
-			//auto emoteAction = new CActorAnimationActionEmote(g_emoteMannequinParams.tagIDs.Awe);
-			//QueueAction(*emoteAction);
-
 			if (auto pInteractor = pInteractionEntity->GetComponent<CEntityInteractionComponent>())
 			{
 				// There's an interactor component, so this is an interactive entity.

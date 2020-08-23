@@ -494,26 +494,9 @@ void SpellCastAnimationFragmentEmote(float dt, entt::registry& spellRegistry, en
 		{
 			if (auto pActorComponent = pTargetEntity->GetComponent<CActorComponent>())
 			{
-				// HACK: Shouldn't be needed but the tags aren't loaded yet...how do they get loaded?
-				//if (auto pActorAnimationComponent = pTargetEntity->GetComponent<CActorAnimationComponent>())
-				{
-					// The actor animation component is responsible for maintaining the context.
-					//const auto& pContext = pActorAnimationComponent->GetContext();
-
-					// The mannequin tags for an actor will need to be loaded. Because these are found in the controller definition,
-					// they are potentially different for every actor. 
-					//GetMannequinUserParams<SActorMannequinParams>(pContext);
-
-
-
-					// HACK: Hard coded for now.
-					auto emoteStr = string(animationTag.value).MakeLower();
-					//TagID emoteTagId = GetEmoteTagId(emoteStr);
-
-					//auto emoteAction = new CActorAnimationActionEmote(emoteTagId);
-					auto emoteAction = new CActorAnimationActionEmote(emoteStr);
-					pActorComponent->QueueAction(*emoteAction);
-				}
+				// Queue an action and provide a tag for the specific emotion.
+				auto emoteAction = new CActorAnimationActionEmote(string(animationTag.value).MakeLower());
+				pActorComponent->QueueAction(*emoteAction);
 			}
 		}
 
