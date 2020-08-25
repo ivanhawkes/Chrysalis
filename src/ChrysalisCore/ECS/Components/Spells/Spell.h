@@ -149,14 +149,10 @@ struct Spell final
 {
 	void Serialize(Serialization::IArchive& ar)
 	{
-		ar(castDuration, "castDuration", "The length of time it takes to cast this spell. Instant cast spells should be zero.");
 		ar(targetType, "targetType", "Source of the spell - typically none or self.");
 		ar(spellcastPayload, "spellcastPayload", "At what time should the spell payload be delivered?");
 	}
 
-
-	/** The length of time it takes to cast this spell. Instant cast spells should be zero. */
-	float castDuration {2.0f};
 
 	/** At what time should the spell payload be delivered? */
 	SpellcastPayload spellcastPayload {SpellcastPayload::onCompletion};

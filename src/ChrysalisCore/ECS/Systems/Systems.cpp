@@ -287,7 +287,7 @@ void SpellCastOpen(float dt, entt::registry& spellRegistry, entt::registry& acto
 			}
 		}
 
-		if (spell.castDuration <= spellcastExecution.executionTime)
+//		if (spell.castDuration <= spellcastExecution.executionTime)
 		{
 			// TODO: The spell should cast now if it's not immediate cast.
 
