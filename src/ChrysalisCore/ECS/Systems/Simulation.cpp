@@ -31,18 +31,14 @@ void CSimulation::RewireSpell(entt::registry& spellcastingRegistry, entt::entity
 	EntityId targetEntityId {INVALID_ENTITYID};
 
 	// The source should almost always be the real source of the spell.
-	if (spell.sourceTargetType != TargetType::none)
+	if (spell.targetType != TargetType::none)
 	{
 		source = sourceEntity;
 		sourceEntityId = crySourceEntityId;
 	}
-	else
-	{
-		source = entt::null;
-		sourceEntityId = INVALID_ENTITYID;
-	}
 
-	switch (spell.targetTargetType)
+	// The target should be the target usually, unless there is no direct target.
+	switch (spell.targetType)
 	{
 		// Targetting the caster.
 		case TargetType::self:
@@ -279,7 +275,7 @@ void CSimulation::LoadPrototypeData()
 		.component<Name, Prototype,
 		Health, Damage, DamageOverTime, SelfHarm, Heal, HealOverTime,
 		Qi, UtiliseQi, UtiliseQiOverTime, ReplenishQi, ReplenishQiOverTime,
-		Spell,
+		Spell, SpellCastDuration,
 		SpellActionSchematyc, SpellActionDRS,
 		SpellActionInspect, SpellActionExamine,
 		SpellActionTake, SpellActionDrop, SpellActionThrow,
@@ -308,7 +304,7 @@ void CSimulation::SavePrototypeData()
 		.component<Name, Prototype,
 		Health, Damage, DamageOverTime, SelfHarm, Heal, HealOverTime,
 		Qi, UtiliseQi, UtiliseQiOverTime, ReplenishQi, ReplenishQiOverTime,
-		Spell,
+		Spell, SpellCastDuration,
 		SpellActionSchematyc, SpellActionDRS,
 		SpellActionInspect, SpellActionExamine,
 		SpellActionTake, SpellActionDrop, SpellActionThrow,

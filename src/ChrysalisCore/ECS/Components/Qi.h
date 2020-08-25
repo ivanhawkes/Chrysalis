@@ -61,13 +61,9 @@ struct UtiliseQi final
 
 	void Serialize(Serialization::IArchive& ar)
 	{
-		ar(targetTargetType, "targetTargetType", "targetTargetType");
 		ar(quantity, "quantity", "quantity");
 	}
 
-
-	/** Use the spell's target or source for this component's target. */
-	TargetTargetType targetTargetType {TargetTargetType::target};
 
 	/** Modify an attribute by this amount. */
 	float quantity {0.0f};
@@ -88,15 +84,11 @@ struct UtiliseQiOverTime final
 
 	void Serialize(Serialization::IArchive& ar)
 	{
-		ar(targetTargetType, "targetTargetType", "targetTargetType");
 		ar(quantity, "quantity", "quantity");
 		ar(duration, "duration", "duration");
 		ar(interval, "interval", "interval");
 	}
 
-
-	/** Use the spell's target or source for this component's target. */
-	TargetTargetType targetTargetType {TargetTargetType::target};
 
 	/** Modify an attribute by this amount. */
 	float quantity {0.0f};
@@ -128,13 +120,9 @@ struct ReplenishQi final
 
 	void Serialize(Serialization::IArchive& ar)
 	{
-		ar(targetTargetType, "targetTargetType", "targetTargetType");
 		ar(quantity, "quantity", "quantity");
 	}
 
-
-	/** Use the spell's target or source for this component's target. */
-	TargetTargetType targetTargetType {TargetTargetType::target};
 
 	/** Modify an attribute by this amount. */
 	float quantity {0.0f};
@@ -155,15 +143,11 @@ struct ReplenishQiOverTime final
 
 	void Serialize(Serialization::IArchive& ar)
 	{
-		ar(targetTargetType, "targetTargetType", "targetTargetType");
 		ar(quantity, "quantity", "quantity");
 		ar(duration, "duration", "duration");
 		ar(interval, "interval", "interval");
 	}
 
-
-	/** Use the spell's target or source for this component's target. */
-	TargetTargetType targetTargetType {TargetTargetType::target};
 
 	/** Modify an attribute by this amount. */
 	float quantity {0.0f};

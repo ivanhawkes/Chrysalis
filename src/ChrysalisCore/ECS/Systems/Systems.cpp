@@ -28,19 +28,8 @@ void SystemApplyDamage(entt::registry& spellRegistry, entt::registry& actorRegis
 	// Apply any damage to the damage modifiers.
 	spellRegistry.view<Damage, SourceEntity, TargetEntity>().each([&spellRegistry, &actorRegistry](auto entity, auto& damage, auto& sourceEntity, auto& targetEntity) {
 		// Get the health component for the target entity and apply the damage to it's health modifier.
-		Health* targetHealth {nullptr};
-		if (damage.targetTargetType == TargetTargetType::target)
-		{
-			auto& health = actorRegistry.get<Health>(targetEntity.targetEntityId);
-			targetHealth = &health;
-		}
-		else
-		{
-			auto& health = actorRegistry.get<Health>(sourceEntity.sourceEntityId);
-			targetHealth = &health;
-		}
-
-		targetHealth->health.modifiers -= damage.quantity;
+		Health& targetHealth = actorRegistry.get<Health>(targetEntity.targetEntityId);
+		targetHealth.health.modifiers -= damage.quantity;
 
 		// Remove just the component.
 		spellRegistry.remove<Damage>(entity);
@@ -59,18 +48,8 @@ void SystemApplyDamageOverTime(float dt, entt::registry& spellRegistry, entt::re
 			damage.deltaSinceTick -= damage.interval;
 
 			// Get the health component for the target entity and apply the damage to it's health modifier.
-			Health* targetHealth {nullptr};
-			if (damage.targetTargetType == TargetTargetType::target)
-			{
-				auto& health = actorRegistry.get<Health>(targetEntity.targetEntityId);
-				targetHealth = &health;
-			}
-			else
-			{
-				auto& health = actorRegistry.get<Health>(sourceEntity.sourceEntityId);
-				targetHealth = &health;
-			}
-			targetHealth->health.modifiers -= damage.quantity;
+			Health& targetHealth = actorRegistry.get<Health>(targetEntity.targetEntityId);
+			targetHealth.health.modifiers -= damage.quantity;
 		}
 
 		if (damage.ticksRemaining <= 0.0f)
@@ -87,28 +66,18 @@ void SystemApplyHeal(entt::registry& spellRegistry, entt::registry& actorRegistr
 	// Apply any heals to the health modifiers.
 	spellRegistry.view<Heal, SourceEntity, TargetEntity>().each([&spellRegistry, &actorRegistry](auto entity, auto& heal, auto& sourceEntity, auto& targetEntity) {
 		// Get the health component for the target entity and apply the heal to it's health modifier.
-		Health* targetHealth {nullptr};
-		if (heal.targetTargetType == TargetTargetType::target)
-		{
-			auto& health = actorRegistry.get<Health>(targetEntity.targetEntityId);
-			targetHealth = &health;
-		}
-		else
-		{
-			auto& health = actorRegistry.get<Health>(sourceEntity.sourceEntityId);
-			targetHealth = &health;
-		}
+		Health& targetHealth = actorRegistry.get<Health>(targetEntity.targetEntityId);
 
 		// Check for overheals.
-		float newModifier = targetHealth->health.modifiers + heal.quantity;
+		float newModifier = targetHealth.health.modifiers + heal.quantity;
 		if (newModifier > 0.0f)
 		{
 			// It was an overheal.
-			targetHealth->health.modifiers = 0.0f;
+			targetHealth.health.modifiers = 0.0f;
 		}
 		else
 		{
-			targetHealth->health.modifiers = newModifier;
+			targetHealth.health.modifiers = newModifier;
 		}
 
 		// Remove just the component.
@@ -128,29 +97,18 @@ void SystemApplyHealOverTime(float dt, entt::registry& spellRegistry, entt::regi
 			heal.deltaSinceTick -= heal.interval;
 
 			// Get the health component for the target entity and apply the heal to it's health modifier.
-			Health* targetHealth {nullptr};
-			if (heal.targetTargetType == TargetTargetType::target)
-			{
-				auto& health = actorRegistry.get<Health>(targetEntity.targetEntityId);
-				targetHealth = &health;
-			}
-			else
-			{
-				auto& health = actorRegistry.get<Health>(sourceEntity.sourceEntityId);
-				targetHealth = &health;
-			}
-
+			Health& targetHealth = actorRegistry.get<Health>(targetEntity.targetEntityId);
 
 			// Check for overheals.
-			float newModifier = targetHealth->health.modifiers + heal.quantity;
+			float newModifier = targetHealth.health.modifiers + heal.quantity;
 			if (newModifier > 0.0f)
 			{
 				// It was an overheal.
-				targetHealth->health.modifiers = 0.0f;
+				targetHealth.health.modifiers = 0.0f;
 			}
 			else
 			{
-				targetHealth->health.modifiers = newModifier;
+				targetHealth.health.modifiers = newModifier;
 			}
 
 			if (heal.ticksRemaining <= 0.0f)
@@ -190,20 +148,8 @@ void SystemApplyQiUtilisation(entt::registry& spellRegistry, entt::registry& act
 	// Apply any qi usage to the modifiers.
 	spellRegistry.view<UtiliseQi, SourceEntity, TargetEntity>().each([&spellRegistry, &actorRegistry](auto entity, auto& qiUse, auto& sourceEntity, auto& targetEntity) {
 		// Get the qi component for the target entity and apply the usage to it's modifier.
-		Qi* targetQi {nullptr};
-		if (qiUse.targetTargetType == TargetTargetType::target)
-		{
-			auto& qi = actorRegistry.get<Qi>(targetEntity.targetEntityId);
-			targetQi = &qi;
-		}
-		else
-		{
-			auto& qi = actorRegistry.get<Qi>(sourceEntity.sourceEntityId);
-			targetQi = &qi;
-		}
-
-		// Get the qi component for the target entity and apply the usage to it's modifier.
-		targetQi->qi.modifiers -= qiUse.quantity;
+		Qi& targetQi = actorRegistry.get<Qi>(targetEntity.targetEntityId);
+		targetQi.qi.modifiers -= qiUse.quantity;
 
 		// Remove just the component.
 		spellRegistry.remove<UtiliseQi>(entity);
@@ -222,18 +168,8 @@ void SystemApplyQiUtilisationOverTime(float dt, entt::registry& spellRegistry, e
 			qiUse.deltaSinceTick -= qiUse.interval;
 
 			// Get the qi component for the target entity and apply the usage to it's modifier.
-			Qi* targetQi {nullptr};
-			if (qiUse.targetTargetType == TargetTargetType::target)
-			{
-				auto& qi = actorRegistry.get<Qi>(targetEntity.targetEntityId);
-				targetQi = &qi;
-			}
-			else
-			{
-				auto& qi = actorRegistry.get<Qi>(sourceEntity.sourceEntityId);
-				targetQi = &qi;
-			}
-			targetQi->qi.modifiers -= qiUse.quantity;
+			Qi& targetQi = actorRegistry.get<Qi>(targetEntity.targetEntityId);
+			targetQi.qi.modifiers -= qiUse.quantity;
 		}
 
 		if (qiUse.ticksRemaining <= 0.0f)
@@ -250,28 +186,18 @@ void SystemApplyQiReplenishment(entt::registry& spellRegistry, entt::registry& a
 	// Apply any replenishment to the qi modifiers.
 	spellRegistry.view<ReplenishQi, SourceEntity, TargetEntity>().each([&spellRegistry, &actorRegistry](auto entity, auto& replenish, auto& sourceEntity, auto& targetEntity) {
 		// Get the qi component for the target entity and apply the replenishment to it's modifier.
-		Qi* targetQi {nullptr};
-		if (replenish.targetTargetType == TargetTargetType::target)
-		{
-			auto& qi = actorRegistry.get<Qi>(targetEntity.targetEntityId);
-			targetQi = &qi;
-		}
-		else
-		{
-			auto& qi = actorRegistry.get<Qi>(sourceEntity.sourceEntityId);
-			targetQi = &qi;
-		}
+		Qi& targetQi = actorRegistry.get<Qi>(targetEntity.targetEntityId);
 
 		// Check for over-replenishment.
-		float newModifier = targetQi->qi.modifiers + replenish.quantity;
+		float newModifier = targetQi.qi.modifiers + replenish.quantity;
 		if (newModifier > 0.0f)
 		{
 			// It was an over-replenishment.
-			targetQi->qi.modifiers = 0.0f;
+			targetQi.qi.modifiers = 0.0f;
 		}
 		else
 		{
-			targetQi->qi.modifiers = newModifier;
+			targetQi.qi.modifiers = newModifier;
 		}
 
 		// Remove just the component.
@@ -291,28 +217,18 @@ void SystemApplyQiReplenishmentOverTime(float dt, entt::registry& spellRegistry,
 			replenish.deltaSinceTick -= replenish.interval;
 
 			// Get the qi component for the target entity and apply the replenishment to it's modifier.
-			Qi* targetQi {nullptr};
-			if (replenish.targetTargetType == TargetTargetType::target)
-			{
-				auto& qi = actorRegistry.get<Qi>(targetEntity.targetEntityId);
-				targetQi = &qi;
-			}
-			else
-			{
-				auto& qi = actorRegistry.get<Qi>(sourceEntity.sourceEntityId);
-				targetQi = &qi;
-			}
+			Qi& targetQi = actorRegistry.get<Qi>(targetEntity.targetEntityId);
 
 			// Check for over-replenishment.
-			float newModifier = targetQi->qi.modifiers + replenish.quantity;
+			float newModifier = targetQi.qi.modifiers + replenish.quantity;
 			if (newModifier > 0.0f)
 			{
 				// It was an over-replenishment.
-				targetQi->qi.modifiers = 0.0f;
+				targetQi.qi.modifiers = 0.0f;
 			}
 			else
 			{
-				targetQi->qi.modifiers = newModifier;
+				targetQi.qi.modifiers = newModifier;
 			}
 
 			if (replenish.ticksRemaining <= 0.0f)

@@ -9,6 +9,11 @@ src/ChrysalisCore/.vs/
 *.spp
 *.tif
 *.tiff
+*.tga
+*.psd
+*.max
+*.mb
+*.obj
 
 # Config files
 /user.cfg

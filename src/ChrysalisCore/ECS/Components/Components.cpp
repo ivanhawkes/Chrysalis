@@ -55,7 +55,8 @@ void RegisterComponentsWithMeta()
 	// Spellcasts.
 	RegisterTypeWithMeta<Spell>("spell"_hs);
 	RegisterTypeWithMeta<SpellcastExecution>("spellcast-execution"_hs);
-
+	RegisterTypeWithMeta<SpellCastDuration>("spell-cast-duration"_hs);
+	
 	// Spell actions.
 	RegisterTypeWithMeta<SpellActionSchematyc>("spell-action-schematyc"_hs);
 	RegisterTypeWithMeta<SpellActionDRS>("spell-action-drs"_hs);

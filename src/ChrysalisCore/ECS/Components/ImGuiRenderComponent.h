@@ -38,6 +38,7 @@ void ImGuiRenderComponent(ReplenishQiOverTime ar);
 // Spellcasts.
 void ImGuiRenderComponent(Spell ar);
 void ImGuiRenderComponent(SpellcastExecution ar);
+void ImGuiRenderComponent(SpellCastDuration ar);
 
 // Spell actions.
 void ImGuiRenderComponent(SpellActionSchematyc ar);

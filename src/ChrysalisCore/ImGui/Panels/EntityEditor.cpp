@@ -67,8 +67,10 @@ void CEntityEditor::EnumerateEntities()
 
 			if (ImGui::BeginPopupContextWindow())
 			{
+				auto& typeMap = ECS::Simulation.GetTypeMap();
+
 				// Add a menu item for each component type.
-				for (auto& registeredType : ECS::Simulation.GetTypeMap())
+				for (auto& registeredType : typeMap)
 				{
 					if (ImGui::MenuItem(registeredType.second.tag, NULL, false))
 					{

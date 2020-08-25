@@ -8,11 +8,8 @@ namespace Chrysalis::ECS
 /**
 	Requirements:
 
-	targetType - enemy, ally, neutral?
 	description - in simple text, no markdown?
 	resistanceType - is this appropriate at a spell level?
-	castTime - in seconds
-	requireLoS
 	add hate
 	dot stacks
 	max targets
@@ -26,27 +23,16 @@ namespace Chrysalis::ECS
 enum class TargetType
 {
 	none,
-
 	self,
+	singleTarget,
 	groupMembers,
 	raidMembers,
-	singleTarget,
 	cone,
 	column,
 	chain,
 	sourceBasedAOE,
 	targetBasedAOE,
 	groundTargettedAOE,
-};
-
-
-/** Used to allow each individual component to select which of the two available spell targets to use for it's actual target.
-	Giving each component this ability to select the actual target opens up the means to have mana cost come from the target 
-	instead of the caster (mana burn) and life steal abilities. */
-enum class TargetTargetType
-{
-	source,
-	target,
 };
 
 
@@ -59,6 +45,9 @@ enum class TargetAggressionType
 	aggressive,			// Actively hostile.
 };
 
+
+// Spell cast duration.
+using SpellCastDuration = SimpleComponent<float, "spell-cast-duration"_hs>;
 
 // Loss of sight, movement and rotation restricted, ambling around.
 using CrowdControlBlind = FlagComponent<"crowd-control-blind"_hs>;
@@ -161,8 +150,7 @@ struct Spell final
 	void Serialize(Serialization::IArchive& ar)
 	{
 		ar(castDuration, "castDuration", "The length of time it takes to cast this spell. Instant cast spells should be zero.");
-		ar(sourceTargetType, "sourceTargetType", "Source of the spell - typically none or self.");
-		ar(targetTargetType, "targetTargetType", "Target for the spell. May target self, others, or even AoEs.");
+		ar(targetType, "targetType", "Source of the spell - typically none or self.");
 		ar(spellcastPayload, "spellcastPayload", "At what time should the spell payload be delivered?");
 	}
 
@@ -174,12 +162,8 @@ struct Spell final
 	SpellcastPayload spellcastPayload {SpellcastPayload::onCompletion};
 
 	// Source for the spell will generally only be none or self.
-	TargetType sourceTargetType {TargetType::self};
+	TargetType targetType {TargetType::self};
 	
-	// The target for the spell can be any valid form of target, including ones that do not include a target entity but rather an AOE
-	// or chain of targets. Note: chained targets may still need a valid target entity for the first in the chain.
-	TargetType targetTargetType {TargetType::singleTarget};
-
 	// Which sort of targets can this spell be cast upon?
 	TargetAggressionType targetAggressionType {TargetAggressionType::allied};
 };

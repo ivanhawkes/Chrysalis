@@ -10,21 +10,15 @@ namespace Chrysalis::ECS
 SERIALIZATION_ENUM_BEGIN(TargetType, "Target Type")
 SERIALIZATION_ENUM(TargetType::none, "none", "none")
 SERIALIZATION_ENUM(TargetType::self, "self", "self")
+SERIALIZATION_ENUM(TargetType::singleTarget, "singleTarget", "singleTarget")
 SERIALIZATION_ENUM(TargetType::groupMembers, "groupMembers", "groupMembers")
 SERIALIZATION_ENUM(TargetType::raidMembers, "raidMembers", "raidMembers")
-SERIALIZATION_ENUM(TargetType::singleTarget, "singleTarget", "singleTarget")
 SERIALIZATION_ENUM(TargetType::cone, "cone", "cone")
 SERIALIZATION_ENUM(TargetType::column, "column", "column")
 SERIALIZATION_ENUM(TargetType::chain, "chain", "chain")
 SERIALIZATION_ENUM(TargetType::sourceBasedAOE, "sourceBasedAOE", "sourceBasedAOE")
 SERIALIZATION_ENUM(TargetType::targetBasedAOE, "targetBasedAOE", "targetBasedAOE")
 SERIALIZATION_ENUM(TargetType::groundTargettedAOE, "groundTargettedAOE", "groundTargettedAOE")
-SERIALIZATION_ENUM_END()
-
-// Target target type.
-SERIALIZATION_ENUM_BEGIN(TargetTargetType, "Target Target Type")
-SERIALIZATION_ENUM(TargetTargetType::source, "source", "source")
-SERIALIZATION_ENUM(TargetTargetType::target, "target", "target")
 SERIALIZATION_ENUM_END()
 
 // Target aggression.
