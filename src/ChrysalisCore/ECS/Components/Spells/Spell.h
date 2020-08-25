@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ECS/Components/Components.h"
+#include <vector>
 
 
 namespace Chrysalis::ECS
@@ -88,42 +89,8 @@ using CrowdControlPolymorph = FlagComponent<"crowd-control-polymorph"_hs>;
 // Restricts use of spells, shouts and other vocal abilities.
 using CrowdControlSilence = FlagComponent<"crowd-control-silence"_hs>;
 
-// A timer for counting up or down.
+// A timer.
 using Cooldown = SimpleComponent<float, "cooldown"_hs>;
-
-
-enum class BuffType
-{
-	none,
-
-	// Resistances.
-	acidResistance,
-	bleedResistance,
-	chiResistance,
-	coldResistance,
-	crushResistance,
-	decayResistance,
-	diseaseResistance,
-	electricityResistance,
-	energyResistance,
-	entropyResistance,
-	explosionResistance,
-	fireResistance,
-	holyResistance,
-	iceResistance,
-	natureResistance,
-	pierceResistance,
-	plasmaResistance,
-	poisonResistance,
-	radiationResistance,
-	slashResistance,
-	unholyResistance,
-
-	// General buffs.
-	//bleed, // Debuff - or could be more generic...mmm...not sure.
-	//haste, // buff only or negative values for debuffs
-	//disarmed, // stateful debuff
-};
 
 
 enum class SpellcastPayload
@@ -145,7 +112,14 @@ enum class SpellCastExecutionStatus
 };
 
 
-struct Spell final
+// If you move, something gets cancelled.
+using CancelOnMovement = SimpleComponent<bool, "cancel-on-movement"_hs>;
+
+// Spellcast is channelled. Effects occur during the channelling. Cancel on movement is generally expected to be paired with this component.
+using Channelled = SimpleComponent<bool, "Channelled"_hs>;
+
+
+struct SpellFragment final
 {
 	void Serialize(Serialization::IArchive& ar)
 	{
@@ -162,6 +136,28 @@ struct Spell final
 	
 	// Which sort of targets can this spell be cast upon?
 	TargetAggressionType targetAggressionType {TargetAggressionType::allied};
+};
+
+
+// TODO: This is broken.
+
+struct Spell final
+{
+
+	Spell()
+	{
+		fragments.push_back(entt::entity {1});
+		fragments.push_back(entt::entity {2});
+	}
+
+	void Serialize(Serialization::IArchive& ar)
+	{
+		ar(fragments, "fragments", "A list of the fragments that make up this spell.");
+	}
+
+
+	// A spell is comprised of fragments.
+	std::vector<entt::entity> fragments;
 };
 
 

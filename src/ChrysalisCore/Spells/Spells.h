@@ -9,7 +9,7 @@ namespace Chrysalis
 struct SpellCastOpen : public ISpellcasting
 {
 
-	SpellCastOpen(ECS::Name name, ECS::Spell spell, ECS::SourceEntity sourceAndTarget, ECS::TargetEntity targetEntity)
+	SpellCastOpen(ECS::Name name, ECS::SpellFragment spell, ECS::SourceEntity sourceAndTarget, ECS::TargetEntity targetEntity)
 		:name(name), spell(spell), sourceEntity(sourceEntity), targetEntity(targetEntity) {}
 	~SpellCastOpen() = default;
 
@@ -22,7 +22,7 @@ struct SpellCastOpen : public ISpellcasting
 	// ~ISpellcasting
 
 	ECS::Name name;
-	ECS::Spell spell;
+	ECS::SpellFragment spell;
 	ECS::SourceEntity sourceEntity;
 	ECS::TargetEntity targetEntity;
 };

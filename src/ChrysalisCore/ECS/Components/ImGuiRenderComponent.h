@@ -36,6 +36,7 @@ void ImGuiRenderComponent(ReplenishQi ar);
 void ImGuiRenderComponent(ReplenishQiOverTime ar);
 
 // Spellcasts.
+void ImGuiRenderComponent(SpellFragment ar);
 void ImGuiRenderComponent(Spell ar);
 void ImGuiRenderComponent(SpellcastExecution ar);
 void ImGuiRenderComponent(SpellCastDuration ar);
@@ -70,6 +71,7 @@ void ImGuiRenderComponent(AnimationTag ar);
 
 // Simple components.
 void ImGuiRenderComponent(Timer ar);
+void ImGuiRenderComponent(Duration ar);
 void ImGuiRenderComponent(Aura ar);
 void ImGuiRenderComponent(Buff ar);
 void ImGuiRenderComponent(Debuff ar);

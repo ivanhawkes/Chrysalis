@@ -127,6 +127,11 @@ void ImGuiRenderComponent(ReplenishQiOverTime ar)
 
 // Spellcasts.
 
+void ImGuiRenderComponent(SpellFragment ar)
+{
+}
+
+
 void ImGuiRenderComponent(Spell ar)
 {
 }
@@ -314,6 +319,12 @@ void ImGuiRenderComponent(AnimationTag ar)
 // Simple components.
 
 void ImGuiRenderComponent(Timer ar)
+{
+	ImGui::InputFloat("Value:", &ar.value);
+}
+
+
+void ImGuiRenderComponent(Duration ar)
 {
 	ImGui::InputFloat("Value:", &ar.value);
 }

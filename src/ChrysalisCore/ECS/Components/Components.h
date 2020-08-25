@@ -7,6 +7,17 @@
 
 namespace Chrysalis::ECS
 {
+// Cast an enum to it's underlying type for serialisation.
+//template <typename E>
+//[[nodiscard]] constexpr auto to_underlying(E e) noexcept
+//{
+//	return static_cast<std::underlying_type_t<E>>(e);
+//}
+
+
+//bool Serialize(Serialization::IArchive& ar, entt::entity& value, const char* szName, const char* szLabel);
+
+
 void RegisterComponentsWithMeta();
 
 
@@ -110,10 +121,7 @@ struct Name final
 };
 
 
-/**	A way of marking an entity and saying that is it based on the components of a different entity. The prototype entity
-	needs to have a matching name and must exist in a registry of the designer's choice.
-
-*/
+/**	A prototype. */
 
 struct Prototype final
 {
@@ -128,7 +136,8 @@ struct Prototype final
 
 	void Serialize(Serialization::IArchive& ar)
 	{
-		ar(prototypeEntityId, "prototypeEntityId", "Entity Id for the prototype this entity uses as it's base.");
+		//ar(to_underlying(prototypeEntityId), "prototypeEntityId", "Entity Id for the prototype this entity uses as it's base.");
+		ar(static_cast<std::uint32_t>(prototypeEntityId), "prototypeEntityId", "Entity Id for the prototype this entity uses as it's base.");	
 	}
 
 
@@ -215,13 +224,12 @@ using AnimationTag = SimpleComponent<string, "AnimationTag"_hs>;								// A tag
 
 
 // Simple components.
-using Timer = SimpleComponent<float, "Timer"_hs>;							// A timer for counting up or down.
+using Timer = SimpleComponent<float, "Timer"_hs>;							// A timer.
+using Duration = SimpleComponent<float, "Duration"_hs>;						// A timer.
 using Aura = FlagComponent<"Aura"_hs>;										// Indicates this is an aura.
 using Buff = FlagComponent<"Buff"_hs>;										// Indicates this is a buff.
 using Debuff = FlagComponent<"Debuff"_hs>;									// Indicates this is a debuff.
-using Channelled = SimpleComponent<bool, "Channelled"_hs>;					// Spellcast is channlled - this may just be a pair of crowd controls or might work with them.
 using MovementFactor = SimpleComponent<float, "MovementFactor"_hs>;			// Apply factor to movement. You can stop, slow, or accelerate an entity.
-using CancelOnMovement = SimpleComponent<bool, "cancel-on-movement"_hs>;	// If you move, something gets cancelled.
 using AreaOfEffect = SimpleComponent<float, "AreaOfEffect"_hs>;				// Flags something as an AOE and provides a radius for that AOE.
 
 

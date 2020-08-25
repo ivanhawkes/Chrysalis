@@ -34,6 +34,40 @@ enum class DamageType
 };
 
 
+enum class BuffType
+{
+	none,
+
+	// Resistances.
+	acidResistance,
+	bleedResistance,
+	chiResistance,
+	coldResistance,
+	crushResistance,
+	decayResistance,
+	diseaseResistance,
+	electricityResistance,
+	energyResistance,
+	entropyResistance,
+	explosionResistance,
+	fireResistance,
+	holyResistance,
+	iceResistance,
+	natureResistance,
+	pierceResistance,
+	plasmaResistance,
+	poisonResistance,
+	radiationResistance,
+	slashResistance,
+	unholyResistance,
+
+	// General buffs.
+	//bleed, // Debuff - or could be more generic...mmm...not sure.
+	//haste, // buff only or negative values for debuffs
+	//disarmed, // stateful debuff
+};
+
+
 struct Health final
 {
 	Health() = default;

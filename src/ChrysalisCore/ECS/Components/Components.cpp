@@ -27,6 +27,14 @@ void RegisterTypeWithMeta(entt::hashed_string nameHash)
 }
 
 
+//bool Serialize(Serialization::IArchive& ar, entt::entity& value, const char* szName, const char* szLabel)
+//{
+//	ar(to_underlying(value), "entityId", "An EnTT enity ID.");
+//
+//	return true;
+//}
+
+
 /** Every component needs to register itself with the meta before we can utilise it properly. */
 void RegisterComponentsWithMeta()
 {
@@ -53,6 +61,7 @@ void RegisterComponentsWithMeta()
 	RegisterTypeWithMeta<ReplenishQiOverTime>("replenish-qi-over-time"_hs);
 
 	// Spellcasts.
+	RegisterTypeWithMeta<SpellFragment>("spell-fragment"_hs);
 	RegisterTypeWithMeta<Spell>("spell"_hs);
 	RegisterTypeWithMeta<SpellcastExecution>("spellcast-execution"_hs);
 	RegisterTypeWithMeta<SpellCastDuration>("spell-cast-duration"_hs);
@@ -87,6 +96,7 @@ void RegisterComponentsWithMeta()
 
 	// Simple components.
 	RegisterTypeWithMeta<Timer>("timer"_hs);
+	RegisterTypeWithMeta<Duration>("duration"_hs);
 	RegisterTypeWithMeta<Aura>("aura"_hs);
 	RegisterTypeWithMeta<Buff>("buff"_hs);
 	RegisterTypeWithMeta<Debuff>("debuff"_hs);

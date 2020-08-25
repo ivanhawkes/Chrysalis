@@ -246,7 +246,7 @@ void SystemApplyQiReplenishmentOverTime(float dt, entt::registry& spellRegistry,
 // ***
 
 
-bool IsSpellCastable(const Spell& spell, const SourceEntity& sourceEntity, const TargetEntity& targetEntity)
+bool IsSpellCastable(const SpellFragment& spell, const SourceEntity& sourceEntity, const TargetEntity& targetEntity)
 {
 	// TODO: Range and LoS checks, etc.
 
@@ -257,7 +257,7 @@ bool IsSpellCastable(const Spell& spell, const SourceEntity& sourceEntity, const
 void SpellCastOpen(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Query the registry.
-	spellRegistry.view<SpellActionOpen, Name, Spell, SpellcastExecution, SourceEntity, TargetEntity>().each
+	spellRegistry.view<SpellActionOpen, Name, SpellFragment, SpellcastExecution, SourceEntity, TargetEntity>().each
 	([dt, &spellRegistry, &actorRegistry](auto entity, auto& spellActionOpen, auto& name, auto& spell, auto& spellcastExecution, auto& sourceEntity, auto& targetEntity) {
 		// Check validity of the spell cast request.
 		if (IsSpellCastable(spell, sourceEntity, targetEntity))
@@ -309,7 +309,7 @@ void SpellCastOpen(float dt, entt::registry& spellRegistry, entt::registry& acto
 void SpellCastTake(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Query the registry.
-	spellRegistry.view<SpellActionTake, Name, Spell, SpellcastExecution, SourceEntity, TargetEntity>().each
+	spellRegistry.view<SpellActionTake, Name, SpellFragment, SpellcastExecution, SourceEntity, TargetEntity>().each
 	([dt, &spellRegistry, &actorRegistry](auto entity, auto& spellActionTake, auto& name, auto& spell, auto& spellcastExecution, auto& sourceEntity, auto& targetEntity) {
 		// Check validity of the spell cast request.
 		if (IsSpellCastable(spell, sourceEntity, targetEntity))
@@ -327,7 +327,7 @@ void SpellCastTake(float dt, entt::registry& spellRegistry, entt::registry& acto
 void SpellCastDrop(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Query the registry.
-	spellRegistry.view<SpellActionDrop, Name, Spell, SpellcastExecution, SourceEntity, TargetEntity>().each
+	spellRegistry.view<SpellActionDrop, Name, SpellFragment, SpellcastExecution, SourceEntity, TargetEntity>().each
 	([dt, &spellRegistry, &actorRegistry](auto entity, auto& spellActionDrop, auto& name, auto& spell, auto& spellcastExecution, auto& sourceEntity, auto& targetEntity) {
 		// Check validity of the spell cast request.
 		if (IsSpellCastable(spell, sourceEntity, targetEntity))
@@ -345,7 +345,7 @@ void SpellCastDrop(float dt, entt::registry& spellRegistry, entt::registry& acto
 void SpellCastSwitch(float dt, entt::registry& spellRegistry, entt::registry& actorRegistry)
 {
 	// Query the registry.
-	spellRegistry.view<SpellActionSwitch, Name, Spell, SpellcastExecution, SourceEntity, TargetEntity>().each
+	spellRegistry.view<SpellActionSwitch, Name, SpellFragment, SpellcastExecution, SourceEntity, TargetEntity>().each
 	([dt, &spellRegistry, &actorRegistry](auto entity, auto& spellActionSwitch, auto& name, auto& spell, auto& spellcastExecution, auto& sourceEntity, auto& targetEntity) {
 		// Check validity of the spell cast request.
 		if (IsSpellCastable(spell, sourceEntity, targetEntity))

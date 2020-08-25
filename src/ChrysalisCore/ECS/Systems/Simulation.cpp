@@ -23,7 +23,7 @@ namespace Chrysalis::ECS
 void CSimulation::RewireSpell(entt::registry& spellcastingRegistry, entt::entity spellEntity, entt::entity sourceEntity, entt::entity targetEntity,
 	EntityId crySourceEntityId, EntityId cryTargetEntityId)
 {
-	Spell& spell = spellcastingRegistry.get<Spell>(spellEntity);
+	SpellFragment& spellFragment = spellcastingRegistry.get<SpellFragment>(spellEntity);
 
 	entt::entity source {entt::null};
 	entt::entity target {entt::null};
@@ -31,14 +31,14 @@ void CSimulation::RewireSpell(entt::registry& spellcastingRegistry, entt::entity
 	EntityId targetEntityId {INVALID_ENTITYID};
 
 	// The source should almost always be the real source of the spell.
-	if (spell.targetType != TargetType::none)
+	if (spellFragment.targetType != TargetType::none)
 	{
 		source = sourceEntity;
 		sourceEntityId = crySourceEntityId;
 	}
 
 	// The target should be the target usually, unless there is no direct target.
-	switch (spell.targetType)
+	switch (spellFragment.targetType)
 	{
 		// Targetting the caster.
 		case TargetType::self:
@@ -239,7 +239,7 @@ void CSimulation::LoadActorData()
 		.component<Name, Prototype,
 		Health, Damage, DamageOverTime, Heal, HealOverTime,
 		Qi, UtiliseQi, UtiliseQiOverTime, ReplenishQi, ReplenishQiOverTime,
-		Spell, ItemClass, RenderLight
+		SpellFragment, ItemClass, RenderLight
 		>(actorSerial);
 }
 
@@ -254,7 +254,7 @@ void CSimulation::SaveActorData()
 		.component<Name, Prototype,
 		Health, Damage, DamageOverTime, Heal, HealOverTime,
 		Qi, UtiliseQi, UtiliseQiOverTime, ReplenishQi, ReplenishQiOverTime,
-		Spell, ItemClass, RenderLight
+		SpellFragment, ItemClass, RenderLight
 		>(actorSerial);
 	actorSerial.SaveToFile("chrysalis/parameters/actor/actor-snapshot.xml");
 }
@@ -275,7 +275,7 @@ void CSimulation::LoadPrototypeData()
 		.component<Name, Prototype,
 		Health, Damage, DamageOverTime, SelfHarm, Heal, HealOverTime,
 		Qi, UtiliseQi, UtiliseQiOverTime, ReplenishQi, ReplenishQiOverTime,
-		Spell, SpellCastDuration,
+		Spell, SpellFragment, SpellCastDuration,
 		SpellActionSchematyc, SpellActionDRS,
 		SpellActionInspect, SpellActionExamine,
 		SpellActionTake, SpellActionDrop, SpellActionThrow,
@@ -283,7 +283,7 @@ void CSimulation::LoadPrototypeData()
 		SpellActionOpen, SpellActionClose,
 		SpellActionUnlock, SpellActionLock,
 		RenderLight,
-		Timer, Range, Aura, Buff, Debuff, Cooldown,
+		Timer, Duration, Range, Aura, Buff, Debuff, Cooldown,
 		Channelled, 
 		AnimationFragmentSpellCast, AnimationFragmentEmote, AnimationTag,
 		MovementFactor, CancelOnMovement, AreaOfEffect,
@@ -304,7 +304,7 @@ void CSimulation::SavePrototypeData()
 		.component<Name, Prototype,
 		Health, Damage, DamageOverTime, SelfHarm, Heal, HealOverTime,
 		Qi, UtiliseQi, UtiliseQiOverTime, ReplenishQi, ReplenishQiOverTime,
-		Spell, SpellCastDuration,
+		Spell, SpellFragment, SpellCastDuration,
 		SpellActionSchematyc, SpellActionDRS,
 		SpellActionInspect, SpellActionExamine,
 		SpellActionTake, SpellActionDrop, SpellActionThrow,
@@ -312,7 +312,7 @@ void CSimulation::SavePrototypeData()
 		SpellActionOpen, SpellActionClose,
 		SpellActionUnlock, SpellActionLock,
 		RenderLight,
-		Timer, Range, Aura, Buff, Debuff, Cooldown,
+		Timer, Duration, Range, Aura, Buff, Debuff, Cooldown,
 		Channelled, 
 		AnimationFragmentSpellCast, AnimationFragmentEmote, AnimationTag,
 		MovementFactor, CancelOnMovement, AreaOfEffect,
