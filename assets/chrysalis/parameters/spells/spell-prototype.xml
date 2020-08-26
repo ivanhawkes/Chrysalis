@@ -58,8 +58,8 @@
   <name CryXmlVersion="2" name="Emote Anger" displayName="Emote Anger" entityId="25"/>
   <name CryXmlVersion="2" name="Emote Fear" displayName="Emote Fear" entityId="26"/>
   <name CryXmlVersion="2" name="AAA" displayName="AAA" entityId="27"/>
-  <prototype CryXmlVersion="2" prototypeEntityId="1048575" entityId="26"/>
-  <prototype CryXmlVersion="2" prototypeEntityId="1048575" entityId="27"/>
+  <prototype CryXmlVersion="2" prototypeEntityId="1" entityId="26"/>
+  <prototype CryXmlVersion="2" prototypeEntityId="2" entityId="27"/>
   <damage CryXmlVersion="2" quantity="14" damageType="fire" entityId="0"/>
   <damage CryXmlVersion="2" quantity="12" damageType="fire" entityId="2"/>
   <damage CryXmlVersion="2" quantity="8" damageType="qi" entityId="7"/>
@@ -87,7 +87,13 @@
   <replenish-qi CryXmlVersion="2" quantity="8" entityId="7"/>
   <replenish-qi-over-time CryXmlVersion="2" quantity="4" duration="10" interval="2" entityId="6"/>
   <spell CryXmlVersion="2" entityId="27">
-   <fragments />
+   <fragments>
+    <element prototypeEntityId="1"/>
+    <element prototypeEntityId="2"/>
+    <element prototypeEntityId="3"/>
+    <element prototypeEntityId="4"/>
+    <element prototypeEntityId="10"/>
+   </fragments>
   </spell>
   <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" entityId="0"/>
   <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" entityId="1"/>

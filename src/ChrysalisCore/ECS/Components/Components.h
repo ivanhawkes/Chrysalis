@@ -121,6 +121,13 @@ struct Name final
 };
 
 
+template <typename E>
+[[nodiscard]] constexpr auto to_underlying(E e) noexcept
+{
+	return static_cast<std::underlying_type_t<E>>(e);
+}
+
+
 /**	A prototype. */
 
 struct Prototype final
@@ -136,8 +143,10 @@ struct Prototype final
 
 	void Serialize(Serialization::IArchive& ar)
 	{
-		//ar(to_underlying(prototypeEntityId), "prototypeEntityId", "Entity Id for the prototype this entity uses as it's base.");
-		ar(static_cast<std::uint32_t>(prototypeEntityId), "prototypeEntityId", "Entity Id for the prototype this entity uses as it's base.");	
+		// TODO: Need a better way to handle this.
+		uint32_t protoId = to_underlying(prototypeEntityId);
+		ar(protoId, "prototypeEntityId", "Entity Id for the prototype this entity uses as it's base.");
+		prototypeEntityId = entt::entity(protoId);
 	}
 
 

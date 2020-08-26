@@ -139,17 +139,8 @@ struct SpellFragment final
 };
 
 
-// TODO: This is broken.
-
 struct Spell final
 {
-
-	Spell()
-	{
-		fragments.push_back(entt::entity {1});
-		fragments.push_back(entt::entity {2});
-	}
-
 	void Serialize(Serialization::IArchive& ar)
 	{
 		ar(fragments, "fragments", "A list of the fragments that make up this spell.");
@@ -157,7 +148,7 @@ struct Spell final
 
 
 	// A spell is comprised of fragments.
-	std::vector<entt::entity> fragments;
+	std::vector<Prototype> fragments;
 };
 
 

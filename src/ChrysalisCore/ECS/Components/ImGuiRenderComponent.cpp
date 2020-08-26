@@ -27,7 +27,9 @@ void ImGuiRenderComponent(Name ar)
 
 void ImGuiRenderComponent(Prototype ar)
 {
-	// TODO: Need conversion from the base entity type.
+	// TODO: Need a better way to handle this.
+	int32_t protoId = to_underlying(ar.prototypeEntityId);
+	ImGui::InputInt("Prototype Id:", &protoId);
 }
 
 
@@ -134,6 +136,10 @@ void ImGuiRenderComponent(SpellFragment ar)
 
 void ImGuiRenderComponent(Spell ar)
 {
+	for (auto& prototypeId : ar.fragments)
+	{
+		ImGuiRenderComponent(prototypeId);
+	}
 }
 
 
