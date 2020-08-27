@@ -30,6 +30,7 @@ void ImGuiRenderComponent(Prototype ar)
 	// TODO: Need a better way to handle this.
 	int32_t protoId = to_underlying(ar.prototypeEntityId);
 	ImGui::InputInt("Prototype Id:", &protoId);
+	ar.prototypeEntityId = entt::entity {protoId};
 }
 
 

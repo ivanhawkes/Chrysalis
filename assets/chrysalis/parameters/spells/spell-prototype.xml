@@ -95,33 +95,33 @@
     <element prototypeEntityId="10"/>
    </fragments>
   </spell>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" entityId="0"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" entityId="1"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" entityId="2"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" entityId="3"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" entityId="4"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" entityId="5"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" entityId="6"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" entityId="7"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" entityId="8"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" entityId="9"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" entityId="10"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" entityId="11"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" entityId="12"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" entityId="13"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" entityId="14"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" entityId="15"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" entityId="16"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="channelledActive" entityId="17"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="channelledActive" entityId="18"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" entityId="19"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" entityId="20"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" entityId="21"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" entityId="22"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" entityId="23"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" entityId="24"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" entityId="25"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" entityId="26"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" targetAggressionType="allied" entityId="0"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="1"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" targetAggressionType="allied" entityId="2"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" targetAggressionType="allied" entityId="3"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="4"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" targetAggressionType="allied" entityId="5"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" targetAggressionType="allied" entityId="6"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" targetAggressionType="allied" entityId="7"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" targetAggressionType="allied" entityId="8"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="9"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="10"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="11"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="12"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="13"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="14"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="15"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="16"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="channelledActive" targetAggressionType="allied" entityId="17"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="channelledActive" targetAggressionType="allied" entityId="18"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="19"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="20"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="21"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" targetAggressionType="allied" entityId="22"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="23"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="24"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" targetAggressionType="allied" entityId="25"/>
+  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" targetAggressionType="allied" entityId="26"/>
   <spell-cast-duration CryXmlVersion="2" value="2" entityId="0"/>
   <spell-cast-duration CryXmlVersion="2" value="2" entityId="5"/>
   <spell-cast-duration CryXmlVersion="2" value="2" entityId="7"/>

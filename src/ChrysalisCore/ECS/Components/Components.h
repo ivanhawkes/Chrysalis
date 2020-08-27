@@ -8,14 +8,11 @@
 namespace Chrysalis::ECS
 {
 // Cast an enum to it's underlying type for serialisation.
-//template <typename E>
-//[[nodiscard]] constexpr auto to_underlying(E e) noexcept
-//{
-//	return static_cast<std::underlying_type_t<E>>(e);
-//}
-
-
-//bool Serialize(Serialization::IArchive& ar, entt::entity& value, const char* szName, const char* szLabel);
+template <typename E>
+[[nodiscard]] constexpr auto to_underlying(E e) noexcept
+{
+	return static_cast<std::underlying_type_t<E>>(e);
+}
 
 
 void RegisterComponentsWithMeta();
@@ -121,13 +118,6 @@ struct Name final
 };
 
 
-template <typename E>
-[[nodiscard]] constexpr auto to_underlying(E e) noexcept
-{
-	return static_cast<std::underlying_type_t<E>>(e);
-}
-
-
 /**	A prototype. */
 
 struct Prototype final
@@ -146,7 +136,7 @@ struct Prototype final
 		// TODO: Need a better way to handle this.
 		uint32_t protoId = to_underlying(prototypeEntityId);
 		ar(protoId, "prototypeEntityId", "Entity Id for the prototype this entity uses as it's base.");
-		prototypeEntityId = entt::entity(protoId);
+		prototypeEntityId = entt::entity {protoId};
 	}
 
 

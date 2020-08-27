@@ -25,11 +25,13 @@ void CEntityEditor::Draw()
 	}
 
 	// TODO: This should load the registry specific to the editor window.
+	ImGui::SameLine();
 	if (ImGui::Button("Save"))
 	{
 		ECS::Simulation.SavePrototypeData();
 	}
 
+	ImGui::SameLine();
 	if (ImGui::Button("Add Entity"))
 	{
 		// Add a new blank entity.
@@ -54,10 +56,18 @@ void CEntityEditor::EnumerateEntities()
 	auto view = m_registry.view<ECS::Name>();
 	for (auto& entity : view)
 	{
-		// Get the name.
+		// Figure out if this is the presently selected entity.
+		const auto selectedEntityFlag = ((entity == m_selectedEntity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
 		auto& name = view.get<ECS::Name>(entity);
 
-		if (ImGui::TreeNode(name.name.c_str()))
+		// Show the node and select it if it's clicked.
+		bool isEntityNodeOpened = ImGui::TreeNodeEx(name.name.c_str(), selectedEntityFlag);
+		if (ImGui::IsItemClicked())
+		{
+			m_selectedEntity = entity;
+		}
+
+		if (isEntityNodeOpened)
 		{
 			ImGui::SameLine();
 			if (ImGui::Button("-"))

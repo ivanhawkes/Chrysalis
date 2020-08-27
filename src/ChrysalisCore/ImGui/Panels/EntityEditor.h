@@ -24,6 +24,7 @@ public:
 private:
 	entt::registry& m_registry;
 	string m_windowName;
+	entt::entity m_selectedEntity {entt::null};
 };
 }
 

@@ -125,6 +125,7 @@ struct SpellFragment final
 	{
 		ar(targetType, "targetType", "Source of the spell - typically none or self.");
 		ar(spellcastPayload, "spellcastPayload", "At what time should the spell payload be delivered?");
+		ar(targetAggressionType, "targetAggressionType", "Which entities might be considered targets for this spell?");
 	}
 
 
