@@ -1,4 +1,4 @@
-<AssetMetadata version="0" type="Level" guid="93671371-981b-923e-3d39-504372bc302b" source="" timestamp="1598534458">
+<AssetMetadata version="0" type="Level" guid="93671371-981b-923e-3d39-504372bc302b" source="" timestamp="1598536920">
  <Files>
   <File path="test_all/test_all.level"/>
  </Files>
@@ -334,6 +334,7 @@
   <Path>chrysalis/materials/whitebox/grid.mtl</Path>
   <Path>chrysalis/objects/items/flashlight/maglite_02d.cgf</Path>
   <Path>chrysalis/objects/items/flashlight/maglite_02d.mtl</Path>
+  <Path>chrysalis/parameters/spells/spell-prototype.xml</Path>
   <Path>chrysalis/textures/lights/flashlight_projector.dds</Path>
   <Path>editor/resourcecache/chrysalis/characters/human/male/textures/male_clothing_ddna.dds</Path>
   <Path>editor/resourcecache/chrysalis/characters/human/male/textures/male_clothing_diff.dds</Path>
