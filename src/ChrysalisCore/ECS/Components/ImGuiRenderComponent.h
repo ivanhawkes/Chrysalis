@@ -36,8 +36,10 @@ void ImGuiRenderComponent(ReplenishQi ar);
 void ImGuiRenderComponent(ReplenishQiOverTime ar);
 
 // Spellcasts.
-void ImGuiRenderComponent(SpellFragment ar);
 void ImGuiRenderComponent(Spell ar);
+void ImGuiRenderComponent(SpellFragment ar);
+void ImGuiRenderComponent(SpellTargetType ar);
+void ImGuiRenderComponent(SpellTargetAggressionType ar);
 void ImGuiRenderComponent(SpellcastExecution ar);
 void ImGuiRenderComponent(SpellCastDuration ar);
 

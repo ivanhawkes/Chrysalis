@@ -61,7 +61,7 @@ void CEntityEditor::EnumerateEntities()
 		auto& name = view.get<ECS::Name>(entity);
 
 		// Show the node and select it if it's clicked.
-		bool isEntityNodeOpened = ImGui::TreeNodeEx(name.name.c_str(), selectedEntityFlag);
+		bool isEntityNodeOpened = ImGui::TreeNodeEx(name.name.c_str(), selectedEntityFlag, "%s (%d)", name.name.c_str(), entity);
 		if (ImGui::IsItemClicked())
 		{
 			m_selectedEntity = entity;

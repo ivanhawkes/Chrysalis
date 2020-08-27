@@ -78,7 +78,7 @@ struct SerialiseECSInput
 		// Dirty way to get the attribute out, since I don't have a primitive for getting an entity attribute.
 		std::underlying_type_t<entt::entity> entityId {0};
 		node->getAttr("entityId", entityId);
-		entity = static_cast<entt::entity>(entityId);
+		entity = entt::entity {entityId};
 
 		m_currentEntity++;
 	}
@@ -93,7 +93,7 @@ struct SerialiseECSInput
 			// Dirty way to get the attribute out, since I don't have a primitive for getting an entity attribute.
 			std::underlying_type_t<entt::entity> val {0};
 			componentNode->getAttr("entityId", val);
-			entity = static_cast<entt::entity>(val);
+			entity = entt::entity {val};
 
 			// Each entity get's a couple of nodes made for storing it's components.	
 			if (auto prop = entt::resolve<Type>().prop("name-hs"_hs))

@@ -38,13 +38,20 @@ void ImGuiRenderComponent(Prototype ar)
 
 void ImGuiRenderComponent(SourceEntity ar)
 {
-	// TODO: Need conversion from the base entity type.
+	// TODO: Need a better way to handle this.
+	int32_t sourceId = to_underlying(ar.sourceEntityId);
+	ImGui::Text("Source Id: %u", sourceId);
+	ImGui::Text("Cry Source Id: %u", ar.crySourceEntityId);
+
 }
 
 
 void ImGuiRenderComponent(TargetEntity ar)
 {
 	// TODO: Need conversion from the base entity type.
+	int32_t targetId = to_underlying(ar.targetEntityId);
+	ImGui::Text("Target Id: %u", targetId);
+	ImGui::Text("Cry Target Id: %u", ar.cryTargetEntityId);
 }
 
 
@@ -130,17 +137,27 @@ void ImGuiRenderComponent(ReplenishQiOverTime ar)
 
 // Spellcasts.
 
-void ImGuiRenderComponent(SpellFragment ar)
-{
-}
-
-
 void ImGuiRenderComponent(Spell ar)
 {
 	for (auto& prototypeId : ar.fragments)
 	{
 		ImGuiRenderComponent(prototypeId);
 	}
+}
+
+
+void ImGuiRenderComponent(SpellFragment ar)
+{
+}
+
+
+void ImGuiRenderComponent(SpellTargetType ar)
+{
+}
+
+
+void ImGuiRenderComponent(SpellTargetAggressionType ar)
+{
 }
 
 

@@ -119,27 +119,6 @@ using CancelOnMovement = SimpleComponent<bool, "cancel-on-movement"_hs>;
 using Channelled = SimpleComponent<bool, "Channelled"_hs>;
 
 
-struct SpellFragment final
-{
-	void Serialize(Serialization::IArchive& ar)
-	{
-		ar(targetType, "targetType", "Source of the spell - typically none or self.");
-		ar(spellcastPayload, "spellcastPayload", "At what time should the spell payload be delivered?");
-		ar(targetAggressionType, "targetAggressionType", "Which entities might be considered targets for this spell?");
-	}
-
-
-	/** At what time should the spell payload be delivered? */
-	SpellcastPayload spellcastPayload {SpellcastPayload::onCompletion};
-
-	// Source for the spell will generally only be none or self.
-	TargetType targetType {TargetType::self};
-	
-	// Which sort of targets can this spell be cast upon?
-	TargetAggressionType targetAggressionType {TargetAggressionType::allied};
-};
-
-
 struct Spell final
 {
 	void Serialize(Serialization::IArchive& ar)
@@ -150,6 +129,19 @@ struct Spell final
 
 	// A spell is comprised of fragments.
 	std::vector<Prototype> fragments;
+};
+
+
+struct SpellFragment final
+{
+	void Serialize(Serialization::IArchive& ar)
+	{
+		ar(spellcastPayload, "spellcastPayload", "At what time should the spell payload be delivered?");
+	}
+
+
+	/** At what time should the spell payload be delivered? */
+	SpellcastPayload spellcastPayload {SpellcastPayload::onCompletion};
 };
 
 
@@ -167,5 +159,31 @@ struct SpellcastExecution final
 
 	/** Status of the casting mechanic. */
 	SpellCastExecutionStatus castExecutionStatus {SpellCastExecutionStatus::queued};
+};
+
+
+struct SpellTargetType final
+{
+	void Serialize(Serialization::IArchive& ar)
+	{
+		ar(targetType, "targetType", "Entity that is the target for this spell fragment.");
+	}
+
+
+	// Source for the spell will generally only be none or self.
+	TargetType targetType {TargetType::self};
+};
+
+
+struct SpellTargetAggressionType final
+{
+	void Serialize(Serialization::IArchive& ar)
+	{
+		ar(targetAggressionType, "targetAggressionType", "Which entities might be considered targets for this spell?");
+	}
+
+
+	// Which sort of targets can this spell be cast upon?
+	TargetAggressionType targetAggressionType {TargetAggressionType::allied};
 };
 }

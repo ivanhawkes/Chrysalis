@@ -28,10 +28,13 @@
   <entity entityId="25"/>
   <entity entityId="26"/>
   <entity entityId="27"/>
+  <entity entityId="28"/>
  </entities>
  <components>
-  <name CryXmlVersion="2" name="Fireball" displayName="Fireball" entityId="0"/>
-  <name CryXmlVersion="2" name="Shadow Word Pain" displayName="Shadow Word Pain" entityId="1"/>
+  <name CryXmlVersion="2" name="FB Mana" displayName="FB Mana" entityId="1"/>
+  <name CryXmlVersion="2" name="FB Dmg" displayName="FB Dmg" entityId="0"/>
+  <name CryXmlVersion="2" name="Fireball" displayName="Fireball" entityId="27"/>
+  <name CryXmlVersion="2" name="Shadow Word Pain" displayName="Shadow Word Pain" entityId="28"/>
   <name CryXmlVersion="2" name="Scorch" displayName="Scorch" entityId="2"/>
   <name CryXmlVersion="2" name="Heal" displayName="Heal" entityId="3"/>
   <name CryXmlVersion="2" name="Renew" displayName="Renew" entityId="4"/>
@@ -57,23 +60,20 @@
   <name CryXmlVersion="2" name="Truecast(Hunter)" displayName="Truecast(Hunter)" entityId="24"/>
   <name CryXmlVersion="2" name="Emote Anger" displayName="Emote Anger" entityId="25"/>
   <name CryXmlVersion="2" name="Emote Fear" displayName="Emote Fear" entityId="26"/>
-  <name CryXmlVersion="2" name="AAA" displayName="AAA" entityId="27"/>
-  <prototype CryXmlVersion="2" prototypeEntityId="1" entityId="26"/>
-  <prototype CryXmlVersion="2" prototypeEntityId="2" entityId="27"/>
   <damage CryXmlVersion="2" quantity="14" damageType="fire" entityId="0"/>
   <damage CryXmlVersion="2" quantity="12" damageType="fire" entityId="2"/>
   <damage CryXmlVersion="2" quantity="8" damageType="qi" entityId="7"/>
   <damage CryXmlVersion="2" quantity="12" damageType="qi" entityId="8"/>
   <damage CryXmlVersion="2" quantity="15" damageType="fire" entityId="22"/>
-  <damage-over-time CryXmlVersion="2" quantity="4" damageType="unholy" duration="16" interval="1" entityId="1"/>
+  <damage-over-time CryXmlVersion="2" quantity="4" damageType="unholy" duration="16" interval="1" entityId="28"/>
   <self-harm CryXmlVersion="2" quantity="0" damageType="fire" entityId="22"/>
   <heal CryXmlVersion="2" quantity="17" entityId="3"/>
   <heal CryXmlVersion="2" quantity="12" entityId="5"/>
   <heal CryXmlVersion="2" quantity="6" entityId="8"/>
   <heal-over-time CryXmlVersion="2" quantity="3" duration="10" interval="2" entityId="4"/>
   <heal-over-time CryXmlVersion="2" quantity="2" duration="10" interval="2" entityId="5"/>
-  <utilise-qi CryXmlVersion="2" quantity="7" entityId="0"/>
   <utilise-qi CryXmlVersion="2" quantity="6" entityId="1"/>
+  <utilise-qi CryXmlVersion="2" quantity="6" entityId="28"/>
   <utilise-qi CryXmlVersion="2" quantity="11" entityId="2"/>
   <utilise-qi CryXmlVersion="2" quantity="8" entityId="3"/>
   <utilise-qi CryXmlVersion="2" quantity="8" entityId="4"/>
@@ -88,41 +88,42 @@
   <replenish-qi-over-time CryXmlVersion="2" quantity="4" duration="10" interval="2" entityId="6"/>
   <spell CryXmlVersion="2" entityId="27">
    <fragments>
+    <element prototypeEntityId="0"/>
     <element prototypeEntityId="1"/>
-    <element prototypeEntityId="2"/>
-    <element prototypeEntityId="3"/>
-    <element prototypeEntityId="4"/>
-    <element prototypeEntityId="10"/>
    </fragments>
   </spell>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" targetAggressionType="allied" entityId="0"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="1"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" targetAggressionType="allied" entityId="2"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" targetAggressionType="allied" entityId="3"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="4"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" targetAggressionType="allied" entityId="5"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" targetAggressionType="allied" entityId="6"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" targetAggressionType="allied" entityId="7"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" targetAggressionType="allied" entityId="8"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="9"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="10"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="11"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="12"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="13"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="14"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="15"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="16"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="channelledActive" targetAggressionType="allied" entityId="17"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="channelledActive" targetAggressionType="allied" entityId="18"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="19"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="20"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="21"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" targetAggressionType="allied" entityId="22"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="23"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="immediate" targetAggressionType="allied" entityId="24"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" targetAggressionType="allied" entityId="25"/>
-  <spell-fragment CryXmlVersion="2" targetType="singleTarget" spellcastPayload="onCompletion" targetAggressionType="allied" entityId="26"/>
-  <spell-cast-duration CryXmlVersion="2" value="2" entityId="0"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="26"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="immediate" entityId="28"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="2"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="3"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="immediate" entityId="4"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="5"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="6"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="7"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="8"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="immediate" entityId="9"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="immediate" entityId="10"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="immediate" entityId="11"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="immediate" entityId="12"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="immediate" entityId="13"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="immediate" entityId="14"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="immediate" entityId="15"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="immediate" entityId="16"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="channelledActive" entityId="17"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="channelledActive" entityId="18"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="immediate" entityId="19"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="immediate" entityId="20"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="immediate" entityId="21"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="22"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="immediate" entityId="23"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="immediate" entityId="24"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="25"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="1"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="0"/>
+  <spell-target-type CryXmlVersion="2" targetType="singleTarget" entityId="0"/>
+  <spell-target-type CryXmlVersion="2" targetType="self" entityId="1"/>
+  <spell-target-aggression-type CryXmlVersion="2" targetAggressionType="aggressive" entityId="27"/>
+  <spell-cast-duration CryXmlVersion="2" value="2" entityId="8"/>
   <spell-cast-duration CryXmlVersion="2" value="2" entityId="5"/>
   <spell-cast-duration CryXmlVersion="2" value="2" entityId="7"/>
   <spell-cast-duration CryXmlVersion="2" value="2" entityId="3"/>
@@ -130,7 +131,6 @@
   <spell-cast-duration CryXmlVersion="2" value="2" entityId="21"/>
   <spell-cast-duration CryXmlVersion="2" value="2" entityId="20"/>
   <spell-cast-duration CryXmlVersion="2" value="2" entityId="19"/>
-  <spell-cast-duration CryXmlVersion="2" value="2" entityId="8"/>
   <spell-action-schematyc CryXmlVersion="2" entityId="9"/>
   <spell-action-drs CryXmlVersion="2" entityId="10"/>
   <spell-action-inspect CryXmlVersion="2" entityId="11"/>
@@ -151,7 +151,7 @@
   <duration CryXmlVersion="2" value="12" entityId="23"/>
   <duration CryXmlVersion="2" value="12" entityId="5"/>
   <duration CryXmlVersion="2" value="12" entityId="4"/>
-  <duration CryXmlVersion="2" value="18" entityId="1"/>
+  <duration CryXmlVersion="2" value="18" entityId="28"/>
   <range CryXmlVersion="2" minRange="0" maxRange="30" entityId="24"/>
   <range CryXmlVersion="2" minRange="0" maxRange="30" entityId="22"/>
   <range CryXmlVersion="2" minRange="0" maxRange="30" entityId="23"/>
@@ -172,15 +172,15 @@
   <range CryXmlVersion="2" minRange="0" maxRange="30" entityId="4"/>
   <range CryXmlVersion="2" minRange="0" maxRange="30" entityId="3"/>
   <range CryXmlVersion="2" minRange="0" maxRange="30" entityId="2"/>
-  <range CryXmlVersion="2" minRange="0" maxRange="30" entityId="1"/>
-  <range CryXmlVersion="2" minRange="0" maxRange="30" entityId="0"/>
+  <range CryXmlVersion="2" minRange="0" maxRange="30" entityId="28"/>
+  <range CryXmlVersion="2" minRange="0" maxRange="30" entityId="27"/>
   <aura CryXmlVersion="2" entityId="24"/>
   <buff CryXmlVersion="2" entityId="24"/>
   <buff CryXmlVersion="2" entityId="4"/>
   <buff CryXmlVersion="2" entityId="5"/>
   <debuff CryXmlVersion="2" entityId="23"/>
   <debuff CryXmlVersion="2" entityId="2"/>
-  <debuff CryXmlVersion="2" entityId="1"/>
+  <debuff CryXmlVersion="2" entityId="28"/>
   <cooldown CryXmlVersion="2" value="1.5" entityId="24"/>
   <cooldown CryXmlVersion="2" value="1.5" entityId="23"/>
   <cooldown CryXmlVersion="2" value="1.5" entityId="22"/>
@@ -191,8 +191,8 @@
   <cooldown CryXmlVersion="2" value="1.5" entityId="4"/>
   <cooldown CryXmlVersion="2" value="1.5" entityId="3"/>
   <cooldown CryXmlVersion="2" value="1.5" entityId="2"/>
-  <cooldown CryXmlVersion="2" value="1.5" entityId="1"/>
-  <cooldown CryXmlVersion="2" value="1.5" entityId="0"/>
+  <cooldown CryXmlVersion="2" value="1.5" entityId="28"/>
+  <cooldown CryXmlVersion="2" value="2" entityId="27"/>
   <channelled CryXmlVersion="2" value="true" entityId="22"/>
   <animation-fragment-emote CryXmlVersion="2" value="" entityId="25"/>
   <animation-fragment-emote CryXmlVersion="2" value="" entityId="26"/>
@@ -200,6 +200,7 @@
   <animation-tag CryXmlVersion="2" value="fear" entityId="26"/>
   <movement-factor CryXmlVersion="2" value="0.75" entityId="23"/>
   <cancel-on-movement CryXmlVersion="2" value="true" entityId="22"/>
+  <cancel-on-movement CryXmlVersion="2" value="true" entityId="27"/>
   <area-of-effect CryXmlVersion="2" value="4" entityId="22"/>
   <area-of-effect CryXmlVersion="2" value="5" entityId="23"/>
   <area-of-effect CryXmlVersion="2" value="30" entityId="24"/>
@@ -209,8 +210,8 @@
  </components>
  <meta>
   <component-types>
-   <component-type count="28"/>
-   <component-type count="2"/>
+   <component-type count="29"/>
+   <component-type count="0"/>
    <component-type count="0"/>
    <component-type count="5"/>
    <component-type count="1"/>
@@ -223,8 +224,10 @@
    <component-type count="1"/>
    <component-type count="1"/>
    <component-type count="1"/>
-   <component-type count="27"/>
-   <component-type count="9"/>
+   <component-type count="28"/>
+   <component-type count="2"/>
+   <component-type count="1"/>
+   <component-type count="8"/>
    <component-type count="1"/>
    <component-type count="1"/>
    <component-type count="1"/>
@@ -250,7 +253,7 @@
    <component-type count="2"/>
    <component-type count="2"/>
    <component-type count="1"/>
-   <component-type count="1"/>
+   <component-type count="2"/>
    <component-type count="3"/>
    <component-type count="0"/>
    <component-type count="0"/>
@@ -266,6 +269,6 @@
    <component-type count="0"/>
    <component-type count="0"/>
   </component-types>
-  <entities count="28"/>
+  <entities count="29"/>
  </meta>
 </ecs>

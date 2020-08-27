@@ -61,8 +61,10 @@ void RegisterComponentsWithMeta()
 	RegisterTypeWithMeta<ReplenishQiOverTime>("replenish-qi-over-time"_hs);
 
 	// Spellcasts.
-	RegisterTypeWithMeta<SpellFragment>("spell-fragment"_hs);
 	RegisterTypeWithMeta<Spell>("spell"_hs);
+	RegisterTypeWithMeta<SpellFragment>("spell-fragment"_hs);
+	RegisterTypeWithMeta<SpellTargetType>("spell-target-type"_hs);
+	RegisterTypeWithMeta<SpellTargetAggressionType>("spell-target-aggression-type"_hs);
 	RegisterTypeWithMeta<SpellcastExecution>("spellcast-execution"_hs);
 	RegisterTypeWithMeta<SpellCastDuration>("spell-cast-duration"_hs);
 	

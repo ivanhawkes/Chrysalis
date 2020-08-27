@@ -23,60 +23,63 @@ namespace Chrysalis::ECS
 void CSimulation::RewireSpell(entt::registry& spellcastingRegistry, entt::entity spellEntity, entt::entity sourceEntity, entt::entity targetEntity,
 	EntityId crySourceEntityId, EntityId cryTargetEntityId)
 {
-	SpellFragment& spellFragment = spellcastingRegistry.get<SpellFragment>(spellEntity);
+	//Spell& spell = spellcastingRegistry.get<Spell>(spellEntity);
 
-	entt::entity source {entt::null};
-	entt::entity target {entt::null};
-	EntityId sourceEntityId {INVALID_ENTITYID};
-	EntityId targetEntityId {INVALID_ENTITYID};
+	//SpellFragment& spellFragment = spellcastingRegistry.get<SpellFragment>(spellEntity);
 
-	// The source should almost always be the real source of the spell.
-	if (spellFragment.targetType != TargetType::none)
-	{
-		source = sourceEntity;
-		sourceEntityId = crySourceEntityId;
-	}
+	//entt::entity source {entt::null};
+	//entt::entity target {entt::null};
+	//EntityId sourceEntityId {INVALID_ENTITYID};
+	//EntityId targetEntityId {INVALID_ENTITYID};
 
-	// The target should be the target usually, unless there is no direct target.
-	switch (spellFragment.targetType)
-	{
-		// Targetting the caster.
-		case TargetType::self:
-			target = sourceEntity;
-			targetEntityId = crySourceEntityId;
-			break;
+	//// The source should almost always be the real source of the spell.
+	//if (spellFragment.targetType != TargetType::none)
+	//{
+	//	source = sourceEntity;
+	//	sourceEntityId = crySourceEntityId;
+	//}
 
-			// Not targetted at an entity.
-		case TargetType::none:
-		case TargetType::cone:
-		case TargetType::column:
-		case TargetType::sourceBasedAOE:
-		case TargetType::groundTargettedAOE:
-			target = entt::null;
-			targetEntityId = INVALID_ENTITYID;
-			break;
+	//// The target should be the target usually, unless there is no direct target.
+	//switch (spellFragment.targetType)
+	//{
+	//	// Targetting the caster.
+	//	case TargetType::self:
+	//		target = sourceEntity;
+	//		targetEntityId = crySourceEntityId;
+	//		break;
 
-			// Targetting the selected entity.
-		default:
-			target = targetEntity;
-			targetEntityId = cryTargetEntityId;
-			break;
-	}
+	//		// Not targetted at an entity.
+	//	case TargetType::none:
+	//	case TargetType::cone:
+	//	case TargetType::column:
+	//	case TargetType::sourceBasedAOE:
+	//	case TargetType::groundTargettedAOE:
+	//		target = entt::null;
+	//		targetEntityId = INVALID_ENTITYID;
+	//		break;
+
+	//		// Targetting the selected entity.
+	//	default:
+	//		target = targetEntity;
+	//		targetEntityId = cryTargetEntityId;
+	//		break;
+	//}
 
 	// The source and target for the spell need to be added to the entity.
-	spellcastingRegistry.emplace<SourceEntity>(spellEntity, source, sourceEntityId);
-	spellcastingRegistry.emplace<TargetEntity>(spellEntity, target, targetEntityId);
+	spellcastingRegistry.emplace<SourceEntity>(spellEntity, sourceEntity, crySourceEntityId);
+	spellcastingRegistry.emplace<TargetEntity>(spellEntity, targetEntity, cryTargetEntityId);
 }
 
 
 /** Super dirty and slow way to locate a spell from the registry. */
 entt::entity CSimulation::GetSpellByName(const char* spellName)
 {
-	auto view = m_spellRegistry.view<Name>();
+	auto view = m_spellRegistry.view<Name, Spell>();
 
 	for (auto& entity : view)
 	{
 		auto& name = view.get<Name>(entity);
+		//auto& spell = view.get<Spell>(entity);
 
 		if (strcmp(name.name, spellName) == 0)
 		{
@@ -93,19 +96,35 @@ entt::entity CSimulation::GetSpellByName(const char* spellName)
 void CSimulation::CastSpellByName(const char* spellName, entt::entity sourceEntity, entt::entity targetEntity,
 	EntityId crySourceEntityId, EntityId cryTargetEntityId)
 {
-	auto spellEntity = GetSpellByName(spellName);
-	if (spellEntity != entt::null)
+	auto spellEntityId = GetSpellByName(spellName);
+	if (spellEntityId != entt::null)
 	{
 		auto newEntity = m_spellcastingRegistry.create();
 
-		m_spellRegistry.visit(spellEntity, [this, spellEntity, newEntity](const auto type_id)
-			{m_functionDispatchMap[type_id].stampFunction(m_spellRegistry, spellEntity, m_spellcastingRegistry, newEntity); });
+		// Copy each component for the spell itself.
+		m_spellRegistry.visit(spellEntityId, [this, spellEntityId, newEntity](const auto type_id)
+			{m_functionDispatchMap[type_id].stampFunction(m_spellRegistry, spellEntityId, m_spellcastingRegistry, newEntity); });
 
 		// Do fixups.
 		RewireSpell(m_spellcastingRegistry, newEntity, sourceEntity, targetEntity, crySourceEntityId, cryTargetEntityId);
 
 		// We supply them an execution context.
 		m_spellcastingRegistry.emplace<SpellcastExecution>(newEntity);
+
+		auto& spellEntity = m_spellRegistry.get<Spell>(spellEntityId);
+
+		// The spell is really made up of fragments, so we need a new entity for each fragment prototype the spell references.
+		for (auto& prototypeId : spellEntity.fragments)
+		{
+			auto newFragmentEntityId = m_spellcastingRegistry.create();
+
+			// Copy each component for the spell itself.
+			m_spellRegistry.visit(prototypeId.prototypeEntityId, [this, prototypeId, newFragmentEntityId](const auto type_id)
+				{m_functionDispatchMap[type_id].stampFunction(m_spellRegistry, prototypeId.prototypeEntityId, m_spellcastingRegistry, newFragmentEntityId); });
+
+			// Do fixups.
+			RewireSpell(m_spellcastingRegistry, newFragmentEntityId, sourceEntity, targetEntity, crySourceEntityId, cryTargetEntityId);
+		}
 
 		// Adjust their qi cast timer.
 		auto& qi = m_actorRegistry.get<Qi>(sourceEntity);
@@ -275,7 +294,7 @@ void CSimulation::LoadPrototypeData()
 		.component<Name, Prototype,
 		Health, Damage, DamageOverTime, SelfHarm, Heal, HealOverTime,
 		Qi, UtiliseQi, UtiliseQiOverTime, ReplenishQi, ReplenishQiOverTime,
-		Spell, SpellFragment, SpellCastDuration,
+		Spell, SpellFragment, SpellTargetType, SpellTargetAggressionType, SpellCastDuration,
 		SpellActionSchematyc, SpellActionDRS,
 		SpellActionInspect, SpellActionExamine,
 		SpellActionTake, SpellActionDrop, SpellActionThrow,
@@ -304,7 +323,7 @@ void CSimulation::SavePrototypeData()
 		.component<Name, Prototype,
 		Health, Damage, DamageOverTime, SelfHarm, Heal, HealOverTime,
 		Qi, UtiliseQi, UtiliseQiOverTime, ReplenishQi, ReplenishQiOverTime,
-		Spell, SpellFragment, SpellCastDuration,
+		Spell, SpellFragment, SpellTargetType, SpellTargetAggressionType, SpellCastDuration,
 		SpellActionSchematyc, SpellActionDRS,
 		SpellActionInspect, SpellActionExamine,
 		SpellActionTake, SpellActionDrop, SpellActionThrow,
