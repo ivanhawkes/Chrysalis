@@ -23,51 +23,44 @@ namespace Chrysalis::ECS
 void CSimulation::RewireSpell(entt::registry& spellcastingRegistry, entt::entity spellEntity, entt::entity sourceEntity, entt::entity targetEntity,
 	EntityId crySourceEntityId, EntityId cryTargetEntityId)
 {
-	//Spell& spell = spellcastingRegistry.get<Spell>(spellEntity);
+	entt::entity source {sourceEntity};
+	entt::entity target {targetEntity};
+	EntityId sourceEntityId {crySourceEntityId};
+	EntityId targetEntityId {cryTargetEntityId};
 
-	//SpellFragment& spellFragment = spellcastingRegistry.get<SpellFragment>(spellEntity);
+	auto* spellTargetType = spellcastingRegistry.try_get<SpellTargetType>(spellEntity);
+	if (spellTargetType)
+	{
+		// The target should be the target usually, unless there is no direct target.
+		switch (spellTargetType->targetType)
+		{
+			// Targetting the caster.
+			case TargetType::self:
+				target = sourceEntity;
+				targetEntityId = crySourceEntityId;
+				break;
 
-	//entt::entity source {entt::null};
-	//entt::entity target {entt::null};
-	//EntityId sourceEntityId {INVALID_ENTITYID};
-	//EntityId targetEntityId {INVALID_ENTITYID};
+			// Not targetted at an entity.
+			case TargetType::none:
+			case TargetType::cone:
+			case TargetType::column:
+			case TargetType::sourceBasedAOE:
+			case TargetType::groundTargettedAOE:
+				target = entt::null;
+				targetEntityId = INVALID_ENTITYID;
+				break;
 
-	//// The source should almost always be the real source of the spell.
-	//if (spellFragment.targetType != TargetType::none)
-	//{
-	//	source = sourceEntity;
-	//	sourceEntityId = crySourceEntityId;
-	//}
-
-	//// The target should be the target usually, unless there is no direct target.
-	//switch (spellFragment.targetType)
-	//{
-	//	// Targetting the caster.
-	//	case TargetType::self:
-	//		target = sourceEntity;
-	//		targetEntityId = crySourceEntityId;
-	//		break;
-
-	//		// Not targetted at an entity.
-	//	case TargetType::none:
-	//	case TargetType::cone:
-	//	case TargetType::column:
-	//	case TargetType::sourceBasedAOE:
-	//	case TargetType::groundTargettedAOE:
-	//		target = entt::null;
-	//		targetEntityId = INVALID_ENTITYID;
-	//		break;
-
-	//		// Targetting the selected entity.
-	//	default:
-	//		target = targetEntity;
-	//		targetEntityId = cryTargetEntityId;
-	//		break;
-	//}
+			// Targetting the selected entity.
+			default:
+				target = targetEntity;
+				targetEntityId = cryTargetEntityId;
+				break;
+		}
+	}
 
 	// The source and target for the spell need to be added to the entity.
-	spellcastingRegistry.emplace<SourceEntity>(spellEntity, sourceEntity, crySourceEntityId);
-	spellcastingRegistry.emplace<TargetEntity>(spellEntity, targetEntity, cryTargetEntityId);
+	spellcastingRegistry.emplace<SourceEntity>(spellEntity, source, sourceEntityId);
+	spellcastingRegistry.emplace<TargetEntity>(spellEntity, target, targetEntityId);
 }
 
 
@@ -79,7 +72,6 @@ entt::entity CSimulation::GetSpellByName(const char* spellName)
 	for (auto& entity : view)
 	{
 		auto& name = view.get<Name>(entity);
-		//auto& spell = view.get<Spell>(entity);
 
 		if (strcmp(name.name, spellName) == 0)
 		{
@@ -303,7 +295,7 @@ void CSimulation::LoadPrototypeData()
 		SpellActionUnlock, SpellActionLock,
 		RenderLight,
 		Timer, Duration, Range, Aura, Buff, Debuff, Cooldown,
-		Channelled, 
+		Channelled,
 		AnimationFragmentSpellCast, AnimationFragmentEmote, AnimationTag,
 		MovementFactor, CancelOnMovement, AreaOfEffect,
 		CrowdControlBlind, CrowdControlDisarm, CrowdControlMovementRestricted, CrowdControlRotationRestricted, CrowdControlFlee, CrowdControlMindControl,
@@ -332,7 +324,7 @@ void CSimulation::SavePrototypeData()
 		SpellActionUnlock, SpellActionLock,
 		RenderLight,
 		Timer, Duration, Range, Aura, Buff, Debuff, Cooldown,
-		Channelled, 
+		Channelled,
 		AnimationFragmentSpellCast, AnimationFragmentEmote, AnimationTag,
 		MovementFactor, CancelOnMovement, AreaOfEffect,
 		CrowdControlBlind, CrowdControlDisarm, CrowdControlMovementRestricted, CrowdControlRotationRestricted, CrowdControlFlee, CrowdControlMindControl,
