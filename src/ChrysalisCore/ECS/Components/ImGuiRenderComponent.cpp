@@ -340,7 +340,7 @@ void ImGuiRenderComponent(AnimationTag ar)
 }
 
 
-// Simple components.
+// Timers.
 
 void ImGuiRenderComponent(Timer ar)
 {
@@ -353,6 +353,14 @@ void ImGuiRenderComponent(Duration ar)
 	ImGui::InputFloat("Value:", &ar.value);
 }
 
+
+void ImGuiRenderComponent(Delay ar)
+{
+	ImGui::InputFloat("Value:", &ar.value);
+}
+
+
+// Simple components.
 
 void ImGuiRenderComponent(Aura ar)
 {

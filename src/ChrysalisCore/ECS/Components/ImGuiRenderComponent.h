@@ -71,9 +71,12 @@ void ImGuiRenderComponent(AnimationFragmentSpellCast ar);
 void ImGuiRenderComponent(AnimationFragmentEmote ar);
 void ImGuiRenderComponent(AnimationTag ar);
 
-// Simple components.
+// Timers.
 void ImGuiRenderComponent(Timer ar);
 void ImGuiRenderComponent(Duration ar);
+void ImGuiRenderComponent(Delay ar);
+
+// Simple components.
 void ImGuiRenderComponent(Aura ar);
 void ImGuiRenderComponent(Buff ar);
 void ImGuiRenderComponent(Debuff ar);

@@ -172,7 +172,7 @@ void CSimulation::Init()
 void CSimulation::Update(const float deltaTime)
 {
 	// Run the ticks no more often than this interval.
-	static const float tickInterval {0.5f};
+	static const float tickInterval {0.05f};
 
 	// Track the amount of time that has gone since we last run the tick code.
 	static float passedTime {0.0f};
@@ -200,6 +200,9 @@ void CSimulation::Update(const float deltaTime)
 
 void CSimulation::UpdateImmediate(const float deltaTime)
 {
+	// Update all the timers before anything else.
+	SystemUpdateAllTimers(deltaTime, m_spellcastingRegistry);
+
 	// Simluate some direct heals and direct damage.
 	SystemApplyDamage(m_spellcastingRegistry, m_actorRegistry);
 	SystemApplyHeal(m_spellcastingRegistry, m_actorRegistry);
@@ -294,7 +297,8 @@ void CSimulation::LoadPrototypeData()
 		SpellActionOpen, SpellActionClose,
 		SpellActionUnlock, SpellActionLock,
 		RenderLight,
-		Timer, Duration, Range, Aura, Buff, Debuff, Cooldown,
+		Timer, Duration, Delay,
+		Range, Aura, Buff, Debuff, Cooldown,
 		Channelled,
 		AnimationFragmentSpellCast, AnimationFragmentEmote, AnimationTag,
 		MovementFactor, CancelOnMovement, AreaOfEffect,
@@ -323,7 +327,8 @@ void CSimulation::SavePrototypeData()
 		SpellActionOpen, SpellActionClose,
 		SpellActionUnlock, SpellActionLock,
 		RenderLight,
-		Timer, Duration, Range, Aura, Buff, Debuff, Cooldown,
+		Timer, Duration, Delay,
+		Range, Aura, Buff, Debuff, Cooldown,
 		Channelled,
 		AnimationFragmentSpellCast, AnimationFragmentEmote, AnimationTag,
 		MovementFactor, CancelOnMovement, AreaOfEffect,

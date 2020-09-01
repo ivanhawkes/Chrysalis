@@ -11,7 +11,7 @@ namespace Chrysalis::ECS
 template <typename E>
 [[nodiscard]] constexpr auto to_underlying(E e) noexcept
 {
-	return static_cast<std::underlying_type_t<E>>(e);
+ 	return static_cast<std::underlying_type_t<E>>(e);
 }
 
 
@@ -222,9 +222,17 @@ using AnimationFragmentEmote = SimpleComponent<string, "AnimationFragmentEmote"_
 using AnimationTag = SimpleComponent<string, "AnimationTag"_hs>;								// A tag to pass to mannequin.
 
 
+// A general timer.
+using Timer = SimpleComponent<float, "Timer"_hs>;
+
+// Guideline: add to an entity to indicate something should happen for X seconds.
+// TODO: Duration is awkward - how is it different to both timer and delay?
+using Duration = SimpleComponent<float, "Duration"_hs>;
+
+// Guideline: add to an entity to prevent processing it for X seconds e.g. delay a spell payload till the cast timer has completed.
+using Delay = SimpleComponent<float, "Delay"_hs>;
+
 // Simple components.
-using Timer = SimpleComponent<float, "Timer"_hs>;							// A timer.
-using Duration = SimpleComponent<float, "Duration"_hs>;						// A timer.
 using Aura = FlagComponent<"Aura"_hs>;										// Indicates this is an aura.
 using Buff = FlagComponent<"Buff"_hs>;										// Indicates this is a buff.
 using Debuff = FlagComponent<"Debuff"_hs>;									// Indicates this is a debuff.

@@ -74,7 +74,7 @@ bool CChrysalisCorePlugin::Initialize(SSystemGlobalEnvironment& env, const SSyst
 #ifdef IMGUI
 	g_pImguiImpl = std::make_shared<CImguiImpl>();
 	g_pSpellPrototypeEditor = std::make_shared<CEntityEditor>(ECS::Simulation.GetSpellRegistry(), "Spell Prototype Editor");
-	g_pSpellcastEditor = std::make_shared<CEntityEditor>(ECS::Simulation.GetSpellCastingRegistry(), "Spellcast Prototype Editor");
+	g_pSpellcastEditor = std::make_shared<CEntityEditor>(ECS::Simulation.GetSpellCastingRegistry(), "Spellcast Editor");
 	//g_pActorEditor = std::make_shared<CEntityEditor>(ECS::Simulation.GetActorRegistry(), "Actor Editor");
 #endif
 

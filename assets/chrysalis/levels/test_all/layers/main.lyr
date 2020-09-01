@@ -1,5 +1,5 @@
 <ObjectLayer>
- <Layer Name="Main" FullName="Main" GUID="374a523a-e30d-4fff-b284-10fcbf81d9a7" Hidden="0" Frozen="0" Expanded="0" Type="0" Exportable="1" ExportLayerPak="1" DefaultLoaded="0" HavePhysics="1" IsDefaultColor="1" Color="4671303" Timestamp="1598536920">
+ <Layer Name="Main" FullName="Main" GUID="374a523a-e30d-4fff-b284-10fcbf81d9a7" Hidden="0" Frozen="0" Expanded="0" Type="0" Exportable="1" ExportLayerPak="1" DefaultLoaded="0" HavePhysics="1" IsDefaultColor="1" Color="4671303" Timestamp="1598963057">
   <LayerObjects>
    <Object Type="Designer" Layer="Main" LayerGUID="374a523a-e30d-4fff-b284-10fcbf81d9a7" Id="39ad7183-a73a-10b6-faec-2c12a06c9cdd" Name="Designer2-3" Pos="67.565811,61.172646,31.125" Rotate="1,0,0,0" Scale="1,1,1" ColorRGB="16777215" UseCustomLevelLayerColor="0" Material="EngineAssets/TextureMsg/DefaultSolids" MinSpec="0" RndFlags="1073741832" StaticObjFlags="0" ViewDistRatio="100">
     <Brush DesignerModeFlags="0" SubdivisionLevel="0" SubdivisionSmoothingGroup="0" MirrorPlaneNormal="0,0,0" MirrorPlaneDistance="0">
@@ -111,7 +111,7 @@
      <Component CryXmlVersion="2" TypeGUID="bae91d5c-8cfb-40b2-8397-f5a9eedb9ac4" TypeName="Cry::Audio::DefaultComponents::CListenerComponent" GUID="8b688ffb-0272-1d2f-dfcd-e245d2101d08" Name="" UserAdded="false">
       <properties>
        <listener name="Default Listener">
-        <offset x="-0.017295837" y="-0.013656616" z="1.6639137"/>
+        <offset x="-0.016075134" y="-0.013477325" z="1.6635551"/>
        </listener>
       </properties>
      </Component>
@@ -134,7 +134,7 @@
    <Object Type="EnvironmentProbe" Layer="Main" LayerGUID="374a523a-e30d-4fff-b284-10fcbf81d9a7" Id="3e966bc9-65ed-15cb-1906-2c579cc4c9fe" Name="EnvironmentProbe-1" Pos="65.486526,62.54652,34.985748" Rotate="0.99999177,0,0,0" Scale="1,1,1" ColorRGB="65535" UseCustomLevelLayerColor="0" MinSpec="0" cubemap_resolution="256" preview_cubemap="0" OutdoorOnly="0" GIMode="0" ViewDistRatio="100" HiddenInGame="0" EntityClass="EnvironmentLight" HasEntity="1">
     <Properties />
     <Components>
-     <Component typeId="0d3d1840-d239-411e-8738-14c56cccee2c" guid="c7f8a9c1-71d9-4d37-64f5-7543a26f5f60" CryXmlVersion="2" Active="true" IgnoreVisAreas="false" SortPriority="0" AttentuationFalloffMax="1" VolumetricFogOnly="false" AffectsVolumetricFog="true" AffectsOnlyThisArea="true" LinkToSkyColor="false" DiffuseMultiplier="1" SpecularMultiplier="1" ProjectionActive="false" ProjectionHeight="1" ProjectionLength="1" ProjectionWidth="1" Cubemap="">
+     <Component typeId="0d3d1840-d239-411e-8738-14c56cccee2c" guid="d7e77828-4984-ad2f-3fdb-0639a880f91e" CryXmlVersion="2" Active="true" IgnoreVisAreas="false" SortPriority="0" AttentuationFalloffMax="1" VolumetricFogOnly="false" AffectsVolumetricFog="true" AffectsOnlyThisArea="true" LinkToSkyColor="false" DiffuseMultiplier="1" SpecularMultiplier="1" ProjectionActive="false" ProjectionHeight="1" ProjectionLength="1" ProjectionWidth="1" Cubemap="">
       <BoxSize x="128" y="128" z="128"/>
       <Color r="1" g="1" b="1" a="1"/>
      </Component>
@@ -309,9 +309,11 @@
         <spells>
          <element spellName="Fireball" isHidden="false" enabled="true"/>
          <element spellName="Shadow Word Pain" isHidden="false" enabled="true"/>
+         <element spellName="Scorch" isHidden="false" enabled="true"/>
          <element spellName="Qi Burn" isHidden="false" enabled="true"/>
-         <element spellName="Hellfire" isHidden="false" enabled="true"/>
          <element spellName="Emote Anger" isHidden="false" enabled="true"/>
+         <element spellName="Renew" isHidden="false" enabled="true"/>
+         <element spellName="Life Steal" isHidden="false" enabled="true"/>
         </spells>
        </SpellCollection>
       </properties>

@@ -96,9 +96,12 @@ void RegisterComponentsWithMeta()
 	RegisterTypeWithMeta<AnimationFragmentEmote>("animation-fragment-emote"_hs);
 	RegisterTypeWithMeta<AnimationTag>("animation-tag"_hs);
 
-	// Simple components.
+	// Timers.
 	RegisterTypeWithMeta<Timer>("timer"_hs);
 	RegisterTypeWithMeta<Duration>("duration"_hs);
+	RegisterTypeWithMeta<Delay>("delay"_hs);
+
+	// Simple components.
 	RegisterTypeWithMeta<Aura>("aura"_hs);
 	RegisterTypeWithMeta<Buff>("buff"_hs);
 	RegisterTypeWithMeta<Debuff>("debuff"_hs);
