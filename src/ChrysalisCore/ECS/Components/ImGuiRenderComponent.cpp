@@ -129,12 +129,6 @@ void ImGuiRenderComponent(SpellcastExecution ar)
 }
 
 
-void ImGuiRenderComponent(SpellCastDuration ar)
-{
-	ImGui::InputFloat("Value:", &ar.value);
-}
-
-
 // Spell actions.
 
 void ImGuiRenderComponent(SpellActionSchematyc ar)

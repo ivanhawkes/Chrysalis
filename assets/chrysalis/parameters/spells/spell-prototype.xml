@@ -145,7 +145,7 @@
   <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="7"/>
   <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="35"/>
   <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="22"/>
-  <spell-fragment CryXmlVersion="2" spellcastPayload="immediate" entityId="21"/>
+  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="31"/>
   <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="37"/>
   <spell-fragment CryXmlVersion="2" spellcastPayload="immediate" entityId="24"/>
   <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="25"/>
@@ -154,7 +154,6 @@
   <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="30"/>
   <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="20"/>
   <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="32"/>
-  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="31"/>
   <spell-target-type CryXmlVersion="2" targetType="singleTarget" entityId="0"/>
   <spell-target-type CryXmlVersion="2" targetType="self" entityId="1"/>
   <spell-target-type CryXmlVersion="2" targetType="singleTarget" entityId="30"/>
@@ -171,7 +170,6 @@
   <spell-target-aggression-type CryXmlVersion="2" targetAggressionType="aggressive" entityId="28"/>
   <spell-target-aggression-type CryXmlVersion="2" targetAggressionType="aggressive" entityId="34"/>
   <spell-target-aggression-type CryXmlVersion="2" targetAggressionType="aggressive" entityId="33"/>
-  <spell-cast-duration CryXmlVersion="2" value="2" entityId="21"/>
   <render-light CryXmlVersion="2" lensFlareName="" attachToSun="false" flareEnable="false" flareFOV="360" attenuationBulbSize="0.1" ignoreVisAreas="false" affectVolumetricFog="true" volumetricFogOnly="false" onlyAffectThisArea="true" linkToSkyColor="false" ambient="false" fogRadialLobe="0" GIMode="none" diffuseMultiplier="4" specularMultiplier="1.25" shadowSpec="None" shadowBias="1" shadowSlopeBias="1" shadownResolution="1" shadowUpdateMin="4" shadowMinRes="0" shadowUpdateRatio="0" style="0" speed="1" shape="point" twoSided="false" texturePath="chrysalis/textures/lights/flashlight_projector.dds" width="1" height="1" nearPlane="0" materialPath="" angle="6.2831855" radius="13" fovAngle="0.78539819" effectSlotMaterial="" entityId="21">
    <Color r="1" g="1" b="1" a="1"/>
   </render-light>
@@ -251,10 +249,9 @@
    <component-type count="12"/>
    <component-type count="1"/>
    <component-type count="9"/>
-   <component-type count="20"/>
+   <component-type count="19"/>
    <component-type count="12"/>
    <component-type count="4"/>
-   <component-type count="1"/>
    <component-type count="0"/>
    <component-type count="0"/>
    <component-type count="0"/>

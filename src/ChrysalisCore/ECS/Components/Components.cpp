@@ -61,7 +61,6 @@ void RegisterComponentsWithMeta()
 	RegisterTypeWithMeta<SpellTargetType>("spell-target-type"_hs);
 	RegisterTypeWithMeta<SpellTargetAggressionType>("spell-target-aggression-type"_hs);
 	RegisterTypeWithMeta<SpellcastExecution>("spellcast-execution"_hs);
-	RegisterTypeWithMeta<SpellCastDuration>("spell-cast-duration"_hs);
 	
 	// Spell actions.
 	RegisterTypeWithMeta<SpellActionSchematyc>("spell-action-schematyc"_hs);

@@ -36,7 +36,6 @@ void ImGuiRenderComponent(SpellFragment ar);
 void ImGuiRenderComponent(SpellTargetType ar);
 void ImGuiRenderComponent(SpellTargetAggressionType ar);
 void ImGuiRenderComponent(SpellcastExecution ar);
-void ImGuiRenderComponent(SpellCastDuration ar);
 
 // Spell actions.
 void ImGuiRenderComponent(SpellActionSchematyc ar);

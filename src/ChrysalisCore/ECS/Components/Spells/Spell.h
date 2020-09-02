@@ -47,9 +47,6 @@ enum class TargetAggressionType
 };
 
 
-// Spell cast duration.
-using SpellCastDuration = SimpleComponent<float, "spell-cast-duration"_hs>;
-
 // Loss of sight, movement and rotation restricted, ambling around.
 using CrowdControlBlind = FlagComponent<"crowd-control-blind"_hs>;
 
@@ -93,6 +90,7 @@ using CrowdControlSilence = FlagComponent<"crowd-control-silence"_hs>;
 using Cooldown = SimpleComponent<float, "cooldown"_hs>;
 
 
+// TODO: Most of this is no longer needed. Refactor out the part which is - the channelling flag.
 enum class SpellcastPayload
 {
 	immediate,			// The spell payload fires immediately.
