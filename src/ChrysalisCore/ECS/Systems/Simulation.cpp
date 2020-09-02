@@ -251,8 +251,8 @@ void CSimulation::LoadActorData()
 	entt::snapshot_loader {m_actorRegistry}
 		.entities(actorSerial)
 		.component<Name, Prototype,
-		Health, Damage, DamageOverTime, Heal, HealOverTime,
-		Qi, UtiliseQi, UtiliseQiOverTime, ReplenishQi, ReplenishQiOverTime,
+		Health, Damage, Heal,
+		Qi, UtiliseQi, ReplenishQi,
 		SpellFragment, ItemClass, RenderLight
 		>(actorSerial);
 }
@@ -266,8 +266,8 @@ void CSimulation::SaveActorData()
 	entt::snapshot {m_actorRegistry}
 		.entities(actorSerial)
 		.component<Name, Prototype,
-		Health, Damage, DamageOverTime, Heal, HealOverTime,
-		Qi, UtiliseQi, UtiliseQiOverTime, ReplenishQi, ReplenishQiOverTime,
+		Health, Damage, Heal,
+		Qi, UtiliseQi, ReplenishQi,
 		SpellFragment, ItemClass, RenderLight
 		>(actorSerial);
 	actorSerial.SaveToFile("chrysalis/parameters/actor/actor-snapshot.xml");
@@ -287,8 +287,8 @@ void CSimulation::LoadPrototypeData()
 	entt::snapshot_loader {m_spellRegistry}
 		.entities(spellSerial)
 		.component<Name, Prototype,
-		Health, Damage, DamageOverTime, SelfHarm, Heal, HealOverTime,
-		Qi, UtiliseQi, UtiliseQiOverTime, ReplenishQi, ReplenishQiOverTime,
+		Health, Damage, Heal,
+		Qi, UtiliseQi, ReplenishQi,
 		Spell, SpellFragment, SpellTargetType, SpellTargetAggressionType, SpellCastDuration,
 		SpellActionSchematyc, SpellActionDRS,
 		SpellActionInspect, SpellActionExamine,
@@ -298,7 +298,8 @@ void CSimulation::LoadPrototypeData()
 		SpellActionUnlock, SpellActionLock,
 		RenderLight,
 		Timer, Duration, Delay,
-		Range, Aura, Buff, Debuff, Cooldown,
+		Range, TickEachInterval,
+		Aura, Buff, Debuff, Cooldown,
 		Channelled,
 		AnimationFragmentSpellCast, AnimationFragmentEmote, AnimationTag,
 		MovementFactor, CancelOnMovement, AreaOfEffect,
@@ -317,8 +318,8 @@ void CSimulation::SavePrototypeData()
 	entt::snapshot {m_spellRegistry}
 		.entities(spellSerial)
 		.component<Name, Prototype,
-		Health, Damage, DamageOverTime, SelfHarm, Heal, HealOverTime,
-		Qi, UtiliseQi, UtiliseQiOverTime, ReplenishQi, ReplenishQiOverTime,
+		Health, Damage, Heal,
+		Qi, UtiliseQi, ReplenishQi,
 		Spell, SpellFragment, SpellTargetType, SpellTargetAggressionType, SpellCastDuration,
 		SpellActionSchematyc, SpellActionDRS,
 		SpellActionInspect, SpellActionExamine,
@@ -328,7 +329,8 @@ void CSimulation::SavePrototypeData()
 		SpellActionUnlock, SpellActionLock,
 		RenderLight,
 		Timer, Duration, Delay,
-		Range, Aura, Buff, Debuff, Cooldown,
+		Range, TickEachInterval,
+		Aura, Buff, Debuff, Cooldown,
 		Channelled,
 		AnimationFragmentSpellCast, AnimationFragmentEmote, AnimationTag,
 		MovementFactor, CancelOnMovement, AreaOfEffect,

@@ -216,6 +216,41 @@ struct Range final
 };
 
 
+// Ticks each interval. Support component needed to make HoTs and DoTs work. Use in conjuction with a quantity object.
+
+struct TickEachInterval final
+{
+	TickEachInterval() = default;
+	~TickEachInterval() = default;
+
+	TickEachInterval(float quantity, float duration, float interval) :
+		duration(duration), interval(interval)
+	{
+		ticksRemaining = duration / interval;
+	}
+
+
+	void Serialize(Serialization::IArchive& ar)
+	{
+		ar(duration, "duration", "duration");
+		ar(interval, "interval", "interval");
+	}
+
+
+	/** Limit the duration for this modifier. Given as remaining time in seconds. */
+	float duration {12.0f};
+
+	/** The ticks need to occur at this interval. */
+	float interval {1.0f};
+
+	/** Gametime passed since the last tick. */
+	float deltaSinceTick {0.0f};
+
+	/** Ticks remaining. */
+	float ticksRemaining {duration / interval};
+};
+
+
 // Animation components.
 using AnimationFragmentSpellCast = SimpleComponent<string, "AnimationFragmentSpellCast"_hs>;	// An animation used when casting a spell.
 using AnimationFragmentEmote = SimpleComponent<string, "AnimationFragmentEmote"_hs>;			// An animation used to emote.

@@ -135,75 +135,6 @@ struct Damage final
 };
 
 
-struct DamageOverTime final
-{
-	DamageOverTime() = default;
-	~DamageOverTime() = default;
-
-	DamageOverTime(float quantity, DamageType damageType,
-		float duration, float interval) :
-		quantity(quantity), damageType(damageType),
-		duration(duration), interval(interval)
-	{
-		ticksRemaining = duration / interval;
-	}
-
-
-	void Serialize(Serialization::IArchive& ar)
-	{
-		ar(quantity, "quantity", "quantity");
-		ar(damageType, "damageType", "damageType");
-		ar(duration, "duration", "duration");
-		ar(interval, "interval", "interval");
-	}
-
-
-	/** Modify an attribute by this amount. */
-	float quantity {0.0f};
-
-	/** The type of damage. */
-	DamageType damageType {DamageType::acid};
-
-	/** Limit the duration for this modifier. Given as remaining time in seconds. */
-	float duration {10.0f};
-
-	/** The ticks need to occur at this interval. */
-	float interval {1.0f};
-
-	/** Gametime passed since the last tick. */
-	float deltaSinceTick {0.0f};
-
-	/** Ticks remaining. */
-	float ticksRemaining {duration / interval};
-};
-
-
-struct SelfHarm final
-{
-	SelfHarm() = default;
-	~SelfHarm() = default;
-
-	SelfHarm(float quantity, DamageType damageType) :
-		quantity(quantity), damageType(damageType)
-	{
-	}
-
-
-	void Serialize(Serialization::IArchive& ar)
-	{
-		ar(quantity, "quantity", "quantity");
-		ar(damageType, "damageType", "Damage Type");
-	}
-
-
-	/** Modify an attribute by this amount. */
-	float quantity {0.0f};
-
-	/** The type of damage. */
-	DamageType damageType {DamageType::acid};
-};
-
-
 struct Heal final
 {
 	Heal() = default;
@@ -223,42 +154,5 @@ struct Heal final
 
 	/** Modify an attribute by this amount. */
 	float quantity {0.0f};
-};
-
-
-struct HealOverTime final
-{
-	HealOverTime() = default;
-	~HealOverTime() = default;
-
-	HealOverTime(float quantity,
-		float duration, float interval) :
-		quantity(quantity), duration(duration), interval(interval)
-	{
-	}
-
-
-	void Serialize(Serialization::IArchive& ar)
-	{
-		ar(quantity, "quantity", "quantity");
-		ar(duration, "duration", "duration");
-		ar(interval, "interval", "interval");
-	}
-
-
-	/** Modify an attribute by this amount. */
-	float quantity {0.0f};
-
-	/** Limit the duration for this modifier. Given as remaining time in seconds. */
-	float duration {10.0f};
-
-	/** The ticks need to occur at this interval. */
-	float interval {1.0f};
-
-	/** Gametime passed since the last tick. */
-	float deltaSinceTick {0.0f};
-
-	/** Ticks remaining. */
-	float ticksRemaining {duration / interval};
 };
 }

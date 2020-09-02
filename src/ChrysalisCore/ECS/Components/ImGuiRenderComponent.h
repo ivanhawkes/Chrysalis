@@ -23,17 +23,12 @@ void ImGuiRenderComponent(TargetEntity ar);
 // Health.
 void ImGuiRenderComponent(Health ar);
 void ImGuiRenderComponent(Damage ar);
-void ImGuiRenderComponent(DamageOverTime ar);
-void ImGuiRenderComponent(SelfHarm ar);
 void ImGuiRenderComponent(Heal ar);
-void ImGuiRenderComponent(HealOverTime ar);
 
 // Qi.
 void ImGuiRenderComponent(Qi ar);
 void ImGuiRenderComponent(UtiliseQi ar);
-void ImGuiRenderComponent(UtiliseQiOverTime ar);
 void ImGuiRenderComponent(ReplenishQi ar);
-void ImGuiRenderComponent(ReplenishQiOverTime ar);
 
 // Spellcasts.
 void ImGuiRenderComponent(Spell ar);
@@ -65,6 +60,9 @@ void ImGuiRenderComponent(ItemClass ar);
 
 // Range checking.
 void ImGuiRenderComponent(Range ar);
+
+// Ticks each interval.
+void ImGuiRenderComponent(TickEachInterval ar);
 
 // Animation components.
 void ImGuiRenderComponent(AnimationFragmentSpellCast ar);

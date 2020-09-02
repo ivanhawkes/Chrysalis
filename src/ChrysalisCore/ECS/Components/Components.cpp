@@ -48,17 +48,12 @@ void RegisterComponentsWithMeta()
 	// Health.
 	RegisterTypeWithMeta<Health>("health"_hs);
 	RegisterTypeWithMeta<Damage>("damage"_hs);
-	RegisterTypeWithMeta<DamageOverTime>("damage-over-time"_hs);
-	RegisterTypeWithMeta<SelfHarm>("self-harm"_hs);
 	RegisterTypeWithMeta<Heal>("heal"_hs);
-	RegisterTypeWithMeta<HealOverTime>("heal-over-time"_hs);
 
 	// Qi.
 	RegisterTypeWithMeta<Qi>("qi"_hs);
 	RegisterTypeWithMeta<UtiliseQi>("utilise-qi"_hs);
-	RegisterTypeWithMeta<UtiliseQiOverTime>("utilise-qi-over-time"_hs);
 	RegisterTypeWithMeta<ReplenishQi>("replenish-qi"_hs);
-	RegisterTypeWithMeta<ReplenishQiOverTime>("replenish-qi-over-time"_hs);
 
 	// Spellcasts.
 	RegisterTypeWithMeta<Spell>("spell"_hs);
@@ -90,6 +85,9 @@ void RegisterComponentsWithMeta()
 
 	// Range checking.
 	RegisterTypeWithMeta<Range>("range"_hs);
+
+	// Ticks each interval.
+	RegisterTypeWithMeta<TickEachInterval>("tick-each-interval"_hs);
 
 	// Animation components.
 	RegisterTypeWithMeta<AnimationFragmentSpellCast>("animation-fragment-spellcast"_hs);

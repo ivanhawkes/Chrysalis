@@ -70,43 +70,6 @@ struct UtiliseQi final
 };
 
 
-struct UtiliseQiOverTime final
-{
-	UtiliseQiOverTime() = default;
-	~UtiliseQiOverTime() = default;
-
-	UtiliseQiOverTime(float quantity,
-		float duration, float interval) :
-		quantity(quantity), duration(duration), interval(interval)
-	{
-	}
-
-
-	void Serialize(Serialization::IArchive& ar)
-	{
-		ar(quantity, "quantity", "quantity");
-		ar(duration, "duration", "duration");
-		ar(interval, "interval", "interval");
-	}
-
-
-	/** Modify an attribute by this amount. */
-	float quantity {0.0f};
-
-	/** Limit the duration for this modifier. Given as remaining time in seconds. */
-	float duration {10.0f};
-
-	/** The damage ticks need to occur at this interval. */
-	float interval {1.0f};
-
-	/** Gametime passed since the last tick. */
-	float deltaSinceTick {0.0f};
-
-	/** Ticks remaining. */
-	float ticksRemaining {duration / interval};
-};
-
-
 struct ReplenishQi final
 {
 	ReplenishQi() = default;
@@ -126,42 +89,5 @@ struct ReplenishQi final
 
 	/** Modify an attribute by this amount. */
 	float quantity {0.0f};
-};
-
-
-struct ReplenishQiOverTime final
-{
-	ReplenishQiOverTime() = default;
-	~ReplenishQiOverTime() = default;
-
-	ReplenishQiOverTime(float quantity,
-		float duration, float interval) :
-		quantity(quantity), duration(duration), interval(interval)
-	{
-	}
-
-
-	void Serialize(Serialization::IArchive& ar)
-	{
-		ar(quantity, "quantity", "quantity");
-		ar(duration, "duration", "duration");
-		ar(interval, "interval", "interval");
-	}
-
-
-	/** Modify an attribute by this amount. */
-	float quantity {0.0f};
-
-	/** Limit the duration for this modifier. Given as remaining time in seconds. */
-	float duration {10.0f};
-
-	/** The ticks need to occur at this interval. */
-	float interval {1.0f};
-
-	/** Gametime passed since the last tick. */
-	float deltaSinceTick {0.0f};
-
-	/** Ticks remaining. */
-	float ticksRemaining {duration / interval};
 };
 }

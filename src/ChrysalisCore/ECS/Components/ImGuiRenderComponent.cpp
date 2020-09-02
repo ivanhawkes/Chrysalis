@@ -71,31 +71,9 @@ void ImGuiRenderComponent(Damage ar)
 }
 
 
-void ImGuiRenderComponent(DamageOverTime ar)
-{
-	ImGui::InputFloat("Quantity:", &ar.quantity);
-	ImGui::InputFloat("Duration:", &ar.duration);
-	ImGui::InputFloat("Interval:", &ar.interval);
-}
-
-
-void ImGuiRenderComponent(SelfHarm ar)
-{
-	ImGui::InputFloat("Quantity:", &ar.quantity);
-}
-
-
 void ImGuiRenderComponent(Heal ar)
 {
 	ImGui::InputFloat("Quantity:", &ar.quantity);
-}
-
-
-void ImGuiRenderComponent(HealOverTime ar)
-{
-	ImGui::InputFloat("Quantity:", &ar.quantity);
-	ImGui::InputFloat("Duration:", &ar.duration);
-	ImGui::InputFloat("Interval:", &ar.interval);
 }
 
 
@@ -113,25 +91,9 @@ void ImGuiRenderComponent(UtiliseQi ar)
 }
 
 
-void ImGuiRenderComponent(UtiliseQiOverTime ar)
-{
-	ImGui::InputFloat("Quantity:", &ar.quantity);
-	ImGui::InputFloat("Duration:", &ar.duration);
-	ImGui::InputFloat("Interval:", &ar.interval);
-}
-
-
 void ImGuiRenderComponent(ReplenishQi ar)
 {
 	ImGui::InputFloat("Quantity:", &ar.quantity);
-}
-
-
-void ImGuiRenderComponent(ReplenishQiOverTime ar)
-{
-	ImGui::InputFloat("Quantity:", &ar.quantity);
-	ImGui::InputFloat("Duration:", &ar.duration);
-	ImGui::InputFloat("Interval:", &ar.interval);
 }
 
 
@@ -318,6 +280,18 @@ void ImGuiRenderComponent(Range ar)
 	ImGui::InputFloat("Minimum:", &ar.minRange);
 	ImGui::InputFloat("Maximum:", &ar.maxRange);
 }
+
+
+// Ticks each interval.
+
+void ImGuiRenderComponent(TickEachInterval ar)
+{
+	ImGui::InputFloat("Duration:", &ar.duration);
+	ImGui::InputFloat("Interval:", &ar.interval);
+	ImGui::InputFloat("Delta Since Tick:", &ar.deltaSinceTick);
+	ImGui::InputFloat("Ticks Remaining:", &ar.ticksRemaining);
+}
+
 
 
 // Animation components.

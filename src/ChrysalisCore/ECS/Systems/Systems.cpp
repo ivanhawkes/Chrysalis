@@ -73,7 +73,7 @@ void SystemUpdateDelays(float dt, entt::registry& spellcastingRegistry)
 void SystemApplyDamage(entt::registry& spellcastingRegistry, entt::registry& actorRegistry)
 {
 	// Apply any damage to the damage modifiers.
-	spellcastingRegistry.view<Damage, SourceEntity, TargetEntity>(entt::exclude<Delay>).each
+	spellcastingRegistry.view<Damage, SourceEntity, TargetEntity>(entt::exclude<Delay, TickEachInterval>).each
 	([&spellcastingRegistry, &actorRegistry](auto entity, auto& damage, auto& sourceEntity, auto& targetEntity) {
 		// Get the health component for the target entity and apply the damage to it's health modifier.
 		Health& targetHealth = actorRegistry.get<Health>(targetEntity.targetEntityId);
@@ -88,20 +88,20 @@ void SystemApplyDamage(entt::registry& spellcastingRegistry, entt::registry& act
 void SystemApplyDamageOverTime(float dt, entt::registry& spellcastingRegistry, entt::registry& actorRegistry)
 {
 	// Apply any damage to the damage modifiers.
-	spellcastingRegistry.view<DamageOverTime, SourceEntity, TargetEntity>().each
-	([dt, &spellcastingRegistry, &actorRegistry](auto entity, auto& damage, auto& sourceEntity, auto& targetEntity) {
-		damage.deltaSinceTick += dt;
-		if ((damage.deltaSinceTick >= damage.interval) && (damage.ticksRemaining >= 1.0f))
+	spellcastingRegistry.view<Damage, TickEachInterval, SourceEntity, TargetEntity>().each
+	([dt, &spellcastingRegistry, &actorRegistry](auto entity, auto& damage, auto& tickEachInterval, auto& sourceEntity, auto& targetEntity) {
+		tickEachInterval.deltaSinceTick += dt;
+		if ((tickEachInterval.deltaSinceTick >= tickEachInterval.interval) && (tickEachInterval.ticksRemaining >= 1.0f))
 		{
-			damage.ticksRemaining--;
-			damage.deltaSinceTick -= damage.interval;
+			tickEachInterval.ticksRemaining--;
+			tickEachInterval.deltaSinceTick -= tickEachInterval.interval;
 
 			// Get the health component for the target entity and apply the damage to it's health modifier.
 			Health& targetHealth = actorRegistry.get<Health>(targetEntity.targetEntityId);
 			targetHealth.health.modifiers -= damage.quantity;
 		}
 
-		if (damage.ticksRemaining <= 0.0f)
+		if (tickEachInterval.ticksRemaining <= 0.0f)
 		{
 			// Destroy the entity.
 			spellcastingRegistry.destroy(entity);
@@ -113,7 +113,7 @@ void SystemApplyDamageOverTime(float dt, entt::registry& spellcastingRegistry, e
 void SystemApplyHeal(entt::registry& spellcastingRegistry, entt::registry& actorRegistry)
 {
 	// Apply any heals to the health modifiers.
-	spellcastingRegistry.view<Heal, SourceEntity, TargetEntity>(entt::exclude<Delay>).each
+	spellcastingRegistry.view<Heal, SourceEntity, TargetEntity>(entt::exclude<Delay, TickEachInterval>).each
 	([&spellcastingRegistry, &actorRegistry](auto entity, auto& heal, auto& sourceEntity, auto& targetEntity) {
 		// Get the health component for the target entity and apply the heal to it's health modifier.
 		Health& targetHealth = actorRegistry.get<Health>(targetEntity.targetEntityId);
@@ -139,13 +139,13 @@ void SystemApplyHeal(entt::registry& spellcastingRegistry, entt::registry& actor
 void SystemApplyHealOverTime(float dt, entt::registry& spellcastingRegistry, entt::registry& actorRegistry)
 {
 	// Apply any heal to the health modifiers.
-	spellcastingRegistry.view<HealOverTime, SourceEntity, TargetEntity>().each
-	([dt, &spellcastingRegistry, &actorRegistry](auto entity, auto& heal, auto& sourceEntity, auto& targetEntity) {
-		heal.deltaSinceTick += dt;
-		if ((heal.deltaSinceTick >= heal.interval) && (heal.ticksRemaining >= 1.0f))
+	spellcastingRegistry.view<Heal, TickEachInterval, SourceEntity, TargetEntity>().each
+	([dt, &spellcastingRegistry, &actorRegistry](auto entity, auto& heal, auto& tickEachInterval, auto& sourceEntity, auto& targetEntity) {
+		tickEachInterval.deltaSinceTick += dt;
+		if ((tickEachInterval.deltaSinceTick >= tickEachInterval.interval) && (tickEachInterval.ticksRemaining >= 1.0f))
 		{
-			heal.ticksRemaining--;
-			heal.deltaSinceTick -= heal.interval;
+			tickEachInterval.ticksRemaining--;
+			tickEachInterval.deltaSinceTick -= tickEachInterval.interval;
 
 			// Get the health component for the target entity and apply the heal to it's health modifier.
 			Health& targetHealth = actorRegistry.get<Health>(targetEntity.targetEntityId);
@@ -162,7 +162,7 @@ void SystemApplyHealOverTime(float dt, entt::registry& spellcastingRegistry, ent
 				targetHealth.health.modifiers = newModifier;
 			}
 
-			if (heal.ticksRemaining <= 0.0f)
+			if (tickEachInterval.ticksRemaining <= 0.0f)
 			{
 				// Destroy the entity.
 				spellcastingRegistry.destroy(entity);
@@ -198,7 +198,7 @@ void SystemHealthCheck(entt::registry& spellcastingRegistry, entt::registry& act
 void SystemApplyQiUtilisation(entt::registry& spellcastingRegistry, entt::registry& actorRegistry)
 {
 	// Apply any qi usage to the modifiers.
-	spellcastingRegistry.view<UtiliseQi, SourceEntity, TargetEntity>(entt::exclude<Delay>).each
+	spellcastingRegistry.view<UtiliseQi, SourceEntity, TargetEntity>(entt::exclude<Delay, TickEachInterval>).each
 	([&spellcastingRegistry, &actorRegistry](auto entity, auto& qiUse, auto& sourceEntity, auto& targetEntity) {
 		// Get the qi component for the target entity and apply the usage to it's modifier.
 		Qi& targetQi = actorRegistry.get<Qi>(targetEntity.targetEntityId);
@@ -213,20 +213,20 @@ void SystemApplyQiUtilisation(entt::registry& spellcastingRegistry, entt::regist
 void SystemApplyQiUtilisationOverTime(float dt, entt::registry& spellcastingRegistry, entt::registry& actorRegistry)
 {
 	// Apply any qi to the modifiers.
-	spellcastingRegistry.view<UtiliseQiOverTime, SourceEntity, TargetEntity>().each
-	([dt, &spellcastingRegistry, &actorRegistry](auto entity, auto& qiUse, auto& sourceEntity, auto& targetEntity) {
-		qiUse.deltaSinceTick += dt;
-		if ((qiUse.deltaSinceTick >= qiUse.interval) && (qiUse.ticksRemaining >= 1.0f))
+	spellcastingRegistry.view<UtiliseQi, TickEachInterval, SourceEntity, TargetEntity>().each
+	([dt, &spellcastingRegistry, &actorRegistry](auto entity, auto& utiliseQi, auto& tickEachInterval, auto& sourceEntity, auto& targetEntity) {
+		tickEachInterval.deltaSinceTick += dt;
+		if ((tickEachInterval.deltaSinceTick >= tickEachInterval.interval) && (tickEachInterval.ticksRemaining >= 1.0f))
 		{
-			qiUse.ticksRemaining--;
-			qiUse.deltaSinceTick -= qiUse.interval;
+			tickEachInterval.ticksRemaining--;
+			tickEachInterval.deltaSinceTick -= tickEachInterval.interval;
 
 			// Get the qi component for the target entity and apply the usage to it's modifier.
 			Qi& targetQi = actorRegistry.get<Qi>(targetEntity.targetEntityId);
-			targetQi.qi.modifiers -= qiUse.quantity;
+			targetQi.qi.modifiers -= utiliseQi.quantity;
 		}
 
-		if (qiUse.ticksRemaining <= 0.0f)
+		if (tickEachInterval.ticksRemaining <= 0.0f)
 		{
 			// Destroy the entity.
 			spellcastingRegistry.destroy(entity);
@@ -238,7 +238,7 @@ void SystemApplyQiUtilisationOverTime(float dt, entt::registry& spellcastingRegi
 void SystemApplyQiReplenishment(entt::registry& spellcastingRegistry, entt::registry& actorRegistry)
 {
 	// Apply any replenishment to the qi modifiers.
-	spellcastingRegistry.view<ReplenishQi, SourceEntity, TargetEntity>(entt::exclude<Delay>).each
+	spellcastingRegistry.view<ReplenishQi, SourceEntity, TargetEntity>(entt::exclude<Delay, TickEachInterval>).each
 	([&spellcastingRegistry, &actorRegistry](auto entity, auto& replenish, auto& sourceEntity, auto& targetEntity) {
 		// Get the qi component for the target entity and apply the replenishment to it's modifier.
 		Qi& targetQi = actorRegistry.get<Qi>(targetEntity.targetEntityId);
@@ -264,19 +264,19 @@ void SystemApplyQiReplenishment(entt::registry& spellcastingRegistry, entt::regi
 void SystemApplyQiReplenishmentOverTime(float dt, entt::registry& spellcastingRegistry, entt::registry& actorRegistry)
 {
 	// Apply any replenishment to the qi modifiers.
-	spellcastingRegistry.view<ReplenishQiOverTime, SourceEntity, TargetEntity>().each
-	([dt, &spellcastingRegistry, &actorRegistry](auto entity, auto& replenish, auto& sourceEntity, auto& targetEntity) {
-		replenish.deltaSinceTick += dt;
-		if ((replenish.deltaSinceTick >= replenish.interval) && (replenish.ticksRemaining >= 1.0f))
+	spellcastingRegistry.view<ReplenishQi, TickEachInterval, SourceEntity, TargetEntity>().each
+	([dt, &spellcastingRegistry, &actorRegistry](auto entity, auto& replenishQi, auto& tickEachInterval, auto& sourceEntity, auto& targetEntity) {
+		tickEachInterval.deltaSinceTick += dt;
+		if ((tickEachInterval.deltaSinceTick >= tickEachInterval.interval) && (tickEachInterval.ticksRemaining >= 1.0f))
 		{
-			replenish.ticksRemaining--;
-			replenish.deltaSinceTick -= replenish.interval;
+			tickEachInterval.ticksRemaining--;
+			tickEachInterval.deltaSinceTick -= tickEachInterval.interval;
 
 			// Get the qi component for the target entity and apply the replenishment to it's modifier.
 			Qi& targetQi = actorRegistry.get<Qi>(targetEntity.targetEntityId);
 
 			// Check for over-replenishment.
-			float newModifier = targetQi.qi.modifiers + replenish.quantity;
+			float newModifier = targetQi.qi.modifiers + replenishQi.quantity;
 			if (newModifier > 0.0f)
 			{
 				// It was an over-replenishment.
@@ -287,7 +287,7 @@ void SystemApplyQiReplenishmentOverTime(float dt, entt::registry& spellcastingRe
 				targetQi.qi.modifiers = newModifier;
 			}
 
-			if (replenish.ticksRemaining <= 0.0f)
+			if (tickEachInterval.ticksRemaining <= 0.0f)
 			{
 				// Destroy the entity.
 				spellcastingRegistry.destroy(entity);
