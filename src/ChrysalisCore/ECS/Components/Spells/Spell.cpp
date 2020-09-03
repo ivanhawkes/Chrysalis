@@ -30,14 +30,6 @@ SERIALIZATION_ENUM(TargetAggressionType::aggressive, "aggressive", "aggressive")
 SERIALIZATION_ENUM_END()
 
 // Spellcast Execution Status.
-SERIALIZATION_ENUM_BEGIN(SpellcastPayload, "Spellcast Payload")
-SERIALIZATION_ENUM(SpellcastPayload::immediate, "immediate", "immediate")
-SERIALIZATION_ENUM(SpellcastPayload::channelledActive, "channelledActive", "channelledActive")
-SERIALIZATION_ENUM(SpellcastPayload::channelledDuration, "channelledDuration", "channelledDuration")
-SERIALIZATION_ENUM(SpellcastPayload::onCompletion, "onCompletion", "onCompletion")
-SERIALIZATION_ENUM_END()
-
-// Spellcast Execution Status.
 SERIALIZATION_ENUM_BEGIN(SpellCastExecutionStatus, "Spellcast Execution Status")
 SERIALIZATION_ENUM(SpellCastExecutionStatus::queued, "queued", "queued")
 SERIALIZATION_ENUM(SpellCastExecutionStatus::casting, "casting", "casting")

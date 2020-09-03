@@ -62,7 +62,6 @@ enum class BuffType
 	unholyResistance,
 
 	// General buffs.
-	//bleed, // Debuff - or could be more generic...mmm...not sure.
 	//haste, // buff only or negative values for debuffs
 	//disarmed, // stateful debuff
 };

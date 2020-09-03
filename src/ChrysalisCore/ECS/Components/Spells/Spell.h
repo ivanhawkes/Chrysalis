@@ -90,16 +90,6 @@ using CrowdControlSilence = FlagComponent<"crowd-control-silence"_hs>;
 using Cooldown = SimpleComponent<float, "cooldown"_hs>;
 
 
-// TODO: Most of this is no longer needed. Refactor out the part which is - the channelling flag.
-enum class SpellcastPayload
-{
-	immediate,			// The spell payload fires immediately.
-	channelledActive,	// The spell payload is channelled over time as long the key is held down.
-	channelledDuration,	// The spell payload is channelled for the duration of the spell.
-	onCompletion,		// The spell payload fires on completion of the cast duration.
-};
-
-
 enum class SpellCastExecutionStatus
 {
 	queued,				// The spell has been added to the processing queue.
@@ -134,12 +124,13 @@ struct SpellFragment final
 {
 	void Serialize(Serialization::IArchive& ar)
 	{
-		ar(spellcastPayload, "spellcastPayload", "At what time should the spell payload be delivered?");
 	}
 
 
-	/** At what time should the spell payload be delivered? */
-	SpellcastPayload spellcastPayload {SpellcastPayload::onCompletion};
+	// Adding this member prevents EnTT from optimising this component out when saving and loading.
+	// TODO: Find out how to make these take no space but avoid being skipped by EnTT.
+	// NOTE: Figure out if I really need SpellFragment now?
+	int wastedSpace {0};
 };
 
 

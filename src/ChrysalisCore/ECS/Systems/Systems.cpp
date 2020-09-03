@@ -302,7 +302,7 @@ void SystemApplyQiReplenishmentOverTime(float dt, entt::registry& spellcastingRe
 // ***
 
 
-bool IsSpellCastable(const SpellFragment& spell, const SourceEntity& sourceEntity, const TargetEntity& targetEntity)
+bool IsSpellCastable(const SpellFragment& spellFragment, const SourceEntity& sourceEntity, const TargetEntity& targetEntity)
 {
 	// TODO: Range and LoS checks, etc.
 
@@ -314,9 +314,9 @@ void SpellCastOpen(float dt, entt::registry& spellcastingRegistry, entt::registr
 {
 	// Query the registry.
 	spellcastingRegistry.view<SpellActionOpen, Name, SpellFragment, SpellcastExecution, SourceEntity, TargetEntity>().each
-	([dt, &spellcastingRegistry, &actorRegistry](auto entity, auto& spellActionOpen, auto& name, auto& spell, auto& spellcastExecution, auto& sourceEntity, auto& targetEntity) {
+	([dt, &spellcastingRegistry, &actorRegistry](auto entity, auto& spellActionOpen, auto& name, auto& spellFragment, auto& spellcastExecution, auto& sourceEntity, auto& targetEntity) {
 		// Check validity of the spell cast request.
-		if (IsSpellCastable(spell, sourceEntity, targetEntity))
+		if (IsSpellCastable(spellFragment, sourceEntity, targetEntity))
 		{
 			switch (spellcastExecution.castExecutionStatus)
 			{
@@ -337,7 +337,7 @@ void SpellCastOpen(float dt, entt::registry& spellcastingRegistry, entt::registr
 				if (auto* pSpellbookComponent = pSourceEntity->GetComponent<CSpellbookComponent>())
 				{
 					// Toss the spell onto the source entity's queue.
-					auto spellcast = std::make_shared<Chrysalis::SpellCastOpen>(name, spell, sourceEntity, targetEntity);
+					auto spellcast = std::make_shared<Chrysalis::SpellCastOpen>(name, spellFragment, sourceEntity, targetEntity);
 					pSpellbookComponent->QueueSpellCast(spellcast);
 				}
 			}
@@ -366,9 +366,9 @@ void SpellCastTake(float dt, entt::registry& spellcastingRegistry, entt::registr
 {
 	// Query the registry.
 	spellcastingRegistry.view<SpellActionTake, Name, SpellFragment, SpellcastExecution, SourceEntity, TargetEntity>().each
-	([dt, &spellcastingRegistry, &actorRegistry](auto entity, auto& spellActionTake, auto& name, auto& spell, auto& spellcastExecution, auto& sourceEntity, auto& targetEntity) {
+	([dt, &spellcastingRegistry, &actorRegistry](auto entity, auto& spellActionTake, auto& name, auto& spellFragment, auto& spellcastExecution, auto& sourceEntity, auto& targetEntity) {
 		// Check validity of the spell cast request.
-		if (IsSpellCastable(spell, sourceEntity, targetEntity))
+		if (IsSpellCastable(spellFragment, sourceEntity, targetEntity))
 		{
 			// Do something.
 			CryLogAlways("Spellcast: %s, Source: %d, target: %d", name.displayName.c_str(), sourceEntity.sourceEntityId, targetEntity.targetEntityId);
@@ -384,9 +384,9 @@ void SpellCastDrop(float dt, entt::registry& spellcastingRegistry, entt::registr
 {
 	// Query the registry.
 	spellcastingRegistry.view<SpellActionDrop, Name, SpellFragment, SpellcastExecution, SourceEntity, TargetEntity>().each
-	([dt, &spellcastingRegistry, &actorRegistry](auto entity, auto& spellActionDrop, auto& name, auto& spell, auto& spellcastExecution, auto& sourceEntity, auto& targetEntity) {
+	([dt, &spellcastingRegistry, &actorRegistry](auto entity, auto& spellActionDrop, auto& name, auto& spellFragment, auto& spellcastExecution, auto& sourceEntity, auto& targetEntity) {
 		// Check validity of the spell cast request.
-		if (IsSpellCastable(spell, sourceEntity, targetEntity))
+		if (IsSpellCastable(spellFragment, sourceEntity, targetEntity))
 		{
 			// Do something.
 			CryLogAlways("Spellcast: %s, Source: %d, target: %d", name.displayName.c_str(), sourceEntity.sourceEntityId, targetEntity.targetEntityId);
@@ -402,9 +402,9 @@ void SpellCastSwitch(float dt, entt::registry& spellcastingRegistry, entt::regis
 {
 	// Query the registry.
 	spellcastingRegistry.view<SpellActionSwitch, Name, SpellFragment, SpellcastExecution, SourceEntity, TargetEntity>().each
-	([dt, &spellcastingRegistry, &actorRegistry](auto entity, auto& spellActionSwitch, auto& name, auto& spell, auto& spellcastExecution, auto& sourceEntity, auto& targetEntity) {
+	([dt, &spellcastingRegistry, &actorRegistry](auto entity, auto& spellActionSwitch, auto& name, auto& spellFragment, auto& spellcastExecution, auto& sourceEntity, auto& targetEntity) {
 		// Check validity of the spell cast request.
-		if (IsSpellCastable(spell, sourceEntity, targetEntity))
+		if (IsSpellCastable(spellFragment, sourceEntity, targetEntity))
 		{
 			// Do something.
 			CryLogAlways("Spellcast: %s, Source: %d, Target: %d", name.displayName.c_str(), sourceEntity.sourceEntityId, targetEntity.targetEntityId);
