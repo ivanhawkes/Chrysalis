@@ -9,7 +9,7 @@ namespace Chrysalis::ECS
 
 // Attributes.
 
-void ImGuiRenderComponent(AttributeType ar)
+void ImGuiRenderComponent(AttributeType& ar)
 {
 	ImGui::InputFloat("Base:", &ar.base);
 	ImGui::InputFloat("Base Modifiers:", &ar.baseModifiers);
@@ -19,13 +19,13 @@ void ImGuiRenderComponent(AttributeType ar)
 
 // Name and prototypes for references.
 
-void ImGuiRenderComponent(Name ar)
+void ImGuiRenderComponent(Name& ar)
 {
 	ImGui::Text(ar.name);
 }
 
 
-void ImGuiRenderComponent(Prototype ar)
+void ImGuiRenderComponent(Prototype& ar)
 {
 	// TODO: Need a better way to handle this.
 	int32_t protoId = to_underlying(ar.prototypeEntityId);
@@ -36,7 +36,7 @@ void ImGuiRenderComponent(Prototype ar)
 
 // Source and target entitiy Ids.
 
-void ImGuiRenderComponent(SourceEntity ar)
+void ImGuiRenderComponent(SourceEntity& ar)
 {
 	// TODO: Need a better way to handle this.
 	int32_t sourceId = to_underlying(ar.sourceEntityId);
@@ -46,7 +46,7 @@ void ImGuiRenderComponent(SourceEntity ar)
 }
 
 
-void ImGuiRenderComponent(TargetEntity ar)
+void ImGuiRenderComponent(TargetEntity& ar)
 {
 	// TODO: Need conversion from the base entity type.
 	int32_t targetId = to_underlying(ar.targetEntityId);
@@ -57,7 +57,7 @@ void ImGuiRenderComponent(TargetEntity ar)
 
 // Health.
 
-void ImGuiRenderComponent(Health ar)
+void ImGuiRenderComponent(Health& ar)
 {
 	ImGuiRenderComponent(ar.health);
 	ImGui::Checkbox("Dead?:", &ar.isDead);
@@ -65,13 +65,13 @@ void ImGuiRenderComponent(Health ar)
 }
 
 
-void ImGuiRenderComponent(Damage ar)
+void ImGuiRenderComponent(Damage& ar)
 {
 	ImGui::InputFloat("Quantity:", &ar.quantity);
 }
 
 
-void ImGuiRenderComponent(Heal ar)
+void ImGuiRenderComponent(Heal& ar)
 {
 	ImGui::InputFloat("Quantity:", &ar.quantity);
 }
@@ -79,19 +79,19 @@ void ImGuiRenderComponent(Heal ar)
 
 // Qi.
 
-void ImGuiRenderComponent(Qi ar)
+void ImGuiRenderComponent(Qi& ar)
 {
 	ImGuiRenderComponent(ar.qi);
 }
 
 
-void ImGuiRenderComponent(UtiliseQi ar)
+void ImGuiRenderComponent(UtiliseQi& ar)
 {
 	ImGui::InputFloat("Quantity:", &ar.quantity);
 }
 
 
-void ImGuiRenderComponent(ReplenishQi ar)
+void ImGuiRenderComponent(ReplenishQi& ar)
 {
 	ImGui::InputFloat("Quantity:", &ar.quantity);
 }
@@ -99,7 +99,7 @@ void ImGuiRenderComponent(ReplenishQi ar)
 
 // Spellcasts.
 
-void ImGuiRenderComponent(Spell ar)
+void ImGuiRenderComponent(Spell& ar)
 {
 	for (auto& prototypeId : ar.fragments)
 	{
@@ -108,22 +108,22 @@ void ImGuiRenderComponent(Spell ar)
 }
 
 
-void ImGuiRenderComponent(SpellFragment ar)
+void ImGuiRenderComponent(SpellFragment& ar)
 {
 }
 
 
-void ImGuiRenderComponent(SpellTargetType ar)
+void ImGuiRenderComponent(SpellTargetType& ar)
 {
 }
 
 
-void ImGuiRenderComponent(SpellTargetAggressionType ar)
+void ImGuiRenderComponent(SpellTargetAggressionType& ar)
 {
 }
 
 
-void ImGuiRenderComponent(SpellcastExecution ar)
+void ImGuiRenderComponent(SpellcastExecution& ar)
 {
 	ImGui::InputFloat("Execution Time:", &ar.executionTime);
 }
@@ -131,69 +131,69 @@ void ImGuiRenderComponent(SpellcastExecution ar)
 
 // Spell actions.
 
-void ImGuiRenderComponent(SpellActionSchematyc ar)
+void ImGuiRenderComponent(SpellActionSchematyc& ar)
 {
 }
 
 
-void ImGuiRenderComponent(SpellActionDRS ar)
+void ImGuiRenderComponent(SpellActionDRS& ar)
 {
 }
 
 
-void ImGuiRenderComponent(SpellActionInspect ar)
+void ImGuiRenderComponent(SpellActionInspect& ar)
 {
 }
 
 
-void ImGuiRenderComponent(SpellActionExamine ar)
+void ImGuiRenderComponent(SpellActionExamine& ar)
 {
 }
 
 
-void ImGuiRenderComponent(SpellActionTake ar)
+void ImGuiRenderComponent(SpellActionTake& ar)
 {
 }
 
 
-void ImGuiRenderComponent(SpellActionDrop ar)
+void ImGuiRenderComponent(SpellActionDrop& ar)
 {
 }
 
 
-void ImGuiRenderComponent(SpellActionThrow ar)
+void ImGuiRenderComponent(SpellActionThrow& ar)
 {
 }
 
 
-void ImGuiRenderComponent(SpellActionSwitch ar)
+void ImGuiRenderComponent(SpellActionSwitch& ar)
 {
 }
 
 
-void ImGuiRenderComponent(SpellActionOpen ar)
+void ImGuiRenderComponent(SpellActionOpen& ar)
 {
 }
 
 
-void ImGuiRenderComponent(SpellActionClose ar)
+void ImGuiRenderComponent(SpellActionClose& ar)
 {
 }
 
 
-void ImGuiRenderComponent(SpellActionUnlock ar)
+void ImGuiRenderComponent(SpellActionUnlock& ar)
 {
 }
 
 
-void ImGuiRenderComponent(SpellActionLock ar)
+void ImGuiRenderComponent(SpellActionLock& ar)
 {
 }
 
 
 // Environment.
 
-void ImGuiRenderComponent(RenderLight ar)
+void ImGuiRenderComponent(RenderLight& ar)
 {
 	ImGui::Text("Optics");
 	//ar(desc.m_lensFlareName, "lensFlareName", "Diffuse color expressed as RGB e.g. 128, 255, 128.");
@@ -262,14 +262,14 @@ void ImGuiRenderComponent(RenderLight ar)
 
 // Items.
 
-void ImGuiRenderComponent(ItemClass ar)
+void ImGuiRenderComponent(ItemClass& ar)
 {
 }
 
 
 // Range checking.
 
-void ImGuiRenderComponent(Range ar)
+void ImGuiRenderComponent(Range& ar)
 {
 	ImGui::InputFloat("Minimum:", &ar.minRange);
 	ImGui::InputFloat("Maximum:", &ar.maxRange);
@@ -278,7 +278,7 @@ void ImGuiRenderComponent(Range ar)
 
 // Ticks each interval.
 
-void ImGuiRenderComponent(TickEachInterval ar)
+void ImGuiRenderComponent(TickEachInterval& ar)
 {
 	ImGui::InputFloat("Duration:", &ar.duration);
 	ImGui::InputFloat("Interval:", &ar.interval);
@@ -290,19 +290,19 @@ void ImGuiRenderComponent(TickEachInterval ar)
 
 // Animation components.
 
-void ImGuiRenderComponent(AnimationFragmentSpellCast ar)
+void ImGuiRenderComponent(AnimationFragmentSpellCast& ar)
 {
 	ImGui::Text(ar.value);
 }
 
 
-void ImGuiRenderComponent(AnimationFragmentEmote ar)
+void ImGuiRenderComponent(AnimationFragmentEmote& ar)
 {
 	ImGui::Text(ar.value);
 }
 
 
-void ImGuiRenderComponent(AnimationTag ar)
+void ImGuiRenderComponent(AnimationTag& ar)
 {
 	ImGui::Text(ar.value);
 }
@@ -310,19 +310,19 @@ void ImGuiRenderComponent(AnimationTag ar)
 
 // Timers.
 
-void ImGuiRenderComponent(Timer ar)
+void ImGuiRenderComponent(Timer& ar)
 {
 	ImGui::InputFloat("Value:", &ar.value);
 }
 
 
-void ImGuiRenderComponent(Duration ar)
+void ImGuiRenderComponent(Duration& ar)
 {
 	ImGui::InputFloat("Value:", &ar.value);
 }
 
 
-void ImGuiRenderComponent(Delay ar)
+void ImGuiRenderComponent(Delay& ar)
 {
 	ImGui::InputFloat("Value:", &ar.value);
 }
@@ -330,40 +330,40 @@ void ImGuiRenderComponent(Delay ar)
 
 // Simple components.
 
-void ImGuiRenderComponent(Aura ar)
+void ImGuiRenderComponent(Aura& ar)
 {
 }
 
 
-void ImGuiRenderComponent(Buff ar)
+void ImGuiRenderComponent(Buff& ar)
 {
 }
 
 
-void ImGuiRenderComponent(Debuff ar)
+void ImGuiRenderComponent(Debuff& ar)
 {
 }
 
 
-void ImGuiRenderComponent(Channelled ar)
+void ImGuiRenderComponent(Channelled& ar)
 {
 	ImGui::Checkbox("Value:", &ar.value);
 }
 
 
-void ImGuiRenderComponent(MovementFactor ar)
+void ImGuiRenderComponent(MovementFactor& ar)
 {
 	ImGui::InputFloat("Value:", &ar.value);
 }
 
 
-void ImGuiRenderComponent(CancelOnMovement ar)
+void ImGuiRenderComponent(CancelOnMovement& ar)
 {
 	ImGui::Checkbox("Value:", &ar.value);
 }
 
 
-void ImGuiRenderComponent(AreaOfEffect ar)
+void ImGuiRenderComponent(AreaOfEffect& ar)
 {
 	ImGui::InputFloat("Value:", &ar.value);
 }
@@ -371,74 +371,74 @@ void ImGuiRenderComponent(AreaOfEffect ar)
 
 // Crowd control.
 
-void ImGuiRenderComponent(CrowdControlBlind ar)
+void ImGuiRenderComponent(CrowdControlBlind& ar)
 {
 }
 
 
-void ImGuiRenderComponent(CrowdControlDisarm ar)
+void ImGuiRenderComponent(CrowdControlDisarm& ar)
 {
 }
 
 
-void ImGuiRenderComponent(CrowdControlMovementRestricted ar)
+void ImGuiRenderComponent(CrowdControlMovementRestricted& ar)
 {
 }
 
 
-void ImGuiRenderComponent(CrowdControlRotationRestricted ar)
+void ImGuiRenderComponent(CrowdControlRotationRestricted& ar)
 {
 }
 
 
-void ImGuiRenderComponent(CrowdControlFlee ar)
+void ImGuiRenderComponent(CrowdControlFlee& ar)
 {
 }
 
 
-void ImGuiRenderComponent(CrowdControlMindControl ar)
+void ImGuiRenderComponent(CrowdControlMindControl& ar)
 {
 }
 
 
-void ImGuiRenderComponent(CrowdControlPull ar)
+void ImGuiRenderComponent(CrowdControlPull& ar)
 {
 }
 
 
-void ImGuiRenderComponent(CrowdControlTaunt ar)
+void ImGuiRenderComponent(CrowdControlTaunt& ar)
 {
 }
 
 
-void ImGuiRenderComponent(CrowdControlThrow ar)
+void ImGuiRenderComponent(CrowdControlThrow& ar)
 {
 }
 
 
-void ImGuiRenderComponent(CrowdControlKockback ar)
+void ImGuiRenderComponent(CrowdControlKockback& ar)
 {
 }
 
 
-void ImGuiRenderComponent(CrowdControlKnockdown ar)
+void ImGuiRenderComponent(CrowdControlKnockdown& ar)
 {
 }
 
 
-void ImGuiRenderComponent(CrowdControlPolymorph ar)
+void ImGuiRenderComponent(CrowdControlPolymorph& ar)
 {
 }
 
 
-void ImGuiRenderComponent(CrowdControlSilence ar)
+void ImGuiRenderComponent(CrowdControlSilence& ar)
 {
 }
 
 
 // Cooldowns.
 
-void ImGuiRenderComponent(Cooldown ar)
+void ImGuiRenderComponent(Cooldown& ar)
 {
 	ImGui::InputFloat("Value:", &ar.value);
 }

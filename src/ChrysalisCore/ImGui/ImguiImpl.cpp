@@ -82,6 +82,11 @@ void CImguiImpl::InitImgui()
 	io.DisplaySize = {(float)dimensions.x, (float)dimensions.y};
 	io.RenderDrawListsFn = nullptr;
 
+#ifdef IMGUI_HAS_DOCK
+	// If using the docking branch, make use of docking features.
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+#endif
+
 	m_pRenderer = std::make_unique<CImguiRenderer>(dimensions);
 
 	auto keyMap = &ImGui::GetIO().KeyMap[0];
