@@ -8,8 +8,6 @@
   <Move scopes="FullBody1P+FullBody3P"/>
   <Interaction scopes="FullBody1P+FullBody3P+SlaveCharacter+SlaveObject"/>
   <Emote scopes="FullBody1P+FullBody3P+Torso1P+Torso3P+Audio1+Audio2"/>
-  <Looking scopes="Looking"/>
-  <LookPose scopes="LookPose"/>
   <Aiming scopes="FullBody1P+FullBody3P+GroundAlignment1P+GroundAlignment3P+Torso1P+Torso3P+Audio1+Audio2+AimPose+Aiming+Looking+SlaveCharacter+SlaveObject+Weapon+WeaponForceFeedback+AttachmentTop+AttachmentBottom"/>
   <AimPose scopes="FullBody1P+FullBody3P+GroundAlignment1P+GroundAlignment3P+Torso1P+Torso3P+Audio1+Audio2+AimPose+Aiming+Looking+SlaveCharacter+SlaveObject+Weapon+WeaponForceFeedback+AttachmentTop+AttachmentBottom"/>
  </FragmentDefs>

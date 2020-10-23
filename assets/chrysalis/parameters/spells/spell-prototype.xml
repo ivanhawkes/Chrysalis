@@ -135,25 +135,25 @@
   <spell CryXmlVersion="2" entityId="23">
    <fragments />
   </spell>
-  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="26"/>
-  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="0"/>
-  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="29"/>
-  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="3"/>
-  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="2"/>
-  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="5"/>
-  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="6"/>
-  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="7"/>
-  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="35"/>
-  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="22"/>
-  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="31"/>
-  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="37"/>
-  <spell-fragment CryXmlVersion="2" spellcastPayload="immediate" entityId="24"/>
-  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="25"/>
-  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="1"/>
-  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="36"/>
-  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="30"/>
-  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="20"/>
-  <spell-fragment CryXmlVersion="2" spellcastPayload="onCompletion" entityId="32"/>
+  <spell-fragment CryXmlVersion="2" entityId="26"/>
+  <spell-fragment CryXmlVersion="2" entityId="0"/>
+  <spell-fragment CryXmlVersion="2" entityId="29"/>
+  <spell-fragment CryXmlVersion="2" entityId="3"/>
+  <spell-fragment CryXmlVersion="2" entityId="2"/>
+  <spell-fragment CryXmlVersion="2" entityId="5"/>
+  <spell-fragment CryXmlVersion="2" entityId="6"/>
+  <spell-fragment CryXmlVersion="2" entityId="7"/>
+  <spell-fragment CryXmlVersion="2" entityId="35"/>
+  <spell-fragment CryXmlVersion="2" entityId="22"/>
+  <spell-fragment CryXmlVersion="2" entityId="31"/>
+  <spell-fragment CryXmlVersion="2" entityId="37"/>
+  <spell-fragment CryXmlVersion="2" entityId="24"/>
+  <spell-fragment CryXmlVersion="2" entityId="25"/>
+  <spell-fragment CryXmlVersion="2" entityId="1"/>
+  <spell-fragment CryXmlVersion="2" entityId="36"/>
+  <spell-fragment CryXmlVersion="2" entityId="30"/>
+  <spell-fragment CryXmlVersion="2" entityId="20"/>
+  <spell-fragment CryXmlVersion="2" entityId="32"/>
   <spell-target-type CryXmlVersion="2" targetType="singleTarget" entityId="0"/>
   <spell-target-type CryXmlVersion="2" targetType="self" entityId="1"/>
   <spell-target-type CryXmlVersion="2" targetType="singleTarget" entityId="30"/>

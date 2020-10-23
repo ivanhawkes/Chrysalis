@@ -77,10 +77,8 @@ void CImguiImpl::InitImgui()
 	ImGui::SetAllocatorFunctions(Allocate, Free);
 
 	ImGuiIO& io = ImGui::GetIO();
-	//io.DisplaySize = ImVec2(300, 200);
 	Vec2i dimensions(gEnv->pRenderer->GetWidth(), gEnv->pRenderer->GetHeight());
 	io.DisplaySize = {(float)dimensions.x, (float)dimensions.y};
-	io.RenderDrawListsFn = nullptr;
 
 #ifdef IMGUI_HAS_DOCK
 	// If using the docking branch, make use of docking features.

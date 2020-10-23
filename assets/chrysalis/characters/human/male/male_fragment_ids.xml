@@ -4,8 +4,6 @@
   <Tag name="Move"/>
   <Tag name="Interaction"/>
   <Tag name="Emote"/>
-  <Tag name="Looking"/>
-  <Tag name="LookPose"/>
   <Tag name="Aiming"/>
   <Tag name="AimPose"/>
  </Tags>
