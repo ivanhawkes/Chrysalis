@@ -21,7 +21,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories("../vendor/entt/src")
-include_directories("../vendor/imgui")
+#include_directories("../vendor/imgui")
 
 # I like to know which compiler I am using.
 message (STATUS "CMAKE_CXX_COMPILER_VERSION = ${CMAKE_CXX_COMPILER_VERSION}")
@@ -39,14 +39,26 @@ add_sources("ChrysalisCore_uber.cpp"
 		"StdAfx.cpp"
 		"StdAfx.h"
 )
-add_sources("CryImGui_uber.cpp"
+add_sources("ImGui_Local_uber.cpp"
     PROJECTS Chrysalis
-    SOURCE_GROUP "ImGui"
+    SOURCE_GROUP "ImGuiLocal"
+        "ImGui/imconfig.h"
         "ImGui/ImguiImpl.cpp"
         "ImGui/ImguiImpl.h"
+        "ImGui/PerfMonitor.cpp"
+        "ImGui/PerfMonitor.h"
         "ImGui/ImguiRenderer.h"
         "ImGui/ImguiRenderer.cpp"
-        "ImGui/imconfig.h"
+)
+add_sources("ImGui_Panels_uber.cpp"
+    PROJECTS Chrysalis
+    SOURCE_GROUP "ImGuiLocal\\\\Panels"
+        "ImGui/Panels/EntityEditor.cpp"
+        "ImGui/Panels/EntityEditor.h"
+)
+add_sources("ImGui_Vendor_uber.cpp"
+    PROJECTS Chrysalis
+    SOURCE_GROUP "ImGuiVendor"
         "ImGui/imgui.cpp"
         "ImGui/imgui.h"
         "ImGui/imgui_demo.cpp"
@@ -56,14 +68,6 @@ add_sources("CryImGui_uber.cpp"
         "ImGui/imstb_rectpack.h"
         "ImGui/imstb_textedit.h"
         "ImGui/imstb_truetype.h"
-        "ImGui/PerfMonitor.cpp"
-        "ImGui/PerfMonitor.h"
-)
-add_sources("CryImGui_Panels_uber.cpp"
-    PROJECTS Chrysalis
-    SOURCE_GROUP "ImGui\\\\Panels"
-        "ImGui/Panels/EntityEditor.cpp"
-        "ImGui/Panels/EntityEditor.h"
 )
 add_sources("Actor_uber.cpp"
     PROJECTS Chrysalis
@@ -613,7 +617,7 @@ endif()
 #set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories("../vendor/entt/src")
-include_directories("../vendor/imgui")
+#include_directories("../vendor/imgui")
 
 # I like to know which compiler I am using.
 #message (STATUS "CMAKE_CXX_COMPILER_VERSION = ${CMAKE_CXX_COMPILER_VERSION}")
