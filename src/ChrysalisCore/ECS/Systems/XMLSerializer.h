@@ -1,5 +1,7 @@
 #pragma once
 
+#include<entt/entt.hpp>
+
 
 namespace Chrysalis::ECS
 {
@@ -72,15 +74,20 @@ struct SerialiseECSInput
 	/** Called for each entity. */
 	void operator()(entt::entity& entity)
 	{
-		// Each entity get's a couple of nodes made for storing it's components.
-		XmlNodeRef node = m_entitiesNode->getChild(m_currentEntity);
+		// Prevent them passing in a deleted entity id.
+		// FIXME: This is a terrible way to try and detect if it's a deleted entity, but it's all I can find for now.
+		if (to_integral(entity) < 3435973836)
+		{
+			// Each entity get's a couple of nodes made for storing it's components.
+			XmlNodeRef node = m_entitiesNode->getChild(m_currentEntity);
 
-		// Dirty way to get the attribute out, since I don't have a primitive for getting an entity attribute.
-		std::underlying_type_t<entt::entity> entityId {0};
-		node->getAttr("entityId", entityId);
-		entity = entt::entity {entityId};
+			// Dirty way to get the attribute out, since I don't have a primitive for getting an entity attribute.
+			std::underlying_type_t<entt::entity> entityId {0};
+			node->getAttr("entityId", entityId);
+			entity = entt::entity {entityId};
 
-		m_currentEntity++;
+			m_currentEntity++;
+		}
 	}
 
 

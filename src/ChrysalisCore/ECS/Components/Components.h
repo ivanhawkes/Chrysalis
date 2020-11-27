@@ -1,6 +1,9 @@
 #pragma once
 
 #include <entt/entt.hpp>
+#include <entt/core/hashed_string.hpp>
+
+using namespace entt::literals;
 
 
 /** Thinking about making this a single include header for convenience. */

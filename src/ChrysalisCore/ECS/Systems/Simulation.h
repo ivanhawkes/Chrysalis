@@ -84,12 +84,11 @@ public:
 	void RegisterTypeWithSimulation(entt::hashed_string nameHash)
 	{
 #ifdef IMGUI
-		m_functionDispatchMap[entt::type_info<TYPE>::id()] = RegisteredType(nameHash, &CloneComponent<TYPE>, &EmplaceComponent<TYPE>, &RemoveComponent<TYPE>, &ImGuiRenderComponent<TYPE>);
+		m_functionDispatchMap[entt::type_id<TYPE>().seq()] = RegisteredType(nameHash, &CloneComponent<TYPE>, &EmplaceComponent<TYPE>, &RemoveComponent<TYPE>, &ImGuiRenderComponent<TYPE>);
 #else
-		m_functionDispatchMap[entt::type_info<TYPE>::id()] = RegisteredType(nameHash, &CloneComponent<TYPE>, &EmplaceComponent<TYPE>, &RemoveComponent<TYPE>);
+		m_functionDispatchMap[entt::type_id<TYPE>().seq()] = RegisteredType(nameHash, &CloneComponent<TYPE>, &EmplaceComponent<TYPE>, &RemoveComponent<TYPE>);
 #endif
 	}
-
 
 	/** One time initialisation. */
 	void Init();

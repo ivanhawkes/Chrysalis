@@ -95,7 +95,7 @@ void CSimulation::CastSpellByName(const char* spellName, entt::entity sourceEnti
 
 		// Copy each component for the spell itself.
 		m_spellRegistry.visit(spellEntityId, [this, spellEntityId, newEntity](const auto type_id)
-			{m_functionDispatchMap[type_id].stampFunction(m_spellRegistry, spellEntityId, m_spellcastingRegistry, newEntity); });
+			{m_functionDispatchMap[type_id.seq()].stampFunction(m_spellRegistry, spellEntityId, m_spellcastingRegistry, newEntity); });
 
 		// Do fixups.
 		RewireSpell(m_spellcastingRegistry, newEntity, sourceEntity, targetEntity, crySourceEntityId, cryTargetEntityId);
@@ -112,7 +112,7 @@ void CSimulation::CastSpellByName(const char* spellName, entt::entity sourceEnti
 
 			// Copy each component for the spell itself.
 			m_spellRegistry.visit(prototypeId.prototypeEntityId, [this, prototypeId, newFragmentEntityId](const auto type_id)
-				{m_functionDispatchMap[type_id].stampFunction(m_spellRegistry, prototypeId.prototypeEntityId, m_spellcastingRegistry, newFragmentEntityId); });
+				{m_functionDispatchMap[type_id.seq()].stampFunction(m_spellRegistry, prototypeId.prototypeEntityId, m_spellcastingRegistry, newFragmentEntityId); });
 
 			// Do fixups.
 			RewireSpell(m_spellcastingRegistry, newFragmentEntityId, sourceEntity, targetEntity, crySourceEntityId, cryTargetEntityId);
@@ -276,8 +276,8 @@ void CSimulation::SaveActorData()
 
 void CSimulation::LoadPrototypeData()
 {
-	// We might need to reload the data, so best to be sure and clear it's current data.
-	m_spellRegistry.clear();
+	// Clearing the data didn't seem to be enough, so I am creating using a freshly made registry instead.
+	m_spellRegistry = entt::registry {};
 
 	// Load the definitions from disk into the serialiser.
 	SerialiseECSInput spellSerial;

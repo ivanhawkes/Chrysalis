@@ -94,7 +94,7 @@ void CEntityEditor::EnumerateEntities()
 			// List all their components.
 			m_registry.visit(entity, [this, entity](const auto type_id)
 				{
-					ECS::CSimulation::RegisteredType& registeredType = ECS::Simulation.GetTypeMap()[type_id];
+					ECS::CSimulation::RegisteredType& registeredType = ECS::Simulation.GetTypeMap()[type_id.seq()];
 					if (ImGui::TreeNode(registeredType.tag.data()))
 					{
 						registeredType.imgRenderFunction(m_registry, entity);

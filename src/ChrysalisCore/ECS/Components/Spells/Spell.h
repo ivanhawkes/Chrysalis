@@ -3,6 +3,8 @@
 #include "ECS/Components/Components.h"
 #include <vector>
 
+using namespace entt::literals;
+
 
 namespace Chrysalis::ECS
 {
